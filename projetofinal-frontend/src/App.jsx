@@ -1,12 +1,10 @@
-import { Button } from '@material-tailwind/react';
-import './App.css';
+
+
 
 function App() {
   return (
-    <div className="App">
-      <Button>
+    <div>
         Click Me
-      </Button>
     </div>
   );
 }
