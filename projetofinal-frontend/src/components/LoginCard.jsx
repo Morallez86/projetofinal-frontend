@@ -1,4 +1,5 @@
 import { Button, Card, Checkbox, Label, TextInput } from "flowbite-react";
+import { RiLoginCircleFill } from "react-icons/ri";
 
 function LoginCard() {
   return (
@@ -22,6 +23,7 @@ function LoginCard() {
           <TextInput id="password" type="password" placeholder="Your password" required />
         </div>
         <Button type="submit">Submit</Button>
+        <Button icon={RiLoginCircleFill}>Forgot password?</Button>
       </form>
     </Card>
   );

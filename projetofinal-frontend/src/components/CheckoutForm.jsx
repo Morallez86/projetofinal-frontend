@@ -1,10 +1,9 @@
 import React from "react";
 import { Tabs } from "flowbite-react";
-import { HiAdjustments, HiClipboardList, HiUserCircle } from "react-icons/hi";
-import { MdDashboard } from "react-icons/md";
 import { RiLoginCircleFill } from "react-icons/ri";
 import { RxAvatar } from "react-icons/rx";
 import LoginCard from "./LoginCard";
+import RegisterCard from "./RegisterCard";
 
 
 function CheckoutForm() {
@@ -15,7 +14,7 @@ function CheckoutForm() {
           <LoginCard/>
         </Tabs.Item>
         <Tabs.Item title="Register" icon={RxAvatar}>
-
+          <RegisterCard/>
         </Tabs.Item>
       </Tabs>
     </div>
