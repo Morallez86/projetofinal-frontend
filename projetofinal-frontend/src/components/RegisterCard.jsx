@@ -1,6 +1,6 @@
 import { Button, Card, Label, TextInput } from "flowbite-react";
-
-import { FaStarOfLife } from "react-icons/fa";
+import { HiInformationCircle } from "react-icons/hi";
+import { Alert } from "flowbite-react";
 
 function RegisterCard() {
   return (
@@ -14,7 +14,6 @@ function RegisterCard() {
             id="email"
             type="email"
             placeholder="Your email"
-            required
           />
         </div>
         <div>
@@ -25,7 +24,7 @@ function RegisterCard() {
             id="password"
             type="password"
             placeholder="Your password"
-            required
+            
           />
         </div>
         <div>
@@ -39,11 +38,22 @@ function RegisterCard() {
             id="password-confirmation"
             type="password"
             placeholder="Confirm your password"
-            required
+            
           />
         </div>
         <Button type="submit">Submit</Button>
       </form>
+      <Alert color="failure" icon={HiInformationCircle}>
+        <span className="font-medium"> </span> Email format is incorrect!
+      </Alert>
+      <Alert color="failure" icon={HiInformationCircle}>
+        <span className="font-medium"> </span>
+        Password isn't strong enough
+      </Alert>
+      <Alert color="failure" icon={HiInformationCircle}>
+        <span className="font-medium"> </span>
+        Passwords don't match
+      </Alert>
     </Card>
   );
 }

@@ -2,6 +2,8 @@ import { Button, Card, Label, TextInput } from "flowbite-react";
 import { Dropdown } from "flowbite-react";
 import { FileInput } from "flowbite-react";
 import { FaStarOfLife } from "react-icons/fa";
+import { HiInformationCircle } from "react-icons/hi";
+import { Alert } from "flowbite-react";
 
 function ValidateAccountCard() {
   return (
@@ -43,6 +45,7 @@ function ValidateAccountCard() {
             id="nickname"
             type="text"
             placeholder="Example: JohnDoe98"
+            maxLength={15}
           />
         </div>
         <div>
@@ -58,6 +61,7 @@ function ValidateAccountCard() {
             placeholder="Talk about yourself..."
             rows={2}
             className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
+            maxLength={300}
           />
         </div>
         <div className="mb-2 block flex items-center">
@@ -69,6 +73,9 @@ function ValidateAccountCard() {
         </div>
         <Button type="submit">Submit</Button>
       </form>
+      <Alert color="failure" icon={HiInformationCircle}>
+        <span className="font-medium"> </span> Mandatory fields are not filled in!
+      </Alert>
     </Card>
   );
 }
