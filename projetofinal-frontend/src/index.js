@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import ValidateAccountPage from './Pages/ValidateAccountPage';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -12,6 +13,7 @@ root.render(
     <Router>
         <Routes>
           <Route index element={<App />} />
+          <Route path="/validateAccount" element={<ValidateAccountPage/>} />
         </Routes>
     </Router>
   </React.StrictMode>,

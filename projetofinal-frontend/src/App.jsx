@@ -1,11 +1,13 @@
 import React from 'react';
 import CheckoutForm from './Components/CheckoutForm';
-
-
+import backgroundImage from './Assets/Background.png'; 
+import './general.css'
 
 function App() {
   return (
-    <CheckoutForm/>
+    <div>
+      <CheckoutForm />
+    </div>
   );
 }
 
