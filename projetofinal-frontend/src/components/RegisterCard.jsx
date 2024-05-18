@@ -4,8 +4,63 @@ import { Alert } from "flowbite-react";
 import { Dropdown } from "flowbite-react";
 import { FaStarOfLife } from "react-icons/fa";
 import { FileInput } from "flowbite-react";
+import { useState } from "react";
 
 function RegisterCard() {
+
+  const [formDataName, setFormDataName] = useState({
+    name: "",
+  });
+
+  const [formDatapasswords, setFormDatapasswords] = useState({
+    password: "",
+    passwordConfirmation: "",
+  });
+
+  const [formDataNames, setFormDataNames] = useState({
+    firstName: formDataName.name.split(" ")[0],
+    lastName: formDataName.name.split(" ")[1],
+  });
+
+  const [formDataRegister, setFormDataRegister] = useState({
+    email: "",
+    password: "",
+    workplace: "",
+    firstName: "",
+    lastName: "",
+    username: "",
+    biography: "",
+  });
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    if (name === "name") {
+      setFormDataName((prevDataName) => ({ ...prevDataName, [name]: value }));
+
+      const nameParts = value.split(" ");
+      setFormDataNames({
+        firstName: nameParts[0] || "",
+        lastName: nameParts.slice(1).join(" ") || "",
+      });
+
+      setFormDataRegister((prevDataRegister) => ({
+        ...prevDataRegister,
+        firstName: nameParts[0] || "",
+        lastName: nameParts.slice(1).join(" ") || "",
+      }));
+    } else if (name === "password" || name === "passwordConfirmation") {
+      setFormDatapasswords((prevData) => ({ ...prevData, [name]: value }));
+      setFormDataRegister((prevDataRegister) => ({ ...prevDataRegister, [name]: value }));
+    } else {
+      setFormDataRegister((prevDataRegister) => ({ ...prevDataRegister, [name]: value }));
+    }
+    
+    console.log(formDataRegister);
+    console.log(formDataName);
+    console.log(formDatapasswords); 
+    console.log(formDataNames);
+  };
+
   return (
     <Card className="max-w-sm overflow-auto">
       <form className="flex flex-col gap-4">
@@ -17,7 +72,9 @@ function RegisterCard() {
           <TextInput
             id="email"
             type="email"
+            name= "email"
             placeholder="Your email"
+            onChange={handleChange}
           />
         </div>
         <div>
@@ -28,7 +85,9 @@ function RegisterCard() {
           <TextInput
             id="password"
             type="password"
+            name="password"
             placeholder="Your password"
+            onChange={handleChange}
             
           />
         </div>
@@ -43,8 +102,9 @@ function RegisterCard() {
           <TextInput
             id="password-confirmation"
             type="password"
+            name="passwordConfirmation"
             placeholder="Confirm your password"
-            
+            onChange={handleChange}
           />
         </div>
         <div>
@@ -71,18 +131,22 @@ function RegisterCard() {
           <TextInput
             id="name"
             type="text"
+            name="name"
             placeholder="First and Last Name"
+            onChange={handleChange}
           />
         </div>
         <div>
           <div className="mb-2 block">
-            <Label htmlFor="nickname" value="Nickname" />
+            <Label htmlFor="nickname" value="Username" />
           </div>
           <TextInput
-            id="nickname"
+            id="username"
             type="text"
+            name="username"
             placeholder="Example: JohnDoe98"
             maxLength={15}
+            onChange={handleChange}
           />
         </div>
         <div>
@@ -99,6 +163,8 @@ function RegisterCard() {
             rows={2}
             className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
             maxLength={300}
+            name="biography"
+            onChange={handleChange}
           />
         </div>
         <div className="mb-2 block flex items-center">
