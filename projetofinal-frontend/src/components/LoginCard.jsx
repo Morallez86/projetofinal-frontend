@@ -15,9 +15,33 @@ function LoginCard() {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    fetch ("http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/users/login", {
+      method: "POST",
+      headers: {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    })
+      .then(async function (response) {
+        if (response.status === 401) {
+          console.log("Invalid information")
+        } else if (response.status === 200) {
+          console.log("Sucessfull login")
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching user:", error);
+      });
+  }
+
+
+
   return (
     <Card className="max-w-sm">
-      <form className="flex flex-col gap-4">
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <div>
           <div className="mb-2 block">
             <Label htmlFor="email" value="Email" />
