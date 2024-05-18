@@ -11,10 +11,10 @@ function CheckoutForm() {
     <div className="flex justify-center">
       <Tabs aria-label="Default tabs" style="default" className="mx-auto">
         <Tabs.Item active title="Login" icon={RiLoginCircleFill}>
-          <LoginCard/>
+          <LoginCard />
         </Tabs.Item>
         <Tabs.Item title="Register" icon={RxAvatar}>
-          <RegisterCard/>
+          <RegisterCard />
         </Tabs.Item>
       </Tabs>
     </div>

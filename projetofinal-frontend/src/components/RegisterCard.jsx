@@ -121,6 +121,14 @@ function RegisterCard() {
         <span className="font-medium"> </span>
         Passwords don't match
       </Alert>
+      <Alert color="failure" icon={HiInformationCircle}>
+        <span className="font-medium"> </span>
+        You can only enter 2 names (first and last)
+      </Alert>
+      <Alert color="failure" icon={HiInformationCircle}>
+        <span className="font-medium"> </span>
+        The required fields are not all filled in
+      </Alert>
     </Card>
   );
 }
