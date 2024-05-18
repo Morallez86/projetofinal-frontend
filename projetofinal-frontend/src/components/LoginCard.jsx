@@ -55,7 +55,7 @@ function LoginCard() {
           {" "}
           REMEMBER!{" "}
         </span>{" "}
-        Validate your account in your email if you haven't already done so!
+        Validate your account in your email if you haven't already done so
       </Alert>
     </Card>
   );
