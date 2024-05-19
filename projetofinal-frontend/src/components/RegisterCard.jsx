@@ -5,6 +5,7 @@ import { Dropdown } from "flowbite-react";
 import { FaStarOfLife } from "react-icons/fa";
 import { FileInput } from "flowbite-react";
 import { useState } from "react";
+import zxcvbn from "zxcvbn";
 
 function RegisterCard() {
   const [formDataName, setFormDataName] = useState({
@@ -78,9 +79,69 @@ function RegisterCard() {
     }));
   };
 
+  const [warningUsername, setWarningUsername] = useState(0);
+  const [warningPasswordEquals, setWarningPasswordEquals] = useState(0);
+  const [warningPasswordPower, setWarningPasswordPower] = useState(0);
+  const [warningNameMax, setWarningNameMax] = useState(0);
+  const [warningNameMin, setWarningNameMin] = useState(0);
+  const [warningRequiresInputs, setWarningRequiresInputs] = useState(0);
+  const [warningEmail, setWarningEmail] = useState(0);
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setWarningUsername(0);
+    setWarningPasswordEquals(0);
+    setWarningPasswordPower(0);
+    setWarningNameMax(0);
+    setWarningNameMin(0);
+    setWarningRequiresInputs(0);
+    setWarningEmail(0);
+
+    if (!/^\S+@\S+\.\S+$/.test(formDataRegister.email.trim())) {
+      setWarningEmail(1);
+    }
+
+    if (/\s/.test(formDataRegister.username)) {
+      setWarningUsername(1);
+      //Não pode ter espaços o username
+    }
+    if (
+      formDataRegister.password.length < 8 ||
+      zxcvbn(formDataRegister.password).score < 3
+    ) {
+      setWarningPasswordPower(1);
+      //Password tem de ter 8 caracteres
+    }
+    if (formDataRegister.password !== formDatapasswords.passwordConfirmation) {
+      setWarningPasswordEquals(1);
+      //Passwords têm de ser iguais
+    }
+    if (formDataName.name.split(" ").length > 2) {
+      setWarningNameMax(1);
+      //Só pode ter 2 nomes
+    }
+    if (formDataName.name.split(" ").length < 2) {
+      setWarningNameMin(1);
+      //Tem de ter 2 nomes
+    }
+    if (
+      formDataRegister.email === "" ||
+      formDatapasswords.password === "" ||
+      formDatapasswords.passwordConfirmation === "" ||
+      formDataRegister.workplace === "" ||
+      formDataNames.firstName === "" ||
+      formDataNames.lastName === ""
+    ) {
+      setWarningRequiresInputs(1);
+      //Tem de preencher todos os campos obrigatórios
+    } else {
+      //Enviar o formulário
+    }
+  };
+
   return (
     <Card className="max-w-sm overflow-auto">
-      <form className="flex flex-col gap-4">
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <div>
           <div className="mb-2 block flex items-center">
             <Label htmlFor="email" value="Email" />
@@ -204,25 +265,60 @@ function RegisterCard() {
         </div>
         <Button type="submit">Submit</Button>
       </form>
-      <Alert color="failure" icon={HiInformationCircle}>
-        <span className="font-medium"> </span> Email format is incorrect!
+      {warningEmail === 1 && (
+        <Alert color="failure" icon={HiInformationCircle}>
+          <span className="font-medium"> </span> Email format is incorrect!
+        </Alert>
+      )}
+      {warningUsername === 1 && (
+        <Alert color="failure" icon={HiInformationCircle}>
+          <span className="font-medium"> </span> Username can't have spaces
+        </Alert>
+      )}
+      {warningPasswordPower === 1 && (
+        <>
+        <Alert color="failure" icon={HiInformationCircle}>
+          <span className="font-medium"> </span>
+          Password isn't strong enough
+        </Alert>
+        <Alert color="warning" icon={HiInformationCircle} rounded>
+        <span
+          className="font-medium"
+          style={{ textDecoration: "underline" }}
+        >
+          TIP TO A STRONG  PASSWORD!
+        </span>{" "}
+        Must have at least 8 characters, use upper and lower case letters, use numbers and special characters    
       </Alert>
-      <Alert color="failure" icon={HiInformationCircle}>
-        <span className="font-medium"> </span>
-        Password isn't strong enough
-      </Alert>
-      <Alert color="failure" icon={HiInformationCircle}>
-        <span className="font-medium"> </span>
-        Passwords don't match
-      </Alert>
-      <Alert color="failure" icon={HiInformationCircle}>
-        <span className="font-medium"> </span>
-        You can only enter 2 names (first and last)
-      </Alert>
-      <Alert color="failure" icon={HiInformationCircle}>
-        <span className="font-medium"> </span>
-        The required fields are not all filled in
-      </Alert>
+      </>
+      )}
+
+      {warningPasswordEquals === 1 && (
+        <Alert color="failure" icon={HiInformationCircle}>
+          <span className="font-medium"> </span>
+          Passwords don't match
+        </Alert>
+      )}
+      {warningNameMax === 1 && (
+        <Alert color="failure" icon={HiInformationCircle}>
+          <span className="font-medium"> </span>
+          You can only enter 2 names (first and last)
+        </Alert>
+      )}
+      {warningNameMin === 1 && (
+        <Alert color="failure" icon={HiInformationCircle}>
+          <span className="font-medium"> </span>
+          You need to enter 2 names (first and last)
+        </Alert>
+      )}
+      {warningRequiresInputs === 1 && (
+        <Alert color="failure" icon={HiInformationCircle}>
+          <span clas sName="font-medium">
+            {" "}
+          </span>
+          The required fields are not all filled in
+        </Alert>
+      )}
     </Card>
   );
 }
