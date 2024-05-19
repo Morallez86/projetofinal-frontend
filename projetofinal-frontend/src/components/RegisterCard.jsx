@@ -40,13 +40,13 @@ function RegisterCard() {
       const nameParts = value.split(" ");
       setFormDataNames({
         firstName: nameParts[0] || "",
-        lastName: nameParts.slice(1).join(" ") || "",
+        lastName: nameParts[1] || "",
       });
 
       setFormDataRegister((prevDataRegister) => ({
         ...prevDataRegister,
         firstName: nameParts[0] || "",
-        lastName: nameParts.slice(1).join(" ") || "",
+        lastName: nameParts[1] || "",
       }));
     } else if (name === "password" || name === "passwordConfirmation") {
       setFormDatapasswords((prevData) => ({ ...prevData, [name]: value }));
