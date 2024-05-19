@@ -64,11 +64,6 @@ function RegisterCard() {
         [name]: value,
       }));
     }
-
-    console.log(formDataRegister);
-    console.log(formDataName);
-    console.log(formDatapasswords);
-    console.log(formDataNames);
   };
 
   const handleWorkLocationChange = (location) => {
@@ -99,6 +94,7 @@ function RegisterCard() {
 
     if (!/^\S+@\S+\.\S+$/.test(formDataRegister.email.trim())) {
       setWarningEmail(1);
+      //Email tem de ter @ e .
     }
 
     if (/\s/.test(formDataRegister.username)) {
@@ -134,8 +130,33 @@ function RegisterCard() {
     ) {
       setWarningRequiresInputs(1);
       //Tem de preencher todos os campos obrigatórios
-    } else {
-      //Enviar o formulário
+    }
+    if (
+      warningUsername === 0 &&
+      warningPasswordEquals === 0 &&
+      warningPasswordPower === 0 &&
+      warningNameMax === 0 &&
+      warningNameMin === 0 &&
+      warningRequiresInputs === 0 &&
+      warningEmail === 0
+    ) {
+      fetch(
+        "http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/users/register",
+        {
+          method: "POST",
+          headers: {
+            Accept: "*/*",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formDataRegister),
+        }
+      ).then((response) => {
+        if (response.status === 201) {
+          console.log("User registered successfully");
+        } else {
+          console.log("User registration failed");
+        }
+      });
     }
   };
 
@@ -277,20 +298,21 @@ function RegisterCard() {
       )}
       {warningPasswordPower === 1 && (
         <>
-        <Alert color="failure" icon={HiInformationCircle}>
-          <span className="font-medium"> </span>
-          Password isn't strong enough
-        </Alert>
-        <Alert color="warning" icon={HiInformationCircle} rounded>
-        <span
-          className="font-medium"
-          style={{ textDecoration: "underline" }}
-        >
-          TIP TO A STRONG  PASSWORD!
-        </span>{" "}
-        Must have at least 8 characters, use upper and lower case letters, use numbers and special characters    
-      </Alert>
-      </>
+          <Alert color="failure" icon={HiInformationCircle}>
+            <span className="font-medium"> </span>
+            Password isn't strong enough
+          </Alert>
+          <Alert color="warning" icon={HiInformationCircle} rounded>
+            <span
+              className="font-medium"
+              style={{ textDecoration: "underline" }}
+            >
+              TIP TO A STRONG PASSWORD!
+            </span>{" "}
+            Must have at least 8 characters, use upper and lower case letters,
+            use numbers and special characters
+          </Alert>
+        </>
       )}
 
       {warningPasswordEquals === 1 && (
