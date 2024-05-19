@@ -7,7 +7,6 @@ import { FileInput } from "flowbite-react";
 import { useState } from "react";
 
 function RegisterCard() {
-
   const [formDataName, setFormDataName] = useState({
     name: "",
   });
@@ -32,6 +31,8 @@ function RegisterCard() {
     biography: "",
   });
 
+  const [selectedWorkLocation, setSelectedWorkLocation] = useState("");
+
   const handleChange = (event) => {
     const { name, value } = event.target;
     if (name === "name") {
@@ -48,17 +49,33 @@ function RegisterCard() {
         firstName: nameParts[0] || "",
         lastName: nameParts[1] || "",
       }));
-    } else if (name === "password" || name === "passwordConfirmation") {
+    } else if (name === "password") {
       setFormDatapasswords((prevData) => ({ ...prevData, [name]: value }));
-      setFormDataRegister((prevDataRegister) => ({ ...prevDataRegister, [name]: value }));
+      setFormDataRegister((prevDataRegister) => ({
+        ...prevDataRegister,
+        [name]: value,
+      }));
+    } else if (name === "passwordConfirmation") {
+      setFormDatapasswords((prevData) => ({ ...prevData, [name]: value }));
     } else {
-      setFormDataRegister((prevDataRegister) => ({ ...prevDataRegister, [name]: value }));
+      setFormDataRegister((prevDataRegister) => ({
+        ...prevDataRegister,
+        [name]: value,
+      }));
     }
-    
+
     console.log(formDataRegister);
     console.log(formDataName);
-    console.log(formDatapasswords); 
+    console.log(formDatapasswords);
     console.log(formDataNames);
+  };
+
+  const handleWorkLocationChange = (location) => {
+    setSelectedWorkLocation(location);
+    setFormDataRegister((prevDataRegister) => ({
+      ...prevDataRegister,
+      workplace: location,
+    }));
   };
 
   return (
@@ -72,7 +89,7 @@ function RegisterCard() {
           <TextInput
             id="email"
             type="email"
-            name= "email"
+            name="email"
             placeholder="Your email"
             onChange={handleChange}
           />
@@ -88,7 +105,6 @@ function RegisterCard() {
             name="password"
             placeholder="Your password"
             onChange={handleChange}
-            
           />
         </div>
         <div>
@@ -97,7 +113,7 @@ function RegisterCard() {
               htmlFor="password-confirmation"
               value="Password Confirmation"
             />
-             <FaStarOfLife className="text-red-500  ml-2 text-xs" />
+            <FaStarOfLife className="text-red-500  ml-2 text-xs" />
           </div>
           <TextInput
             id="password-confirmation"
@@ -113,13 +129,25 @@ function RegisterCard() {
             <FaStarOfLife className="text-red-500  ml-2 text-xs" />
           </div>
           <div>
-            <Dropdown label="Choose a location" dismissOnClick={true}>
-              <Dropdown.Item>Lisbon</Dropdown.Item>
-              <Dropdown.Item>Coimbra</Dropdown.Item>
-              <Dropdown.Item>Porto</Dropdown.Item>
-              <Dropdown.Item>Tomar</Dropdown.Item>
-              <Dropdown.Item>Viseu</Dropdown.Item>
-              <Dropdown.Item>Vila Real</Dropdown.Item>
+            <Dropdown
+              label={selectedWorkLocation || "Choose a location"}
+              dismissOnClick={true}
+            >
+              {[
+                "Lisbon",
+                "Coimbra",
+                "Porto",
+                "Tomar",
+                "Viseu",
+                "Vila Real",
+              ].map((location) => (
+                <Dropdown.Item
+                  key={location}
+                  onClick={() => handleWorkLocationChange(location)}
+                >
+                  {location}
+                </Dropdown.Item>
+              ))}
             </Dropdown>
           </div>
         </div>
@@ -138,7 +166,7 @@ function RegisterCard() {
         </div>
         <div>
           <div className="mb-2 block">
-            <Label htmlFor="nickname" value="Username" />
+            <Label htmlFor="username" value="Username" />
           </div>
           <TextInput
             id="username"
