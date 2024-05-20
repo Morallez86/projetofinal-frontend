@@ -9,6 +9,8 @@ import {
 } from "flowbite-react";
 import { RiLoginCircleFill } from "react-icons/ri";
 import { HiInformationCircle, HiOutlineMail } from "react-icons/hi";
+import { LuMailQuestion } from "react-icons/lu";
+
 import { useState } from "react";
 
 function LoginCard() {
@@ -118,10 +120,17 @@ function LoginCard() {
         <Modal.Header />
         <Modal.Body>
           <div className="text-center">
-            <HiOutlineMail className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
-            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
-              Enter your email to recover your password
+            <h3 className="mb-5 text-lg font-bold text-gray-500 dark:text-gray-400">
+              Recover Password
             </h3>
+            <div className="mb-5">
+              <TextInput
+                id="emailRecovery"
+                type="email"
+                placeholder="Enter your email to recover your password"
+                icon={HiOutlineMail}
+              />
+            </div>
             <div className="flex justify-center gap-4">
               <Button color="failure" onClick={() => setOpenPopUp(false)}>
                 {"Submit"}
