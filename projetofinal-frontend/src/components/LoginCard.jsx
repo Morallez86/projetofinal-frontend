@@ -50,7 +50,22 @@ function LoginCard() {
     setWarningEmailFormat(0);
 
     try {
-      /* fecth ao backend para recuperar a palavra-passe */
+      fetch("http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/users/emailRecoveryPassword", {
+        method: "POST",
+        headers: {
+          Accept: "*/*",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(emailRecovery),
+      }).then((response) => {
+        if (response.status === 200) {
+          console.log("Email sent");
+        } else if (response.status === 400) {
+          console.log("User not found");
+        } else {
+          console.log("Unexpected response status:", response.status);
+        }
+      });
     } catch (error) {
       console.error("Error fetching user:", error);
       setWarning(3);
