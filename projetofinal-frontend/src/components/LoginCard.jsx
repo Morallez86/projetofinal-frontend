@@ -58,6 +58,10 @@ function LoginCard() {
     event.preventDefault();
   };
 
+  const openEmailInput = () => {
+    console.log("Forgot password?");
+  }
+
   return (
     <Card className="max-w-sm">
       <div className="flex flex-col gap-4">
@@ -91,7 +95,7 @@ function LoginCard() {
         <Button onClick={handleSubmit} disabled={loading}>
           {loading ? <Spinner size="sm" /> : "Submit"}
         </Button>
-        <Button type="button">
+        <Button type="button" onClick={openEmailInput}>
           <RiLoginCircleFill className="mr-2" />
           Forgot password?
         </Button>
