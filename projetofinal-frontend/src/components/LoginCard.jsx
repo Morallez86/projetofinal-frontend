@@ -1,6 +1,14 @@
-import { Button, Card, Label, TextInput, Spinner, Alert } from "flowbite-react";
+import {
+  Button,
+  Card,
+  Label,
+  TextInput,
+  Spinner,
+  Alert,
+  Modal,
+} from "flowbite-react";
 import { RiLoginCircleFill } from "react-icons/ri";
-import { HiInformationCircle } from "react-icons/hi";
+import { HiInformationCircle, HiOutlineMail } from "react-icons/hi";
 import { useState } from "react";
 
 function LoginCard() {
@@ -11,6 +19,7 @@ function LoginCard() {
 
   const [loading, setLoading] = useState(false);
   const [warning, setWarning] = useState(0);
+  const [openPopUp, setOpenPopUp] = useState(false);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -48,7 +57,7 @@ function LoginCard() {
       }
     } catch (error) {
       console.error("Error fetching user:", error);
-      setWarning(3); 
+      setWarning(3);
     } finally {
       setLoading(false);
     }
@@ -59,8 +68,8 @@ function LoginCard() {
   };
 
   const openEmailInput = () => {
-    console.log("Forgot password?");
-  }
+    setOpenPopUp(true);
+  };
 
   return (
     <Card className="max-w-sm">
@@ -100,6 +109,30 @@ function LoginCard() {
           Forgot password?
         </Button>
       </div>
+      <Modal
+        show={openPopUp}
+        size="md"
+        onClose={() => setOpenPopUp(false)}
+        popup
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className="text-center">
+            <HiOutlineMail className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
+            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+              Enter your email to recover your password
+            </h3>
+            <div className="flex justify-center gap-4">
+              <Button color="failure" onClick={() => setOpenPopUp(false)}>
+                {"Submit"}
+              </Button>
+              <Button color="gray" onClick={() => setOpenPopUp(false)}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
       {warning === 1 && (
         <Alert color="failure" icon={HiInformationCircle}>
           <span className="font-medium">Incorrect information! Try again.</span>
