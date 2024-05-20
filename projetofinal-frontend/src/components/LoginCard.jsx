@@ -107,10 +107,10 @@ function LoginCard() {
   const cleanWarnings = () => {
     setWarning(0);
     setWarningEmailFormat(0);
-  }
+  };
 
-  console.log(emailRecovery.email)
-  console.log(formData.email)
+  console.log(emailRecovery.email);
+  console.log(formData.email);
 
   return (
     <Card className="max-w-sm">
@@ -150,6 +150,7 @@ function LoginCard() {
           Forgot password?
         </Button>
       </div>
+      <div className="flex flex-col gap-4"></div>
       <Modal
         show={openPopUp}
         size="md"
@@ -177,9 +178,17 @@ function LoginCard() {
               <Button color="failure" onClick={() => handleSubmitRecover()}>
                 {"Submit"}
               </Button>
-              <Button color="gray" onClick={() => { setOpenPopUp(false); cleanWarnings();}}>
+              <Button
+                color="gray"
+                onClick={() => {
+                  setOpenPopUp(false);
+                  cleanWarnings();
+                }}
+              >
                 Cancel
               </Button>
+            </div>
+            <div className="mt-5">
               {warningEmailFormat === 1 && (
                 <Alert color="failure" icon={HiInformationCircle}>
                   <span className="font-medium">Email format is incorrect</span>
