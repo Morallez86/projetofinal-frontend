@@ -56,7 +56,7 @@ function LoginCard() {
           Accept: "*/*",
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(emailRecovery),
+        body: JSON.stringify(emailRecovery.email),
       }).then((response) => {
         if (response.status === 200) {
           console.log("Email sent");
