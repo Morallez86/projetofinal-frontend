@@ -74,6 +74,10 @@ function RegisterCard() {
     }));
   };
 
+  const handleInvalid = (event) => {
+    event.preventDefault();
+  };
+
   const [warningUsername, setWarningUsername] = useState(0);
   const [warningPasswordEquals, setWarningPasswordEquals] = useState(0);
   const [warningPasswordPower, setWarningPasswordPower] = useState(0);
@@ -92,7 +96,11 @@ function RegisterCard() {
     setWarningRequiresInputs(0);
     setWarningEmail(0);
 
-    if (!/^\S+@\S+\.\S+$/.test(formDataRegister.email.trim())) {
+    if (
+      !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
+        formDataRegister.email.trim()
+      )
+    ) {
       setWarningEmail(1);
       //Email tem de ter @ e .
     }
@@ -174,6 +182,7 @@ function RegisterCard() {
             name="email"
             placeholder="Your email"
             onChange={handleChange}
+            onInvalid={handleInvalid}
           />
         </div>
         <div>
