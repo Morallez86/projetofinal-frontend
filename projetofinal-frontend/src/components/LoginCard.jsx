@@ -9,7 +9,6 @@ import {
 } from "flowbite-react";
 import { RiLoginCircleFill } from "react-icons/ri";
 import { HiInformationCircle, HiOutlineMail } from "react-icons/hi";
-import { LuMailQuestion } from "react-icons/lu";
 
 import { useState } from "react";
 
@@ -19,13 +18,45 @@ function LoginCard() {
     password: "",
   });
 
+  const [emailRecovery, setEmailRecovery] = useState({
+    email: "",
+  });
+
   const [loading, setLoading] = useState(false);
   const [warning, setWarning] = useState(0);
   const [openPopUp, setOpenPopUp] = useState(false);
+  const [warningEmailFormat, setWarningEmailFormat] = useState(0);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const handleChangeEmailRecovery = (event) => {
+    const { name, value } = event.target;
+    setEmailRecovery((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const handleSubmitRecover = async () => {
+    if (
+      !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
+        emailRecovery.email
+      )
+    ) {
+      setWarningEmailFormat(1);
+      return;
+    }
+    setLoading(true);
+    setWarningEmailFormat(0);
+
+    try {
+      /* fecth ao backend para recuperar a palavra-passe */
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      setWarning(3);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSubmit = async () => {
@@ -72,6 +103,11 @@ function LoginCard() {
   const openEmailInput = () => {
     setOpenPopUp(true);
   };
+
+  const cleanWarnings = () => {
+    setWarning(0);
+    setWarningEmailFormat(0);
+  }
 
   return (
     <Card className="max-w-sm">
@@ -129,15 +165,29 @@ function LoginCard() {
                 type="email"
                 placeholder="Enter your email to recover your password"
                 icon={HiOutlineMail}
+                name="emailRecovery"
+                onChange={handleChangeEmailRecovery}
               />
             </div>
             <div className="flex justify-center gap-4">
-              <Button color="failure" onClick={() => setOpenPopUp(false)}>
+              <Button color="failure" onClick={() => handleSubmitRecover()}>
                 {"Submit"}
               </Button>
-              <Button color="gray" onClick={() => setOpenPopUp(false)}>
+              <Button color="gray" onClick={() => { setOpenPopUp(false); cleanWarnings();}}>
                 Cancel
               </Button>
+              {warningEmailFormat === 1 && (
+                <Alert color="failure" icon={HiInformationCircle}>
+                  <span className="font-medium">Email format is incorrect</span>
+                </Alert>
+              )}
+              {warning === 3 && (
+                <Alert color="failure" icon={HiInformationCircle}>
+                  <span className="font-medium">
+                    Network error! Please try again later.
+                  </span>
+                </Alert>
+              )}
             </div>
           </div>
         </Modal.Body>
