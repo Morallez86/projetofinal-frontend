@@ -109,6 +109,9 @@ function LoginCard() {
     setWarningEmailFormat(0);
   }
 
+  console.log(emailRecovery.email)
+  console.log(formData.email)
+
   return (
     <Card className="max-w-sm">
       <div className="flex flex-col gap-4">
@@ -165,8 +168,9 @@ function LoginCard() {
                 type="email"
                 placeholder="Enter your email to recover your password"
                 icon={HiOutlineMail}
-                name="emailRecovery"
+                name="email"
                 onChange={handleChangeEmailRecovery}
+                value={emailRecovery.email}
               />
             </div>
             <div className="flex justify-center gap-4">
