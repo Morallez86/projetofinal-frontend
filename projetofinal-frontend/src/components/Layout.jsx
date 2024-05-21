@@ -8,6 +8,9 @@ import { CiEdit } from "react-icons/ci";
 import { GiSkills } from "react-icons/gi";
 import { LuMessagesSquare } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
+import { IoCreateOutline } from "react-icons/io5";
+import { CiBoxList } from "react-icons/ci";
+import { VscTools } from "react-icons/vsc";
 
 function Layout({
   activeTab,
@@ -135,11 +138,13 @@ function Layout({
                 active={activeSubProjects === 0}
                 value={0}
                 title={<span className="text-black">Create New</span>}
+                icon={IoCreateOutline}
               ></Tabs.Item>
               <Tabs.Item
                 active={activeSubProjects === 1}
                 value={1}
                 title={<span className="text-black">Projects List</span>}
+                icon={CiBoxList}
               ></Tabs.Item>
             </Tabs>
           </div>
@@ -168,11 +173,13 @@ function Layout({
                 active={activeSubComponents === 0}
                 value={0}
                 title={<span className="text-black">Components</span>}
+                icon={VscTools}
               ></Tabs.Item>
               <Tabs.Item
                 active={activeSubComponents === 1}
                 value={1}
                 title={<span className="text-black">Resources</span>}
+                icon={GrResources}
               ></Tabs.Item>
             </Tabs>
           </div>
