@@ -4,10 +4,41 @@ import { Alert } from "flowbite-react";
 import { Dropdown } from "flowbite-react";
 import { FaStarOfLife } from "react-icons/fa";
 import { FileInput } from "flowbite-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import zxcvbn from "zxcvbn";
 
 function RegisterCard() {
+  const [workplaces, setWorkplaces] = useState([]);
+
+  useEffect(() => {
+    getWorkplaces();
+  }, []);
+
+  const getWorkplaces = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/workplaces/all",
+        {
+          method: "GET",
+          headers: {
+            Accept: "*/*",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        const data = await response.json();
+        setWorkplaces(data);
+        console.log(data);
+      } else if (response.status === 404) {
+        console.log("Workplaces not found");
+      }
+    } catch (error) {
+      console.error("Error fetching workplaces:", error);
+    }
+  };
+
   const [formDataName, setFormDataName] = useState({
     name: "",
   });
@@ -138,7 +169,7 @@ function RegisterCard() {
       setWarningRequiresInputs(1);
       //Tem de preencher todos os campos obrigatórios
     }
-    
+
     if (
       warningUsername === 1 ||
       warningPasswordEquals === 1 ||
@@ -250,24 +281,17 @@ function RegisterCard() {
             <FaStarOfLife className="text-red-500  ml-2 text-xs" />
           </div>
           <Dropdown
-              label={selectedWorkLocation || "Choose a location"}
-              dismissOnClick={true}
-            >
-              {[
-                "Lisbon",
-                "Coimbra",
-                "Porto",
-                "Tomar",
-                "Viseu",
-                "Vila Real",
-              ].map((location) => (
-                <Dropdown.Item
-                  key={location}
-                  onClick={() => handleWorkLocationChange(location)}
-                >
-                  {location}
-                </Dropdown.Item>
-              ))}
+            label={selectedWorkLocation || "Choose a location"}
+            dismissOnClick={true}
+          >
+            {workplaces.map((location) => (
+              <Dropdown.Item
+                key={location.id}
+                onClick={() => handleWorkLocationChange(location.name)}
+              >
+                {location.name}
+              </Dropdown.Item>
+            ))}
           </Dropdown>
         </div>
         <div>
