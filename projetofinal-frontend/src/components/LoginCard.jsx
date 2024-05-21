@@ -50,7 +50,7 @@ function LoginCard() {
     setWarningEmailFormat(0);
 
     try {
-      const response = await fetch("http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/users/emailRecoveryPassword", {
+      await fetch("http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/users/emailRecoveryPassword", {
         method: "POST",
         headers: {
           Accept: "*/*",
