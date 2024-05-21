@@ -50,7 +50,7 @@ function LoginCard() {
     setWarningEmailFormat(0);
 
     try {
-      fetch("http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/users/emailRecoveryPassword", {
+      const response = await fetch("http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/users/emailRecoveryPassword", {
         method: "POST",
         headers: {
           Accept: "*/*",
@@ -124,9 +124,6 @@ function LoginCard() {
     setWarningEmailFormat(0);
   };
 
-  console.log(emailRecovery.email);
-  console.log(formData.email);
-
   return (
     <Card className="max-w-sm">
       <div className="flex flex-col gap-4">
@@ -190,9 +187,13 @@ function LoginCard() {
               />
             </div>
             <div className="flex justify-center gap-4">
+              {!loading  && (
               <Button color="failure" onClick={() => handleSubmitRecover()}>
                 {"Submit"}
-              </Button>
+                </Button>  )} 
+              {loading && (
+                <Spinner aria-label="Alternate spinner button example" size="sm" />
+              )}
               <Button
                 color="gray"
                 onClick={() => {
