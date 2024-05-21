@@ -11,6 +11,8 @@ import { useNavigate } from "react-router-dom";
 import { IoCreateOutline } from "react-icons/io5";
 import { CiBoxList } from "react-icons/ci";
 import { VscTools } from "react-icons/vsc";
+import { CgProfile } from "react-icons/cg";
+
 
 function Layout({
   activeTab,
@@ -57,7 +59,7 @@ function Layout({
         ></Tabs.Item>
       </Tabs>
 
-      <div className="w-full max-w-2xl">
+      <div className="w-full max-w-3xl">
         {activeTab === 0 && (
           <div>
             <Tabs
@@ -79,6 +81,8 @@ function Layout({
                   case 3:
                     navigate("/messages");
                     break;
+                    case 4: 
+                    navigate("/aboutMe");
                   default:
                     break;
                 }
@@ -110,6 +114,12 @@ function Layout({
                 value={3}
                 title={<span className="text-black">Messages</span>}
                 icon={LuMessagesSquare}
+              ></Tabs.Item>
+              <Tabs.Item
+                active={activeSubTabProfile === 4}
+                value={4}
+                title={<span className="text-black">About me</span>}
+                icon={CgProfile}
               ></Tabs.Item>
             </Tabs>
           </div>
