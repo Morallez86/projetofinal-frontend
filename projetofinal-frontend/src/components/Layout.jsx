@@ -8,9 +8,12 @@ import { CiEdit } from "react-icons/ci";
 import { GiSkills } from "react-icons/gi";
 import { LuMessagesSquare } from "react-icons/lu";
 
-
-
-function Layout({ activeTab, activeSubTabProfile }) {
+function Layout({
+  activeTab,
+  activeSubTabProfile,
+  activeSubProjects,
+  activeSubComponents,
+}) {
   return (
     <div className="flex flex-col items-center">
       <Tabs
@@ -20,11 +23,13 @@ function Layout({ activeTab, activeSubTabProfile }) {
       >
         <Tabs.Item value={0} title="MyProfile" icon={ImProfile}></Tabs.Item>
         <Tabs.Item
+          active={activeTab === 1}
           value={1}
           title="All Projects"
           icon={AiOutlineFundProjectionScreen}
         ></Tabs.Item>
         <Tabs.Item
+          active={activeTab === 2}
           value={2}
           title="Components/Resources"
           icon={GrResources}
@@ -34,19 +39,27 @@ function Layout({ activeTab, activeSubTabProfile }) {
       <div className="w-full max-w-2xl">
         {activeTab === 0 && (
           <div>
-            <Tabs aria-label="Pills" style="pills" className="w-full" defaultValue={activeSubTabProfile} >
+            <Tabs
+              aria-label="Pills"
+              style="pills"
+              className="w-full"
+              defaultValue={activeSubTabProfile}
+            >
               {console.log("Rendering MyProfile sub-tabs")}
               <Tabs.Item
-              value={0}
+                active={activeSubTabProfile === 0}
+                value={0}
                 title={<span className="text-black">My Projects</span>}
                 icon={PiProjectorScreenChartLight}
               ></Tabs.Item>
               <Tabs.Item
-              value={1}
+                active={activeSubTabProfile === 1}
+                value={1}
                 title={<span className="text-black">Edit Profile</span>}
                 icon={CiEdit}
               ></Tabs.Item>
               <Tabs.Item
+                active={activeSubTabProfile === 2}
                 value={2}
                 title={
                   <span className="text-black">Register Skill/Interest</span>
@@ -54,6 +67,7 @@ function Layout({ activeTab, activeSubTabProfile }) {
                 icon={GiSkills}
               ></Tabs.Item>
               <Tabs.Item
+                active={activeSubTabProfile === 3}
                 value={3}
                 title={<span className="text-black">Messages</span>}
                 icon={LuMessagesSquare}
@@ -66,9 +80,13 @@ function Layout({ activeTab, activeSubTabProfile }) {
             <Tabs aria-label="Pills" style="pills" className="w-full">
               {console.log("Rendering All Projects sub-tabs")}
               <Tabs.Item
+                active={activeSubProjects === 0}
+                value={0}
                 title={<span className="text-black">Create New</span>}
               ></Tabs.Item>
               <Tabs.Item
+                active={activeSubProjects === 1}
+                value={1}
                 title={<span className="text-black">Projects List</span>}
               ></Tabs.Item>
             </Tabs>
@@ -79,9 +97,13 @@ function Layout({ activeTab, activeSubTabProfile }) {
             <Tabs aria-label="Pills" style="pills" className="w-full ">
               {console.log("Rendering Components/Resources sub-tabs")}
               <Tabs.Item
+                active={activeSubComponents === 0}
+                value={0}
                 title={<span className="text-black">Components</span>}
               ></Tabs.Item>
               <Tabs.Item
+                active={activeSubComponents === 1}
+                value={1}
                 title={<span className="text-black">Resources</span>}
               ></Tabs.Item>
             </Tabs>

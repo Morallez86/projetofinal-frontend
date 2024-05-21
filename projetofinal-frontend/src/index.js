@@ -6,6 +6,12 @@ import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import MyProfile_MyProjects from "./Pages/MyProfile_MyProjects";
 import MyProfile_EditProfile from "./Pages/MyProfile_EditProfile";
+import MyProfile_RegisterSkillInterest from "./Pages/MyProfile_RegisterSkillInterest";
+import MyProfile_Message from "./Pages/MyProfile_Message";
+import AllProjects_CreateNew from "./Pages/AllProjects_CreateNew";
+import AllProjects_List from "./Pages/AllProjects_List";
+import Componentes_Components from "./Pages/Componentes_Components";
+import Components_Resources from "./Pages/Components_Resources";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -16,6 +22,15 @@ root.render(
         <Route index element={<App />} />
         <Route path="/home" element={<MyProfile_MyProjects />} />
         <Route path="/editProfile" element={<MyProfile_EditProfile />} />
+        <Route
+          path="/registerSkillInterest"
+          element={<MyProfile_RegisterSkillInterest />}
+        />
+        <Route path="/messages" element={<MyProfile_Message />} />
+        <Route path="/createNewProject" element={<AllProjects_CreateNew />} />
+        <Route path="/projectsList" element={<AllProjects_List />} />
+        <Route path="/components" element={<Componentes_Components />} />
+        <Route path="/resources" element={<Components_Resources />} />
       </Routes>
     </Router>
   </React.StrictMode>
