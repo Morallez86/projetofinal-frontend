@@ -138,15 +138,20 @@ function RegisterCard() {
       setWarningRequiresInputs(1);
       //Tem de preencher todos os campos obrigatórios
     }
+    
     if (
-      warningUsername === 0 &&
-      warningPasswordEquals === 0 &&
-      warningPasswordPower === 0 &&
-      warningNameMax === 0 &&
-      warningNameMin === 0 &&
-      warningRequiresInputs === 0 &&
-      warningEmail === 0
+      warningUsername === 1 ||
+      warningPasswordEquals === 1 ||
+      warningPasswordPower === 1 ||
+      warningNameMax === 1 ||
+      warningNameMin === 1 ||
+      warningRequiresInputs === 1 ||
+      warningEmail === 1
     ) {
+      console.log("not enter in fecth");
+      return;
+    } else {
+      console.log("entrei com avisos");
       try {
         const registerResponse = await fetch(
           "http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/users/register",
@@ -172,8 +177,8 @@ function RegisterCard() {
               method: "POST",
               headers: {
                 Accept: "*/*",
-                "filename": file.name,
-                "email": formDataRegister.email,
+                filename: file.name,
+                email: formDataRegister.email,
               },
               body: file,
             }
@@ -244,9 +249,7 @@ function RegisterCard() {
             <Label htmlFor="workplace" value="Workplace" />
             <FaStarOfLife className="text-red-500  ml-2 text-xs" />
           </div>
-          <Dropdown
-            label={selectedWorkLocation || "Select work location"}
-          >
+          <Dropdown label={selectedWorkLocation || "Select work location"}>
             <Dropdown.Item onClick={() => handleWorkLocationChange("School")}>
               School
             </Dropdown.Item>
