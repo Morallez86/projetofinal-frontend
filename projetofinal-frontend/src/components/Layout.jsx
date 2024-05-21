@@ -7,6 +7,7 @@ import { Tabs } from "flowbite-react";
 import { CiEdit } from "react-icons/ci";
 import { GiSkills } from "react-icons/gi";
 import { LuMessagesSquare } from "react-icons/lu";
+import { useNavigate } from "react-router-dom";
 
 function Layout({
   activeTab,
@@ -14,12 +15,29 @@ function Layout({
   activeSubProjects,
   activeSubComponents,
 }) {
+  const navigate = useNavigate();
+
   return (
     <div className="flex flex-col items-center">
       <Tabs
         aria-label="Full width tabs"
         style="fullWidth"
         defaultValue={activeTab}
+        onActiveTabChange={(value) => {
+          switch (value) {
+            case 0:
+              navigate("/home");
+              break;
+            case 1:
+              navigate("/createNewProject");
+              break;
+            case 2:
+              navigate("/components");
+              break;
+            default:
+              break;
+          }
+        }}
       >
         <Tabs.Item value={0} title="MyProfile" icon={ImProfile}></Tabs.Item>
         <Tabs.Item
@@ -44,6 +62,24 @@ function Layout({
               style="pills"
               className="w-full"
               defaultValue={activeSubTabProfile}
+              onActiveTabChange={(value) => {
+                switch (value) {
+                  case 0:
+                    navigate("/home");
+                    break;
+                  case 1:
+                    navigate("/editProfile");
+                    break;
+                  case 2:
+                    navigate("/registerSkillInterest");
+                    break;
+                  case 3:
+                    navigate("/messages");
+                    break;
+                  default:
+                    break;
+                }
+              }}
             >
               {console.log("Rendering MyProfile sub-tabs")}
               <Tabs.Item
@@ -77,7 +113,23 @@ function Layout({
         )}
         {activeTab === 1 && (
           <div>
-            <Tabs aria-label="Pills" style="pills" className="w-full">
+            <Tabs
+              aria-label="Pills"
+              style="pills"
+              className="w-full"
+              onActiveTabChange={(value) => {
+                switch (value) {
+                  case 0:
+                    navigate("/createNewProject");
+                    break;
+                  case 1:
+                    navigate("/projectsList");
+                    break;
+                  default:
+                    break;
+                }
+              }}
+            >
               {console.log("Rendering All Projects sub-tabs")}
               <Tabs.Item
                 active={activeSubProjects === 0}
@@ -94,7 +146,23 @@ function Layout({
         )}
         {activeTab === 2 && (
           <div>
-            <Tabs aria-label="Pills" style="pills" className="w-full ">
+            <Tabs
+              aria-label="Pills"
+              style="pills"
+              className="w-full "
+              onActiveTabChange={(value) => {
+                switch (value) {
+                  case 0:
+                    navigate("/components");
+                    break;
+                  case 1:
+                    navigate("/resources");
+                    break;
+                  default:
+                    break;
+                }
+              }}
+            >
               {console.log("Rendering Components/Resources sub-tabs")}
               <Tabs.Item
                 active={activeSubComponents === 0}
