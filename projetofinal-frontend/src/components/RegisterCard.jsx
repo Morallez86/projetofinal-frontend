@@ -82,8 +82,7 @@ function RegisterCard() {
   const [warningRequiresInputs, setWarningRequiresInputs] = useState(0);
   const [warningEmail, setWarningEmail] = useState(0);
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
+  const handleSubmit = async () => {
     setWarningUsername(0);
     setWarningPasswordEquals(0);
     setWarningPasswordPower(0);
@@ -140,31 +139,57 @@ function RegisterCard() {
       warningRequiresInputs === 0 &&
       warningEmail === 0
     ) {
-      fetch(
-        "http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/users/register",
-        {
-          method: "POST",
-          headers: {
-            Accept: "*/*",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formDataRegister),
-        }
-      ).then((response) => {
-        if (response.status === 201) {
+      try {
+        const registerResponse = await fetch(
+          "http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/users/register",
+          {
+            method: "POST",
+            headers: {
+              Accept: "*/*",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formDataRegister),
+          }
+        );
+
+        if (registerResponse.status === 201) {
           console.log("User registered successfully");
+
+          const fileInput = document.getElementById("small-file-upload");
+          const file = fileInput.files[0];
+
+          const imageResponse = await fetch(
+            "http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/users/image",
+            {
+              method: "POST",
+              headers: {
+                Accept: "*/*",
+                "filename": file.name,
+                "email": formDataRegister.email,
+              },
+              body: file,
+            }
+          );
+
+          if (imageResponse.status === 200) {
+            console.log("Image uploaded successfully");
+          } else {
+            console.log("Image upload failed");
+          }
         } else {
           console.log("User registration failed");
         }
-      });
+      } catch (error) {
+        console.error("Error during registration or image upload:", error);
+      }
     }
   };
 
   return (
     <Card className="max-w-sm overflow-auto">
-      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+      <div className="flex flex-col gap-4">
         <div>
-          <div className="mb-2 block flex items-center">
+          <div className="mb-2 flex items-center">
             <Label htmlFor="email" value="Email" />
             <FaStarOfLife className="text-red-500  ml-2 text-xs" />
           </div>
@@ -177,7 +202,7 @@ function RegisterCard() {
           />
         </div>
         <div>
-          <div className="mb-2 block flex items-center">
+          <div className="mb-2 flex items-center">
             <Label htmlFor="password" value="Password" />
             <FaStarOfLife className="text-red-500  ml-2 text-xs" />
           </div>
@@ -190,7 +215,7 @@ function RegisterCard() {
           />
         </div>
         <div>
-          <div className="mb-2 block flex items-center">
+          <div className="mb-2 flex items-center">
             <Label
               htmlFor="password-confirmation"
               value="Password Confirmation"
@@ -206,36 +231,34 @@ function RegisterCard() {
           />
         </div>
         <div>
-          <div className="mb-2 block flex items-center">
-            <Label htmlFor="Work-location" value="Work Location" />
+          <div className="mb-2 flex items-center">
+            <Label htmlFor="workplace" value="Workplace" />
             <FaStarOfLife className="text-red-500  ml-2 text-xs" />
           </div>
-          <div>
-            <Dropdown
-              label={selectedWorkLocation || "Choose a location"}
-              dismissOnClick={true}
+          <Dropdown
+            label={selectedWorkLocation || "Select work location"}
+          >
+            <Dropdown.Item onClick={() => handleWorkLocationChange("School")}>
+              School
+            </Dropdown.Item>
+            <Dropdown.Item
+              onClick={() => handleWorkLocationChange("Informatics Center")}
             >
-              {[
-                "Lisbon",
-                "Coimbra",
-                "Porto",
-                "Tomar",
-                "Viseu",
-                "Vila Real",
-              ].map((location) => (
-                <Dropdown.Item
-                  key={location}
-                  onClick={() => handleWorkLocationChange(location)}
-                >
-                  {location}
-                </Dropdown.Item>
-              ))}
-            </Dropdown>
-          </div>
+              Informatics Center
+            </Dropdown.Item>
+            <Dropdown.Item
+              onClick={() => handleWorkLocationChange("Refectory")}
+            >
+              Refectory
+            </Dropdown.Item>
+            <Dropdown.Item onClick={() => handleWorkLocationChange("Library")}>
+              Library
+            </Dropdown.Item>
+          </Dropdown>
         </div>
         <div>
-          <div className="mb-2 block flex items-center">
-            <Label htmlFor="name" value="Name" />
+          <div className="mb-2 flex items-center">
+            <Label htmlFor="name" value="Full name" />
             <FaStarOfLife className="text-red-500  ml-2 text-xs" />
           </div>
           <TextInput
@@ -277,15 +300,15 @@ function RegisterCard() {
             onChange={handleChange}
           />
         </div>
-        <div className="mb-2 block flex items-center">
+        <div className="mb-2 flex items-center">
           <FaStarOfLife className="text-red-500  mr-2 text-xs" />
           <Label
             htmlFor="warning"
             value="inputs with this symbol are mandatory"
           />
         </div>
-        <Button type="submit">Submit</Button>
-      </form>
+        <Button onClick={handleSubmit}>Submit</Button>
+      </div>
       {warningEmail === 1 && (
         <Alert color="failure" icon={HiInformationCircle}>
           <span className="font-medium"> </span> Email format is incorrect!
@@ -335,9 +358,7 @@ function RegisterCard() {
       )}
       {warningRequiresInputs === 1 && (
         <Alert color="failure" icon={HiInformationCircle}>
-          <span clas sName="font-medium">
-            {" "}
-          </span>
+          <span className="font-medium"> </span>
           The required fields are not all filled in
         </Alert>
       )}
