@@ -245,24 +245,24 @@ function RegisterCard() {
             <FaStarOfLife className="text-red-500  ml-2 text-xs" />
           </div>
           <Dropdown
-            label={selectedWorkLocation || "Select work location"}
-          >
-            <Dropdown.Item onClick={() => handleWorkLocationChange("School")}>
-              School
-            </Dropdown.Item>
-            <Dropdown.Item
-              onClick={() => handleWorkLocationChange("Informatics Center")}
+              label={selectedWorkLocation || "Choose a location"}
+              dismissOnClick={true}
             >
-              Informatics Center
-            </Dropdown.Item>
-            <Dropdown.Item
-              onClick={() => handleWorkLocationChange("Refectory")}
-            >
-              Refectory
-            </Dropdown.Item>
-            <Dropdown.Item onClick={() => handleWorkLocationChange("Library")}>
-              Library
-            </Dropdown.Item>
+              {[
+                "Lisbon",
+                "Coimbra",
+                "Porto",
+                "Tomar",
+                "Viseu",
+                "Vila Real",
+              ].map((location) => (
+                <Dropdown.Item
+                  key={location}
+                  onClick={() => handleWorkLocationChange(location)}
+                >
+                  {location}
+                </Dropdown.Item>
+              ))}
           </Dropdown>
         </div>
         <div>
