@@ -9,10 +9,13 @@ import {
 } from "flowbite-react";
 import { RiLoginCircleFill } from "react-icons/ri";
 import { HiInformationCircle, HiOutlineMail } from "react-icons/hi";
-
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import useUserStore from "../Stores/UserStore";
 
 function LoginCard() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -26,6 +29,8 @@ function LoginCard() {
   const [warning, setWarning] = useState(0);
   const [openPopUp, setOpenPopUp] = useState(false);
   const [warningEmailFormat, setWarningEmailFormat] = useState(0);
+  const setToken = useUserStore((state) => state.setToken);
+  const setRole = useUserStore((state) => state.setRole); 
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -35,6 +40,15 @@ function LoginCard() {
   const handleChangeEmailRecovery = (event) => {
     const { name, value } = event.target;
     setEmailRecovery((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+    // Function to store token and role in Zustand state
+  const storeTokenAndRole = (token) => {
+    setToken(token); // Store the token
+    const decodedToken = jwtDecode(token); // Decode the token
+    const role = decodedToken.role; // Extract the role from decoded token
+    console.log(role);
+    setRole(role); // Store the role in Zustand
   };
 
   const handleSubmitRecover = async () => {
@@ -99,7 +113,12 @@ function LoginCard() {
         console.log("Invalid information");
       } else if (response.status === 200) {
         setWarning(0);
+        const data = await response.json();
+        const token = data.token;
+        console.log(token);
+        storeTokenAndRole(token);
         console.log("Successful login");
+        navigate("/home");
       } else {
         console.log("Unexpected response status:", response.status);
       }
