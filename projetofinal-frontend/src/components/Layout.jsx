@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { ImProfile } from "react-icons/im";
 import { AiOutlineFundProjectionScreen } from "react-icons/ai";
 import { GrResources } from "react-icons/gr";
@@ -24,7 +24,7 @@ function Layout({
     <div className="flex flex-col items-center">
       <Tabs
         aria-label="Full width tabs"
-        style="fullWidth"
+        variant="fullWidth"
         defaultValue={activeTab}
         onActiveTabChange={(value) => {
           switch (value) {
@@ -62,7 +62,7 @@ function Layout({
           <div>
             <Tabs
               aria-label="Pills"
-              style="pills"
+              variant="pills"
               className="w-full"
               defaultValue={activeSubTabProfile}
               onActiveTabChange={(value) => {
@@ -118,7 +118,7 @@ function Layout({
           <div>
             <Tabs
               aria-label="Pills"
-              style="pills"
+              variant="pills"
               className="w-full"
               onActiveTabChange={(value) => {
                 switch (value) {
@@ -153,7 +153,7 @@ function Layout({
           <div>
             <Tabs
               aria-label="Pills"
-              style="pills"
+              variant="pills"
               className="w-full "
               onActiveTabChange={(value) => {
                 switch (value) {

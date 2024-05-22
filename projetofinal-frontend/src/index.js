@@ -1,17 +1,17 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import MyProfile_MyProjects from "./Pages/MyProfile_MyProjects";
-import MyProfile_EditProfile from "./Pages/MyProfile_EditProfile";
-import MyProfile_RegisterSkillInterest from "./Pages/MyProfile_RegisterSkillInterest";
-import MyProfile_Message from "./Pages/MyProfile_Message";
-import AllProjects_CreateNew from "./Pages/AllProjects_CreateNew";
-import AllProjects_List from "./Pages/AllProjects_List";
-import Componentes_Components from "./Pages/Componentes_Components";
-import Components_Resources from "./Pages/Components_Resources";
+import MyProfileMyProjects from "./Pages/MyProfileMyProjects";
+import MyProfileEditProfile from "./Pages/MyProfileEditProfile";
+import MyProfileRegisterSkillInterest from "./Pages/MyProfileRegisterSkillInterest";
+import MyProfileMessage from "./Pages/MyProfileMessage";
+import AllProjectsCreateNew from "./Pages/AllProjectsCreateNew";
+import AllProjectsList from "./Pages/AllProjectsList";
+import ComponentsComponents from "./Pages/ComponentesComponents";
+import ComponentsResources from "./Pages/ComponentsResources";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -20,17 +20,17 @@ root.render(
     <Router>
       <Routes>
         <Route index element={<App />} />
-        <Route path="/home" element={<MyProfile_MyProjects />} />
-        <Route path="/editProfile" element={<MyProfile_EditProfile />} />
+        <Route path="/home" element={<MyProfileMyProjects />} />
+        <Route path="/editProfile" element={<MyProfileEditProfile />} />
         <Route
           path="/registerSkillInterest"
-          element={<MyProfile_RegisterSkillInterest />}
+          element={<MyProfileRegisterSkillInterest />}
         />
-        <Route path="/messages" element={<MyProfile_Message />} />
-        <Route path="/createNewProject" element={<AllProjects_CreateNew />} />
-        <Route path="/projectsList" element={<AllProjects_List />} />
-        <Route path="/components" element={<Componentes_Components />} />
-        <Route path="/resources" element={<Components_Resources />} />
+        <Route path="/messages" element={<MyProfileMessage />} />
+        <Route path="/createNewProject" element={<AllProjectsCreateNew />} />
+        <Route path="/projectsList" element={<AllProjectsList />} />
+        <Route path="/components" element={<ComponentsComponents />} />
+        <Route path="/resources" element={<ComponentsResources />} />
       </Routes>
     </Router>
   </React.StrictMode>
