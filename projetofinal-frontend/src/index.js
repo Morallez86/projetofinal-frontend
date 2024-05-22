@@ -12,6 +12,7 @@ import AllProjectsCreateNew from "./Pages/AllProjectsCreateNew";
 import AllProjectsList from "./Pages/AllProjectsList";
 import ComponentsComponents from "./Pages/ComponentesComponents";
 import ComponentsResources from "./Pages/ComponentsResources";
+import MyProfile_AboutMe from "./Pages/MyProfile_AboutMe";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -31,6 +32,7 @@ root.render(
         <Route path="/projectsList" element={<AllProjectsList />} />
         <Route path="/components" element={<ComponentsComponents />} />
         <Route path="/resources" element={<ComponentsResources />} />
+        <Route path="/aboutMe" element={<MyProfile_AboutMe/>}/>
       </Routes>
     </Router>
   </React.StrictMode>

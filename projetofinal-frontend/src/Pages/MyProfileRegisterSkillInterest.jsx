@@ -1,5 +1,5 @@
 import React from "react";
-import Layout from "../components/Layout";
+import Layout from "../Components/Layout";
 
 function MyProfileRegisterSkillInterest() {
   return <Layout activeTab={0} activeSubTabProfile={2} />;

@@ -1,5 +1,5 @@
 import React from "react";
-import Layout from "../components/Layout";
+import Layout from "../Components/Layout";
 
 function MyProfileEditProfile() {
   return <Layout activeTab={0} activeSubTabProfile={1} />;

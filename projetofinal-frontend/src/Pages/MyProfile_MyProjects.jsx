@@ -1,8 +1,8 @@
 import React from "react";
 import Layout from "../Components/Layout";
 
-function MyProfileMyProjects() {
+function MyProfile_MyProjects() {
   return <Layout activeTab={0} activeSubTabProfile={0} />;
 }
 
-export default MyProfileMyProjects;
+export default MyProfile_MyProjects;
