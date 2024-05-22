@@ -61,7 +61,6 @@ function ProjectMyProfileTable() {
           placeholder="Search by name..."
           onChange={handleFilter}
           style={{ width: "20%" }}
-          className="mb-2"
         />
       </div>
       <DataTable
