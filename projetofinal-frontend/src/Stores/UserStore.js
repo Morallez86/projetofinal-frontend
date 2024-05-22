@@ -7,7 +7,6 @@ const useUserStore = create(
         (set) => ({
         token: null,
         role: null,
-        userId: null,
 
         // Function to update the token and role
         setToken: (token) => set({ token }),
