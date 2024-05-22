@@ -9,7 +9,6 @@ import {
 } from "flowbite-react";
 import { RiLoginCircleFill } from "react-icons/ri";
 import { HiInformationCircle, HiOutlineMail } from "react-icons/hi";
-
 import { useState } from "react";
 
 function LoginCard() {
@@ -99,6 +98,7 @@ function LoginCard() {
         console.log("Invalid information");
       } else if (response.status === 200) {
         setWarning(0);
+        await response.text();
         console.log("Successful login");
       } else {
         console.log("Unexpected response status:", response.status);
