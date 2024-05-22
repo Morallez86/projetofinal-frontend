@@ -1,6 +1,5 @@
 import React from "react";
 import Layout from "../Components/Layout";
-import { Avatar } from "flowbite-react";
 import ProfileCard from "../Components/ProfileCard";
 import TableProfilePage from "../Components/TableProfilePage";
 
