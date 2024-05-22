@@ -2,6 +2,7 @@ import React from "react";
 import Layout from "../Components/Layout";
 import { Avatar } from "flowbite-react";
 import ProfileCard from "../Components/ProfileCard";
+import TableProfilePage from "../Components/TableProfilePage";
 
 function MyProfile_AboutMe() {
   return (
@@ -10,6 +11,9 @@ function MyProfile_AboutMe() {
       <div className="flex-grow flex p-4">
         <div className="justify-center w-1/3">
           <ProfileCard />
+        </div>
+        <div className="justify-center w-2/3">
+            <TableProfilePage/>
         </div>
       </div>
     </div>
