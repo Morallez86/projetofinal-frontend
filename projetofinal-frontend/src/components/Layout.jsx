@@ -13,7 +13,6 @@ import { CiBoxList } from "react-icons/ci";
 import { VscTools } from "react-icons/vsc";
 import { CgProfile } from "react-icons/cg";
 
-
 function Layout({
   activeTab,
   activeSubTabProfile,
@@ -81,8 +80,9 @@ function Layout({
                   case 3:
                     navigate("/messages");
                     break;
-                    case 4: 
+                  case 4:
                     navigate("/aboutMe");
+                    break;
                   default:
                     break;
                 }
@@ -104,9 +104,7 @@ function Layout({
               <Tabs.Item
                 active={activeSubTabProfile === 2}
                 value={2}
-                title={
-                  <span className="text-black">Register Skill/Interest</span>
-                }
+                title={<span className="text-black">Register Skill/Interest</span>}
                 icon={GiSkills}
               ></Tabs.Item>
               <Tabs.Item
