@@ -1,7 +1,7 @@
 import React from "react";
 import Layout from "../Components/Layout";
 import ProfileCard from "../Components/ProfileCard";
-import TableProfilePage from "../Components/TableProfilePage";
+import ProjectMyProfileTable from "../Components/ProjectMyProfileTable";
 
 function MyProfile_AboutMe() {
   return (
@@ -12,7 +12,7 @@ function MyProfile_AboutMe() {
           <ProfileCard />
         </div>
         <div className="justify-center w-2/3">
-            <TableProfilePage/>
+        <ProjectMyProfileTable/>
         </div>
       </div>
     </div>

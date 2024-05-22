@@ -3,7 +3,7 @@ import { Avatar } from "flowbite-react";
 
 function ProfileCard() {
   return (
-    <Card className="max-w-sm">
+    <Card className="max-w-sm bg-transparent hover:bg-gray-200 transition-colors duration-200">
       <div className="flex flex-col pb-10 ">
         <Avatar
           img="https://i5.walmartimages.com/seo/Funko-Pokemon-Pikachu-Sticker_f08cd5a5-9ca2-4a6a-a111-2a613a1ac474.57a8547237c06ef905a16271ac9fcc0c.jpeg"
