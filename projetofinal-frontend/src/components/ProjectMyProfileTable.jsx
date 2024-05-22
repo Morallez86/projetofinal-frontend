@@ -1,6 +1,7 @@
 import React from "react";
 import DataTable from "react-data-table-component";
 import { useState } from "react";
+import { TextInput } from "flowbite-react";
 
 function ProjectMyProfileTable() {
   const columns = [
@@ -45,7 +46,7 @@ function ProjectMyProfileTable() {
 
   const [records, setRecords] = useState(data);
 
-  function handleFilter(e){
+  function handleFilter(e) {
     const value = e.target.value;
     const filteredData = data.filter((record) => {
       return record.title.toLowerCase().includes(value.toLowerCase());
@@ -55,9 +56,14 @@ function ProjectMyProfileTable() {
 
   return (
     <div>
-        <div>
-            <input type="text" onChange={handleFilter}/>
-        </div>
+      <div>
+        <TextInput
+          placeholder="Search by name..."
+          onChange={handleFilter}
+          style={{ width: "20%" }}
+          className="mb-2"
+        />
+      </div>
       <DataTable
         title="My Projects"
         columns={columns}
