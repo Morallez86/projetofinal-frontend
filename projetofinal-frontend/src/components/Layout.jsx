@@ -12,7 +12,9 @@ import { IoCreateOutline } from "react-icons/io5";
 import { CiBoxList } from "react-icons/ci";
 import { VscTools } from "react-icons/vsc";
 import { CgProfile } from "react-icons/cg";
-import { Avatar } from "flowbite-react";
+import { Avatar, Button } from "flowbite-react";
+import { MdWavingHand } from "react-icons/md";
+import { TbLogout2 } from "react-icons/tb";
 
 function Layout({
   activeTab,
@@ -197,12 +199,18 @@ function Layout({
             </div>
           )}
         </div>
-        <div className="absolute right-2 top-2">
+        <div className="absolute right-2 top-2 flex items-center space-x-2">
+          <MdWavingHand size={20} />
+          <h1 className="text-black font-bold">Hey Elias98</h1>
           <Avatar
             img="https://i5.walmartimages.com/seo/Funko-Pokemon-Pikachu-Sticker_f08cd5a5-9ca2-4a6a-a111-2a613a1ac474.57a8547237c06ef905a16271ac9fcc0c.jpeg"
             alt="avatar"
             rounded
           />
+          <Button className="bg-transparent hover:bg-orange-200 transition-colors duration-200 text-black font-bold">
+            <TbLogout2 size={20} style={{ verticalAlign: "middle" }} />
+            Logout
+          </Button>
         </div>
       </div>
     </div>
