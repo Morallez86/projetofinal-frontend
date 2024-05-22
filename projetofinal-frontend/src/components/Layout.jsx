@@ -201,7 +201,6 @@ function Layout({
           <Avatar
             img="https://i5.walmartimages.com/seo/Funko-Pokemon-Pikachu-Sticker_f08cd5a5-9ca2-4a6a-a111-2a613a1ac474.57a8547237c06ef905a16271ac9fcc0c.jpeg"
             alt="avatar"
-            size={"xl"}
             rounded
           />
         </div>

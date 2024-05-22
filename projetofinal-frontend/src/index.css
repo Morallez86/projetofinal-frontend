@@ -17,6 +17,14 @@
     color: rgb(0 0 0);
 }
 
+.w-10 {
+    width: 4rem;
+}
+
+.h-10 {
+    height: 4rem;
+}
+
 body {
   background: url("./Assets/Background.png") no-repeat center center fixed;
   background-size: cover;
