@@ -44,6 +44,9 @@ function ProfileCard() {
             name: `${userInfoData.firstName} ${userInfoData.lastName}`,
             nickname: userInfoData.username,
             biography: userInfoData.userBiography,
+            jobLocation: userInfoData.workplace,
+            skills: userInfoData.skills,
+            interests: userInfoData.interests,
           });
         }
       })
@@ -66,14 +69,14 @@ function ProfileCard() {
             Name
           </h5>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-           {userInfo.name}
+            {userInfo.name}
           </p>
         </div>
         <div className="mt-4">
           <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">
             Job Location
           </h5>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Coimbra</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{userInfo.jobLocation}</p>
         </div>
         <div className="mt-4">
           <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">
@@ -88,7 +91,7 @@ function ProfileCard() {
             Skills
           </h5>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            HTML, CSS, JavaScript, React, Node.js
+            {userInfo.skills}
           </p>
         </div>
         <div className="mt-4">
@@ -96,7 +99,7 @@ function ProfileCard() {
             Interests
           </h5>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Coding, Gaming, Sport
+            {userInfo.interests}
           </p>
         </div>
         <div className="mt-4">
@@ -104,7 +107,7 @@ function ProfileCard() {
             Biography
           </h5>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Your biography goes here.
+            {userInfo.biography}
           </p>
         </div>
       </div>
