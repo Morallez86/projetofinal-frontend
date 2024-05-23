@@ -203,7 +203,7 @@ function Layout({
           <MdWavingHand size={20} />
           <h1 className="text-black font-bold">Hey Elias98</h1>
           <Avatar
-            img="https://i5.walmartimages.com/seo/Funko-Pokemon-Pikachu-Sticker_f08cd5a5-9ca2-4a6a-a111-2a613a1ac474.57a8547237c06ef905a16271ac9fcc0c.jpeg"
+            img="https://byuc.wordpress.com/wp-content/uploads/2012/07/avat-2.jpg?w=640"
             alt="avatar"
             rounded
           />
