@@ -3,6 +3,8 @@ import { Avatar } from "flowbite-react";
 import useUserStore from "../Stores/UserStore";
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
+import { LuPlusCircle } from "react-icons/lu";
+import { Tooltip } from "react-tooltip";
 
 function ProfileCard() {
   const token = useUserStore((state) => state.token);
@@ -76,7 +78,9 @@ function ProfileCard() {
           <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">
             Job Location
           </h5>
-          <p className="text-sm text-gray-500 dark:text-gray-400">{userInfo.jobLocation}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            {userInfo.jobLocation}
+          </p>
         </div>
         <div className="mt-4">
           <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">
@@ -87,9 +91,23 @@ function ProfileCard() {
           </p>
         </div>
         <div className="mt-4">
-          <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">
-            Skills
-          </h5>
+          <div className="flex items-center">
+            <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">
+              Skills
+            </h5>
+            <div
+              id="icon-element"
+              className="inline-flex items-center cursor-pointer"
+              onClick={() => console.log("click")}
+            >
+              <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
+            </div>
+            <Tooltip
+              anchorSelect="#icon-element"
+              content="Add new skill"
+              place="right"
+            />
+          </div>
           <p className="text-sm text-gray-500 dark:text-gray-400">
             {userInfo.skills}
           </p>
