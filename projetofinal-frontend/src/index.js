@@ -14,6 +14,7 @@ import ComponentsComponents from "./Pages/ComponentesComponents";
 import ComponentsResources from "./Pages/ComponentsResources";
 import MyProfileAboutMe from "./Pages/MyProfileAboutMe";
 import RegistrationStatusPage from "./Pages/RegistrationStatusPage";
+import ForgotPassword from "./Pages/ForgotPassword";
 
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -36,6 +37,7 @@ root.render(
         <Route path="/resources" element={<ComponentsResources />} />
         <Route path="/aboutMe" element={<MyProfileAboutMe/>}/>
         <Route path="/registrationStatusPage/:emailToken" element={<RegistrationStatusPage />} />
+        <Route path="/forgotPassword/:token" element={<ForgotPassword/>} />
       </Routes>
     </Router>
   </React.StrictMode>
