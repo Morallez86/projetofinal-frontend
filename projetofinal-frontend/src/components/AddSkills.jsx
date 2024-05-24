@@ -1,13 +1,48 @@
 import React from "react";
 import { Dropdown, Modal } from "flowbite-react";
 import CreatableSelect from "react-select/creatable";
+import { useState } from "react";
+import useUserStore from "../Stores/UserStore";
+import { useEffect } from "react";
 
 function AddSkills({ openPopUpSkills, closePopUpSkills }) {
-  const options = [
-    { value: "web-development", label: "Web Development" },
-    { value: "mobile-development", label: "Mobile Development" },
-    // Add more options here
-  ];
+  const token = useUserStore((state) => state.token);
+  const [skills, setSkills] = useState([]);
+
+  useEffect(() => {
+    getAllSkills();
+  }, []);
+
+  const getAllSkills = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/skills/all",
+        {
+          method: "GET",
+          headers: {
+            Accept: "*/*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        const data = await response.json();
+        setSkills(data);
+        console.log(data);
+      } else if (response.status === 404) {
+        console.log("Skills not found");
+      }
+    } catch (error) {
+      console.error("Error fetching skills:", error);
+    }
+  };
+
+  const options = skills.map((skill) => ({
+    value: skill.id,
+    label: skill.name,
+  }));
 
   return (
     <>
