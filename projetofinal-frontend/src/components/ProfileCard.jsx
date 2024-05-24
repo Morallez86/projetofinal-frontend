@@ -6,7 +6,7 @@ import { jwtDecode } from "jwt-decode";
 import { LuPlusCircle } from "react-icons/lu";
 import { Tooltip } from "react-tooltip";
 
-function ProfileCard() {
+function ProfileCard({ openPopUpSkills }) {
   const token = useUserStore((state) => state.token);
   const decodedToken = jwtDecode(token);
   const userId = decodedToken.id;
@@ -98,7 +98,7 @@ function ProfileCard() {
             <div
               id="icon-element"
               className="inline-flex items-center cursor-pointer"
-              onClick={() => console.log("click")}
+              onClick={openPopUpSkills}
             >
               <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
             </div>
