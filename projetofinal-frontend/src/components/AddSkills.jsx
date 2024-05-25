@@ -1,13 +1,14 @@
 import React from "react";
-import { Dropdown, Modal } from "flowbite-react";
+import { Dropdown, Modal, Button } from "flowbite-react";
 import CreatableSelect from "react-select/creatable";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import useUserStore from "../Stores/UserStore";
-import { useEffect } from "react";
 
 function AddSkills({ openPopUpSkills, closePopUpSkills }) {
   const token = useUserStore((state) => state.token);
   const [skills, setSkills] = useState([]);
+  const [selectedSkill, setSelectedSkill] = useState(null);
+
 
   useEffect(() => {
     getAllSkills();
@@ -44,6 +45,12 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
     label: skill.name,
   }));
 
+  const handleSelectChange = (selectedOption) => {
+    setSelectedSkill(selectedOption);
+  };
+
+  const isSkillInOptions = options.some(option => option.value === selectedSkill?.value);
+
   return (
     <>
       <Modal show={openPopUpSkills} size="xl" onClose={closePopUpSkills} popup>
@@ -58,19 +65,18 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
                 <h4 className="mb-3">Create New Skill</h4>
                 <div className="flex items-center">
                   <div className="text center">
-                    <Dropdown label="Skill Category" dismissOnClick={true}>
+                    <Dropdown label="Skill Category" dismissOnClick={true} disabled={isSkillInOptions}>
                       <Dropdown.Item>Software</Dropdown.Item>
                       <Dropdown.Item>Knowledge</Dropdown.Item>
                       <Dropdown.Item>Hardware</Dropdown.Item>
                       <Dropdown.Item>Tools</Dropdown.Item>
                     </Dropdown>
-                    <CreatableSelect options={options} className="mt-3" />
+                    <CreatableSelect options={options} className="mt-3" onChange={handleSelectChange} />
                   </div>
                 </div>
-              </div>
-              <div>
-                <h4>Add Existing Skill</h4>
-                {/* Your form or content for adding an existing skill goes here */}
+                <div className="col-span-full mt-3">
+                  <Button>Create</Button>
+                </div>
               </div>
             </div>
           </div>
