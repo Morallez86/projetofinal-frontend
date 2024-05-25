@@ -4,11 +4,11 @@ import { AiOutlineFundProjectionScreen } from "react-icons/ai";
 import { GrResources } from "react-icons/gr";
 import { PiProjectorScreenChartLight } from "react-icons/pi";
 import { Tabs } from "flowbite-react";
-import { CiEdit } from "react-icons/ci";
 import { GiSkills } from "react-icons/gi";
 import { LuMessagesSquare } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
 import { IoCreateOutline } from "react-icons/io5";
+import { CiSettings } from "react-icons/ci";
 import { CiBoxList } from "react-icons/ci";
 import { VscTools } from "react-icons/vsc";
 import { CgProfile } from "react-icons/cg";
@@ -76,7 +76,7 @@ function Layout({
                       navigate("/home");
                       break;
                     case 1:
-                      navigate("/editProfile");
+                      navigate("/changePassword");
                       break;
                     case 2:
                       navigate("/registerSkillInterest");
@@ -102,8 +102,8 @@ function Layout({
                 <Tabs.Item
                   active={activeSubTabProfile === 1}
                   value={1}
-                  title={<span className="text-black">Edit Profile</span>}
-                  icon={CiEdit}
+                  title={<span className="text-black">Change Password</span>}
+                  icon={CiSettings}
                 ></Tabs.Item>
                 <Tabs.Item
                   active={activeSubTabProfile === 2}

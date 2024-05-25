@@ -5,7 +5,7 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import MyProfileMyProjects from "./Pages/MyProfileMyProjects";
-import MyProfileEditProfile from "./Pages/MyProfileEditProfile";
+import MyProfileChangePassword from "./Pages/MyProfileChangePassword";
 import MyProfileRegisterSkillInterest from "./Pages/MyProfileRegisterSkillInterest";
 import MyProfileMessage from "./Pages/MyProfileMessage";
 import AllProjectsCreateNew from "./Pages/AllProjectsCreateNew";
@@ -25,7 +25,7 @@ root.render(
       <Routes>
         <Route index element={<App />} />
         <Route path="/home" element={<MyProfileMyProjects />} />
-        <Route path="/editProfile" element={<MyProfileEditProfile />} />
+        <Route path="/changePassword" element={<MyProfileChangePassword />} />
         <Route
           path="/registerSkillInterest"
           element={<MyProfileRegisterSkillInterest />}
