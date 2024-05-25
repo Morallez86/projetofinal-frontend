@@ -16,7 +16,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
   const getAllSkills = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/skills/all",
+        "http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/skills",
         {
           method: "GET",
           headers: {
@@ -59,10 +59,10 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
                 <div className="flex items-center">
                   <div className="text center">
                     <Dropdown label="Skill Category" dismissOnClick={true}>
-                      <Dropdown.Item>Web Development</Dropdown.Item>
-                      <Dropdown.Item>Mobile Development</Dropdown.Item>
-                      <Dropdown.Item>Software Development</Dropdown.Item>
-                      <Dropdown.Item>Graphic Design</Dropdown.Item>
+                      <Dropdown.Item>Software</Dropdown.Item>
+                      <Dropdown.Item>Knowledge</Dropdown.Item>
+                      <Dropdown.Item>Hardware</Dropdown.Item>
+                      <Dropdown.Item>Tools</Dropdown.Item>
                     </Dropdown>
                     <CreatableSelect options={options} className="mt-3" />
                   </div>
