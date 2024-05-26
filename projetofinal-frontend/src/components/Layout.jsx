@@ -15,6 +15,9 @@ import { CgProfile } from "react-icons/cg";
 import { Avatar, Button } from "flowbite-react";
 import { MdWavingHand } from "react-icons/md";
 import { TbLogout2 } from "react-icons/tb";
+import useUserStore from "../Stores/UserStore";
+import criticalLogo from "../Assets/CriticalLogo.jpg";
+
 
 function Layout({
   activeTab,
@@ -22,10 +25,40 @@ function Layout({
   activeSubProjects,
   activeSubComponents,
 }) {
-  const navigate = useNavigate();
+const navigate = useNavigate();
+const { token, setToken } = useUserStore();
+  
+
+  const handleLogout = async () => {
+    try {
+      console.log(token);
+      const response = await fetch("http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/users/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        // Clear the token and redirect to login page
+        setToken(null);
+        navigate("/");
+      } else {
+        const errorData = await response.json();
+        alert(`Failed to logout: ${errorData.message}`);
+      }
+    } catch (error) {
+      console.error("Error logging out", error);
+      alert("Error logging out");
+    }
+  };
 
   return (
     <div className="relative flex justify-center items-start">
+      <div className="fixed top-2 left-2">
+        <img src={criticalLogo} alt="Critical Logo" className=" w-32 m-2 rounded h-auto" />
+      </div>
       <div className="flex flex-col items-center">
         <Tabs
           aria-label="Full width tabs"
@@ -207,7 +240,10 @@ function Layout({
             alt="avatar"
             rounded
           />
-          <Button className="bg-transparent hover:bg-orange-200 transition-colors duration-200 text-black font-bold">
+          <Button 
+            className="bg-transparent hover:bg-orange-200 transition-colors duration-200 text-black font-bold"
+            onClick={handleLogout}
+          >
             <TbLogout2 size={20} style={{ verticalAlign: "middle" }} />
             Logout
           </Button>
