@@ -50,10 +50,22 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
   const options = skills.map((skill) => ({
     value: skill.name,
     label: skill.name,
+    type: skill.type,
   }));
 
   const handleSelectChange = (selectedOption) => {
     setSelectedSkill(selectedOption);
+    const selectedSkill = skills.find(
+      (skill) => skill.name === selectedOption.value
+    );
+
+    if (selectedSkill) {
+      setSelectedCategory(
+        Object.keys(skillCategoryMapping).find(
+          (key) => skillCategoryMapping[key] === selectedSkill.type
+        )
+      );
+    }
   };
 
   const handleCategoryChange = (selectedOption) => {
