@@ -10,6 +10,7 @@ function ProfileCard({ openPopUpSkills }) {
   const token = useUserStore((state) => state.token);
   const decodedToken = jwtDecode(token);
   const userId = decodedToken.id;
+  const setSkills = useUserStore((state) => state.setSkills);
 
   useEffect(() => {
     fetchUserInfo();
@@ -42,6 +43,8 @@ function ProfileCard({ openPopUpSkills }) {
         } else if (response.status === 200) {
           const userInfoData = await response.json();
           console.log(userInfoData);
+          console.log("User skills", userInfoData.skills);
+          setSkills(userInfoData.skills);
           setUserInfo({
             name: `${userInfoData.firstName} ${userInfoData.lastName}`,
             nickname: userInfoData.username,

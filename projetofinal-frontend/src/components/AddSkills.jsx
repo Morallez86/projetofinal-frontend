@@ -3,12 +3,14 @@ import { Dropdown, Modal, Button } from "flowbite-react";
 import CreatableSelect from "react-select/creatable";
 import { useState, useEffect } from "react";
 import useUserStore from "../Stores/UserStore";
+import { TbLockFilled } from "react-icons/tb";
 
 function AddSkills({ openPopUpSkills, closePopUpSkills }) {
   const token = useUserStore((state) => state.token);
   const [skills, setSkills] = useState([]);
   const [selectedSkill, setSelectedSkill] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const userSkills = useUserStore((state) => state.skills);
 
   const skillCategoryMapping = {
     Software: 200,
@@ -51,6 +53,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
     value: skill.name,
     label: skill.name,
     type: skill.type,
+    isDisabled: userSkills.includes(skill.name),
   }));
 
   const handleSelectChange = (selectedOption) => {
@@ -151,6 +154,13 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
                       options={options}
                       className="mt-3"
                       onChange={handleSelectChange}
+                      isOptionDisabled={(option) => option.isDisabled}
+                      formatOptionLabel={(option) => (
+                        <div>
+                          {option.label}
+                          {option.isDisabled ? <TbLockFilled /> : null}
+                        </div>
+                      )}
                     />
                   </div>
                 </div>
