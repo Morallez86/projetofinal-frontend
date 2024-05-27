@@ -3,19 +3,21 @@ import { Dropdown, Modal, Button } from "flowbite-react";
 import CreatableSelect from "react-select/creatable";
 import { useState, useEffect } from "react";
 import useUserStore from "../Stores/UserStore";
+import { TbLockFilled } from "react-icons/tb";
 
 function AddSkills({ openPopUpSkills, closePopUpSkills }) {
   const token = useUserStore((state) => state.token);
   const [skills, setSkills] = useState([]);
   const [selectedSkill, setSelectedSkill] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const userSkills = useUserStore((state) => state.skills);
 
   const skillCategoryMapping = {
     Software: 200,
     Knowledge: 100,
     Hardware: 300,
     Tools: 400,
-  }
+  };
 
   useEffect(() => {
     getAllSkills();
@@ -48,12 +50,25 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
   };
 
   const options = skills.map((skill) => ({
-    value: skill.id,
+    value: skill.name,
     label: skill.name,
+    type: skill.type,
+    isDisabled: userSkills.includes(skill.name),
   }));
 
   const handleSelectChange = (selectedOption) => {
     setSelectedSkill(selectedOption);
+    const selectedSkill = skills.find(
+      (skill) => skill.name === selectedOption.value
+    );
+
+    if (selectedSkill) {
+      setSelectedCategory(
+        Object.keys(skillCategoryMapping).find(
+          (key) => skillCategoryMapping[key] === selectedSkill.type
+        )
+      );
+    }
   };
 
   const handleCategoryChange = (selectedOption) => {
@@ -65,25 +80,31 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
   );
 
   const handleSubmit = async () => {
-    const data = {
-      skill: selectedSkill.value,
-      category: skillCategoryMapping[selectedCategory],
-    };
+    const data = [
+      {
+        name: selectedSkill.value,
+        type: skillCategoryMapping[selectedCategory],
+      },
+    ];
 
     console.log(data);
 
-    const response = await fetch("/your-endpoint", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (response.ok) {
-      console.log("Data submitted successfully");
-    } else {
-      console.error("Error submitting data");
+    const response = await fetch(
+      "http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/skills",
+      {
+        method: "POST",
+        headers: {
+          Accept: "*/*",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      }
+    );
+    if (response.status === 201) {
+      console.log("Skill added successfully");
+    } else if (response.status === 500) {
+      console.error("Internal Server Error");
     }
   };
 
@@ -98,28 +119,53 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
             </h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <h4 className="mb-3">Create New Skill</h4>
+                <h4 className="mb-3">
+                  Create new skill or Choose one of the existing ones{" "}
+                </h4>
                 <div className="flex items-center">
                   <div className="text center">
                     <Dropdown
-                      label="Skill Category"
+                      label={selectedCategory || "Skill Category"}
                       dismissOnClick={true}
                       disabled={isSkillInOptions}
                     >
-                      <Dropdown.Item onClick={() => handleCategoryChange("Software")}>Software</Dropdown.Item>
-                      <Dropdown.Item onClick={() => handleCategoryChange("Knowledge")}>Knowledge</Dropdown.Item>
-                      <Dropdown.Item onClick={() => handleCategoryChange("Hardware")}>Hardware</Dropdown.Item>
-                      <Dropdown.Item onClick={() => handleCategoryChange("Tools")}>Tools</Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => handleCategoryChange("Software")}
+                      >
+                        Software
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => handleCategoryChange("Knowledge")}
+                      >
+                        Knowledge
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => handleCategoryChange("Hardware")}
+                      >
+                        Hardware
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => handleCategoryChange("Tools")}
+                      >
+                        Tools
+                      </Dropdown.Item>
                     </Dropdown>
                     <CreatableSelect
                       options={options}
                       className="mt-3"
                       onChange={handleSelectChange}
+                      isOptionDisabled={(option) => option.isDisabled}
+                      formatOptionLabel={(option) => (
+                        <div>
+                          {option.label}
+                          {option.isDisabled ? <TbLockFilled /> : null}
+                        </div>
+                      )}
                     />
                   </div>
                 </div>
                 <div className="col-span-full mt-3">
-                  <Button onClick={handleSubmit}>Create</Button>
+                  <Button onClick={handleSubmit}>Add to skills list</Button>
                 </div>
               </div>
             </div>
