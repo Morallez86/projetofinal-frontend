@@ -113,9 +113,26 @@ function ProfileCard({ openPopUpSkills, openPopUpInterests }) {
               place="right"
             />
           </div>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            {userInfo.skills}
-          </p>
+          <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+            <p>
+              {Array.isArray(userInfo.skills)
+                ? userInfo.skills.slice(-5).join(", ")
+                : ""}
+            </p>
+            {Array.isArray(userInfo.skills) &&
+              userInfo.interests.skills > 5 && (
+                <div id="tip-all-skills">
+                  <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+                    {`+${userInfo.skills.length - 5}`}
+                  </button>
+                  <Tooltip
+                    anchorSelect="#tip-all-skills"
+                    content="Check all skills"
+                    place="top"
+                  />
+                </div>
+              )}
+          </div>
         </div>
         <div className="mt-4">
           <div className="flex items-center">
@@ -135,9 +152,26 @@ function ProfileCard({ openPopUpSkills, openPopUpInterests }) {
               place="right"
             />
           </div>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            {userInfo.interests}
-          </p>
+          <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+            <p>
+              {Array.isArray(userInfo.interests)
+                ? userInfo.interests.slice(-5).join(", ")
+                : ""}
+            </p>
+            {Array.isArray(userInfo.interests) &&
+              userInfo.interests.length > 5 && (
+                <div id="tip-all-interests">
+                  <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+                    {`+${userInfo.interests.length - 5}`}
+                  </button>
+                  <Tooltip
+                    anchorSelect="#tip-all-interests"
+                    content="Check all interests"
+                    place="top"
+                  />
+                </div>
+              )}
+          </div>
         </div>
         <div className="mt-4">
           <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">
