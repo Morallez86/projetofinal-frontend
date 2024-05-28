@@ -5,8 +5,9 @@ import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { LuPlusCircle } from "react-icons/lu";
 import { Tooltip } from "react-tooltip";
+import { MdOutlineRemoveCircleOutline } from "react-icons/md";
 
-function ProfileCard({ openPopUpSkills, openPopUpInterests }) {
+function ProfileCard({ openPopUpSkills, openPopUpInterests, openPopUpSkillsRemove }) {
   const token = useUserStore((state) => state.token);
   const decodedToken = jwtDecode(token);
   const userId = decodedToken.id;
@@ -107,10 +108,22 @@ function ProfileCard({ openPopUpSkills, openPopUpInterests }) {
             >
               <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
             </div>
+            <div
+              id="icon-element-remove"
+              className="inline-flex items-center cursor-pointer"
+              onClick={openPopUpSkillsRemove}
+            >
+              <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
+            </div>
             <Tooltip
               anchorSelect="#icon-element"
               content="Add new skill"
-              place="right"
+              place="top"
+            />
+            <Tooltip
+              anchorSelect="#icon-element-remove"
+              content="Remove a skill"
+              place="top"
             />
           </div>
           <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
@@ -120,7 +133,7 @@ function ProfileCard({ openPopUpSkills, openPopUpInterests }) {
                 : ""}
             </p>
             {Array.isArray(userInfo.skills) &&
-              userInfo.interests.skills > 5 && (
+              userInfo.skills.length > 5 && (
                 <div id="tip-all-skills">
                   <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
                     {`+${userInfo.skills.length - 5}`}
@@ -149,7 +162,7 @@ function ProfileCard({ openPopUpSkills, openPopUpInterests }) {
             <Tooltip
               anchorSelect="#icon-element-interests"
               content="Add new interest"
-              place="right"
+              place="top"
             />
           </div>
           <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
