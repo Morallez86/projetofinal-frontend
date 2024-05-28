@@ -133,7 +133,7 @@ function ProfileCard({ openPopUpSkills, openPopUpInterests, openPopUpSkillsRemov
                 : ""}
             </p>
             {Array.isArray(userInfo.skills) &&
-              userInfo.interests.skills > 5 && (
+              userInfo.skills.length > 5 && (
                 <div id="tip-all-skills">
                   <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
                     {`+${userInfo.skills.length - 5}`}
