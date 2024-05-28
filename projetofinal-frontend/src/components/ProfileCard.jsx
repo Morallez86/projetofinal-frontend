@@ -11,6 +11,7 @@ function ProfileCard({ openPopUpSkills, openPopUpInterests }) {
   const decodedToken = jwtDecode(token);
   const userId = decodedToken.id;
   const setSkills = useUserStore((state) => state.setSkills);
+  const setInterests = useUserStore((state) => state.setInterests);
 
   useEffect(() => {
     fetchUserInfo();
@@ -45,6 +46,7 @@ function ProfileCard({ openPopUpSkills, openPopUpInterests }) {
           console.log(userInfoData);
           console.log("User skills", userInfoData.skills);
           setSkills(userInfoData.skills);
+          setInterests(userInfoData.interests);
           setUserInfo({
             name: `${userInfoData.firstName} ${userInfoData.lastName}`,
             nickname: userInfoData.username,

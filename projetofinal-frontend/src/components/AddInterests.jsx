@@ -51,9 +51,40 @@ function AddInterests({ openPopUpInterests, closePopUpInterests }) {
     setSelectedInterest(selectedOption);
   };
 
+  const handleSubmit = async () => {
+    const data = [
+      {
+        name: selectedInterest.value,
+      },
+    ];
+
+    const response = await fetch(
+      "http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/interests",
+      {
+        method: "POST",
+        headers: {
+          Accept: "*/*",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(data),
+      }
+    );
+    if (response.status === 201) {
+      console.log("Interest added successfully");
+    } else if (response.status === 500) {
+      console.error("Internal Server Error");
+    }
+  };
+
   return (
     <>
-      <Modal show={openPopUpInterests} size="xl" onClose={closePopUpInterests} popup>
+      <Modal
+        show={openPopUpInterests}
+        size="xl"
+        onClose={closePopUpInterests}
+        popup
+      >
         <Modal.Header />
         <Modal.Body>
           <div className="text-center">
@@ -82,7 +113,7 @@ function AddInterests({ openPopUpInterests, closePopUpInterests }) {
                   </div>
                 </div>
                 <div className="col-span-full mt-3">
-                  <Button>Add to interests list</Button>
+                  <Button onClick={handleSubmit}>Add to interests list</Button>
                 </div>
               </div>
             </div>
