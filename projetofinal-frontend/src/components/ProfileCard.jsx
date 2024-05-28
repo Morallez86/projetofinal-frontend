@@ -6,11 +6,12 @@ import { jwtDecode } from "jwt-decode";
 import { LuPlusCircle } from "react-icons/lu";
 import { Tooltip } from "react-tooltip";
 
-function ProfileCard({ openPopUpSkills }) {
+function ProfileCard({ openPopUpSkills, openPopUpInterests }) {
   const token = useUserStore((state) => state.token);
   const decodedToken = jwtDecode(token);
   const userId = decodedToken.id;
   const setSkills = useUserStore((state) => state.setSkills);
+  const setInterests = useUserStore((state) => state.setInterests);
 
   useEffect(() => {
     fetchUserInfo();
@@ -45,6 +46,7 @@ function ProfileCard({ openPopUpSkills }) {
           console.log(userInfoData);
           console.log("User skills", userInfoData.skills);
           setSkills(userInfoData.skills);
+          setInterests(userInfoData.interests);
           setUserInfo({
             name: `${userInfoData.firstName} ${userInfoData.lastName}`,
             nickname: userInfoData.username,
@@ -111,17 +113,65 @@ function ProfileCard({ openPopUpSkills }) {
               place="right"
             />
           </div>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            {userInfo.skills}
-          </p>
+          <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+            <p>
+              {Array.isArray(userInfo.skills)
+                ? userInfo.skills.slice(-5).join(", ")
+                : ""}
+            </p>
+            {Array.isArray(userInfo.skills) &&
+              userInfo.interests.skills > 5 && (
+                <div id="tip-all-skills">
+                  <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+                    {`+${userInfo.skills.length - 5}`}
+                  </button>
+                  <Tooltip
+                    anchorSelect="#tip-all-skills"
+                    content="Check all skills"
+                    place="top"
+                  />
+                </div>
+              )}
+          </div>
         </div>
         <div className="mt-4">
-          <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">
-            Interests
-          </h5>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            {userInfo.interests}
-          </p>
+          <div className="flex items-center">
+            <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">
+              Interests
+            </h5>
+            <div
+              id="icon-element-interests"
+              className="inline-flex items-center cursor-pointer"
+              onClick={openPopUpInterests}
+            >
+              <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
+            </div>
+            <Tooltip
+              anchorSelect="#icon-element-interests"
+              content="Add new interest"
+              place="right"
+            />
+          </div>
+          <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+            <p>
+              {Array.isArray(userInfo.interests)
+                ? userInfo.interests.slice(-5).join(", ")
+                : ""}
+            </p>
+            {Array.isArray(userInfo.interests) &&
+              userInfo.interests.length > 5 && (
+                <div id="tip-all-interests">
+                  <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+                    {`+${userInfo.interests.length - 5}`}
+                  </button>
+                  <Tooltip
+                    anchorSelect="#tip-all-interests"
+                    content="Check all interests"
+                    place="top"
+                  />
+                </div>
+              )}
+          </div>
         </div>
         <div className="mt-4">
           <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">

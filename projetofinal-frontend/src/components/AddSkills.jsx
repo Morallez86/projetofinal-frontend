@@ -11,12 +11,17 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
   const [selectedSkill, setSelectedSkill] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const userSkills = useUserStore((state) => state.skills);
+  const [inputValue, setInputValue] = useState("");
 
   const skillCategoryMapping = {
     Software: 200,
     Knowledge: 100,
     Hardware: 300,
     Tools: 400,
+  };
+
+  const handleInputChange = (value) => {
+    setInputValue(value);
   };
 
   useEffect(() => {
@@ -110,7 +115,15 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
 
   return (
     <>
-      <Modal show={openPopUpSkills} size="xl" onClose={closePopUpSkills} popup>
+      <Modal
+        show={openPopUpSkills}
+        size="xl"
+        onClose={() => {
+          closePopUpSkills();
+          setSelectedSkill(null);
+        }}
+        popup
+      >
         <Modal.Header />
         <Modal.Body>
           <div className="text-center">
@@ -154,7 +167,10 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
                       options={options}
                       className="mt-3"
                       onChange={handleSelectChange}
-                      isOptionDisabled={(option) => option.isDisabled}
+                      onInputChange={handleInputChange}
+                      isOptionDisabled={(option) =>
+                        option.isDisabled || inputValue.length > 20
+                      }
                       formatOptionLabel={(option) => (
                         <div>
                           {option.label}
@@ -165,7 +181,12 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
                   </div>
                 </div>
                 <div className="col-span-full mt-3">
-                  <Button onClick={handleSubmit}>Add to skills list</Button>
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={!selectedSkill || !selectedCategory}
+                  >
+                    Add to skills list
+                  </Button>
                 </div>
               </div>
             </div>
