@@ -10,10 +10,15 @@ function AddInterests({ openPopUpInterests, closePopUpInterests }) {
   const [interests, setInterests] = useState([]);
   const [selectedInterest, setSelectedInterest] = useState(null);
   const userInterests = useUserStore((state) => state.interests);
+  const [inputValue, setInputValue] = useState("");
 
   useEffect(() => {
     getAllInterests();
   }, []);
+
+  const handleInputChange = (value) => {
+    setInputValue(value);
+  };
 
   const getAllInterests = async () => {
     try {
@@ -105,7 +110,10 @@ function AddInterests({ openPopUpInterests, closePopUpInterests }) {
                       options={options}
                       className="mt-3"
                       onChange={handleSelectChange}
-                      isOptionDisabled={(option) => option.isDisabled}
+                      onInputChange={handleInputChange}
+                      isOptionDisabled={(option) =>
+                        option.isDisabled || inputValue.length > 20
+                      }
                       formatOptionLabel={(option) => (
                         <div>
                           {option.label}

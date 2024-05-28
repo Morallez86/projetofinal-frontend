@@ -11,12 +11,17 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
   const [selectedSkill, setSelectedSkill] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const userSkills = useUserStore((state) => state.skills);
+  const [inputValue, setInputValue] = useState("");
 
   const skillCategoryMapping = {
     Software: 200,
     Knowledge: 100,
     Hardware: 300,
     Tools: 400,
+  };
+
+  const handleInputChange = (value) => {
+    setInputValue(value);
   };
 
   useEffect(() => {
@@ -162,7 +167,10 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
                       options={options}
                       className="mt-3"
                       onChange={handleSelectChange}
-                      isOptionDisabled={(option) => option.isDisabled}
+                      onInputChange={handleInputChange}
+                      isOptionDisabled={(option) =>
+                        option.isDisabled || inputValue.length > 20
+                      }
                       formatOptionLabel={(option) => (
                         <div>
                           {option.label}
