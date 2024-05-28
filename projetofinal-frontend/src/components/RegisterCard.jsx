@@ -17,7 +17,7 @@ function RegisterCard() {
   const getWorkplaces = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/workplaces/all",
+        "http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/workplaces",
         {
           method: "GET",
           headers: {

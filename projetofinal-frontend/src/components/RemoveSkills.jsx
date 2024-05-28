@@ -6,23 +6,25 @@ import { Checkbox, Label } from "flowbite-react";
 function RemoveSkills({ openPopUpSkillsRemove, closePopUpSkillsRemove }) {
   const userSkills = useUserStore((state) => state.skills);
   const token = useUserStore((state) => state.token);
+  const setSkills = useUserStore((state) => state.setSkills);
 
   const [filter, setFilter] = useState("");
-  const [selectedSkills, setSelectedSkills] = useState([]);
+  const [selectedSkillIds, setSelectedSkillIds] = useState([]);
 
   const filteredSkills = userSkills.filter((skill) =>
-    skill.toLowerCase().includes(filter.toLowerCase())
+    skill.name.toLowerCase().includes(filter.toLowerCase())
   );
 
-  const handleCheckboxChange = (skill) => {
-    if (selectedSkills.includes(skill)) {
-      setSelectedSkills(selectedSkills.filter((s) => s !== skill));
+  const handleCheckboxChange = (skillId) => {
+    if (selectedSkillIds.includes(skillId)) {
+      setSelectedSkillIds(selectedSkillIds.filter((id) => id !== skillId));
     } else {
-      setSelectedSkills([...selectedSkills, skill]);
+      setSelectedSkillIds([...selectedSkillIds, skillId]);
     }
   };
 
   const handleRemoveSkills = async () => {
+    console.log(selectedSkillIds);
     try {
       const response = await fetch(
         "http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/skills",
@@ -33,11 +35,15 @@ function RemoveSkills({ openPopUpSkillsRemove, closePopUpSkillsRemove }) {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(selectedSkills),
+          body: JSON.stringify(selectedSkillIds),
         }
       );
       if (response.status === 204) {
-        console.log("Skills removed successfully");
+        console.log()
+        const updatedSkills = userSkills.filter(
+          (skill) => !selectedSkillIds.includes(skill.id)
+        );
+        setSkills(updatedSkills);
         closePopUpSkillsRemove();
       } else if (response.status === 500) {
         console.log("Internet server error");
@@ -77,14 +83,14 @@ function RemoveSkills({ openPopUpSkillsRemove, closePopUpSkillsRemove }) {
                 />
                 <div className="flex flex-col items-start overflow-y-auto h-36">
                   {filteredSkills.map((skill) => (
-                    <div key={skill} className="flex items-center gap-2 mb-2">
-                      <Checkbox
-                        id={skill}
-                        checked={selectedSkills.includes(skill)}
-                        onChange={() => handleCheckboxChange(skill)}
-                      />
-                      <Label htmlFor={skill}>{skill}</Label>
-                    </div>
+                  <div key={skill.id} className="flex items-center gap-2 mb-2">
+                    <Checkbox
+                      id={skill.id.toString()}
+                      checked={selectedSkillIds.includes(skill.id)}
+                      onChange={() => handleCheckboxChange(skill.id)}
+                    />
+                    <Label htmlFor={skill.id.toString()}>{skill.name}</Label>
+                  </div>
                   ))}
                 </div>
                 <div className="col-span-full mt-3">

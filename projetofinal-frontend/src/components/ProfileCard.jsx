@@ -22,45 +22,44 @@ function ProfileCard({ openPopUpSkills, openPopUpInterests, openPopUpSkillsRemov
     name: "",
     jobLocation: "",
     nickname: "",
-    skills: "",
-    interests: "",
+    skills: [],
+    interests: [],
     biography: "",
   });
 
   const fetchUserInfo = async () => {
-    fetch(
-      `http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/users/profile/${userId}`,
-      {
-        method: "GET",
-        headers: {
-          Accept: "*/*",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
-      .then(async function (response) {
-        if (response.status === 404) {
-          console.log("User with this token is not found");
-        } else if (response.status === 200) {
-          const userInfoData = await response.json();
-          console.log(userInfoData);
-          console.log("User skills", userInfoData.skills);
-          setSkills(userInfoData.skills);
-          setInterests(userInfoData.interests);
-          setUserInfo({
-            name: `${userInfoData.firstName} ${userInfoData.lastName}`,
-            nickname: userInfoData.username,
-            biography: userInfoData.userBiography,
-            jobLocation: userInfoData.workplace,
-            skills: userInfoData.skills,
-            interests: userInfoData.interests,
-          });
+    try {
+      const response = await fetch(
+        `http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/users/profile/${userId}`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "*/*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
-      })
-      .catch((error) => {
-        console.error("Error fetching users:", error);
-      });
+      );
+
+      if (response.status === 404) {
+        console.log("User with this token is not found");
+      } else if (response.status === 200) {
+        const userInfoData = await response.json();
+        console.log(userInfoData);
+        setSkills(userInfoData.skills);
+        setInterests(userInfoData.interests);
+        setUserInfo({
+          name: `${userInfoData.firstName} ${userInfoData.lastName}`,
+          nickname: userInfoData.username,
+          biography: userInfoData.biography,
+          jobLocation: userInfoData.workplace,
+          skills: userInfoData.skills.map((skill) => skill.name),
+          interests: userInfoData.interests,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching user info:", error);
+    }
   };
 
   return (
