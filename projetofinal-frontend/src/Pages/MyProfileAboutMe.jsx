@@ -5,11 +5,13 @@ import ProjectMyProfileTable from "../Components/ProjectMyProfileTable";
 import AddSkills from "../Components/AddSkills";
 import AddInterests from "../Components/AddInterests";
 import RemoveSkills from "../Components/RemoveSkills";
+import RemoveInterests from "../Components/RemoveInterests";
 
 function MyProfile_AboutMe() {
   const [statePopUpSkills, setStatePopUpSkills] = useState(false);
   const [statePopUpInterests, setStatePopUpInterests] = useState(false);
   const [statePopUpSkillsRemove, setStatePopUpSkillsRemove] = useState(false);
+  const [statePopUpInterestRemove, setStatePopUpInterestRemove] = useState(false);
 
   function openAddSkillsModal() {
     setStatePopUpSkills(true);
@@ -35,6 +37,14 @@ function MyProfile_AboutMe() {
     setStatePopUpSkillsRemove(false);
   }
 
+  function openAddInterestRemoveModal() {
+    setStatePopUpInterestRemove(true);
+  }
+
+  function closeAddInterestRemoveModal() {
+    setStatePopUpInterestRemove(false);
+  }
+
   return (
     <div className="flex flex-col min-h-screen">
       <Layout activeTab={0} activeSubTabProfile={4} />
@@ -44,6 +54,7 @@ function MyProfile_AboutMe() {
             openPopUpSkills={openAddSkillsModal}
             openPopUpInterests={openAddInterestsModal}
             openPopUpSkillsRemove={openAddSkillsRemoveModal}
+            openPopUpInterestRemove={openAddInterestRemoveModal}
           />
         </div>
         <div className="justify-center w-2/3">
@@ -61,6 +72,10 @@ function MyProfile_AboutMe() {
       <RemoveSkills
         openPopUpSkillsRemove={statePopUpSkillsRemove}
         closePopUpSkillsRemove={closeAddSkillsRemoveModal}
+      />
+      <RemoveInterests 
+        openPopUpInterestRemove={statePopUpInterestRemove}
+        closePopUpInterestRemove={closeAddInterestRemoveModal}      
       />
     </div>
   );
