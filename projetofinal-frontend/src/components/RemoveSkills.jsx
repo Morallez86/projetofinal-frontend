@@ -5,6 +5,8 @@ import { Checkbox, Label } from "flowbite-react";
 
 function RemoveSkills({ openPopUpSkillsRemove, closePopUpSkillsRemove }) {
   const userSkills = useUserStore((state) => state.skills);
+  const token = useUserStore((state) => state.token);
+
   const [filter, setFilter] = useState("");
   const [selectedSkills, setSelectedSkills] = useState([]);
 
@@ -14,9 +16,34 @@ function RemoveSkills({ openPopUpSkillsRemove, closePopUpSkillsRemove }) {
 
   const handleCheckboxChange = (skill) => {
     if (selectedSkills.includes(skill)) {
-      setSelectedSkills(selectedSkills.filter(s => s !== skill));
+      setSelectedSkills(selectedSkills.filter((s) => s !== skill));
     } else {
       setSelectedSkills([...selectedSkills, skill]);
+    }
+  };
+
+  const handleRemoveSkills = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/skills",
+        {
+          method: "DELETE",
+          headers: {
+            Accept: "*/*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(selectedSkills),
+        }
+      );
+      if (response.status === 204) {
+        console.log("Skills removed successfully");
+        closePopUpSkillsRemove();
+      } else if (response.status === 500) {
+        console.log("Internet server error");
+      }
+    } catch (error) {
+      console.error("Error deleting skills:", error);
     }
   };
 
@@ -51,13 +78,19 @@ function RemoveSkills({ openPopUpSkillsRemove, closePopUpSkillsRemove }) {
                 <div className="flex flex-col items-start overflow-y-auto h-36">
                   {filteredSkills.map((skill) => (
                     <div key={skill} className="flex items-center gap-2 mb-2">
-                      <Checkbox id={skill} checked={selectedSkills.includes(skill)} onChange={() => handleCheckboxChange(skill)} />
+                      <Checkbox
+                        id={skill}
+                        checked={selectedSkills.includes(skill)}
+                        onChange={() => handleCheckboxChange(skill)}
+                      />
                       <Label htmlFor={skill}>{skill}</Label>
                     </div>
                   ))}
                 </div>
                 <div className="col-span-full mt-3">
-                  <Button>Remove selected skills</Button>
+                  <Button onClick={handleRemoveSkills}>
+                    Remove selected skills
+                  </Button>
                 </div>
               </div>
             </div>
