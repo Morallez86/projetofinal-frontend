@@ -6,7 +6,7 @@ import { jwtDecode } from "jwt-decode";
 import { LuPlusCircle } from "react-icons/lu";
 import { Tooltip } from "react-tooltip";
 
-function ProfileCard({ openPopUpSkills }) {
+function ProfileCard({ openPopUpSkills, openPopUpInterests }) {
   const token = useUserStore((state) => state.token);
   const decodedToken = jwtDecode(token);
   const userId = decodedToken.id;
@@ -116,9 +116,23 @@ function ProfileCard({ openPopUpSkills }) {
           </p>
         </div>
         <div className="mt-4">
-          <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">
-            Interests
-          </h5>
+          <div className="flex items-center">
+            <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">
+              Interests
+            </h5>
+            <div
+              id="icon-element-interests"
+              className="inline-flex items-center cursor-pointer"
+              onClick={openPopUpInterests}
+            >
+              <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
+            </div>
+            <Tooltip
+              anchorSelect="#icon-element-interests"
+              content="Add new interest"
+              place="right"
+            />
+          </div>
           <p className="text-sm text-gray-500 dark:text-gray-400">
             {userInfo.interests}
           </p>
