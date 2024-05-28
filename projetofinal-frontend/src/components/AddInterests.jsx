@@ -82,7 +82,10 @@ function AddInterests({ openPopUpInterests, closePopUpInterests }) {
       <Modal
         show={openPopUpInterests}
         size="xl"
-        onClose={closePopUpInterests}
+        onClose={() => {
+          closePopUpInterests();
+          setSelectedInterest(null);
+        }}
         popup
       >
         <Modal.Header />
@@ -113,7 +116,9 @@ function AddInterests({ openPopUpInterests, closePopUpInterests }) {
                   </div>
                 </div>
                 <div className="col-span-full mt-3">
-                  <Button onClick={handleSubmit}>Add to interests list</Button>
+                  <Button onClick={handleSubmit} disabled={!selectedInterest}>
+                    Add to interests list
+                  </Button>
                 </div>
               </div>
             </div>
