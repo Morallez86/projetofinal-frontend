@@ -54,7 +54,7 @@ function ProfileCard({ openPopUpSkills, openPopUpInterests, openPopUpSkillsRemov
           biography: userInfoData.biography,
           jobLocation: userInfoData.workplace,
           skills: userInfoData.skills.map((skill) => skill.name),
-          interests: userInfoData.interests,
+          interests: userInfoData.interests.map((interest) => interest.name),
         });
       }
     } catch (error) {
