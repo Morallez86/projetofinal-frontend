@@ -7,7 +7,7 @@ import { LuPlusCircle } from "react-icons/lu";
 import { Tooltip } from "react-tooltip";
 import { MdOutlineRemoveCircleOutline } from "react-icons/md";
 
-function ProfileCard({ openPopUpSkills, openPopUpInterests }) {
+function ProfileCard({ openPopUpSkills, openPopUpInterests, openPopUpSkillsRemove }) {
   const token = useUserStore((state) => state.token);
   const decodedToken = jwtDecode(token);
   const userId = decodedToken.id;
@@ -111,6 +111,7 @@ function ProfileCard({ openPopUpSkills, openPopUpInterests }) {
             <div
               id="icon-element-remove"
               className="inline-flex items-center cursor-pointer"
+              onClick={openPopUpSkillsRemove}
             >
               <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
             </div>
