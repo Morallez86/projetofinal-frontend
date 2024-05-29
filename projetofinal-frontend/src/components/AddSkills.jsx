@@ -4,7 +4,10 @@ import CreatableSelect from "react-select/creatable";
 import { useState, useEffect } from "react";
 import useUserStore from "../Stores/UserStore";
 import { TbLockFilled } from "react-icons/tb";
-import useApiStore from '../Stores/ApiStore';
+import useApiStore from "../Stores/ApiStore";
+import AddedAnimation from "../Assets/Added.json";
+import Lottie from "react-lottie";
+import { Tooltip } from "react-tooltip";
 
 function AddSkills({ openPopUpSkills, closePopUpSkills }) {
   const token = useUserStore((state) => state.token);
@@ -15,6 +18,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
   const setUserSkills = useUserStore((state) => state.setSkills);
   const [inputValue, setInputValue] = useState("");
   const apiUrl = useApiStore((state) => state.apiUrl);
+  const [animationPlayed, setAnimationPlayed] = useState(false);
 
   const skillCategoryMapping = {
     Software: 200,
@@ -33,17 +37,14 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
 
   const getAllSkills = async () => {
     try {
-      const response = await fetch(
-        `${apiUrl}/skills`,
-        {
-          method: "GET",
-          headers: {
-            Accept: "*/*",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${apiUrl}/skills`, {
+        method: "GET",
+        headers: {
+          Accept: "*/*",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.status === 200) {
         const data = await response.json();
@@ -63,6 +64,15 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
     type: skill.type,
     isDisabled: userSkills.some((userSkill) => userSkill.name === skill.name),
   }));
+
+  const defaultOptions = {
+    loop: false,
+    autoplay: false,
+    animationData: AddedAnimation,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
 
   const handleSelectChange = (selectedOption) => {
     setSelectedSkill(selectedOption);
@@ -97,21 +107,19 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
 
     console.log(data);
 
-    const response = await fetch(
-      `${apiUrl}/skills`,
-      {
-        method: "POST",
-        headers: {
-          Accept: "*/*",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(data),
-      }
-    );
+    const response = await fetch(`${apiUrl}/skills`, {
+      method: "POST",
+      headers: {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    });
     if (response.status === 201) {
       console.log("Skill added successfully");
       setUserSkills([...userSkills, data[0]]);
+      setAnimationPlayed(true);
     } else if (response.status === 500) {
       console.error("Internal Server Error");
     }
@@ -184,14 +192,43 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
                     />
                   </div>
                 </div>
-                <div className="col-span-full mt-3">
-                  <Button
-                    onClick={handleSubmit}
-                    disabled={!selectedSkill || !selectedCategory}
-                  >
-                    Add to skills list
-                  </Button>
+
+                <div
+                  id="icon-element"
+                  style={{
+                    display:
+                      selectedSkill && selectedCategory ? "block" : "none",
+                  }}
+                  onClick={() => {
+                    if (selectedSkill && selectedCategory) {
+                      handleSubmit();
+                      setAnimationPlayed(true);
+                    }
+                  }}
+                >
+                  <Lottie
+                    options={defaultOptions}
+                    height={400}
+                    width={400}
+                    isStopped={!animationPlayed}
+                    isPaused={!animationPlayed}
+                    eventListeners={[
+                      {
+                        eventName: "complete",
+                        callback: () => setAnimationPlayed(false),
+                      },
+                    ]}
+                  />
                 </div>
+                <Tooltip
+                  anchorSelect="#icon-element"
+                  content={
+                    selectedSkill && selectedCategory
+                      ? "Click to add this new skill to your list"
+                      : "Please select a skill and category first."
+                  }
+                  place="top"
+                />
               </div>
             </div>
           </div>
