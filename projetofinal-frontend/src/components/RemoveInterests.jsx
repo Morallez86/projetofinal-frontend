@@ -65,6 +65,7 @@ function RemoveInterests({
         size="xl"
         onClose={() => {
           closePopUpInterestRemove();
+            setSelectedInterestIds([]);
         }}
         popup
       >
