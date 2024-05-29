@@ -39,7 +39,7 @@ function RemoveSkills({ openPopUpSkillsRemove, closePopUpSkillsRemove }) {
         }
       );
       if (response.status === 204) {
-        console.log()
+        console.log();
         const updatedSkills = userSkills.filter(
           (skill) => !selectedSkillIds.includes(skill.id)
         );
@@ -60,6 +60,7 @@ function RemoveSkills({ openPopUpSkillsRemove, closePopUpSkillsRemove }) {
         size="xl"
         onClose={() => {
           closePopUpSkillsRemove();
+          setSelectedSkillIds([]);
         }}
         popup
       >
@@ -83,14 +84,17 @@ function RemoveSkills({ openPopUpSkillsRemove, closePopUpSkillsRemove }) {
                 />
                 <div className="flex flex-col items-start overflow-y-auto h-36">
                   {filteredSkills.map((skill) => (
-                  <div key={skill.id} className="flex items-center gap-2 mb-2">
-                    <Checkbox
-                      id={skill.id.toString()}
-                      checked={selectedSkillIds.includes(skill.id)}
-                      onChange={() => handleCheckboxChange(skill.id)}
-                    />
-                    <Label htmlFor={skill.id.toString()}>{skill.name}</Label>
-                  </div>
+                    <div
+                      key={skill.id}
+                      className="flex items-center gap-2 mb-2"
+                    >
+                      <Checkbox
+                        id={skill.id.toString()}
+                        checked={selectedSkillIds.includes(skill.id)}
+                        onChange={() => handleCheckboxChange(skill.id)}
+                      />
+                      <Label htmlFor={skill.id.toString()}>{skill.name}</Label>
+                    </div>
                   ))}
                 </div>
                 <div className="col-span-full mt-3">

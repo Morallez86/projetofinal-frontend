@@ -58,7 +58,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
     value: skill.name,
     label: skill.name,
     type: skill.type,
-    isDisabled: userSkills.includes(skill.name),
+    isDisabled: userSkills.some((userSkill) => userSkill.name === skill.name),
   }));
 
   const handleSelectChange = (selectedOption) => {

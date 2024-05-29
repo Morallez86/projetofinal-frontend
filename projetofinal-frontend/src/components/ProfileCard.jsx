@@ -7,7 +7,12 @@ import { Tooltip } from "react-tooltip";
 import { MdOutlineRemoveCircleOutline } from "react-icons/md";
 import { MdOutlineEdit } from "react-icons/md";
 
-function ProfileCard({ openPopUpSkills, openPopUpInterests, openPopUpSkillsRemove }) {
+function ProfileCard({
+  openPopUpSkills,
+  openPopUpInterests,
+  openPopUpSkillsRemove,
+  openPopUpInterestRemove,
+}) {
   const token = useUserStore((state) => state.token);
   const decodedToken = jwtDecode(token);
   const userId = decodedToken.id;
@@ -55,7 +60,7 @@ function ProfileCard({ openPopUpSkills, openPopUpInterests, openPopUpSkillsRemov
           biography: userInfoData.biography,
           jobLocation: userInfoData.workplace,
           skills: userInfoData.skills.map((skill) => skill.name),
-          interests: userInfoData.interests,
+          interests: userInfoData.interests.map((interest) => interest.name),
         });
       }
     } catch (error) {
@@ -222,19 +227,18 @@ function ProfileCard({ openPopUpSkills, openPopUpInterests, openPopUpSkillsRemov
                 ? userInfo.skills.slice(-5).join(", ")
                 : ""}
             </p>
-            {Array.isArray(userInfo.skills) &&
-              userInfo.skills.length > 5 && (
-                <div id="tip-all-skills">
-                  <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
-                    {`+${userInfo.skills.length - 5}`}
-                  </button>
-                  <Tooltip
-                    anchorSelect="#tip-all-skills"
-                    content="Check all skills"
-                    place="top"
-                  />
-                </div>
-              )}
+            {Array.isArray(userInfo.skills) && userInfo.skills.length > 5 && (
+              <div id="tip-all-skills">
+                <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+                  {`+${userInfo.skills.length - 5}`}
+                </button>
+                <Tooltip
+                  anchorSelect="#tip-all-skills"
+                  content="Check all skills"
+                  place="top"
+                />
+              </div>
+            )}
           </div>
         </div>
         <div className="mt-4">
@@ -247,9 +251,21 @@ function ProfileCard({ openPopUpSkills, openPopUpInterests, openPopUpSkillsRemov
             >
               <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
             </div>
+            <div
+              id="icon-element-remove-interest"
+              className="inline-flex items-center cursor-pointer"
+              onClick={openPopUpInterestRemove}
+            >
+              <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
+            </div>
             <Tooltip
               anchorSelect="#icon-element-interests"
               content="Add new interest"
+              place="top"
+            />
+            <Tooltip
+              anchorSelect="#con-element-remove-interest"
+              content="Remove an interest"
               place="top"
             />
           </div>

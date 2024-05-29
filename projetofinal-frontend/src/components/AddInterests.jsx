@@ -49,7 +49,9 @@ function AddInterests({ openPopUpInterests, closePopUpInterests }) {
   const options = interests.map((interest) => ({
     value: interest.name,
     label: interest.name,
-    isDisabled: userInterests.includes(interest.name),
+    isDisabled: userInterests.some(
+      (userInterest) => userInterest.name === interest.name
+    ),
   }));
 
   const handleSelectChange = (selectedOption) => {
