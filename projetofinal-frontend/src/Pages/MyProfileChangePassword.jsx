@@ -4,6 +4,7 @@ import { HiInformationCircle } from "react-icons/hi";
 import Layout from "../Components/Layout";
 import useUserStore from "../Stores/UserStore";
 import zxcvbn from "zxcvbn";
+import useApiStore from '../Stores/ApiStore';
 
 function MyProfileChangePassword() {
   const [oldPassword, setOldPassword] = useState("");
@@ -13,6 +14,7 @@ function MyProfileChangePassword() {
   const [passwordStrengthWarning, setPasswordStrengthWarning] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
   const { token } = useUserStore();
+  const apiUrl = useApiStore((state) => state.apiUrl);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -50,7 +52,7 @@ function MyProfileChangePassword() {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/users/updatePassword", {
+      const response = await fetch(`${apiUrl}/rest/users/updatePassword`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

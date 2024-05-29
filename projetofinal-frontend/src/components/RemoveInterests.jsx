@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Modal, Button, TextInput } from "flowbite-react";
 import useUserStore from "../Stores/UserStore";
 import { Checkbox, Label } from "flowbite-react";
+import useApiStore from '../Stores/ApiStore';
 
 function RemoveInterests({
   openPopUpInterestRemove,
@@ -10,6 +11,7 @@ function RemoveInterests({
   const userInterests = useUserStore((state) => state.interests);
   const token = useUserStore((state) => state.token);
   const setInterests = useUserStore((state) => state.setInterests);
+  const apiUrl = useApiStore((state) => state.apiUrl);
   console.log(userInterests);
 
   const [filter, setFilter] = useState("");
@@ -33,7 +35,7 @@ function RemoveInterests({
     console.log(selectedInterestIds);
     try {
       const response = await fetch(
-        "http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/interests",
+        `${apiUrl}/interests`,
         {
           method: "DELETE",
           headers: {

@@ -9,6 +9,7 @@ import {
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { HiInformationCircle } from "react-icons/hi";
+import useApiStore from '../Stores/ApiStore';
 
 function ForgotPassword() {
     const [showWarning, setShowWarning] = useState(false);
@@ -18,6 +19,7 @@ function ForgotPassword() {
     const navigate = useNavigate();
     const { token } = useParams();
     const [loading, setLoading] = useState(false);
+    const apiUrl = useApiStore((state) => state.apiUrl);
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -50,7 +52,7 @@ function ForgotPassword() {
     console.log(password);
     setLoading(true);
     try {
-        const response = await fetch('http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/users/forgotPassword', {
+        const response = await fetch(`${apiUrl}/users/forgotPassword`, {
             headers: {
                 'Content-Type': 'application/json',
             },

@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { Modal, Button, TextInput } from "flowbite-react";
 import useUserStore from "../Stores/UserStore";
 import { Checkbox, Label } from "flowbite-react";
+import useApiStore from '../Stores/ApiStore';
 
 function RemoveSkills({ openPopUpSkillsRemove, closePopUpSkillsRemove }) {
+  const apiUrl = useApiStore((state) => state.apiUrl);
   const userSkills = useUserStore((state) => state.skills);
   const token = useUserStore((state) => state.token);
   const setSkills = useUserStore((state) => state.setSkills);
@@ -27,7 +29,7 @@ function RemoveSkills({ openPopUpSkillsRemove, closePopUpSkillsRemove }) {
     console.log(selectedSkillIds);
     try {
       const response = await fetch(
-        "http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/skills",
+        `${apiUrl}/skills`,
         {
           method: "DELETE",
           headers: {

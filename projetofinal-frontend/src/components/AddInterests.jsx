@@ -4,6 +4,7 @@ import CreatableSelect from "react-select/creatable";
 import { useState, useEffect } from "react";
 import useUserStore from "../Stores/UserStore";
 import { TbLockFilled } from "react-icons/tb";
+import useApiStore from '../Stores/ApiStore';
 
 function AddInterests({ openPopUpInterests, closePopUpInterests }) {
   const token = useUserStore((state) => state.token);
@@ -12,6 +13,7 @@ function AddInterests({ openPopUpInterests, closePopUpInterests }) {
   const userInterests = useUserStore((state) => state.interests);
   const setUserInterests= useUserStore((state) => state.setInterests);
   const [inputValue, setInputValue] = useState("");
+  const apiUrl = useApiStore((state) => state.apiUrl);
 
   useEffect(() => {
     getAllInterests();
@@ -24,7 +26,7 @@ function AddInterests({ openPopUpInterests, closePopUpInterests }) {
   const getAllInterests = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/interests",
+        `${apiUrl}/interests`,
         {
           method: "GET",
           headers: {

@@ -13,8 +13,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import useUserStore from "../Stores/UserStore";
+import useApiStore from '../Stores/ApiStore';
 
 function LoginCard() {
+  const apiUrl = useApiStore((state) => state.apiUrl);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -64,7 +66,7 @@ function LoginCard() {
     setWarningEmailFormat(0);
 
     try {
-      await fetch("http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/users/emailRecoveryPassword", {
+      await fetch(`${apiUrl}/users/emailRecoveryPassword`, {
         method: "POST",
         headers: {
           Accept: "*/*",
@@ -97,7 +99,7 @@ function LoginCard() {
     setWarning(0);
     try {
       const response = await fetch(
-        "http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/users/login",
+        `${apiUrl}/users/login`,
         {
           method: "POST",
           headers: {

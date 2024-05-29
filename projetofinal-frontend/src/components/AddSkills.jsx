@@ -4,6 +4,7 @@ import CreatableSelect from "react-select/creatable";
 import { useState, useEffect } from "react";
 import useUserStore from "../Stores/UserStore";
 import { TbLockFilled } from "react-icons/tb";
+import useApiStore from '../Stores/ApiStore';
 
 function AddSkills({ openPopUpSkills, closePopUpSkills }) {
   const token = useUserStore((state) => state.token);
@@ -13,6 +14,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
   const userSkills = useUserStore((state) => state.skills);
   const setUserSkills = useUserStore((state) => state.setSkills);
   const [inputValue, setInputValue] = useState("");
+  const apiUrl = useApiStore((state) => state.apiUrl);
 
   const skillCategoryMapping = {
     Software: 200,
@@ -32,7 +34,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
   const getAllSkills = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/skills",
+        `${apiUrl}/skills`,
         {
           method: "GET",
           headers: {
@@ -96,7 +98,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
     console.log(data);
 
     const response = await fetch(
-      "http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/skills",
+      `${apiUrl}/skills`,
       {
         method: "POST",
         headers: {

@@ -6,9 +6,11 @@ import { FaStarOfLife } from "react-icons/fa";
 import { FileInput } from "flowbite-react";
 import { useEffect, useState } from "react";
 import zxcvbn from "zxcvbn";
+import useApiStore from '../Stores/ApiStore';
 
 function RegisterCard() {
   const [workplaces, setWorkplaces] = useState([]);
+  const apiUrl = useApiStore((state) => state.apiUrl);
 
   useEffect(() => {
     getWorkplaces();
@@ -17,7 +19,7 @@ function RegisterCard() {
   const getWorkplaces = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/workplaces",
+        `${apiUrl}/workplaces`,
         {
           method: "GET",
           headers: {
@@ -207,7 +209,7 @@ const handleSubmit = async () => {
 
     try {
         const registerResponse = await fetch(
-            "http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/users/register",
+            `${apiUrl}/users/register`,
             {
                 method: "POST",
                 headers: {
@@ -225,7 +227,7 @@ const handleSubmit = async () => {
             const file = fileInput.files[0];
 
             const imageResponse = await fetch(
-                "http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/users/image",
+                `${apiUrl}/users/image`,
                 {
                     method: "POST",
                     headers: {

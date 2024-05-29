@@ -13,6 +13,7 @@ import { LuPlusCircle } from "react-icons/lu";
 import { Tooltip } from "react-tooltip";
 import { MdOutlineRemoveCircleOutline } from "react-icons/md";
 import { MdOutlineEdit } from "react-icons/md";
+import useApiStore from '../Stores/ApiStore';
 
 function ProfileCard({
   openPopUpSkills,
@@ -20,6 +21,7 @@ function ProfileCard({
   openPopUpSkillsRemove,
   openPopUpInterestRemove,
 }) {
+  const apiUrl = useApiStore((state) => state.apiUrl);
   const token = useUserStore((state) => state.token);
   const decodedToken = jwtDecode(token);
   const userId = decodedToken.id;
@@ -61,7 +63,7 @@ function ProfileCard({
   const fetchUserInfo = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/users/profile/${userId}`,
+        `${apiUrl}/users/profile/${userId}`,
         {
           method: "GET",
           headers: {
@@ -101,7 +103,7 @@ function ProfileCard({
     // Save the updated user info here
     try {
       const response = await fetch(
-        `http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/users/profile/${userId}`,
+        `${apiUrl}/users/profile/${userId}`,
         {
           method: "PUT",
           headers: {

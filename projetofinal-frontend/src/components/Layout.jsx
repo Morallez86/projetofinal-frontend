@@ -17,6 +17,7 @@ import { MdWavingHand } from "react-icons/md";
 import { TbLogout2 } from "react-icons/tb";
 import useUserStore from "../Stores/UserStore";
 import criticalLogo from "../Assets/CriticalLogo.jpg";
+import useApiStore from '../Stores/ApiStore';
 
 
 function Layout({
@@ -26,13 +27,14 @@ function Layout({
   activeSubComponents,
 }) {
 const navigate = useNavigate();
+const apiUrl = useApiStore((state) => state.apiUrl);
 const { token, setToken } = useUserStore();
   
 
   const handleLogout = async () => {
     try {
       console.log(token);
-      const response = await fetch("http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/users/logout", {
+      const response = await fetch(`${apiUrl}/users/logout`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

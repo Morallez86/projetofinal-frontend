@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import RegistrationConfirmation from "../Components/RegistrationConfirmation";
+import useApiStore from '../Stores/ApiStore';
 
 function RegistrationStatusPage() {
+    const apiUrl = useApiStore((state) => state.apiUrl);
     const navigate = useNavigate();
     const { emailToken } = useParams();
     const [success, setSuccess] = useState(null);
+    
 
     useEffect(() => {
         if (emailToken) {
-            confirmRegistration(emailToken).then(setSuccess);
+            confirmRegistration(emailToken, apiUrl).then(setSuccess);
         } else {
             setSuccess(false);
         }
@@ -29,9 +32,9 @@ function RegistrationStatusPage() {
     );
 }
 
-async function confirmRegistration(emailToken) {
+async function confirmRegistration(emailToken, apiUrl) {
     try {
-        const response = await fetch('http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/users/confirmRegistration', {
+        const response = await fetch(`${apiUrl}/users/confirmRegistration`, {
             method: 'GET',
             headers: {
                 'emailToken': emailToken
