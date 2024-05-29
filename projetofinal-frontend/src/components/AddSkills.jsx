@@ -11,6 +11,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
   const [selectedSkill, setSelectedSkill] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const userSkills = useUserStore((state) => state.skills);
+  const setUserSkills = useUserStore((state) => state.setSkills);
   const [inputValue, setInputValue] = useState("");
 
   const skillCategoryMapping = {
@@ -108,6 +109,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
     );
     if (response.status === 201) {
       console.log("Skill added successfully");
+      setUserSkills([...userSkills, data[0]]);
     } else if (response.status === 500) {
       console.error("Internal Server Error");
     }

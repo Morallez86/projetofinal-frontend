@@ -89,11 +89,13 @@ function RemoveSkills({ openPopUpSkillsRemove, closePopUpSkillsRemove }) {
                       className="flex items-center gap-2 mb-2"
                     >
                       <Checkbox
-                        id={skill.id.toString()}
+                        id={skill.id ? skill.id.toString() : ""}
                         checked={selectedSkillIds.includes(skill.id)}
                         onChange={() => handleCheckboxChange(skill.id)}
                       />
-                      <Label htmlFor={skill.id.toString()}>{skill.name}</Label>
+                      <Label htmlFor={skill.id ? skill.id.toString() : ""}>
+                        {skill.name}
+                      </Label>{" "}
                     </div>
                   ))}
                 </div>

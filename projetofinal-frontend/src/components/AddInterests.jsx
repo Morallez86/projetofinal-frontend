@@ -10,6 +10,7 @@ function AddInterests({ openPopUpInterests, closePopUpInterests }) {
   const [interests, setInterests] = useState([]);
   const [selectedInterest, setSelectedInterest] = useState(null);
   const userInterests = useUserStore((state) => state.interests);
+  const setUserInterests= useUserStore((state) => state.setInterests);
   const [inputValue, setInputValue] = useState("");
 
   useEffect(() => {
@@ -79,6 +80,7 @@ function AddInterests({ openPopUpInterests, closePopUpInterests }) {
     );
     if (response.status === 201) {
       console.log("Interest added successfully");
+      setUserInterests ([...userInterests, data[0]]);
     } else if (response.status === 500) {
       console.error("Internal Server Error");
     }

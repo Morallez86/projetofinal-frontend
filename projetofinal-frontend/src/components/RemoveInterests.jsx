@@ -10,6 +10,7 @@ function RemoveInterests({
   const userInterests = useUserStore((state) => state.interests);
   const token = useUserStore((state) => state.token);
   const setInterests = useUserStore((state) => state.setInterests);
+  console.log(userInterests);
 
   const [filter, setFilter] = useState("");
   const [selectedInterestIds, setSelectedInterestIds] = useState([]);
@@ -65,7 +66,7 @@ function RemoveInterests({
         size="xl"
         onClose={() => {
           closePopUpInterestRemove();
-            setSelectedInterestIds([]);
+          setSelectedInterestIds([]);
         }}
         popup
       >
@@ -94,11 +95,13 @@ function RemoveInterests({
                       className="flex items-center gap-2 mb-2"
                     >
                       <Checkbox
-                        id={interest.id.toString()}
+                        id={interest.id ? interest.id.toString() : ""}
                         checked={selectedInterestIds.includes(interest.id)}
                         onChange={() => handleCheckboxChange(interest.id)}
                       />
-                      <Label htmlFor={interest.id.toString()}>
+                      <Label
+                        htmlFor={interest.id ? interest.id.toString() : ""}
+                      >
                         {interest.name}
                       </Label>
                     </div>

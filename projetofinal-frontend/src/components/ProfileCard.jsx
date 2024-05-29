@@ -1,4 +1,11 @@
-import { Card, TextInput, Label, Button, Textarea, Avatar } from "flowbite-react";
+import {
+  Card,
+  TextInput,
+  Label,
+  Button,
+  Textarea,
+  Avatar,
+} from "flowbite-react";
 import useUserStore from "../Stores/UserStore";
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
@@ -18,6 +25,8 @@ function ProfileCard({
   const userId = decodedToken.id;
   const setSkills = useUserStore((state) => state.setSkills);
   const setInterests = useUserStore((state) => state.setInterests);
+  const userSkills = useUserStore((state) => state.skills);
+  const userInterests = useUserStore((state) => state.interests);
 
   const [editMode, setEditMode] = useState(false);
   const [userInfo, setUserInfo] = useState({
@@ -32,6 +41,22 @@ function ProfileCard({
   useEffect(() => {
     fetchUserInfo();
   }, []);
+
+  useEffect(() => {
+    setUserInfo((prevInfo) => ({
+      ...prevInfo,
+      skills: userSkills.map((skill) => skill.name),
+    }));
+    console.log("render");
+  }, [userSkills]);
+
+  useEffect(() => {
+    setUserInfo((prevInfo) => ({
+      ...prevInfo,
+      interests: userInterests.map((interest) => interest.name),
+    }));
+    console.log("render");
+  }, [userInterests]);
 
   const fetchUserInfo = async () => {
     try {
@@ -85,8 +110,8 @@ function ProfileCard({
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            firstName: userInfo.name.split(' ')[0],
-            lastName: userInfo.name.split(' ')[1],
+            firstName: userInfo.name.split(" ")[0],
+            lastName: userInfo.name.split(" ")[1],
             username: userInfo.nickname,
             biography: userInfo.biography,
             workplace: userInfo.jobLocation,
@@ -140,7 +165,9 @@ function ProfileCard({
               className="text-sm text-gray-500 dark:text-gray-400"
             />
           ) : (
-            <p className="text-sm text-gray-500 dark:text-gray-400">{userInfo.name}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {userInfo.name}
+            </p>
           )}
         </div>
         <div className="mt-4">
@@ -155,7 +182,9 @@ function ProfileCard({
               className="text-sm text-gray-500 dark:text-gray-400"
             />
           ) : (
-            <p className="text-sm text-gray-500 dark:text-gray-400">{userInfo.jobLocation}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {userInfo.jobLocation}
+            </p>
           )}
         </div>
         <div className="mt-4">
@@ -170,7 +199,9 @@ function ProfileCard({
               className="text-sm text-gray-500 dark:text-gray-400"
             />
           ) : (
-            <p className="text-sm text-gray-500 dark:text-gray-400">{userInfo.nickname}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {userInfo.nickname}
+            </p>
           )}
         </div>
         <div className="mt-4">
@@ -185,7 +216,9 @@ function ProfileCard({
               rows={2}
             />
           ) : (
-            <p className="text-sm text-gray-500 dark:text-gray-400">{userInfo.biography}</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {userInfo.biography}
+            </p>
           )}
         </div>
         {editMode && (
