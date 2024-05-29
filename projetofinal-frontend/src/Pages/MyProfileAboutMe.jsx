@@ -6,12 +6,14 @@ import AddSkills from "../Components/AddSkills";
 import AddInterests from "../Components/AddInterests";
 import RemoveSkills from "../Components/RemoveSkills";
 import RemoveInterests from "../Components/RemoveInterests";
+import Footer from "../Components/Footer";
 
 function MyProfile_AboutMe() {
   const [statePopUpSkills, setStatePopUpSkills] = useState(false);
   const [statePopUpInterests, setStatePopUpInterests] = useState(false);
   const [statePopUpSkillsRemove, setStatePopUpSkillsRemove] = useState(false);
-  const [statePopUpInterestRemove, setStatePopUpInterestRemove] = useState(false);
+  const [statePopUpInterestRemove, setStatePopUpInterestRemove] =
+    useState(false);
 
   function openAddSkillsModal() {
     setStatePopUpSkills(true);
@@ -46,10 +48,10 @@ function MyProfile_AboutMe() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col h-screen">
       <Layout activeTab={0} activeSubTabProfile={4} />
       <div className="flex-grow flex p-4">
-        <div className="justify-center w-1/3">
+        <div className="justify-center w-1/3 h-auto">
           <ProfileCard
             openPopUpSkills={openAddSkillsModal}
             openPopUpInterests={openAddInterestsModal}
@@ -57,9 +59,12 @@ function MyProfile_AboutMe() {
             openPopUpInterestRemove={openAddInterestRemoveModal}
           />
         </div>
-        <div className="justify-center w-2/3">
+        <div className="justify-center w-2/3 ">
           <ProjectMyProfileTable />
         </div>
+      </div>
+      <div className="flex-shrink-0 p-0">
+        <Footer />
       </div>
       <AddSkills
         openPopUpSkills={statePopUpSkills}
@@ -73,9 +78,9 @@ function MyProfile_AboutMe() {
         openPopUpSkillsRemove={statePopUpSkillsRemove}
         closePopUpSkillsRemove={closeAddSkillsRemoveModal}
       />
-      <RemoveInterests 
+      <RemoveInterests
         openPopUpInterestRemove={statePopUpInterestRemove}
-        closePopUpInterestRemove={closeAddInterestRemoveModal}      
+        closePopUpInterestRemove={closeAddInterestRemoveModal}
       />
     </div>
   );

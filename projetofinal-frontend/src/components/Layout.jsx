@@ -17,10 +17,8 @@ import { MdWavingHand } from "react-icons/md";
 import { TbLogout2 } from "react-icons/tb";
 import useUserStore from "../Stores/UserStore";
 import criticalLogo from "../Assets/CriticalLogo.jpg";
-import useApiStore from '../Stores/ApiStore';
+import useApiStore from "../Stores/ApiStore";
 import { TbLogin2 } from "react-icons/tb";
-
-
 
 function Layout({
   activeTab,
@@ -28,10 +26,9 @@ function Layout({
   activeSubProjects,
   activeSubComponents,
 }) {
-const navigate = useNavigate();
-const apiUrl = useApiStore((state) => state.apiUrl);
-const { token, setToken } = useUserStore();
-  
+  const navigate = useNavigate();
+  const apiUrl = useApiStore((state) => state.apiUrl);
+  const { token, setToken } = useUserStore();
 
   const handleLogout = async () => {
     try {
@@ -61,7 +58,11 @@ const { token, setToken } = useUserStore();
   return (
     <div className="grid grid-cols-[1fr_3fr_1fr] gap-4 p-4">
       <div className="flex flex-col items-start">
-        <img src={criticalLogo} alt="Critical Logo" className="w-32 rounded h-auto" />
+        <img
+          src={criticalLogo}
+          alt="Critical Logo"
+          className="w-32 rounded h-auto"
+        />
         <div className="flex items-center space-x-2 mt-4">
           <MdWavingHand size={20} />
           <h1 className="text-black font-bold">Hey Elias98</h1>
@@ -240,10 +241,18 @@ const { token, setToken } = useUserStore();
             </div>
           )}
         </div>
-        </div>
-        <div className="flex  justify-end space-x-2">
-        <Avatar img="https://byuc.wordpress.com/wp-content/uploads/2012/07/avat-2.jpg?w=640" alt="avatar" rounded className="items-start" />
-        <Button className="mt-2 bg-transparent hover:bg-orange-200 transition-colors duration-200 text-black font-bold" onClick={handleLogout}>
+      </div>
+      <div className="flex  justify-end space-x-2">
+        <Avatar
+          img="https://byuc.wordpress.com/wp-content/uploads/2012/07/avat-2.jpg?w=640"
+          alt="avatar"
+          rounded
+          className="items-start"
+        />
+        <Button
+          className="mt-2 bg-transparent hover:bg-orange-200 transition-colors duration-200 text-black font-bold"
+          onClick={handleLogout}
+        >
           <TbLogout2 size={30} />
         </Button>
       </div>
