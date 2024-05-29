@@ -18,6 +18,8 @@ import { TbLogout2 } from "react-icons/tb";
 import useUserStore from "../Stores/UserStore";
 import criticalLogo from "../Assets/CriticalLogo.jpg";
 import useApiStore from '../Stores/ApiStore';
+import { TbLogin2 } from "react-icons/tb";
+
 
 
 function Layout({
@@ -57,9 +59,13 @@ const { token, setToken } = useUserStore();
   };
 
   return (
-    <div className="relative flex justify-center items-start">
-      <div className="fixed top-2 left-2">
-        <img src={criticalLogo} alt="Critical Logo" className=" w-32 m-2 rounded h-auto" />
+    <div className="grid grid-cols-[1fr_3fr_1fr] gap-4 p-4">
+      <div className="flex flex-col items-start">
+        <img src={criticalLogo} alt="Critical Logo" className="w-32 rounded h-auto" />
+        <div className="flex items-center space-x-2 mt-4">
+          <MdWavingHand size={20} />
+          <h1 className="text-black font-bold">Hey Elias98</h1>
+        </div>
       </div>
       <div className="flex flex-col items-center">
         <Tabs
@@ -234,22 +240,12 @@ const { token, setToken } = useUserStore();
             </div>
           )}
         </div>
-        <div className="absolute right-2 top-2 flex items-center space-x-2">
-          <MdWavingHand size={20} />
-          <h1 className="text-black font-bold">Hey Elias98</h1>
-          <Avatar
-            img="https://byuc.wordpress.com/wp-content/uploads/2012/07/avat-2.jpg?w=640"
-            alt="avatar"
-            rounded
-          />
-          <Button 
-            className="bg-transparent hover:bg-orange-200 transition-colors duration-200 text-black font-bold"
-            onClick={handleLogout}
-          >
-            <TbLogout2 size={20} style={{ verticalAlign: "middle" }} />
-            Logout
-          </Button>
         </div>
+        <div className="flex  justify-end space-x-2">
+        <Avatar img="https://byuc.wordpress.com/wp-content/uploads/2012/07/avat-2.jpg?w=640" alt="avatar" rounded className="items-start" />
+        <Button className="mt-2 bg-transparent hover:bg-orange-200 transition-colors duration-200 text-black font-bold" onClick={handleLogout}>
+          <TbLogout2 size={30} />
+        </Button>
       </div>
     </div>
   );
