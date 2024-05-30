@@ -59,9 +59,6 @@ function MyProfile_AboutMe() {
             openPopUpInterestRemove={openAddInterestRemoveModal}
           />
         </div>
-        <div className="justify-center w-2/3 ">
-          <ProjectMyProfileTable />
-        </div>
       </div>
       <div className="flex-shrink-0 p-0">
         <Footer />
