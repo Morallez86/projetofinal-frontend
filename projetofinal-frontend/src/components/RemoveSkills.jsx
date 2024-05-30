@@ -15,6 +15,7 @@ function RemoveSkills({ openPopUpSkillsRemove, closePopUpSkillsRemove }) {
   const [animationPlayed, setAnimationPlayed] = useState(false);
   const [filter, setFilter] = useState("");
   const [selectedSkillIds, setSelectedSkillIds] = useState([]);
+  const [showSuccessText, setShowSuccessText] = useState(false);
   const filteredSkills = userSkills.filter((skill) =>
     skill.name.toLowerCase().includes(filter.toLowerCase())
   );
@@ -109,7 +110,7 @@ function RemoveSkills({ openPopUpSkillsRemove, closePopUpSkillsRemove }) {
               </div>
               <div
                 id="icon-element"
-                className="pointer-events-none flex items-center justify-center h-full"
+                className="pointer-events-none flex items-center justify-center h-full relative"
               >
                 <Lottie
                   options={defaultOptions}
@@ -120,10 +121,19 @@ function RemoveSkills({ openPopUpSkillsRemove, closePopUpSkillsRemove }) {
                   eventListeners={[
                     {
                       eventName: "complete",
-                      callback: () => setAnimationPlayed(false),
+                      callback: () => {
+                        setAnimationPlayed(false);
+                        setShowSuccessText(true);
+                        setTimeout(() => setShowSuccessText(false), 1500);
+                      },
                     },
                   ]}
                 />
+                {showSuccessText && (
+                  <div className="animate-pulse text-green-500 font-bold absolute bottom-0 mb-4">
+                    Removed with success
+                  </div>
+                )}
                 <Tooltip
                   anchorSelect="#icon-element"
                   content="Click to delete this skill from your profile"
