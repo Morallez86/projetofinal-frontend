@@ -20,6 +20,7 @@ function RemoveInterests({
   const [filter, setFilter] = useState("");
   const [selectedInterestIds, setSelectedInterestIds] = useState([]);
   const [animationPlayed, setAnimationPlayed] = useState(false);
+  const [showSuccessText, setShowSuccessText] = useState(false);
 
   const filteredInterest = userInterests.filter((interest) =>
     interest.name.toLowerCase().includes(filter.toLowerCase())
@@ -119,7 +120,7 @@ function RemoveInterests({
               </div>
               <div
                 id="icon-element"
-                className="pointer-events-none flex items-center justify-center h-full"
+                className="pointer-events-none flex items-center justify-center h-full relative"
               >
                 <Lottie
                   options={defaultOptions}
@@ -130,13 +131,22 @@ function RemoveInterests({
                   eventListeners={[
                     {
                       eventName: "complete",
-                      callback: () => setAnimationPlayed(false),
+                      callback: () => {
+                        setAnimationPlayed(false);
+                        setShowSuccessText(true);
+                        setTimeout(() => setShowSuccessText(false), 1500);
+                      },
                     },
                   ]}
                 />
+                {showSuccessText && (
+                  <div className="animate-pulse text-green-500 font-bold absolute bottom-0 mb-4">
+                    Removed with success
+                  </div>
+                )}
                 <Tooltip
                   anchorSelect="#icon-element"
-                  content="Click to delete this interest from your profile"
+                  content="Click to delete this skill from your profile"
                   place="top"
                 />
               </div>
