@@ -2,20 +2,31 @@ import React, { useState } from "react";
 import { Modal, Button, TextInput } from "flowbite-react";
 import useUserStore from "../Stores/UserStore";
 import { Checkbox, Label } from "flowbite-react";
-import useApiStore from '../Stores/ApiStore';
+import useApiStore from "../Stores/ApiStore";
+import RemovedAnimation from "../Assets/Removed.json";
+import Lottie from "react-lottie";
+import { Tooltip } from "react-tooltip";
 
 function RemoveSkills({ openPopUpSkillsRemove, closePopUpSkillsRemove }) {
   const apiUrl = useApiStore((state) => state.apiUrl);
   const userSkills = useUserStore((state) => state.skills);
   const token = useUserStore((state) => state.token);
   const setSkills = useUserStore((state) => state.setSkills);
-
+  const [animationPlayed, setAnimationPlayed] = useState(false);
   const [filter, setFilter] = useState("");
   const [selectedSkillIds, setSelectedSkillIds] = useState([]);
-
   const filteredSkills = userSkills.filter((skill) =>
     skill.name.toLowerCase().includes(filter.toLowerCase())
   );
+
+  const defaultOptions = {
+    loop: false,
+    autoplay: false,
+    animationData: RemovedAnimation,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
 
   const handleCheckboxChange = (skillId) => {
     if (selectedSkillIds.includes(skillId)) {
@@ -28,25 +39,22 @@ function RemoveSkills({ openPopUpSkillsRemove, closePopUpSkillsRemove }) {
   const handleRemoveSkills = async () => {
     console.log(selectedSkillIds);
     try {
-      const response = await fetch(
-        `${apiUrl}/skills`,
-        {
-          method: "DELETE",
-          headers: {
-            Accept: "*/*",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(selectedSkillIds),
-        }
-      );
+      const response = await fetch(`${apiUrl}/skills`, {
+        method: "DELETE",
+        headers: {
+          Accept: "*/*",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(selectedSkillIds),
+      });
       if (response.status === 204) {
         console.log();
         const updatedSkills = userSkills.filter(
           (skill) => !selectedSkillIds.includes(skill.id)
         );
         setSkills(updatedSkills);
-        closePopUpSkillsRemove();
+        setAnimationPlayed(true);
       } else if (response.status === 500) {
         console.log("Internet server error");
       }
@@ -107,6 +115,26 @@ function RemoveSkills({ openPopUpSkillsRemove, closePopUpSkillsRemove }) {
                   </Button>
                 </div>
               </div>
+              <div id="icon-element" className="pointer-events-none">
+                <Lottie
+                  options={defaultOptions}
+                  height={400}
+                  width={400}
+                  isStopped={!animationPlayed}
+                  isPaused={!animationPlayed}
+                  eventListeners={[
+                    {
+                      eventName: "complete",
+                      callback: () => setAnimationPlayed(false),
+                    },
+                  ]}
+                />
+              </div>
+              <Tooltip
+                anchorSelect="#icon-element"
+                content="Click to delete this skill from your profile"
+                place="top"
+              />
             </div>
           </div>
         </Modal.Body>
