@@ -5,6 +5,7 @@ import { useState } from "react";
 import zxcvbn from "zxcvbn";
 import useApiStore from '../Stores/ApiStore';
 import useWorkplaceStore from '../Stores/WorkplaceStore';
+import { useNavigate } from "react-router-dom";
 
 function RegisterCard() {
   const [formDataName, setFormDataName] = useState({ name: "" });
@@ -29,6 +30,7 @@ function RegisterCard() {
   const [warningEmail, setWarningEmail] = useState(0);
   const { apiUrl } = useApiStore();
   const {workplaces} = useWorkplaceStore();
+  const navigate = useNavigate();
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -311,8 +313,15 @@ function RegisterCard() {
           <FaStarOfLife className="text-red-500 mr-2 text-xs" />
           <Label htmlFor="warning" value="Inputs with this symbol are mandatory" />
         </div>
-        <div className="col-span-full">
-          <Button onClick={handleSubmit}>Submit</Button>
+        <div className="flex justify-between col-span-full">
+          <div>
+            <Button onClick={handleSubmit}>Submit</Button>
+          </div>
+          <div className="ml-auto">
+            <Button type="button" onClick={() => navigate("/")}>
+              Home
+            </Button>
+          </div>
         </div>
       </div>
       {warningEmail === 1 && (

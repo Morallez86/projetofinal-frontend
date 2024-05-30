@@ -7,17 +7,23 @@ const useUserStore = create(
     (set) => ({
       token: null,
       role: null,
+      username: null,
+      userId: null,
       skills: [],
       interests: [],
       // Function to update the token and role
       setToken: (token) => set({ token }),
       setRole: (role) => set({ role }),
+      setUsername: (username) => set({ username }),
+      setUserId: (userId) => set({ userId }),
       setSkills: (skills) => set({ skills }),
       setInterests: (interests) => set({ interests }),
 
       // Function to clear the token and role
       clearToken: () => set({ token: null }),
       clearRole: () => set({ role: null }),
+      clearUsername: () => set({ username: null }),
+      clearUserId: () => set({ userId: null }),
       clearSkills: () => set({ skills: [] }),
       clearInterests: () => set({ interests: [] }),
     }),

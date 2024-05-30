@@ -32,7 +32,9 @@ function LoginCard() {
   const [openPopUp, setOpenPopUp] = useState(false);
   const [warningEmailFormat, setWarningEmailFormat] = useState(0);
   const setToken = useUserStore((state) => state.setToken);
-  const setRole = useUserStore((state) => state.setRole); 
+  const setRole = useUserStore((state) => state.setRole);
+  const setUsername = useUserStore((state) => state.setUsername);
+  const setUserId = useUserStore((state) => state.setUserId);  
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -49,8 +51,11 @@ function LoginCard() {
     setToken(token); // Store the token
     const decodedToken = jwtDecode(token); // Decode the token
     const role = decodedToken.role; // Extract the role from decoded token
-    console.log(role);
     setRole(role); // Store the role in Zustand
+    const username = decodedToken.username;
+    setUsername(username)
+    const userId = decodedToken.id;
+    setUserId(userId)
   };
 
   const handleSubmitRecover = async () => {
@@ -181,6 +186,9 @@ function LoginCard() {
         <Button type="button" onClick={openEmailInput}>
           <RiLoginCircleFill className="mr-2" />
           Forgot password?
+        </Button>
+        <Button type="button" onClick={() => navigate("/")}>
+          Home
         </Button>
       </div>
       <div className="flex flex-col gap-4"></div>
