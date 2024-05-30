@@ -224,7 +224,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
                   anchorSelect="#icon-element"
                   content={
                     selectedSkill && selectedCategory
-                      ? "Click to add this new skill to your list"
+                      ? "Click to add this new skill to your profile"
                       : "Please select a skill and category first."
                   }
                   place="top"
