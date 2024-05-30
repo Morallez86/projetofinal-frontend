@@ -76,28 +76,22 @@ function RemoveSkills({ openPopUpSkillsRemove, closePopUpSkillsRemove }) {
       >
         <Modal.Header />
         <Modal.Body>
-          <div className="text-center">
-            <h3 className="mb-5 text-lg font-bold text-gray-500 dark:text-gray-400">
+          <div className="flex flex-col items-center justify-center space-y-5">
+            <h3 className="text-lg font-bold text-gray-500 dark:text-gray-400">
               Remove Skill
             </h3>
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <h4 className="mb-3">
-                  You can remove one or more skills at the same time{" "}
-                </h4>
+              <div className="space-y-3">
+                <h4>You can remove one or more skills at the same time</h4>
                 <TextInput
                   type="text"
                   placeholder="Filter skills"
                   value={filter}
                   onChange={(e) => setFilter(e.target.value)}
-                  className="mb-3"
                 />
-                <div className="flex flex-col items-start overflow-y-auto h-36">
+                <div className="flex flex-col items-start overflow-y-auto h-36 space-y-2">
                   {filteredSkills.map((skill) => (
-                    <div
-                      key={skill.id}
-                      className="flex items-center gap-2 mb-2"
-                    >
+                    <div key={skill.id} className="flex items-center gap-2">
                       <Checkbox
                         id={skill.id ? skill.id.toString() : ""}
                         checked={selectedSkillIds.includes(skill.id)}
@@ -105,17 +99,18 @@ function RemoveSkills({ openPopUpSkillsRemove, closePopUpSkillsRemove }) {
                       />
                       <Label htmlFor={skill.id ? skill.id.toString() : ""}>
                         {skill.name}
-                      </Label>{" "}
+                      </Label>
                     </div>
                   ))}
                 </div>
-                <div className="col-span-full mt-3">
-                  <Button onClick={handleRemoveSkills}>
-                    Remove selected skills
-                  </Button>
-                </div>
+                <Button onClick={handleRemoveSkills}>
+                  Remove selected skills
+                </Button>
               </div>
-              <div id="icon-element" className="pointer-events-none">
+              <div
+                id="icon-element"
+                className="pointer-events-none flex items-center justify-center h-full"
+              >
                 <Lottie
                   options={defaultOptions}
                   height={200}
@@ -129,12 +124,12 @@ function RemoveSkills({ openPopUpSkillsRemove, closePopUpSkillsRemove }) {
                     },
                   ]}
                 />
+                <Tooltip
+                  anchorSelect="#icon-element"
+                  content="Click to delete this skill from your profile"
+                  place="top"
+                />
               </div>
-              <Tooltip
-                anchorSelect="#icon-element"
-                content="Click to delete this skill from your profile"
-                place="top"
-              />
             </div>
           </div>
         </Modal.Body>
