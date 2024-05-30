@@ -4,16 +4,29 @@ import CreatableSelect from "react-select/creatable";
 import { useState, useEffect } from "react";
 import useUserStore from "../Stores/UserStore";
 import { TbLockFilled } from "react-icons/tb";
-import useApiStore from '../Stores/ApiStore';
+import useApiStore from "../Stores/ApiStore";
+import AddedAnimation from "../Assets/Added.json";
+import Lottie from "react-lottie";
+import { Tooltip } from "react-tooltip";
 
 function AddInterests({ openPopUpInterests, closePopUpInterests }) {
   const token = useUserStore((state) => state.token);
   const [interests, setInterests] = useState([]);
   const [selectedInterest, setSelectedInterest] = useState(null);
   const userInterests = useUserStore((state) => state.interests);
-  const setUserInterests= useUserStore((state) => state.setInterests);
+  const setUserInterests = useUserStore((state) => state.setInterests);
   const [inputValue, setInputValue] = useState("");
   const apiUrl = useApiStore((state) => state.apiUrl);
+  const [animationPlayed, setAnimationPlayed] = useState(false);
+
+  const defaultOptions = {
+    loop: false,
+    autoplay: false,
+    animationData: AddedAnimation,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
 
   useEffect(() => {
     getAllInterests();
@@ -25,17 +38,14 @@ function AddInterests({ openPopUpInterests, closePopUpInterests }) {
 
   const getAllInterests = async () => {
     try {
-      const response = await fetch(
-        `${apiUrl}/interests`,
-        {
-          method: "GET",
-          headers: {
-            Accept: "*/*",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${apiUrl}/interests`, {
+        method: "GET",
+        headers: {
+          Accept: "*/*",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.status === 200) {
         const data = await response.json();
@@ -82,7 +92,8 @@ function AddInterests({ openPopUpInterests, closePopUpInterests }) {
     );
     if (response.status === 201) {
       console.log("Interest added successfully");
-      setUserInterests ([...userInterests, data[0]]);
+      setAnimationPlayed(true);
+      setUserInterests([...userInterests, data[0]]);
     } else if (response.status === 500) {
       console.error("Internal Server Error");
     }
@@ -129,11 +140,37 @@ function AddInterests({ openPopUpInterests, closePopUpInterests }) {
                     />
                   </div>
                 </div>
-                <div className="col-span-full mt-3">
-                  <Button onClick={handleSubmit} disabled={!selectedInterest}>
-                    Add to interests list
-                  </Button>
+                <div
+                  id="icon-element"
+                  style={{
+                    display: selectedInterest ? "block" : "none",
+                  }}
+                  onClick={() => {
+                    if (selectedInterest) {
+                      handleSubmit();
+                      setAnimationPlayed(true);
+                    }
+                  }}
+                >
+                  <Lottie
+                    options={defaultOptions}
+                    height={400}
+                    width={400}
+                    isStopped={!animationPlayed}
+                    isPaused={!animationPlayed}
+                    eventListeners={[
+                      {
+                        eventName: "complete",
+                        callback: () => setAnimationPlayed(false),
+                      },
+                    ]}
+                  />
                 </div>
+                <Tooltip
+                  anchorSelect="#icon-element"
+                  content="Click to addd this interest to your profile"
+                  place="top"
+                />
               </div>
             </div>
           </div>
