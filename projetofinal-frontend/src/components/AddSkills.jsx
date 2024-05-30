@@ -117,8 +117,10 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
       body: JSON.stringify(data),
     });
     if (response.status === 201) {
+      const newSkills = await response.json();
       console.log("Skill added successfully");
-      setUserSkills([...userSkills, data[0]]);
+      console.log(newSkills);
+      setUserSkills([...userSkills, ...newSkills]);
       setAnimationPlayed(true);
     } else if (response.status === 500) {
       console.error("Internal Server Error");
@@ -192,7 +194,6 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
                     />
                   </div>
                 </div>
-
                 <div
                   id="icon-element"
                   style={{
