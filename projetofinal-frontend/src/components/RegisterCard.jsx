@@ -1,60 +1,15 @@
-import { Button, Card, Label, TextInput } from "flowbite-react";
+import { Button, Card, Label, TextInput, Alert, Dropdown, FileInput } from "flowbite-react";
 import { HiInformationCircle } from "react-icons/hi";
-import { Alert } from "flowbite-react";
-import { Dropdown } from "flowbite-react";
 import { FaStarOfLife } from "react-icons/fa";
-import { FileInput } from "flowbite-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import zxcvbn from "zxcvbn";
 import useApiStore from '../Stores/ApiStore';
+import useWorkplaceStore from '../Stores/WorkplaceStore';
 
 function RegisterCard() {
-  const [workplaces, setWorkplaces] = useState([]);
-  const apiUrl = useApiStore((state) => state.apiUrl);
-
-  useEffect(() => {
-    getWorkplaces();
-  }, []);
-
-  const getWorkplaces = async () => {
-    try {
-      const response = await fetch(
-        `${apiUrl}/workplaces`,
-        {
-          method: "GET",
-          headers: {
-            Accept: "*/*",
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.status === 200) {
-        const data = await response.json();
-        setWorkplaces(data);
-        console.log(data);
-      } else if (response.status === 404) {
-        console.log("Workplaces not found");
-      }
-    } catch (error) {
-      console.error("Error fetching workplaces:", error);
-    }
-  };
-
-  const [formDataName, setFormDataName] = useState({
-    name: "",
-  });
-
-  const [formDatapasswords, setFormDatapasswords] = useState({
-    password: "",
-    passwordConfirmation: "",
-  });
-
-  const [formDataNames, setFormDataNames] = useState({
-    firstName: formDataName.name.split(" ")[0],
-    lastName: formDataName.name.split(" ")[1],
-  });
-
+  const [formDataName, setFormDataName] = useState({ name: "" });
+  const [formDatapasswords, setFormDatapasswords] = useState({ password: "", passwordConfirmation: "" });
+  const [formDataNames, setFormDataNames] = useState({ firstName: "", lastName: "" });
   const [formDataRegister, setFormDataRegister] = useState({
     email: "",
     password: "",
@@ -64,8 +19,16 @@ function RegisterCard() {
     username: "",
     biography: "",
   });
-
   const [selectedWorkLocation, setSelectedWorkLocation] = useState("");
+  const [warningUsername, setWarningUsername] = useState(0);
+  const [warningPasswordEquals, setWarningPasswordEquals] = useState(0);
+  const [warningPasswordPower, setWarningPasswordPower] = useState(0);
+  const [warningNameMax, setWarningNameMax] = useState(0);
+  const [warningNameMin, setWarningNameMin] = useState(0);
+  const [warningRequiresInputs, setWarningRequiresInputs] = useState(0);
+  const [warningEmail, setWarningEmail] = useState(0);
+  const { apiUrl } = useApiStore();
+  const {workplaces} = useWorkplaceStore();
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -111,15 +74,7 @@ function RegisterCard() {
     event.preventDefault();
   };
 
-  const [warningUsername, setWarningUsername] = useState(0);
-  const [warningPasswordEquals, setWarningPasswordEquals] = useState(0);
-  const [warningPasswordPower, setWarningPasswordPower] = useState(0);
-  const [warningNameMax, setWarningNameMax] = useState(0);
-  const [warningNameMin, setWarningNameMin] = useState(0);
-  const [warningRequiresInputs, setWarningRequiresInputs] = useState(0);
-  const [warningEmail, setWarningEmail] = useState(0);
-
-const handleSubmit = async () => {
+  const handleSubmit = async () => {
     console.log(1);
 
     // Reset warnings
@@ -142,44 +97,44 @@ const handleSubmit = async () => {
 
     // Perform checks and set temporary variables
     if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(formDataRegister.email.trim())) {
-        warningEmail = 1;
-        console.log(2);
+      warningEmail = 1;
+      console.log(2);
     }
 
     if (/\s/.test(formDataRegister.username)) {
-        warningUsername = 1;
-        console.log(3);
+      warningUsername = 1;
+      console.log(3);
     }
 
     if (formDataRegister.password.length < 8 || zxcvbn(formDataRegister.password).score < 3) {
-        warningPasswordPower = 1;
-        console.log(4);
+      warningPasswordPower = 1;
+      console.log(4);
     }
 
     if (formDataRegister.password !== formDatapasswords.passwordConfirmation) {
-        warningPasswordEquals = 1;
+      warningPasswordEquals = 1;
     }
 
     if (formDataName.name.split(" ").length > 2) {
-        warningNameMax = 1;
-        console.log(5);
+      warningNameMax = 1;
+      console.log(5);
     }
 
     if (formDataName.name.split(" ").length < 2) {
-        warningNameMin = 1;
-        console.log(6);
+      warningNameMin = 1;
+      console.log(6);
     }
 
     if (
-        formDataRegister.email === "" ||
-        formDatapasswords.password === "" ||
-        formDatapasswords.passwordConfirmation === "" ||
-        formDataRegister.workplace === "" ||
-        formDataNames.firstName === "" ||
-        formDataNames.lastName === ""
+      formDataRegister.email === "" ||
+      formDatapasswords.password === "" ||
+      formDatapasswords.passwordConfirmation === "" ||
+      formDataRegister.workplace === "" ||
+      formDataNames.firstName === "" ||
+      formDataNames.lastName === ""
     ) {
-        warningRequiresInputs = 1;
-        console.log(7);
+      warningRequiresInputs = 1;
+      console.log(7);
     }
 
     // Set state based on temporary variables
@@ -193,64 +148,64 @@ const handleSubmit = async () => {
 
     // Check if any warnings are set
     if (
-        warningUsername === 1 ||
-        warningPasswordEquals === 1 ||
-        warningPasswordPower === 1 ||
-        warningNameMax === 1 ||
-        warningNameMin === 1 ||
-        warningRequiresInputs === 1 ||
-        warningEmail === 1
+      warningUsername === 1 ||
+      warningPasswordEquals === 1 ||
+      warningPasswordPower === 1 ||
+      warningNameMax === 1 ||
+      warningNameMin === 1 ||
+      warningRequiresInputs === 1 ||
+      warningEmail === 1
     ) {
-        console.log("not enter in fetch");
-        return;
+      console.log("not enter in fetch");
+      return;
     }
 
     console.log("entrei com avisos");
 
     try {
-        const registerResponse = await fetch(
-            `${apiUrl}/users/register`,
-            {
-                method: "POST",
-                headers: {
-                    Accept: "*/*",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(formDataRegister),
-            }
+      const registerResponse = await fetch(
+        `${apiUrl}/users/register`,
+        {
+          method: "POST",
+          headers: {
+            Accept: "*/*",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formDataRegister),
+        }
+      );
+
+      if (registerResponse.status === 201) {
+        console.log("User registered successfully");
+
+        const fileInput = document.getElementById("small-file-upload");
+        const file = fileInput.files[0];
+
+        const imageResponse = await fetch(
+          `${apiUrl}/users/image`,
+          {
+            method: "POST",
+            headers: {
+              Accept: "*/*",
+              filename: file.name,
+              email: formDataRegister.email,
+            },
+            body: file,
+          }
         );
 
-        if (registerResponse.status === 201) {
-            console.log("User registered successfully");
-
-            const fileInput = document.getElementById("small-file-upload");
-            const file = fileInput.files[0];
-
-            const imageResponse = await fetch(
-                `${apiUrl}/users/image`,
-                {
-                    method: "POST",
-                    headers: {
-                        Accept: "*/*",
-                        filename: file.name,
-                        email: formDataRegister.email,
-                    },
-                    body: file,
-                }
-            );
-
-            if (imageResponse.status === 200) {
-                console.log("Image uploaded successfully");
-            } else {
-                console.log("Image upload failed");
-            }
+        if (imageResponse.status === 200) {
+          console.log("Image uploaded successfully");
         } else {
-            console.log("User registration failed");
+          console.log("Image upload failed");
         }
+      } else {
+        console.log("User registration failed");
+      }
     } catch (error) {
-        console.error("Error during registration or image upload:", error);
+      console.error("Error during registration or image upload:", error);
     }
-};
+  };
 
   return (
     <Card className="max-w-lg overflow-auto p-4">
@@ -406,6 +361,5 @@ const handleSubmit = async () => {
     </Card>
   );
 }
-
 
 export default RegisterCard;

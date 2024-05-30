@@ -28,10 +28,10 @@ function Layout({
   activeSubProjects,
   activeSubComponents,
 }) {
-const navigate = useNavigate();
-const apiUrl = useApiStore((state) => state.apiUrl);
-const { token, setToken } = useUserStore();
-  
+  const navigate = useNavigate();
+  const apiUrl = useApiStore((state) => state.apiUrl);
+  const { token, setToken } = useUserStore();
+  const isLoggedIn = sessionStorage.getItem('token') !== null;
 
   const handleLogout = async () => {
     try {
@@ -241,11 +241,23 @@ const { token, setToken } = useUserStore();
           )}
         </div>
         </div>
-        <div className="flex  justify-end space-x-2">
-        <Avatar img="https://byuc.wordpress.com/wp-content/uploads/2012/07/avat-2.jpg?w=640" alt="avatar" rounded className="items-start" />
-        <Button className="mt-2 bg-transparent hover:bg-orange-200 transition-colors duration-200 text-black font-bold" onClick={handleLogout}>
-          <TbLogout2 size={30} />
-        </Button>
+        <div className="flex justify-end items-start space-x-2">
+        <Avatar img="https://byuc.wordpress.com/wp-content/uploads/2012/07/avat-2.jpg?w=640" alt="avatar" rounded />
+        {isLoggedIn ? (
+          <Button
+            className="p-0 flex items-center justify-center bg-transparent hover:bg-orange-200 transition-colors duration-200 text-black font-bold"
+            onClick={handleLogout}
+          >
+            <TbLogout2 size={30} />
+          </Button>
+        ) : (
+          <Button
+            className="p-0 flex items-center justify-center bg-transparent hover:bg-orange-200 transition-colors duration-200 text-black font-bold"
+            onClick={() => navigate("/Login")}
+          >
+            <TbLogin2 size={35} />
+          </Button>
+        )}
       </div>
     </div>
   );

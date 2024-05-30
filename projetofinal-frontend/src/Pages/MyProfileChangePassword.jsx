@@ -1,80 +1,25 @@
-import React, { useState } from "react";
+
+import React from "react";
 import { Alert, Button, Card, Label, Spinner, TextInput } from "flowbite-react";
 import { HiInformationCircle } from "react-icons/hi";
 import Layout from "../Components/Layout";
 import useUserStore from "../Stores/UserStore";
-import zxcvbn from "zxcvbn";
-import useApiStore from '../Stores/ApiStore';
+import useApiStore from "../Stores/ApiStore";
+import useForm from "../Hooks/useForm";
+import useChangePassword from "../Hooks/useChangePassword";
 
 function MyProfileChangePassword() {
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmNewPassword, setConfirmNewPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [passwordStrengthWarning, setPasswordStrengthWarning] = useState(false);
-  const [showWarning, setShowWarning] = useState(false);
   const { token } = useUserStore();
   const apiUrl = useApiStore((state) => state.apiUrl);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    if (name === "oldPassword") {
-      setOldPassword(value);
-    } else if (name === "newPassword") {
-      setNewPassword(value);
-    } else if (name === "confirmNewPassword") {
-      setConfirmNewPassword(value);
-    }
-  };
+  const [formValues, handleChange] = useForm({ oldPassword: "", newPassword: "", confirmNewPassword: "" });
+  const { loading, passwordStrengthWarning, showWarning, handleChangePassword } = useChangePassword(apiUrl, token);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-
-    // Check password strength using zxcvbn
-    const passwordStrength = zxcvbn(newPassword);
-
-    if (passwordStrength.score < 3) {
-      setPasswordStrengthWarning(true);
-      setLoading(false);
-      return;
-    } else {
-      setPasswordStrengthWarning(false);
-    }
-
-    if (newPassword !== confirmNewPassword) {
-      setShowWarning(true);
-      setLoading(false);
-      return;
-    } else {
-      setShowWarning(false);
-    }
-
-    try {
-      const response = await fetch(`${apiUrl}/rest/users/updatePassword`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          oldPassword,
-          newPassword,
-        }),
-      });
-
-      if (response.ok) {
-        alert("Password updated successfully");
-      } else {
-        const errorData = await response.json();
-        alert(`Failed to update password: ${errorData.message}`);
-      }
-    } catch (error) {
-      console.error("Error updating password", error);
-      alert("Error updating password");
-    } finally {
-      setLoading(false);
+    const { oldPassword, newPassword, confirmNewPassword } = formValues;
+    const success = await handleChangePassword(oldPassword, newPassword, confirmNewPassword);
+    if (success) {
+      alert("Password updated successfully");
     }
   };
 
@@ -92,7 +37,7 @@ function MyProfileChangePassword() {
                 name="oldPassword"
                 type="password"
                 placeholder="Your old password"
-                value={oldPassword}
+                value={formValues.oldPassword}
                 onChange={handleChange}
                 className="peer"
               />
@@ -104,7 +49,7 @@ function MyProfileChangePassword() {
                 name="newPassword"
                 type="password"
                 placeholder="Your new password"
-                value={newPassword}
+                value={formValues.newPassword}
                 onChange={handleChange}
                 className="peer"
               />
@@ -116,7 +61,7 @@ function MyProfileChangePassword() {
                 name="confirmNewPassword"
                 type="password"
                 placeholder="Confirm your new password"
-                value={confirmNewPassword}
+                value={formValues.confirmNewPassword}
                 onChange={handleChange}
                 className="peer"
               />
