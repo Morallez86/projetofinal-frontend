@@ -118,8 +118,8 @@ function RemoveSkills({ openPopUpSkillsRemove, closePopUpSkillsRemove }) {
               <div id="icon-element" className="pointer-events-none">
                 <Lottie
                   options={defaultOptions}
-                  height={400}
-                  width={400}
+                  height={200}
+                  width={200}
                   isStopped={!animationPlayed}
                   isPaused={!animationPlayed}
                   eventListeners={[
