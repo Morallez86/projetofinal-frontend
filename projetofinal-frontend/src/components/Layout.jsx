@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ImProfile } from "react-icons/im";
 import { AiOutlineFundProjectionScreen } from "react-icons/ai";
 import { GrResources } from "react-icons/gr";
@@ -19,8 +19,7 @@ import useUserStore from "../Stores/UserStore";
 import criticalLogo from "../Assets/CriticalLogo.jpg";
 import useApiStore from '../Stores/ApiStore';
 import { TbLogin2 } from "react-icons/tb";
-
-
+import { jwtDecode } from "jwt-decode";
 
 function Layout({
   activeTab,
@@ -28,14 +27,48 @@ function Layout({
   activeSubProjects,
   activeSubComponents,
 }) {
-const navigate = useNavigate();
-const apiUrl = useApiStore((state) => state.apiUrl);
-const { token, setToken } = useUserStore();
+  const navigate = useNavigate();
+  const apiUrl = useApiStore((state) => state.apiUrl);
+  const { token, setToken } = useUserStore();
+  const [profileImage, setProfileImage] = useState(null);
   
+  let userId, username;
+  if (token) {
+    const decodedToken = jwtDecode(token);
+    userId = decodedToken.id;
+    username = decodedToken.username;
+  }
+
+  useEffect(() => {
+    const fetchProfileImage = async () => {
+      if (token) {
+        try {
+          const response = await fetch(`${apiUrl}/users/${userId}/image`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          
+          if (response.ok) {
+            const imageBlob = await response.blob();
+            const imageObjectURL = URL.createObjectURL(imageBlob);
+            setProfileImage(imageObjectURL);
+          } else {
+            console.error("Failed to fetch profile image:", response.status);
+          }
+        } catch (error) {
+          console.error("Error fetching profile image:", error);
+        }
+      }
+    };
+
+    fetchProfileImage();
+  }, [apiUrl, token, userId]);
 
   const handleLogout = async () => {
     try {
-      console.log(token);
       const response = await fetch(`${apiUrl}/users/logout`, {
         method: "POST",
         headers: {
@@ -45,7 +78,6 @@ const { token, setToken } = useUserStore();
       });
 
       if (response.ok) {
-        // Clear the token and redirect to login page
         setToken(null);
         navigate("/");
       } else {
@@ -62,10 +94,12 @@ const { token, setToken } = useUserStore();
     <div className="grid grid-cols-[1fr_3fr_1fr] gap-4 p-4">
       <div className="flex flex-col items-start">
         <img src={criticalLogo} alt="Critical Logo" className="w-32 rounded h-auto" />
-        <div className="flex items-center space-x-2 mt-4">
-          <MdWavingHand size={20} />
-          <h1 className="text-black font-bold">Hey Elias98</h1>
-        </div>
+        {username && (
+          <div className="flex items-center space-x-2 mt-4">
+            <MdWavingHand size={20} />
+            <h1 className="text-black font-bold">Hey {username}</h1>
+          </div>
+        )}
       </div>
       <div className="flex flex-col items-center">
         <Tabs
@@ -133,7 +167,6 @@ const { token, setToken } = useUserStore();
                   }
                 }}
               >
-                {console.log("Rendering MyProfile sub-tabs")}
                 <Tabs.Item
                   active={activeSubTabProfile === 0}
                   value={0}
@@ -181,14 +214,13 @@ const { token, setToken } = useUserStore();
                       navigate("/createNewProject");
                       break;
                     case 1:
-                      navigate("/projectsList");
+                      navigate("/");
                       break;
                     default:
                       break;
                   }
                 }}
               >
-                {console.log("Rendering All Projects sub-tabs")}
                 <Tabs.Item
                   active={activeSubProjects === 0}
                   value={0}
@@ -223,7 +255,6 @@ const { token, setToken } = useUserStore();
                   }
                 }}
               >
-                {console.log("Rendering Components/Resources sub-tabs")}
                 <Tabs.Item
                   active={activeSubComponents === 0}
                   value={0}
@@ -241,13 +272,26 @@ const { token, setToken } = useUserStore();
           )}
         </div>
         </div>
-        <div className="flex  justify-end space-x-2">
-        <Avatar img="https://byuc.wordpress.com/wp-content/uploads/2012/07/avat-2.jpg?w=640" alt="avatar" rounded className="items-start" />
-        <Button className="mt-2 bg-transparent hover:bg-orange-200 transition-colors duration-200 text-black font-bold" onClick={handleLogout}>
-          <TbLogout2 size={30} />
-        </Button>
+        <div className="flex justify-end items-start space-x-2">
+          <Avatar img={profileImage} alt="avatar" rounded />
+        {token ? (
+          <Button
+            className="p-0 flex items-center justify-center bg-transparent hover:bg-orange-200 transition-colors duration-200 text-black font-bold"
+            onClick={handleLogout}
+          >
+            <TbLogout2 size={35} />
+          </Button>
+        ) : (
+          <Button
+            className="p-0 flex items-center justify-center bg-transparent hover:bg-orange-200 transition-colors duration-200 text-black font-bold"
+            onClick={() => navigate("/Login")}
+          >
+            <TbLogin2 size={35} />
+          </Button>
+        )}
       </div>
     </div>
   );
 }
+
 export default Layout;

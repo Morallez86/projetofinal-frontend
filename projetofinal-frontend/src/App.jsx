@@ -1,13 +1,18 @@
-import React from "react";
-import CheckoutForm from "./Components/CheckoutForm";
+import React, { useEffect } from "react";
+import Layout from "./Components/Layout";
+import useWorkplaces from "./Hooks/useWorkplaces";
 import "./general.css";
 
 function App() {
-  return (
-    <div className="min-h-screen flex flex-col justify-start items-center">
-      <CheckoutForm />
-    </div>
-  );
+  const { workplaces } = useWorkplaces();
+  console.log(workplaces)
+
+  useEffect(() => {
+  }, []);
+
+  return <Layout activeTab={1} activeSubProjects={1} />;
 }
 
 export default App;
+
+

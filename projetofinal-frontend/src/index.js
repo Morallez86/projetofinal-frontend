@@ -9,12 +9,12 @@ import MyProfileChangePassword from "./Pages/MyProfileChangePassword";
 import MyProfileRegisterSkillInterest from "./Pages/MyProfileRegisterSkillInterest";
 import MyProfileMessage from "./Pages/MyProfileMessage";
 import AllProjectsCreateNew from "./Pages/AllProjectsCreateNew";
-import AllProjectsList from "./Pages/AllProjectsList";
 import ComponentsComponents from "./Pages/ComponentesComponents";
 import ComponentsResources from "./Pages/ComponentsResources";
 import MyProfileAboutMe from "./Pages/MyProfileAboutMe";
 import RegistrationStatusPage from "./Pages/RegistrationStatusPage";
 import ForgotPassword from "./Pages/ForgotPassword";
+import Login from "./Pages/Login"
 
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -32,12 +32,12 @@ root.render(
         />
         <Route path="/messages" element={<MyProfileMessage />} />
         <Route path="/createNewProject" element={<AllProjectsCreateNew />} />
-        <Route path="/projectsList" element={<AllProjectsList />} />
         <Route path="/components" element={<ComponentsComponents />} />
         <Route path="/resources" element={<ComponentsResources />} />
         <Route path="/aboutMe" element={<MyProfileAboutMe/>}/>
         <Route path="/registrationStatusPage/:emailToken" element={<RegistrationStatusPage />} />
         <Route path="/forgotPassword/:token" element={<ForgotPassword/>} />
+        <Route path="/login" element={<Login/>} />
       </Routes>
     </Router>
   </React.StrictMode>
