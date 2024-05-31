@@ -7,7 +7,6 @@ import { TbLockFilled } from "react-icons/tb";
 import useApiStore from "../Stores/ApiStore";
 import AddedAnimation from "../Assets/Added.json";
 import Lottie from "react-lottie";
-import { Tooltip } from "react-tooltip";
 
 function AddSkills({ openPopUpSkills, closePopUpSkills }) {
   const token = useUserStore((state) => state.token);
@@ -19,6 +18,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
   const [inputValue, setInputValue] = useState("");
   const apiUrl = useApiStore((state) => state.apiUrl);
   const [animationPlayed, setAnimationPlayed] = useState(false);
+  const [showSuccessText, setShowSuccessText] = useState(false);
 
   const skillCategoryMapping = {
     Software: 200,
@@ -122,6 +122,9 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
       console.log(newSkills);
       setUserSkills([...userSkills, ...newSkills]);
       setAnimationPlayed(true);
+      setShowSuccessText(true);
+      setSelectedSkill(null);
+      setSelectedCategory(null);
     } else if (response.status === 500) {
       console.error("Internal Server Error");
     }
@@ -140,96 +143,108 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
       >
         <Modal.Header />
         <Modal.Body>
-          <div className="text-center">
-            <h3 className="mb-5 text-lg font-bold text-gray-500 dark:text-gray-400">
+          <div className="flex flex-col items-center justify-center space-y-5 overflow-x-hidden overflow-y-hidden">
+            <h3 className="text-lg font-bold text-gray-500 dark:text-gray-400">
               Register Skill
             </h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <h4 className="mb-3">
-                  Create new skill or Choose one of the existing ones{" "}
-                </h4>
-                <div className="flex items-center">
-                  <div className="text center">
-                    <Dropdown
-                      label={selectedCategory || "Skill Category"}
-                      dismissOnClick={true}
-                      disabled={isSkillInOptions}
+            <div className="space-y-3">
+              <h4>Create new skill or Choose one of the existing ones </h4>
+              <div className="flex items-start space-x-4 min-h-[25rem] relative">
+                <div className="text center z-10">
+                  <Dropdown
+                    label={selectedCategory || "Skill Category"}
+                    dismissOnClick={true}
+                    disabled={isSkillInOptions}
+                    value={selectedCategory}
+                  >
+                    <Dropdown.Item
+                      onClick={() => handleCategoryChange("Software")}
                     >
-                      <Dropdown.Item
-                        onClick={() => handleCategoryChange("Software")}
-                      >
-                        Software
-                      </Dropdown.Item>
-                      <Dropdown.Item
-                        onClick={() => handleCategoryChange("Knowledge")}
-                      >
-                        Knowledge
-                      </Dropdown.Item>
-                      <Dropdown.Item
-                        onClick={() => handleCategoryChange("Hardware")}
-                      >
-                        Hardware
-                      </Dropdown.Item>
-                      <Dropdown.Item
-                        onClick={() => handleCategoryChange("Tools")}
-                      >
-                        Tools
-                      </Dropdown.Item>
-                    </Dropdown>
-                    <CreatableSelect
-                      options={options}
-                      className="mt-3"
-                      onChange={handleSelectChange}
-                      onInputChange={handleInputChange}
-                      isOptionDisabled={(option) =>
-                        option.isDisabled || inputValue.length > 20
-                      }
-                      formatOptionLabel={(option) => (
-                        <div>
-                          {option.label}
-                          {option.isDisabled ? <TbLockFilled /> : null}
-                        </div>
-                      )}
-                    />
-                  </div>
+                      Software
+                    </Dropdown.Item>
+                    <Dropdown.Item
+                      onClick={() => handleCategoryChange("Knowledge")}
+                    >
+                      Knowledge
+                    </Dropdown.Item>
+                    <Dropdown.Item
+                      onClick={() => handleCategoryChange("Hardware")}
+                    >
+                      Hardware
+                    </Dropdown.Item>
+                    <Dropdown.Item
+                      onClick={() => handleCategoryChange("Tools")}
+                    >
+                      Tools
+                    </Dropdown.Item>
+                  </Dropdown>
+                </div>
+                <div className="text center z-10">
+                  <CreatableSelect
+                    options={options}
+                    onChange={handleSelectChange}
+                    onInputChange={handleInputChange}
+                    isOptionDisabled={(option) =>
+                      option.isDisabled || inputValue.length > 20
+                    }
+                    formatOptionLabel={(option) => (
+                      <div>
+                        {option.label}
+                        {option.isDisabled ? <TbLockFilled /> : null}
+                      </div>
+                    )}
+                    placeholder="Select/write skill name"
+                    value={selectedSkill}
+                  />
                 </div>
                 <div
                   id="icon-element"
+                  className="pointer-events-none flex items-center justify-center h-full absolute"
                   style={{
-                    display:
-                      selectedSkill && selectedCategory ? "block" : "none",
-                  }}
-                  onClick={() => {
-                    if (selectedSkill && selectedCategory) {
-                      handleSubmit();
-                      setAnimationPlayed(true);
-                    }
+                    zIndex: 1,
+                    left: 0,
+                    right: 0,
+                    marginLeft: "auto",
+                    marginRight: "auto",
                   }}
                 >
-                  <Lottie
-                    options={defaultOptions}
-                    height={400}
-                    width={400}
-                    isStopped={!animationPlayed}
-                    isPaused={!animationPlayed}
-                    eventListeners={[
-                      {
-                        eventName: "complete",
-                        callback: () => setAnimationPlayed(false),
-                      },
-                    ]}
-                  />
+                  <div
+                    style={{
+                      transform: "scale(3.5)",
+                    }}
+                  >
+                    <Lottie
+                      options={defaultOptions}
+                      height={200}
+                      width={200}
+                      isStopped={!animationPlayed}
+                      isPaused={!animationPlayed}
+                      eventListeners={[
+                        {
+                          eventName: "complete",
+                          callback: () => {
+                            setAnimationPlayed(false);
+
+                            setTimeout(() => setShowSuccessText(false), 500);
+                          },
+                        },
+                      ]}
+                    />
+                  </div>
+                  {showSuccessText && (
+                    <div className="animate-pulse text-green-500 font-bold absolute bottom-0">
+                      Added with success
+                    </div>
+                  )}
                 </div>
-                <Tooltip
-                  anchorSelect="#icon-element"
-                  content={
-                    selectedSkill && selectedCategory
-                      ? "Click to add this new skill to your profile"
-                      : "Please select a skill and category first."
-                  }
-                  place="top"
-                />
+              </div>
+              <div className="flex justify-center mt-4">
+                <Button
+                  onClick={handleSubmit}
+                  disabled={!selectedSkill || !selectedCategory}
+                >
+                  Add Skill
+                </Button>
               </div>
             </div>
           </div>

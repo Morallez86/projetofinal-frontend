@@ -18,6 +18,7 @@ function AddInterests({ openPopUpInterests, closePopUpInterests }) {
   const [inputValue, setInputValue] = useState("");
   const apiUrl = useApiStore((state) => state.apiUrl);
   const [animationPlayed, setAnimationPlayed] = useState(false);
+  const [showSuccessText, setShowSuccessText] = useState(false);
 
   const defaultOptions = {
     loop: false,
@@ -92,8 +93,13 @@ function AddInterests({ openPopUpInterests, closePopUpInterests }) {
     );
     if (response.status === 201) {
       console.log("Interest added successfully");
+      const newInterests = await response.json();
+      console.log(newInterests);
+      setUserInterests([...userInterests, ...newInterests]);
       setAnimationPlayed(true);
-      setUserInterests([...userInterests, data[0]]);
+      setShowSuccessText(true);
+
+      setSelectedInterest(null);
     } else if (response.status === 500) {
       console.error("Internal Server Error");
     }
@@ -112,65 +118,77 @@ function AddInterests({ openPopUpInterests, closePopUpInterests }) {
       >
         <Modal.Header />
         <Modal.Body>
-          <div className="text-center">
+          <div className="flex flex-col items-center justify-center space-y-5 overflow-x-hidden overflow-y-hidden">
+            {" "}
             <h3 className="mb-5 text-lg font-bold text-gray-500 dark:text-gray-400">
               Register Interest
             </h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <h4 className="mb-3">
-                  Create new interest or Choose one of the existing ones{" "}
-                </h4>
-                <div className="flex items-center">
-                  <div className="text center">
-                    <CreatableSelect
-                      options={options}
-                      className="mt-3"
-                      onChange={handleSelectChange}
-                      onInputChange={handleInputChange}
-                      isOptionDisabled={(option) =>
-                        option.isDisabled || inputValue.length > 20
-                      }
-                      formatOptionLabel={(option) => (
-                        <div>
-                          {option.label}
-                          {option.isDisabled ? <TbLockFilled /> : null}
-                        </div>
-                      )}
-                    />
-                  </div>
+            <div className="space-y-3">
+              <h4>Create new interest or Choose one of the existing ones </h4>
+              <div className="flex items-start space-x-4 min-h-[25rem] relative">
+                <div className="text center z-10">
+                  <CreatableSelect
+                    options={options}
+                    className="mt-3"
+                    onChange={handleSelectChange}
+                    onInputChange={handleInputChange}
+                    isOptionDisabled={(option) =>
+                      option.isDisabled || inputValue.length > 20
+                    }
+                    formatOptionLabel={(option) => (
+                      <div>
+                        {option.label}
+                        {option.isDisabled ? <TbLockFilled /> : null}
+                      </div>
+                    )}
+                    placeholder="Select/Write interest name"
+                    value={selectedInterest}
+                  />
                 </div>
                 <div
                   id="icon-element"
+                  className="pointer-events-none flex items-center justify-center h-full absolute"
                   style={{
-                    display: selectedInterest ? "block" : "none",
-                  }}
-                  onClick={() => {
-                    if (selectedInterest) {
-                      handleSubmit();
-                      setAnimationPlayed(true);
-                    }
+                    zIndex: 1,
+                    left: 0,
+                    right: 0,
+                    marginLeft: "auto",
+                    marginRight: "auto",
                   }}
                 >
-                  <Lottie
-                    options={defaultOptions}
-                    height={400}
-                    width={400}
-                    isStopped={!animationPlayed}
-                    isPaused={!animationPlayed}
-                    eventListeners={[
-                      {
-                        eventName: "complete",
-                        callback: () => setAnimationPlayed(false),
-                      },
-                    ]}
-                  />
+                  <div
+                    style={{
+                      transform: "scale(3.5)",
+                    }}
+                  >
+                    <Lottie
+                      options={defaultOptions}
+                      height={200}
+                      width={200}
+                      isStopped={!animationPlayed}
+                      isPaused={!animationPlayed}
+                      eventListeners={[
+                        {
+                          eventName: "complete",
+                          callback: () => {
+                            setAnimationPlayed(false);
+                            setTimeout(() => setShowSuccessText(false), 500);
+                          },
+                        },
+                      ]}
+                    />
+                  </div>
+                  {showSuccessText && (
+                    <div className="animate-pulse text-green-500 font-bold absolute bottom-0">
+                      Added with success
+                    </div>
+                  )}
                 </div>
-                <Tooltip
-                  anchorSelect="#icon-element"
-                  content="Click to addd this interest to your profile"
-                  place="top"
-                />
+              </div>
+              <div className="flex justify-center mt-4">
+                <Button onClick={handleSubmit} disabled={!selectedInterest}>
+                  Add Interest
+                </Button>
               </div>
             </div>
           </div>

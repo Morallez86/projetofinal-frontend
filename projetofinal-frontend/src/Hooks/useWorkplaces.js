@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
-import { getWorkplaces } from '../Services/workplaceService';
-import useWorkplaceStore from '../Stores/WorkplaceStore';
+import { useEffect } from "react";
+import { getWorkplaces } from "../Services/workplaceService";
+import useWorkplaceStore from "../Stores/WorkplaceStore";
 
 const useWorkplaces = () => {
   const setWorkplaces = useWorkplaceStore((state) => state.setWorkplaces);
