@@ -123,6 +123,8 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
       setUserSkills([...userSkills, ...newSkills]);
       setAnimationPlayed(true);
       setShowSuccessText(true);
+      setSelectedSkill(null);
+      setSelectedCategory(null);
     } else if (response.status === 500) {
       console.error("Internal Server Error");
     }
@@ -153,6 +155,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
                     label={selectedCategory || "Skill Category"}
                     dismissOnClick={true}
                     disabled={isSkillInOptions}
+                    value={selectedCategory}
                   >
                     <Dropdown.Item
                       onClick={() => handleCategoryChange("Software")}
@@ -191,6 +194,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
                       </div>
                     )}
                     placeholder="Select/write skill name"
+                    value={selectedSkill}
                   />
                 </div>
                 <div
