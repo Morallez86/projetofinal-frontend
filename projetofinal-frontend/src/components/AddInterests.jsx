@@ -93,9 +93,12 @@ function AddInterests({ openPopUpInterests, closePopUpInterests }) {
     );
     if (response.status === 201) {
       console.log("Interest added successfully");
+      const newInterests = await response.json();
+      console.log(newInterests);
+      setUserInterests([...userInterests, ...newInterests]);
       setAnimationPlayed(true);
       setShowSuccessText(true);
-      setUserInterests([...userInterests, data[0]]);
+
       setSelectedInterest(null);
     } else if (response.status === 500) {
       console.error("Internal Server Error");
