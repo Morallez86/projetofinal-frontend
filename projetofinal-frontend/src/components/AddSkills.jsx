@@ -7,7 +7,6 @@ import { TbLockFilled } from "react-icons/tb";
 import useApiStore from "../Stores/ApiStore";
 import AddedAnimation from "../Assets/Added.json";
 import Lottie from "react-lottie";
-import { Tooltip } from "react-tooltip";
 
 function AddSkills({ openPopUpSkills, closePopUpSkills }) {
   const token = useUserStore((state) => state.token);
@@ -123,6 +122,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
       console.log(newSkills);
       setUserSkills([...userSkills, ...newSkills]);
       setAnimationPlayed(true);
+      setShowSuccessText(true);
     } else if (response.status === 500) {
       console.error("Internal Server Error");
     }
@@ -220,8 +220,8 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
                           eventName: "complete",
                           callback: () => {
                             setAnimationPlayed(false);
-                            setShowSuccessText(true);
-                            setTimeout(() => setShowSuccessText(false), 1500);
+
+                            setTimeout(() => setShowSuccessText(false), 500);
                           },
                         },
                       ]}
