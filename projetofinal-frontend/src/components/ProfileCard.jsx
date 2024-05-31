@@ -5,14 +5,16 @@ import {
   Button,
   Textarea,
   Avatar,
+  FileInput,
+  Select,
 } from "flowbite-react";
 import useUserStore from "../Stores/UserStore";
+import useWorkplaceStore from "../Stores/WorkplaceStore";
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { LuPlusCircle } from "react-icons/lu";
 import { Tooltip } from "react-tooltip";
-import { MdOutlineRemoveCircleOutline } from "react-icons/md";
-import { MdOutlineEdit } from "react-icons/md";
+import { MdOutlineRemoveCircleOutline, MdOutlineEdit } from "react-icons/md";
 import useApiStore from '../Stores/ApiStore';
 
 function ProfileCard({
@@ -25,20 +27,36 @@ function ProfileCard({
   const token = useUserStore((state) => state.token);
   const decodedToken = jwtDecode(token);
   const userId = decodedToken.id;
+  const email = decodedToken.sub;
   const setSkills = useUserStore((state) => state.setSkills);
   const setInterests = useUserStore((state) => state.setInterests);
   const userSkills = useUserStore((state) => state.skills);
   const userInterests = useUserStore((state) => state.interests);
+  const setProfileImage = useUserStore((state) => state.setProfileImage);
+  const initialProfileImage = useUserStore((state) => state.profileImage);
+  const { workplaces } = useWorkplaceStore();
 
   const [editMode, setEditMode] = useState(false);
+  const [profileImage, setProfileImageLocal] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
   const [userInfo, setUserInfo] = useState({
     name: "",
     jobLocation: "",
     nickname: "",
+    visibility: true,
     skills: [],
     interests: [],
     biography: "",
   });
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setProfileImage(imageUrl);
+      setSelectedImage(file);
+    }
+  };
 
   useEffect(() => {
     fetchUserInfo();
@@ -49,7 +67,6 @@ function ProfileCard({
       ...prevInfo,
       skills: userSkills.map((skill) => skill.name),
     }));
-    console.log("render");
   }, [userSkills]);
 
   useEffect(() => {
@@ -57,8 +74,13 @@ function ProfileCard({
       ...prevInfo,
       interests: userInterests.map((interest) => interest.name),
     }));
-    console.log("render");
   }, [userInterests]);
+
+  useEffect(() => {
+    if (initialProfileImage) {
+      setProfileImageLocal(initialProfileImage);
+    }
+  }, [initialProfileImage]);
 
   const fetchUserInfo = async () => {
     try {
@@ -86,6 +108,7 @@ function ProfileCard({
           nickname: userInfoData.username,
           biography: userInfoData.biography,
           jobLocation: userInfoData.workplace,
+          visibility: userInfoData.visibility,
           skills: userInfoData.skills.map((skill) => skill.name),
           interests: userInfoData.interests.map((interest) => interest.name),
         });
@@ -100,36 +123,60 @@ function ProfileCard({
   };
 
   const handleSaveClick = async () => {
-    // Save the updated user info here
-    try {
-      const response = await fetch(
-        `${apiUrl}/users/profile/${userId}`,
-        {
-          method: "PUT",
-          headers: {
-            Accept: "*/*",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            firstName: userInfo.name.split(" ")[0],
-            lastName: userInfo.name.split(" ")[1],
-            username: userInfo.nickname,
-            biography: userInfo.biography,
-            workplace: userInfo.jobLocation,
-          }),
-        }
-      );
+  try {
+    if (selectedImage) {
+      console.log(email);
+      const fileInput = document.getElementById("small-file-upload");
+      const file = fileInput.files[0];
 
-      if (response.status === 200) {
-        console.log("User info updated successfully");
-        setEditMode(false);
+      const imageResponse = await fetch(`${apiUrl}/users/image`, {
+        method: "POST",
+        headers: {
+          Accept: "*/*",
+          filename: file.name,
+          email: email,
+        },
+        body: file,
+      });
+
+      if (imageResponse.status === 200) {
+        console.log("Image uploaded successfully");
       } else {
-        console.error("Error updating user info");
+        console.log("Image upload failed");
       }
-    } catch (error) {
-      console.error("Error updating user info:", error);
     }
+
+    // Update the user info
+  const response = await fetch(`${apiUrl}/users/profile/${userId}`, {
+      method: "PUT",
+      headers: {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        firstName: userInfo.name.split(" ")[0],
+        lastName: userInfo.name.split(" ")[1],
+        username: userInfo.nickname,
+        biography: userInfo.biography,
+        workplace: userInfo.jobLocation,
+        visibility: userInfo.visibility,
+      }),
+    });
+
+    if (response.status === 200) {
+      console.log("User info updated successfully");
+      setEditMode(false);
+    } else {
+      console.error("Error updating user info");
+    }
+  } catch (error) {
+    console.error("Error updating user info:", error);
+  }
+  };
+
+  const handleCancelClick = () => {
+    setEditMode(false);
   };
 
   const handleChange = (e) => {
@@ -141,11 +188,11 @@ function ProfileCard({
   };
 
   return (
-    <Card className="max-w-sm bg-transparent hover:bg-gray-200 transition-colors duration-200">
+    <Card className="bg-gray-200 transition-colors duration-200 w-1/2 h-auto">
       <div className="flex flex-col pb-10">
-        <div className="relative flex items-center justify-center">
+        <div className="relative flex items-center space-x-10 justify-center">
           <Avatar
-            img="https://byuc.wordpress.com/wp-content/uploads/2012/07/avat-2.jpg?w=640"
+            img={profileImage}
             alt="avatar"
             size="xl"
             rounded
@@ -154,80 +201,105 @@ function ProfileCard({
             className="h-6 w-6 text-black cursor-pointer absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2"
             onClick={handleEditClick}
           />
-        </div>
-        <div className="mt-4">
-          <Label htmlFor="name" value="Name" />
-          {editMode ? (
-            <TextInput
-              id="name"
-              type="text"
-              name="name"
-              value={userInfo.name}
-              onChange={handleChange}
-              className="text-sm text-gray-500 dark:text-gray-400"
+          {editMode && (
+            <FileInput
+              id="small-file-upload"
+              sizing="sm"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="mb-4"
             />
-          ) : (
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              {userInfo.name}
-            </p>
           )}
         </div>
-        <div className="mt-4">
-          <Label htmlFor="jobLocation" value="Job Location" />
-          {editMode ? (
-            <TextInput
-              id="jobLocation"
-              type="text"
-              name="jobLocation"
-              value={userInfo.jobLocation}
-              onChange={handleChange}
-              className="text-sm text-gray-500 dark:text-gray-400"
-            />
-          ) : (
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              {userInfo.jobLocation}
-            </p>
-          )}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="mt-4">
+            <Label htmlFor="name" value="Name" />
+            {editMode ? (
+              <TextInput
+                id="name"
+                type="text"
+                name="name"
+                value={userInfo.name}
+                onChange={handleChange}
+                className="text-sm text-gray-500 dark:text-gray-400"
+              />
+            ) : (
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {userInfo.name}
+              </p>
+            )}
+          </div>
+          <div className="mt-4">
+            <Label htmlFor="jobLocation" value="Job Location" />
+            {editMode ? (
+              <TextInput
+                id="jobLocation"
+                type="text"
+                name="jobLocation"
+                value={userInfo.jobLocation}
+                onChange={handleChange}
+                className="text-sm text-gray-500 dark:text-gray-400"
+              />
+            ) : (
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {userInfo.jobLocation}
+              </p>
+            )}
+          </div>
+          <div className="mt-4">
+            <Label htmlFor="nickname" value="Nickname" />
+            {editMode ? (
+              <TextInput
+                id="nickname"
+                type="text"
+                name="nickname"
+                value={userInfo.nickname}
+                onChange={handleChange}
+                className="text-sm text-gray-500 dark:text-gray-400"
+              />
+            ) : (
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {userInfo.nickname}
+              </p>
+            )}
+          </div>
+          <div className="mt-4">
+            <Label htmlFor="biography" value="Biography" />
+            {editMode ? (
+              <Textarea
+                id="biography"
+                name="biography"
+                value={userInfo.biography}
+                onChange={handleChange}
+                className="text-sm text-gray-500 dark:text-gray-400"
+                rows={2}
+              />
+            ) : (
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {userInfo.biography}
+              </p>
+            )}
+          </div>
+          <div className="mt-4">
+            <Label htmlFor="visibility" value="Visibility" />
+            {editMode ? (
+              <Select
+                id="visibility"
+                name="visibility"
+                value={userInfo.visibility.toString()} 
+                onChange={handleChange}
+                className="text-sm text-gray-500 dark:text-gray-400"
+              >
+                <option value="true">Public</option>
+                <option value="false">Private</option>
+              </Select>
+            ) : (
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {userInfo.visibility ? "Public" : "Private"} 
+              </p>
+            )}
+          </div>
         </div>
-        <div className="mt-4">
-          <Label htmlFor="nickname" value="Nickname" />
-          {editMode ? (
-            <TextInput
-              id="nickname"
-              type="text"
-              name="nickname"
-              value={userInfo.nickname}
-              onChange={handleChange}
-              className="text-sm text-gray-500 dark:text-gray-400"
-            />
-          ) : (
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              {userInfo.nickname}
-            </p>
-          )}
-        </div>
-        <div className="mt-4">
-          <Label htmlFor="biography" value="Biography" />
-          {editMode ? (
-            <Textarea
-              id="biography"
-              name="biography"
-              value={userInfo.biography}
-              onChange={handleChange}
-              className="text-sm text-gray-500 dark:text-gray-400"
-              rows={2}
-            />
-          ) : (
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-              {userInfo.biography}
-            </p>
-          )}
-        </div>
-        {editMode && (
-          <Button onClick={handleSaveClick} className="mt-4">
-            Save
-          </Button>
-        )}
         <div className="mt-4">
           <div className="flex items-center">
             <Label htmlFor="skills" value="Skills" />
@@ -299,7 +371,7 @@ function ProfileCard({
               place="top"
             />
             <Tooltip
-              anchorSelect="#con-element-remove-interest"
+              anchorSelect="#icon-element-remove-interest"
               content="Remove an interest"
               place="top"
             />
@@ -310,23 +382,31 @@ function ProfileCard({
                 ? userInfo.interests.slice(-5).join(", ")
                 : ""}
             </p>
-            {Array.isArray(userInfo.interests) &&
-              userInfo.interests.length > 5 && (
-                <div id="tip-all-interests">
-                  <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
-                    {`+${userInfo.interests.length - 5}`}
-                  </button>
-                  <Tooltip
-                    anchorSelect="#tip-all-interests"
-                    content="Check all interests"
-                    place="top"
-                  />
-                </div>
-              )}
+            {Array.isArray(userInfo.interests) && userInfo.interests.length > 5 && (
+              <div id="tip-all-interests">
+                <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+                  {`+${userInfo.interests.length - 5}`}
+                </button>
+                <Tooltip
+                  anchorSelect="#tip-all-interests"
+                  content="Check all interests"
+                  place="top"
+                />
+              </div>
+            )}
           </div>
         </div>
+        {editMode && (
+          <div className="flex justify-end mt-4">
+            <Button onClick={handleCancelClick} className="mr-2">
+              Cancel
+            </Button>
+            <Button onClick={handleSaveClick}>Save</Button>
+          </div>
+        )}
       </div>
     </Card>
   );
 }
+
 export default ProfileCard;
