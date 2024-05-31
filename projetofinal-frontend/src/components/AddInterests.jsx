@@ -96,6 +96,7 @@ function AddInterests({ openPopUpInterests, closePopUpInterests }) {
       setAnimationPlayed(true);
       setShowSuccessText(true);
       setUserInterests([...userInterests, data[0]]);
+      setSelectedInterest(null);
     } else if (response.status === 500) {
       console.error("Internal Server Error");
     }
@@ -137,6 +138,8 @@ function AddInterests({ openPopUpInterests, closePopUpInterests }) {
                         {option.isDisabled ? <TbLockFilled /> : null}
                       </div>
                     )}
+                    placeholder="Select/Write interest name"
+                    value={selectedInterest}
                   />
                 </div>
                 <div
