@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { ImProfile } from "react-icons/im";
 import { AiOutlineFundProjectionScreen } from "react-icons/ai";
 import { GrResources } from "react-icons/gr";
@@ -29,19 +29,22 @@ function Layout({
 }) {
   const navigate = useNavigate();
   const apiUrl = useApiStore((state) => state.apiUrl);
-  const { token, setToken } = useUserStore();
-  const [profileImage, setProfileImage] = useState(null);
-  
+  const { token, setToken, profileImage, setProfileImage, clearProfileImage } = useUserStore();
+
   let userId, username;
   if (token) {
-    const decodedToken = jwtDecode(token);
-    userId = decodedToken.id;
-    username = decodedToken.username;
+    try {
+      const decodedToken = jwtDecode(token);
+      userId = decodedToken.id;
+      username = decodedToken.username;
+    } catch (error) {
+      console.error("Invalid token", error);
+    }
   }
 
   useEffect(() => {
-    const fetchProfileImage = async () => {
-      if (token) {
+     const fetchProfileImage = async () => {
+      if (token && userId) {
         try {
           const response = await fetch(`${apiUrl}/users/${userId}/image`, {
             method: "GET",
@@ -50,7 +53,7 @@ function Layout({
               Authorization: `Bearer ${token}`,
             },
           });
-          
+
           if (response.ok) {
             const imageBlob = await response.blob();
             const imageObjectURL = URL.createObjectURL(imageBlob);
@@ -65,28 +68,37 @@ function Layout({
     };
 
     fetchProfileImage();
-  }, [apiUrl, token, userId]);
+  }, [apiUrl, token, userId, setProfileImage]);
 
   const handleLogout = async () => {
-    try {
-      const response = await fetch(`${apiUrl}/users/logout`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+    if (token) {
+      try {
+        const response = await fetch(`${apiUrl}/users/logout`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-      if (response.ok) {
-        setToken(null);
+        if (response.ok) {
+          setToken(null);
+          clearProfileImage();
+          navigate("/");
+        } else {
+          const errorText = await response.text();
+          alert(`Failed to logout: ${errorText}`);
+          setToken(null); // Clear the token even if logout fails
+          navigate("/");
+        }
+      } catch (error) {
+        console.error("Error logging out", error);
+        alert("Error logging out");
+        setToken(null); // Clear the token on error
         navigate("/");
-      } else {
-        const errorData = await response.json();
-        alert(`Failed to logout: ${errorData.message}`);
       }
-    } catch (error) {
-      console.error("Error logging out", error);
-      alert("Error logging out");
+    } else {
+      navigate("/");
     }
   };
 
@@ -271,9 +283,9 @@ function Layout({
             </div>
           )}
         </div>
-        </div>
-        <div className="flex justify-end items-start space-x-2">
-          <Avatar img={profileImage} alt="avatar" rounded />
+      </div>
+      <div className="flex justify-end items-start space-x-2">
+        <Avatar img={profileImage} alt="avatar" rounded />
         {token ? (
           <Button
             className="p-0 flex items-center justify-center bg-transparent hover:bg-orange-200 transition-colors duration-200 text-black font-bold"

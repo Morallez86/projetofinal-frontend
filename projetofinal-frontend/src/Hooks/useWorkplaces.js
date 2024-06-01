@@ -15,7 +15,6 @@ const useWorkplaces = () => {
         console.error("Error fetching workplaces:", error);
       }
     };
-
     fetchData();
   }, [setWorkplaces]);
 

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Layout from "../Components/Layout";
 import ProfileCard from "../Components/ProfileCard";
-import ProjectMyProfileTable from "../Components/ProjectMyProfileTable";
 import AddSkills from "../Components/AddSkills";
 import AddInterests from "../Components/AddInterests";
 import RemoveSkills from "../Components/RemoveSkills";
@@ -50,15 +49,13 @@ function MyProfile_AboutMe() {
   return (
     <div className="flex flex-col h-screen">
       <Layout activeTab={0} activeSubTabProfile={4} />
-      <div className="flex-grow flex p-4">
-        <div className="justify-center w-1/3 h-auto">
+      <div className="flex p-4 justify-center h-auto">
           <ProfileCard
             openPopUpSkills={openAddSkillsModal}
             openPopUpInterests={openAddInterestsModal}
             openPopUpSkillsRemove={openAddSkillsRemoveModal}
             openPopUpInterestRemove={openAddInterestRemoveModal}
           />
-        </div>
       </div>
       <div className="flex-shrink-0 p-0">
         <Footer />
