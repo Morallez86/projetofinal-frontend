@@ -7,6 +7,7 @@ import {
   Avatar,
   FileInput,
   Select,
+  Dropdown
 } from "flowbite-react";
 import useUserStore from "../Stores/UserStore";
 import useWorkplaceStore from "../Stores/WorkplaceStore";
@@ -25,16 +26,20 @@ function ProfileCard({
 }) {
   const apiUrl = useApiStore((state) => state.apiUrl);
   const token = useUserStore((state) => state.token);
-  const decodedToken = jwtDecode(token);
-  const userId = decodedToken.id;
-  const email = decodedToken.sub;
+  let userId = null;
+  let email = null;
+  if(token!==null){
+    const decodedToken = jwtDecode(token);
+    userId = decodedToken.id;
+    email = decodedToken.sub;
+  }
   const setSkills = useUserStore((state) => state.setSkills);
   const setInterests = useUserStore((state) => state.setInterests);
   const userSkills = useUserStore((state) => state.skills);
   const userInterests = useUserStore((state) => state.interests);
   const setProfileImage = useUserStore((state) => state.setProfileImage);
   const initialProfileImage = useUserStore((state) => state.profileImage);
-  const { workplaces } = useWorkplaceStore();
+  const workplaces = useWorkplaceStore((state) => state.workplaces);
 
   const [editMode, setEditMode] = useState(false);
   const [profileImage, setProfileImageLocal] = useState(null);
@@ -232,14 +237,31 @@ function ProfileCard({
           <div className="mt-4">
             <Label htmlFor="jobLocation" value="Job Location" />
             {editMode ? (
-              <TextInput
-                id="jobLocation"
-                type="text"
-                name="jobLocation"
-                value={userInfo.jobLocation}
-                onChange={handleChange}
-                className="text-sm text-gray-500 dark:text-gray-400"
-              />
+            <Dropdown
+  label={userInfo.jobLocation || "Choose a location"}
+  dismissOnClick={true}
+  onSelect={(workplace) =>
+    setUserInfo((prevInfo) => ({
+      ...prevInfo,
+      jobLocation: workplace,
+    }))
+  }
+>
+  {workplaces.map((workplace) => (
+    <Dropdown.Item
+      key={workplace.id}
+      value={workplace.name}
+      onClick={() =>
+        setUserInfo((prevInfo) => ({
+          ...prevInfo,
+          jobLocation: workplace.name,
+        }))
+      }
+    >
+      {workplace.name}
+    </Dropdown.Item>
+  ))}
+</Dropdown>
             ) : (
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 {userInfo.jobLocation}
