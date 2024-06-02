@@ -1,13 +1,13 @@
-import React from "react";
+// src/Components/ProjectMyProfileTable.js
+import React, { useState } from "react";
 import DataTable from "react-data-table-component";
-import { useState } from "react";
 import { TextInput } from "flowbite-react";
 
-function ProjectMyProfileTable() {
+function ProjectMyProfileTable({ data, onRowClick }) {
   const columns = [
     {
       name: "Project Name",
-      selector: (row) => row.title,
+      selector: (row) => row.name,
       sortable: true,
     },
     {
@@ -17,30 +17,14 @@ function ProjectMyProfileTable() {
     },
     {
       name: "Status",
-      selector: "status",
       selector: (row) => row.status,
       sortable: true,
     },
-  ];
-
-  const data = [
     {
-      id: 1,
-      title: "Project 1",
-      creation_date: "08/04/2024",
-      status: "Pending",
-    },
-    {
-      id: 2,
-      title: "Project 2",
-      creation_date: "10/08/2023",
-      status: "Finished",
-    },
-    {
-      id: 3,
-      title: "Project 3",
-      creation_date: "10/08/2022",
-      status: "Finished",
+      name: "Actions",
+      cell: (row) => (
+        <button onClick={() => onRowClick(row.id)}>View Gantt Chart</button>
+      ),
     },
   ];
 
@@ -49,7 +33,7 @@ function ProjectMyProfileTable() {
   function handleFilter(e) {
     const value = e.target.value;
     const filteredData = data.filter((record) => {
-      return record.title.toLowerCase().includes(value.toLowerCase());
+      return record.name.toLowerCase().includes(value.toLowerCase());
     });
     setRecords(filteredData);
   }
