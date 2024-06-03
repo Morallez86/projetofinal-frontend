@@ -14,7 +14,7 @@ function ProjectCard({
 }) {
   const apiUrl = useApiStore((state) => state.apiUrl);
   const projectSkills = useProjectStore((state) => state.projectSkills);
-  //const setProjectSkills = useProjectStore((state) => state.setProjectSkills);
+  const projectInterests = useProjectStore((state) => state.projectInterests); // Add projectInterests
 
   const [projectInfo, setProjectInfo] = useState({
     title: "",
@@ -34,8 +34,9 @@ function ProjectCard({
     setProjectInfo((prevInfo) => ({
       ...prevInfo,
       skills: projectSkills,
+      interests: projectInterests,
     }));
-  }, [projectSkills]);
+  }, [projectSkills, projectInterests]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -158,12 +159,24 @@ function ProjectCard({
             <Tooltip anchorSelect="#icon-element4" content="Add new interest" place="top" />
             <Tooltip anchorSelect="#icon-element-remove4" content="Remove an interest" place="top" />
           </div>
-          <div className="flex items-center text-sm font-medium text-gray-900">
-            {projectInfo.interests.map((interest, index) => (
-              <span key={index} className="inline-flex items-center rounded-md bg-gray-200 text-black px-2.5 py-0.5 mx-1">
-                {interest}
-              </span>
-            ))}
+          <div className="flex items-center text-sm font-medium text-gray-900 dark:text-gray-400">
+            <p>
+              {Array.isArray(projectInfo.interests)
+                ? projectInfo.interests.slice(0, 3).map((interest) => interest.name).join(", ")
+                : ""}
+            </p>
+            {Array.isArray(projectInfo.interests) && projectInfo.interests.length > 3 && (
+              <div id="tip-all-interests">
+                <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+                  {`+${projectInfo.interests.length - 3}`}
+                </button>
+                <Tooltip
+                  anchorSelect="#tip-all-interests"
+                  content="Check all interests"
+                  place="top"
+                />
+              </div>
+            )}
           </div>
         </div>
         {/* Save Button */}

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Button, TextInput } from "flowbite-react";
 import useUserStore from "../Stores/UserStore";
+import useProjectStore from "../Stores/ProjectStore";
 import { Checkbox, Label } from "flowbite-react";
 import useApiStore from "../Stores/ApiStore";
 import RemovedAnimation from "../Assets/Removed.json";
@@ -10,56 +11,63 @@ import { Tooltip } from "react-tooltip";
 function RemoveInterests({
   openPopUpInterestRemove,
   closePopUpInterestRemove,
+  context,
 }) {
-  const userInterests = useUserStore((state) => state.interests);
-  const token = useUserStore((state) => state.token);
-  const setInterests = useUserStore((state) => state.setInterests);
   const apiUrl = useApiStore((state) => state.apiUrl);
-  console.log(userInterests);
+  const userInterests = useUserStore((state) => state.interests);
+  const projectInterests = useProjectStore((state) => state.projectInterests);
+  const token = useUserStore((state) => state.token);
+  const setUserInterests = useUserStore((state) => state.setInterests);
+  const setProjectInterests = useProjectStore((state) => state.setProjectInterests);
 
   const [filter, setFilter] = useState("");
   const [selectedInterestIds, setSelectedInterestIds] = useState([]);
   const [animationPlayed, setAnimationPlayed] = useState(false);
   const [showSuccessText, setShowSuccessText] = useState(false);
 
-  const filteredInterest = userInterests.filter((interest) =>
+  const filteredInterests = (context === "user" ? userInterests : projectInterests).filter((interest) =>
     interest.name.toLowerCase().includes(filter.toLowerCase())
   );
 
-  const handleCheckboxChange = (interestID) => {
-    if (selectedInterestIds.includes(interestID)) {
-      setSelectedInterestIds(
-        selectedInterestIds.filter((id) => id !== interestID)
-      );
+  const handleCheckboxChange = (idOrIndex) => {
+    if (selectedInterestIds.includes(idOrIndex)) {
+      setSelectedInterestIds(selectedInterestIds.filter((id) => id !== idOrIndex));
     } else {
-      setSelectedInterestIds([...selectedInterestIds, interestID]);
+      setSelectedInterestIds([...selectedInterestIds, idOrIndex]);
     }
   };
 
   const handleRemoveInterests = async () => {
     console.log(selectedInterestIds);
-    try {
-      const response = await fetch(`${apiUrl}/interests`, {
-        method: "DELETE",
-        headers: {
-          Accept: "*/*",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(selectedInterestIds),
-      });
-      if (response.status === 204) {
-        console.log();
-        const updatedInterest = userInterests.filter(
-          (interest) => !selectedInterestIds.includes(interest.id)
-        );
-        setInterests(updatedInterest);
-        setAnimationPlayed(true);
-      } else if (response.status === 500) {
-        console.log("Internet server error");
+    if (context === "user") {
+      try {
+        const response = await fetch(`${apiUrl}/interests`, {
+          method: "DELETE",
+          headers: {
+            Accept: "*/*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(selectedInterestIds),
+        });
+        if (response.status === 204) {
+          const updatedInterests = userInterests.filter(
+            (interest) => !selectedInterestIds.includes(interest.id)
+          );
+          setUserInterests(updatedInterests);
+          setAnimationPlayed(true);
+        } else if (response.status === 500) {
+          console.log("Internet server error");
+        }
+      } catch (error) {
+        console.error("Error deleting interests:", error);
       }
-    } catch (error) {
-      console.error("Error deleting interests:", error);
+    } else {
+      const updatedProjectInterests = projectInterests.filter(
+        (_, index) => !selectedInterestIds.includes(index)
+      );
+      setProjectInterests(updatedProjectInterests);
+      setAnimationPlayed(true);
     }
   };
 
@@ -99,16 +107,14 @@ function RemoveInterests({
                   onChange={(e) => setFilter(e.target.value)}
                 />
                 <div className="flex flex-col items-start overflow-y-auto h-36 space-y-2">
-                  {filteredInterest.map((interest) => (
-                    <div key={interest.id} className="flex items-center gap-2">
+                  {filteredInterests.map((interest, index) => (
+                    <div key={context === "user" ? interest.id : index} className="flex items-center gap-2">
                       <Checkbox
-                        id={interest.id ? interest.id.toString() : ""}
-                        checked={selectedInterestIds.includes(interest.id)}
-                        onChange={() => handleCheckboxChange(interest.id)}
+                        id={context === "user" ? interest.id.toString() : index.toString()}
+                        checked={selectedInterestIds.includes(context === "user" ? interest.id : index)}
+                        onChange={() => handleCheckboxChange(context === "user" ? interest.id : index)}
                       />
-                      <Label
-                        htmlFor={interest.id ? interest.id.toString() : ""}
-                      >
+                      <Label htmlFor={context === "user" ? interest.id.toString() : index.toString()}>
                         {interest.name}
                       </Label>
                     </div>
@@ -146,7 +152,7 @@ function RemoveInterests({
                 )}
                 <Tooltip
                   anchorSelect="#icon-element"
-                  content="Click to delete this skill from your profile"
+                  content="Click to delete this interest from your profile"
                   place="top"
                 />
               </div>
