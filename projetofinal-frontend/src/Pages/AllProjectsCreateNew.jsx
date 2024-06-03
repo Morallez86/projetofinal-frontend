@@ -11,8 +11,7 @@ function AllProjectsCreateNew() {
   const [statePopUpSkills, setStatePopUpSkills] = useState(false);
   const [statePopUpInterests, setStatePopUpInterests] = useState(false);
   const [statePopUpSkillsRemove, setStatePopUpSkillsRemove] = useState(false);
-  const [statePopUpInterestRemove, setStatePopUpInterestRemove] =
-    useState(false);
+  const [statePopUpInterestRemove, setStatePopUpInterestRemove] = useState(false);
 
   function openAddSkillsModal() {
     setStatePopUpSkills(true);
@@ -50,12 +49,12 @@ function AllProjectsCreateNew() {
     <div className="flex flex-col h-screen">
       <Layout activeTab={1} activeSubTabProfile={0} />
       <div className="flex p-4 justify-center h-auto">
-          <ProjectCard
-            openPopUpSkills={openAddSkillsModal}
-            openPopUpInterests={openAddInterestsModal}
-            openPopUpSkillsRemove={openAddSkillsRemoveModal}
-            openPopUpInterestRemove={openAddInterestRemoveModal}
-          />
+        <ProjectCard
+          openPopUpSkills={openAddSkillsModal}
+          openPopUpInterests={openAddInterestsModal}
+          openPopUpSkillsRemove={openAddSkillsRemoveModal}
+          openPopUpInterestRemove={openAddInterestRemoveModal}
+        />
       </div>
       <div className="flex-shrink-0 p-0">
         <Footer />

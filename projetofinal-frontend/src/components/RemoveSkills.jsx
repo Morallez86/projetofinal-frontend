@@ -6,12 +6,16 @@ import useApiStore from "../Stores/ApiStore";
 import RemovedAnimation from "../Assets/Removed.json";
 import Lottie from "react-lottie";
 import { Tooltip } from "react-tooltip";
+import useProjectStore from "../Stores/ProjectStore";
 
-function RemoveSkills({ openPopUpSkillsRemove, closePopUpSkillsRemove }) {
+function RemoveSkills({ openPopUpSkillsRemove, closePopUpSkillsRemove, context }) {
   const apiUrl = useApiStore((state) => state.apiUrl);
   const userSkills = useUserStore((state) => state.skills);
+  const projectSkills = useProjectStore((state) => state.projectSkills);
   const token = useUserStore((state) => state.token);
-  const setSkills = useUserStore((state) => state.setSkills);
+  const setUserSkills = useUserStore((state) => state.setSkills);
+  const setProjectSkills = useProjectStore((state) => state.setProjectSkills);
+  
   const [animationPlayed, setAnimationPlayed] = useState(false);
   const [filter, setFilter] = useState("");
   const [selectedSkillIds, setSelectedSkillIds] = useState([]);
@@ -29,38 +33,49 @@ function RemoveSkills({ openPopUpSkillsRemove, closePopUpSkillsRemove }) {
     },
   };
 
-  const handleCheckboxChange = (skillId) => {
-    if (selectedSkillIds.includes(skillId)) {
-      setSelectedSkillIds(selectedSkillIds.filter((id) => id !== skillId));
+  const handleCheckboxChange = (idOrIndex) => {
+    if (selectedSkillIds.includes(idOrIndex)) {
+      setSelectedSkillIds(selectedSkillIds.filter((id) => id !== idOrIndex));
     } else {
-      setSelectedSkillIds([...selectedSkillIds, skillId]);
+      setSelectedSkillIds([...selectedSkillIds, idOrIndex]);
     }
   };
 
   const handleRemoveSkills = async () => {
     console.log(selectedSkillIds);
-    try {
-      const response = await fetch(`${apiUrl}/skills`, {
-        method: "DELETE",
-        headers: {
-          Accept: "*/*",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(selectedSkillIds),
-      });
-      if (response.status === 204) {
-        console.log();
-        const updatedSkills = userSkills.filter(
-          (skill) => !selectedSkillIds.includes(skill.id)
-        );
-        setSkills(updatedSkills);
-        setAnimationPlayed(true);
-      } else if (response.status === 500) {
-        console.log("Internet server error");
+    if (context === "user") {
+      try {
+        const response = await fetch(`${apiUrl}/skills`, {
+          method: "DELETE",
+          headers: {
+            Accept: "*/*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(selectedSkillIds),
+        });
+        if (response.status === 204) {
+          console.log();
+          if (context === "user") {
+            const updatedSkills = userSkills.filter(
+              (skill) => !selectedSkillIds.includes(skill.id)
+            );
+            setUserSkills(updatedSkills);
+          }
+          setAnimationPlayed(true);
+        } else if (response.status === 500) {
+          console.log("Internet server error");
+        }
+      } catch (error) {
+        console.error("Error deleting skills:", error);
       }
-    } catch (error) {
-      console.error("Error deleting skills:", error);
+    } else {
+      // If context is not for users, save project skills to Zustand store
+      const updatedProjectSkills = projectSkills.filter(
+        (_, index) => !selectedSkillIds.includes(index)
+      );
+      setProjectSkills(updatedProjectSkills);
+      setAnimationPlayed(true);
     }
   };
 
@@ -91,18 +106,31 @@ function RemoveSkills({ openPopUpSkillsRemove, closePopUpSkillsRemove }) {
                   onChange={(e) => setFilter(e.target.value)}
                 />
                 <div className="flex flex-col items-start overflow-y-auto h-36 space-y-2">
-                  {filteredSkills.map((skill) => (
-                    <div key={skill.id} className="flex items-center gap-2">
-                      <Checkbox
-                        id={skill.id ? skill.id.toString() : ""}
-                        checked={selectedSkillIds.includes(skill.id)}
-                        onChange={() => handleCheckboxChange(skill.id)}
-                      />
-                      <Label htmlFor={skill.id ? skill.id.toString() : ""}>
-                        {skill.name}
-                      </Label>
-                    </div>
-                  ))}
+                  {context === "user"
+                    ? filteredSkills.map((skill) => (
+                        <div key={skill.id} className="flex items-center gap-2">
+                          <Checkbox
+                            id={skill.id ? skill.id.toString() : ""}
+                            checked={selectedSkillIds.includes(skill.id)}
+                            onChange={() => handleCheckboxChange(skill.id)}
+                          />
+                          <Label htmlFor={skill.id ? skill.id.toString() : ""}>
+                            {skill.name}
+                          </Label>
+                        </div>
+                      ))
+                    : projectSkills.map((skill, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <Checkbox
+                            id={index.toString()}
+                            checked={selectedSkillIds.includes(index)}
+                            onChange={() => handleCheckboxChange(index)}
+                          />
+                          <Label htmlFor={index.toString()}>
+                            {skill.name}
+                          </Label>
+                        </div>
+                      ))}
                 </div>
                 <Button onClick={handleRemoveSkills}>
                   Remove selected skills

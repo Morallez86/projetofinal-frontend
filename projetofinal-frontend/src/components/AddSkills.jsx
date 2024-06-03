@@ -1,22 +1,25 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Dropdown, Modal, Button } from "flowbite-react";
 import CreatableSelect from "react-select/creatable";
-import { useState, useEffect } from "react";
 import useUserStore from "../Stores/UserStore";
+import useProjectStore from "../Stores/ProjectStore.js";
 import { TbLockFilled } from "react-icons/tb";
 import useApiStore from "../Stores/ApiStore";
 import AddedAnimation from "../Assets/Added.json";
 import Lottie from "react-lottie";
 
-function AddSkills({ openPopUpSkills, closePopUpSkills }) {
+function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
   const token = useUserStore((state) => state.token);
+  const apiUrl = useApiStore((state) => state.apiUrl);
+  const userSkills = useUserStore((state) => state.skills);
+  const setUserSkills = useUserStore((state) => state.setSkills);
+  const projectSkills = useProjectStore((state) => state.projectSkills);
+  const setProjectSkills = useProjectStore((state) => state.setProjectSkills);
+  
   const [skills, setSkills] = useState([]);
   const [selectedSkill, setSelectedSkill] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
-  const userSkills = useUserStore((state) => state.skills);
-  const setUserSkills = useUserStore((state) => state.setSkills);
   const [inputValue, setInputValue] = useState("");
-  const apiUrl = useApiStore((state) => state.apiUrl);
   const [animationPlayed, setAnimationPlayed] = useState(false);
   const [showSuccessText, setShowSuccessText] = useState(false);
 
@@ -27,42 +30,43 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
     Tools: 400,
   };
 
+  useEffect(() => {
+    const getAllSkills = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/skills`, {
+          method: "GET",
+          headers: {
+            Accept: "*/*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.status === 200) {
+          const data = await response.json();
+          setSkills(data);
+        } else if (response.status === 404) {
+          console.log("Skills not found");
+        }
+      } catch (error) {
+        console.error("Error fetching skills:", error);
+      }
+    };
+
+    getAllSkills();
+  }, [apiUrl, token]);
+
   const handleInputChange = (value) => {
     setInputValue(value);
-  };
-
-  useEffect(() => {
-    getAllSkills();
-  }, []);
-
-  const getAllSkills = async () => {
-    try {
-      const response = await fetch(`${apiUrl}/skills`, {
-        method: "GET",
-        headers: {
-          Accept: "*/*",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.status === 200) {
-        const data = await response.json();
-        setSkills(data);
-        console.log(data);
-      } else if (response.status === 404) {
-        console.log("Skills not found");
-      }
-    } catch (error) {
-      console.error("Error fetching skills:", error);
-    }
   };
 
   const options = skills.map((skill) => ({
     value: skill.name,
     label: skill.name,
     type: skill.type,
-    isDisabled: userSkills.some((userSkill) => userSkill.name === skill.name),
+    isDisabled: context === 'user' 
+      ? userSkills.some((userSkill) => userSkill.name === skill.name)
+      : projectSkills.some((projectSkill) => projectSkill.name === skill.name),
   }));
 
   const defaultOptions = {
@@ -105,152 +109,146 @@ function AddSkills({ openPopUpSkills, closePopUpSkills }) {
       },
     ];
 
-    console.log(data);
+    if (context === "user") {
+      try {
+        const response = await fetch(`${apiUrl}/skills`, {
+          method: "POST",
+          headers: {
+            Accept: "*/*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(data),
+        });
 
-    const response = await fetch(`${apiUrl}/skills`, {
-      method: "POST",
-      headers: {
-        Accept: "*/*",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(data),
-    });
-    if (response.status === 201) {
-      const newSkills = await response.json();
-      console.log("Skill added successfully");
-      console.log(newSkills);
-      setUserSkills([...userSkills, ...newSkills]);
-      setAnimationPlayed(true);
-      setShowSuccessText(true);
-      setSelectedSkill(null);
-      setSelectedCategory(null);
-    } else if (response.status === 500) {
-      console.error("Internal Server Error");
+        if (response.status === 201) {
+          const newSkills = await response.json();
+          setUserSkills([...userSkills, ...newSkills]);
+          setAnimationPlayed(true);
+          setShowSuccessText(true);
+          setSelectedSkill(null);
+          setSelectedCategory(null);
+      } else if (response.status === 500) {
+        console.error("Internal Server Error");
+      }
+    } catch (error) {
+      console.error("Error adding skill:", error);
     }
+  } else {
+    // If context is not for users, save project skills to Zustand store
+    setProjectSkills([...projectSkills, ...data]);
+    setAnimationPlayed(true);
+    setShowSuccessText(true);
+    setSelectedSkill(null);
+    setSelectedCategory(null);  
+  }
   };
+    
+    
 
   return (
-    <>
-      <Modal
-        show={openPopUpSkills}
-        size="xl"
-        onClose={() => {
-          closePopUpSkills();
-          setSelectedSkill(null);
-        }}
-        popup
-      >
-        <Modal.Header />
-        <Modal.Body>
-          <div className="flex flex-col items-center justify-center space-y-5 overflow-x-hidden overflow-y-hidden">
-            <h3 className="text-lg font-bold text-gray-500 dark:text-gray-400">
-              Register Skill
-            </h3>
-            <div className="space-y-3">
-              <h4>Create new skill or Choose one of the existing ones </h4>
-              <div className="flex items-start space-x-4 min-h-[25rem] relative">
-                <div className="text center z-10">
-                  <Dropdown
-                    label={selectedCategory || "Skill Category"}
-                    dismissOnClick={true}
-                    disabled={isSkillInOptions}
-                    value={selectedCategory}
-                  >
-                    <Dropdown.Item
-                      onClick={() => handleCategoryChange("Software")}
-                    >
-                      Software
-                    </Dropdown.Item>
-                    <Dropdown.Item
-                      onClick={() => handleCategoryChange("Knowledge")}
-                    >
-                      Knowledge
-                    </Dropdown.Item>
-                    <Dropdown.Item
-                      onClick={() => handleCategoryChange("Hardware")}
-                    >
-                      Hardware
-                    </Dropdown.Item>
-                    <Dropdown.Item
-                      onClick={() => handleCategoryChange("Tools")}
-                    >
-                      Tools
-                    </Dropdown.Item>
-                  </Dropdown>
-                </div>
-                <div className="text center z-10">
-                  <CreatableSelect
-                    options={options}
-                    onChange={handleSelectChange}
-                    onInputChange={handleInputChange}
-                    isOptionDisabled={(option) =>
-                      option.isDisabled || inputValue.length > 20
-                    }
-                    formatOptionLabel={(option) => (
-                      <div>
-                        {option.label}
-                        {option.isDisabled ? <TbLockFilled /> : null}
-                      </div>
-                    )}
-                    placeholder="Select/write skill name"
-                    value={selectedSkill}
-                  />
-                </div>
-                <div
-                  id="icon-element"
-                  className="pointer-events-none flex items-center justify-center h-full absolute"
-                  style={{
-                    zIndex: 1,
-                    left: 0,
-                    right: 0,
-                    marginLeft: "auto",
-                    marginRight: "auto",
-                  }}
+    <Modal
+      show={openPopUpSkills}
+      size="xl"
+      onClose={() => {
+        closePopUpSkills();
+        setSelectedSkill(null);
+        setSelectedCategory(null);
+      }}
+      popup
+    >
+      <Modal.Header />
+      <Modal.Body>
+        <div className="flex flex-col items-center justify-center space-y-5 overflow-x-hidden overflow-y-hidden">
+          <h3 className="text-lg font-bold text-gray-500 dark:text-gray-400">
+            Register Skill
+          </h3>
+          <div className="space-y-3">
+            <h4>Create new skill or Choose one of the existing ones </h4>
+            <div className="flex items-start space-x-4 min-h-[25rem] relative">
+              <div className="text center z-10">
+                <Dropdown
+                  label={selectedCategory || "Skill Category"}
+                  dismissOnClick={true}
+                  disabled={isSkillInOptions}
+                  value={selectedCategory}
                 >
-                  <div
-                    style={{
-                      transform: "scale(3.5)",
-                    }}
-                  >
-                    <Lottie
-                      options={defaultOptions}
-                      height={200}
-                      width={200}
-                      isStopped={!animationPlayed}
-                      isPaused={!animationPlayed}
-                      eventListeners={[
-                        {
-                          eventName: "complete",
-                          callback: () => {
-                            setAnimationPlayed(false);
-
-                            setTimeout(() => setShowSuccessText(false), 500);
-                          },
-                        },
-                      ]}
-                    />
-                  </div>
-                  {showSuccessText && (
-                    <div className="animate-pulse text-green-500 font-bold absolute bottom-0">
-                      Added with success
+                  {Object.keys(skillCategoryMapping).map((category) => (
+                    <Dropdown.Item
+                      key={category}
+                      onClick={() => handleCategoryChange(category)}
+                    >
+                      {category}
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown>
+              </div>
+              <div className="text center z-10">
+                <CreatableSelect
+                  options={options}
+                  onChange={handleSelectChange}
+                  onInputChange={handleInputChange}
+                  isOptionDisabled={(option) =>
+                    option.isDisabled || inputValue.length > 20
+                  }
+                  formatOptionLabel={(option) => (
+                    <div>
+                      {option.label}
+                      {option.isDisabled ? <TbLockFilled /> : null}
                     </div>
                   )}
-                </div>
+                  placeholder="Select/write skill name"
+                  value={selectedSkill}
+                />
               </div>
-              <div className="flex justify-center mt-4">
-                <Button
-                  onClick={handleSubmit}
-                  disabled={!selectedSkill || !selectedCategory}
-                >
-                  Add Skill
-                </Button>
+              <div
+                id="icon-element"
+                className="pointer-events-none flex items-center justify-center h-full absolute"
+                style={{
+                  zIndex: 1,
+                  left: 0,
+                  right: 0,
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                }}
+              >
+                <div style={{ transform: "scale(3.5)" }}>
+                  <Lottie
+                    options={defaultOptions}
+                    height={200}
+                    width={200}
+                    isStopped={!animationPlayed}
+                    isPaused={!animationPlayed}
+                    eventListeners={[
+                      {
+                        eventName: "complete",
+                        callback: () => {
+                          setAnimationPlayed(false);
+                          setTimeout(() => setShowSuccessText(false), 500);
+                        },
+                      },
+                    ]}
+                  />
+                </div>
+                {showSuccessText && (
+                  <div className="animate-pulse text-green-500 font-bold absolute bottom-0">
+                    Added with success
+                  </div>
+                )}
               </div>
             </div>
+            <div className="flex justify-center mt-4">
+              <Button
+                onClick={handleSubmit}
+                disabled={!selectedSkill || !selectedCategory}
+              >
+                Add Skill
+              </Button>
+            </div>
           </div>
-        </Modal.Body>
-      </Modal>
-    </>
+        </div>
+      </Modal.Body>
+    </Modal>
   );
 }
 

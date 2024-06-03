@@ -63,6 +63,7 @@ function MyProfile_AboutMe() {
       <AddSkills
         openPopUpSkills={statePopUpSkills}
         closePopUpSkills={closeAddSkillsModal}
+        context={"user"}
       />
       <AddInterests
         openPopUpInterests={statePopUpInterests}
@@ -71,6 +72,7 @@ function MyProfile_AboutMe() {
       <RemoveSkills
         openPopUpSkillsRemove={statePopUpSkillsRemove}
         closePopUpSkillsRemove={closeAddSkillsRemoveModal}
+        context={"user"}
       />
       <RemoveInterests
         openPopUpInterestRemove={statePopUpInterestRemove}
