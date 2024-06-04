@@ -1,4 +1,3 @@
-// src/Components/ProjectMyProfileTable.js
 import React, { useState } from "react";
 import DataTable from "react-data-table-component";
 import { TextInput } from "flowbite-react";
@@ -23,7 +22,12 @@ function ProjectMyProfileTable({ data, onRowClick }) {
     {
       name: "Actions",
       cell: (row) => (
-        <button onClick={() => onRowClick(row.id)}>View Gantt Chart</button>
+        <button
+          onClick={() => onRowClick(row.id)}
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200"
+        >
+          View Gantt Chart
+        </button>
       ),
     },
   ];
@@ -39,21 +43,48 @@ function ProjectMyProfileTable({ data, onRowClick }) {
   }
 
   return (
-    <div>
-      <div>
+    <div className="p-6 bg-white rounded-lg shadow-lg">
+      <div className="mb-6 flex justify-between items-center">
+        <h2 className="text-2xl font-semibold">My Projects</h2>
         <TextInput
           placeholder="Search by name..."
           onChange={handleFilter}
-          style={{ width: "20%" }}
+          className="w-full sm:w-1/3 lg:w-1/4"
         />
       </div>
       <DataTable
-        title="My Projects"
         columns={columns}
         data={records}
         fixedHeader
         pagination
         responsive
+        customStyles={{
+          header: {
+            style: {
+              minHeight: '56px',
+            },
+          },
+          headRow: {
+            style: {
+              backgroundColor: '#f3f4f6',
+            },
+          },
+          rows: {
+            style: {
+              minHeight: '56px',
+              '&:not(:last-of-type)': {
+                borderBottomWidth: '1px',
+                borderBottomColor: '#e5e7eb',
+              },
+            },
+          },
+          pagination: {
+            style: {
+              borderTopWidth: '1px',
+              borderTopColor: '#e5e7eb',
+            },
+          },
+        }}
       />
     </div>
   );

@@ -18,7 +18,9 @@ function MyProfileMyProjects() {
   return (
     <div className="flex flex-col min-h-screen">
       <Layout activeTab={0} activeSubTabProfile={0}/>
-      <ProjectMyProfileTable data={projects} onRowClick={handleRowClick} />
+      <div className="p-14">
+      <ProjectMyProfileTable data={projects} onRowClick={handleRowClick}  />
+      </div>
     </div>
   );
 }
