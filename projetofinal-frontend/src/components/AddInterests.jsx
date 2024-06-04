@@ -17,6 +17,7 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
   
   const projectInterests = useProjectStore((state) => state.projectInterests);
   const setProjectInterests = useProjectStore((state) => state.setProjectInterests);
+  console.log(projectInterests);
   
   const [interests, setInterests] = useState([]);
   const [selectedInterest, setSelectedInterest] = useState(null);
@@ -66,6 +67,7 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
   const options = interests.map((interest) => ({
     value: interest.name,
     label: interest.name,
+    id: interest.id,
     isDisabled: context === 'user' 
       ? userInterests.some((userInterest) => userInterest.name === interest.name)
       : projectInterests.some((projectInterest) => projectInterest.name === interest.name),
@@ -76,7 +78,12 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
   };
 
   const handleSubmit = async () => {
-    const data = [{ name: selectedInterest.value }];
+    const data = [
+      { 
+        id: selectedInterest.id || null,
+        name: selectedInterest.value
+      }
+    ];
 
     if (context === "user") {
       try {

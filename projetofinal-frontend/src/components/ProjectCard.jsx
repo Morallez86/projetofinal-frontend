@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Card, TextInput, Label, Button, Select, Textarea } from "flowbite-react";
 import { Tooltip } from "react-tooltip";
-import useApiStore from "../Stores/ApiStore";
-import useProjectStore from "../Stores/ProjectStore";
+import useProjectInfo from "../Hooks/useProjectInfo";
+import { createProject } from "../Services/projectService";
 import { LuPlusCircle } from "react-icons/lu";
 import { MdOutlineRemoveCircleOutline } from "react-icons/md";
 
@@ -12,60 +12,12 @@ function ProjectCard({
   openPopUpSkillsRemove,
   openPopUpInterestRemove
 }) {
-  const apiUrl = useApiStore((state) => state.apiUrl);
-  const projectSkills = useProjectStore((state) => state.projectSkills);
-  const projectInterests = useProjectStore((state) => state.projectInterests); // Add projectInterests
-
-  const [projectInfo, setProjectInfo] = useState({
-    title: "",
-    description: "",
-    motivation: "",
-    status: "",
-    maxUsers: 0,
-    startingDate: "",
-    plannedEndDate: "",
-    components: [],
-    resources: [],
-    interests: [],
-    skills: [],
-  });
-
-  useEffect(() => {
-    setProjectInfo((prevInfo) => ({
-      ...prevInfo,
-      skills: projectSkills,
-      interests: projectInterests,
-    }));
-  }, [projectSkills, projectInterests]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setProjectInfo((prevInfo) => ({
-      ...prevInfo,
-      [name]: value,
-    }));
-  };
-
-  const handleDropdownChange = (name, value) => {
-    setProjectInfo((prevInfo) => ({
-      ...prevInfo,
-      [name]: value,
-    }));
-  };
+  const { projectInfo, handleChange, handleDropdownChange } = useProjectInfo();
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch(`${apiUrl}/projects`, {
-        method: "POST",
-        headers: {
-          Accept: "*/*",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(projectInfo),
-      });
-
-      if (response.status === 201) {
-        const newProject = await response.json();
+      const newProject = await createProject(projectInfo);
+      if (newProject) {
         console.log("Project created successfully");
         openPopUpSkills(newProject.id);
       } else {

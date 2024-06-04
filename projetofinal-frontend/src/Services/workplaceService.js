@@ -1,6 +1,6 @@
 import useApiStore from '../Stores/ApiStore';
 
-const apiUrl = useApiStore.getState().apiUrl;  // Accessing state directly
+const apiUrl = useApiStore.getState().apiUrl;
 
 export const getWorkplaces = async () => {
   try {

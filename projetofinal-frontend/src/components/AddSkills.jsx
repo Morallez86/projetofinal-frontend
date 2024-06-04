@@ -15,13 +15,14 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
   const setUserSkills = useUserStore((state) => state.setSkills);
   const projectSkills = useProjectStore((state) => state.projectSkills);
   const setProjectSkills = useProjectStore((state) => state.setProjectSkills);
-  
+
   const [skills, setSkills] = useState([]);
   const [selectedSkill, setSelectedSkill] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [animationPlayed, setAnimationPlayed] = useState(false);
   const [showSuccessText, setShowSuccessText] = useState(false);
+
 
   const skillCategoryMapping = {
     Software: 200,
@@ -64,6 +65,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
     value: skill.name,
     label: skill.name,
     type: skill.type,
+    id: skill.id,
     isDisabled: context === 'user' 
       ? userSkills.some((userSkill) => userSkill.name === skill.name)
       : projectSkills.some((projectSkill) => projectSkill.name === skill.name),
@@ -104,6 +106,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
   const handleSubmit = async () => {
     const data = [
       {
+        id: isSkillInOptions ? selectedSkill.id : null,
         name: selectedSkill.value,
         type: skillCategoryMapping[selectedCategory],
       },
@@ -128,23 +131,21 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
           setShowSuccessText(true);
           setSelectedSkill(null);
           setSelectedCategory(null);
-      } else if (response.status === 500) {
-        console.error("Internal Server Error");
+        } else if (response.status === 500) {
+          console.error("Internal Server Error");
+        }
+      } catch (error) {
+        console.error("Error adding skill:", error);
       }
-    } catch (error) {
-      console.error("Error adding skill:", error);
+    } else {
+      // If context is not for users, save project skills to Zustand store
+      setProjectSkills([...projectSkills, ...data]);
+      setAnimationPlayed(true);
+      setShowSuccessText(true);
+      setSelectedSkill(null);
+      setSelectedCategory(null);
     }
-  } else {
-    // If context is not for users, save project skills to Zustand store
-    setProjectSkills([...projectSkills, ...data]);
-    setAnimationPlayed(true);
-    setShowSuccessText(true);
-    setSelectedSkill(null);
-    setSelectedCategory(null);  
-  }
   };
-    
-    
 
   return (
     <Modal
