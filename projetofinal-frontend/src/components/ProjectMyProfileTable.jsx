@@ -5,18 +5,43 @@ import { TextInput } from "flowbite-react";
 function ProjectMyProfileTable({ data, onRowClick }) {
   const columns = [
     {
-      name: "Project Name",
-      selector: (row) => row.name,
-      sortable: true,
-    },
-    {
-      name: "Date",
-      selector: (row) => row.creation_date,
+      name: "Title",
+      selector: (row) => row.title,
       sortable: true,
     },
     {
       name: "Status",
       selector: (row) => row.status,
+      sortable: true,
+    },
+    {
+      name: "Approved",
+      selector: (row) => (row.approved ? "Yes" : "No"),
+      sortable: true,
+    },
+    {
+      name: "Creation Date",
+      selector: (row) => row.creationDate,
+      sortable: true,
+    },
+    {
+      name: "Approved Date",
+      selector: (row) => row.approvedDate || "N/A",
+      sortable: true,
+    },
+    {
+      name: "Starting Date",
+      selector: (row) => row.startingDate || "N/A",
+      sortable: true,
+    },
+    {
+      name: "Planned End Date",
+      selector: (row) => row.plannedEndDate || "N/A",
+      sortable: true,
+    },
+    {
+      name: "End Date",
+      selector: (row) => row.endDate || "N/A",
       sortable: true,
     },
     {
@@ -37,7 +62,7 @@ function ProjectMyProfileTable({ data, onRowClick }) {
   function handleFilter(e) {
     const value = e.target.value;
     const filteredData = data.filter((record) => {
-      return record.name.toLowerCase().includes(value.toLowerCase());
+      return record.title.toLowerCase().includes(value.toLowerCase());
     });
     setRecords(filteredData);
   }
@@ -47,7 +72,7 @@ function ProjectMyProfileTable({ data, onRowClick }) {
       <div className="mb-6 flex justify-between items-center">
         <h2 className="text-2xl font-semibold">My Projects</h2>
         <TextInput
-          placeholder="Search by name..."
+          placeholder="Search by title..."
           onChange={handleFilter}
           className="w-full sm:w-1/3 lg:w-1/4"
         />

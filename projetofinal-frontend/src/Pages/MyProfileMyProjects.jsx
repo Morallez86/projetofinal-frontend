@@ -7,8 +7,28 @@ import ProjectMyProfileTable from "../Components/ProjectMyProfileTable";
 function MyProfileMyProjects() {
   const navigate = useNavigate();
   const projects = [
-    { id: 1, name: "Project 1", creation_date: "08/04/2024", status: "Pending" },
-    { id: 2, name: "Project 2", creation_date: "10/08/2023", status: "Finished" },
+    {
+      id: 1,
+      title: "Project 1",
+      status: "Pending",
+      approved: false,
+      creationDate: "2024-08-04",
+      approvedDate: null,
+      startingDate: null,
+      plannedEndDate: "2024-12-31",
+      endDate: null,
+    },
+    {
+      id: 2,
+      title: "Project 2",
+      status: "Finished",
+      approved: true,
+      creationDate: "2023-10-08",
+      approvedDate: "2023-11-01",
+      startingDate: "2023-11-05",
+      plannedEndDate: "2024-01-31",
+      endDate: "2024-01-30",
+    },
   ];
 
   const handleRowClick = (projectId) => {

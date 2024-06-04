@@ -86,14 +86,10 @@ function Layout({
           clearProfileImage();
           navigate("/");
         } else {
-          const errorText = await response.text();
-          alert(`Failed to logout: ${errorText}`);
           setToken(null); // Clear the token even if logout fails
           navigate("/");
         }
       } catch (error) {
-        console.error("Error logging out", error);
-        alert("Error logging out");
         setToken(null); // Clear the token on error
         navigate("/");
       }
