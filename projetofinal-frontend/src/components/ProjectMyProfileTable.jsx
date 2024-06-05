@@ -2,16 +2,54 @@ import React, { useState } from "react";
 import DataTable from "react-data-table-component";
 import { TextInput } from "flowbite-react";
 
-function ProjectMyProfileTable({ data, onRowClick }) {
+// Helper function to convert the date array to a JS Date object
+const formatDate = (dateArray) => {
+  if (!Array.isArray(dateArray) || dateArray.length < 3) {
+    return "Invalid Date";
+  }
+  // Adjust month value as JS Date months are zero-based
+  const [year, month, day, hour = 0, minute = 0] = dateArray;
+  return new Date(year, month - 1, day, hour, minute).toLocaleDateString();
+};
+
+// Helper function to map status value to status string
+const getStatusString = (statusValue) => {
+  switch (statusValue) {
+    case 100:
+      return "PLANNING";
+    case 200:
+      return "READY";
+    case 300:
+      return "IN PROGRESS";
+    case 400:
+      return "FINISHED";
+    case 500:
+      return "CANCELLED";
+    default:
+      return "UNKNOWN";
+  }
+};
+
+function ProjectMyProfileTable({
+  data,
+  onRowClick,
+  loading,
+  pagination,
+  paginationServer,
+  paginationTotalRows,
+  onChangePage,
+  onChangeRowsPerPage,
+  rowsPerPage,
+}) {
   const columns = [
     {
-      name: "Title",
+      name: "Project Name",
       selector: (row) => row.title,
       sortable: true,
     },
     {
       name: "Status",
-      selector: (row) => row.status,
+      selector: (row) => getStatusString(row.status),
       sortable: true,
     },
     {
@@ -21,27 +59,12 @@ function ProjectMyProfileTable({ data, onRowClick }) {
     },
     {
       name: "Creation Date",
-      selector: (row) => row.creationDate,
-      sortable: true,
-    },
-    {
-      name: "Approved Date",
-      selector: (row) => row.approvedDate || "N/A",
-      sortable: true,
-    },
-    {
-      name: "Starting Date",
-      selector: (row) => row.startingDate || "N/A",
+      selector: (row) => formatDate(row.creationDate),
       sortable: true,
     },
     {
       name: "Planned End Date",
-      selector: (row) => row.plannedEndDate || "N/A",
-      sortable: true,
-    },
-    {
-      name: "End Date",
-      selector: (row) => row.endDate || "N/A",
+      selector: (row) => formatDate(row.plannedEndDate),
       sortable: true,
     },
     {
@@ -49,7 +72,7 @@ function ProjectMyProfileTable({ data, onRowClick }) {
       cell: (row) => (
         <button
           onClick={() => onRowClick(row.id)}
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-200"
+          className="text-blue-500 hover:underline"
         >
           View Gantt Chart
         </button>
@@ -57,59 +80,40 @@ function ProjectMyProfileTable({ data, onRowClick }) {
     },
   ];
 
-  const [records, setRecords] = useState(data);
+  const [filterText, setFilterText] = useState("");
 
-  function handleFilter(e) {
-    const value = e.target.value;
-    const filteredData = data.filter((record) => {
-      return record.title.toLowerCase().includes(value.toLowerCase());
-    });
-    setRecords(filteredData);
-  }
+  const filteredItems = data.filter(
+    (item) =>
+      item.title && item.title.toLowerCase().includes(filterText.toLowerCase())
+  );
+
+  const handleFilter = (e) => {
+    setFilterText(e.target.value);
+  };
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg">
       <div className="mb-6 flex justify-between items-center">
         <h2 className="text-2xl font-semibold">My Projects</h2>
         <TextInput
-          placeholder="Search by title..."
+          placeholder="Search by name..."
           onChange={handleFilter}
-          className="w-full sm:w-1/3 lg:w-1/4"
+          value={filterText}
+          className="w-1/4"
         />
       </div>
       <DataTable
         columns={columns}
-        data={records}
-        fixedHeader
-        pagination
+        data={filteredItems}
+        progressPending={loading}
+        pagination={pagination}
+        paginationServer={paginationServer}
+        paginationTotalRows={paginationTotalRows}
+        onChangePage={onChangePage}
+        onChangeRowsPerPage={onChangeRowsPerPage}
+        paginationRowsPerPageOptions={[10, 20, 30, 40, 50]}
+        paginationPerPage={rowsPerPage}
         responsive
-        customStyles={{
-          header: {
-            style: {
-              minHeight: '56px',
-            },
-          },
-          headRow: {
-            style: {
-              backgroundColor: '#f3f4f6',
-            },
-          },
-          rows: {
-            style: {
-              minHeight: '56px',
-              '&:not(:last-of-type)': {
-                borderBottomWidth: '1px',
-                borderBottomColor: '#e5e7eb',
-              },
-            },
-          },
-          pagination: {
-            style: {
-              borderTopWidth: '1px',
-              borderTopColor: '#e5e7eb',
-            },
-          },
-        }}
       />
     </div>
   );
