@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import DataTable from "react-data-table-component";
 import { TextInput } from "flowbite-react";
+import { GoProjectRoadmap } from "react-icons/go";
+import { Tooltip } from "react-tooltip";
 
 // Helper function to convert the date array to a JS Date object
 const formatDate = (dateArray) => {
@@ -41,11 +44,30 @@ function ProjectMyProfileTable({
   onChangeRowsPerPage,
   rowsPerPage,
 }) {
+  const navigate = useNavigate();
+
   const columns = [
     {
       name: "Project Name",
       selector: (row) => row.title,
       sortable: true,
+      cell: (row) => (
+        <div className="flex justify-between items-center w-full">
+          <span>{row.title}</span>
+          <div>
+            <GoProjectRoadmap
+              id={`tip-project-details-${row.id}`}
+              className="ml-2 text-blue-500 hover:underline cursor-pointer"
+              onClick={() => navigate(`/myProjects/${row.id}`)}
+            />
+            <Tooltip
+              anchorSelect={`tip-project-details-${row.id}`}
+              content="Project Details"
+              place="top"
+            />
+          </div>
+        </div>
+      ),
     },
     {
       name: "Status",

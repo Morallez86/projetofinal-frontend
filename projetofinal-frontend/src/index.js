@@ -16,6 +16,7 @@ import RegistrationStatusPage from "./Pages/RegistrationStatusPage";
 import ForgotPassword from "./Pages/ForgotPassword";
 import Login from "./Pages/Login"
 import GanttChartPage from "./Pages/GanttChartPage";
+import ProjectDetails from "./Pages/ProjectDetails";
 
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -25,7 +26,7 @@ root.render(
     <Router>
       <Routes>
         <Route index element={<App />} />
-        <Route path="/home" element={<MyProfileMyProjects />} />
+        <Route path="/myProjects" element={<MyProfileMyProjects />} />
         <Route path="/changePassword" element={<MyProfileChangePassword />} />
         <Route path="/registerSkillInterest" element={<MyProfileRegisterSkillInterest />}/>
         <Route path="/messages" element={<MyProfileMessage />} />
@@ -36,7 +37,8 @@ root.render(
         <Route path="/registrationStatusPage/:emailToken" element={<RegistrationStatusPage />} />
         <Route path="/forgotPassword/:token" element={<ForgotPassword/>} />
         <Route path="/login" element={<Login/>} />
-        <Route path="/home/:projectId/ganttChart" element={<GanttChartPage />} />
+        <Route path="/myProjects/:projectId" element={<ProjectDetails />} />
+        <Route path="/myProjects/:projectId/ganttChart" element={<GanttChartPage />} />
       </Routes>
     </Router>
   </React.StrictMode>

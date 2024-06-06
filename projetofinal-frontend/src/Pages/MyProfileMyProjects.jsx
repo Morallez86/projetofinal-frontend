@@ -2,31 +2,20 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "../Components/Layout";
 import ProjectMyProfileTable from "../Components/ProjectMyProfileTable";
-import useApiStore from '../Stores/ApiStore';
+import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
 import { jwtDecode } from "jwt-decode";
 
-function MyProfileMyProjects() {
-  const navigate = useNavigate();
+const useProjects = (userId, page, rowsPerPage) => {
+  const apiUrl = useApiStore.getState().apiUrl;
   const token = useUserStore((state) => state.token);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const apiUrl = useApiStore.getState().apiUrl;
-  let userId
-
-  if (token) {
-        try {
-          const decodedToken = jwtDecode(token);
-          userId = decodedToken.id;
-        } catch (error) {
-          console.error("Invalid token", error);
-        }
-  }
 
   useEffect(() => {
+    if (!userId) return;
+
     const fetchProjects = async () => {
       setLoading(true);
       try {
@@ -58,8 +47,24 @@ function MyProfileMyProjects() {
     fetchProjects();
   }, [page, rowsPerPage, apiUrl, token, userId]);
 
+  return { projects, loading, totalPages };
+};
+
+function MyProfileMyProjects() {
+  const navigate = useNavigate();
+  const token = useUserStore((state) => state.token);
+  const decodedToken = token ? jwtDecode(token) : null;
+  const userId = decodedToken ? decodedToken.id : null;
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(1);
+  const { projects, loading, totalPages } = useProjects(
+    userId,
+    page,
+    rowsPerPage
+  );
+
   const handleRowClick = (projectId) => {
-    navigate(`/home/${projectId}/ganttChart`);
+    navigate(`/myProjects/${projectId}/ganttChart`);
   };
 
   return (
@@ -74,7 +79,9 @@ function MyProfileMyProjects() {
           paginationServer
           paginationTotalRows={totalPages}
           onChangePage={(newPage) => setPage(newPage)}
-          onChangeRowsPerPage={(newRowsPerPage) => setRowsPerPage(newRowsPerPage)}
+          onChangeRowsPerPage={(newRowsPerPage) =>
+            setRowsPerPage(newRowsPerPage)
+          }
           rowsPerPage={rowsPerPage}
         />
       </div>

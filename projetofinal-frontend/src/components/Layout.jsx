@@ -117,7 +117,7 @@ function Layout({
           onActiveTabChange={(value) => {
             switch (value) {
               case 0:
-                navigate("/home");
+                navigate("/myProjects");
                 break;
               case 1:
                 navigate("/createNewProject");
@@ -156,7 +156,7 @@ function Layout({
                 onActiveTabChange={(value) => {
                   switch (value) {
                     case 0:
-                      navigate("/home");
+                      navigate("/myProjects");
                       break;
                     case 1:
                       navigate("/changePassword");

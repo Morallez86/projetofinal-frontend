@@ -125,7 +125,7 @@ function LoginCard() {
         console.log(token);
         storeTokenAndRole(token);
         console.log("Successful login");
-        navigate("/home");
+        navigate("/myProjects");
       } else {
         console.log("Unexpected response status:", response.status);
       }

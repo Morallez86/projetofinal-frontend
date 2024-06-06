@@ -21,15 +21,18 @@ function App() {
     const fetchProjects = async () => {
       setLoading(true);
       try {
+        const headers = {
+          Accept: "*/*",
+          "Content-Type": "application/json",
+        };
+
+        if (token) {
+          headers.Authorization = `Bearer ${token}`;
+        }
+
         const response = await fetch(
           `${apiUrl}/projects?page=${page}&limit=${rowsPerPage}`,
-          {
-            headers: {
-              Accept: "*/*",
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          { headers }
         );
 
         if (!response.ok) {

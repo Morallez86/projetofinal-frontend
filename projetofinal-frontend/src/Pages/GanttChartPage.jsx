@@ -1,4 +1,3 @@
-// src/Pages/GanttChartPage.js
 import React from "react";
 import { useParams } from "react-router-dom";
 import Layout from "../Components/Layout";
@@ -31,7 +30,7 @@ const GanttChartPage = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-    <Layout activeTab={0} activeSubTabProfile={0}/>
+      <Layout activeTab={0} activeSubTabProfile={0} />
       <div className="gantt-container">
         <Gantt tasks={tasks} viewMode={ViewMode.Day} />
       </div>
