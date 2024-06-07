@@ -31,7 +31,6 @@ function ProjectCard({
   return (
     <Card className="bg-gray-200 transition-colors duration-200 w-3/4 h-auto mx-auto mt-10">
       <div className="grid grid-cols-3 gap-4 p-4">
-        {/* Form fields for project information */}
         <div>
           <Label htmlFor="title" value="Title" />
           <TextInput id="title" type="text" name="title" value={projectInfo.title} onChange={handleChange} />
