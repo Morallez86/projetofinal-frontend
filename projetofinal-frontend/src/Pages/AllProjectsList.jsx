@@ -4,7 +4,6 @@ import useWorkplaces from "../Hooks/useWorkplaces";
 
 function AllProjectsList() {
   const { workplaces } = useWorkplaces();
-  console.log(workplaces)
 
   useEffect(() => {
   }, []);

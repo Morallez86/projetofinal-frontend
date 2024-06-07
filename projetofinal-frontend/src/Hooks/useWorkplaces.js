@@ -7,16 +7,19 @@ const useWorkplaces = () => {
   const workplaces = useWorkplaceStore((state) => state.workplaces);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getWorkplaces();
-        setWorkplaces(data);
-      } catch (error) {
-        console.error("Error fetching workplaces:", error);
-      }
-    };
-    fetchData();
-  }, [setWorkplaces]);
+    // Only fetch workplaces if they are not already set
+    if (!workplaces || workplaces.length === 0) {
+      const fetchData = async () => {
+        try {
+          const data = await getWorkplaces();
+          setWorkplaces(data);
+        } catch (error) {
+          console.error("Error fetching workplaces:", error);
+        }
+      };
+      fetchData();
+    }
+  }, [workplaces, setWorkplaces]);
 
   return { workplaces };
 };

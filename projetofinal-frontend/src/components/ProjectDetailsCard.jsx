@@ -1,57 +1,233 @@
-import React from 'react'
+import React, { useState, useEffect } from "react";
+import {
+  Card,
+  TextInput,
+  Label,
+  Button,
+  Select,
+  Textarea,
+} from "flowbite-react";
+import { MdOutlineEdit } from "react-icons/md";
+import useApiStore from "../Stores/ApiStore";
+import useUserStore from "../Stores/UserStore";
+import { useParams } from "react-router-dom";
+import basePhoto from "../Assets/092.png";
 
-function ProjectDetailsCard({ project }) {
-  // Helper function to convert the date array to a JS Date object
-  console.log(project);
-  const formatDate = (dateArray) => {
-    if (!Array.isArray(dateArray) || dateArray.length < 3) {
-      return "Invalid Date";
-    }
-    const [year, month, day, hour = 0, minute = 0] = dateArray;
-    return new Date(year, month - 1, day, hour, minute).toLocaleDateString();
+function ProjectDetailsCard({ project, userImages }) {
+  const { projectId } = useParams();
+  const [editMode, setEditMode] = useState(false);
+  const [projectDetails, setProjectDetails] = useState({ ...project });
+  const apiUrl = useApiStore((state) => state.apiUrl);
+  const token = useUserStore((state) => state.token);
+
+  const statusOptions = [
+    { value: 100, label: "PLANNING" },
+    { value: 200, label: "READY" },
+    { value: 300, label: "IN PROGRESS" },
+    { value: 400, label: "FINISHED" },
+    { value: 500, label: "CANCELLED" },
+  ];
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setProjectDetails((prevDetails) => ({
+      ...prevDetails,
+      [name]: value,
+    }));
   };
 
-  // Helper function to map status value to status string
-  const getStatusString = (statusValue) => {
-    switch (statusValue) {
-      case 100:
-        return "PLANNING";
-      case 200:
-        return "READY";
-      case 300:
-        return "IN PROGRESS";
-      case 400:
-        return "FINISHED";
-      case 500:
-        return "CANCELLED";
-      default:
-        return "UNKNOWN";
+  const handleSaveClick = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/projects/${projectId}`, {
+        method: "PUT",
+        headers: {
+          Accept: "*/*",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(projectDetails),
+      });
+
+      if (response.status === 200) {
+        console.log("Project details updated successfully");
+        setEditMode(false);
+      } else {
+        console.error("Error updating project details");
+      }
+    } catch (error) {
+      console.error("Error updating project details:", error);
     }
+  };
+
+  const handleCancelClick = () => {
+    setProjectDetails({ ...project });
+    setEditMode(false);
+  };
+
+  useEffect(() => {
+    setProjectDetails({ ...project });
+  }, [project]);
+
+  const formatDateForInput = (dateArray) => {
+    if (!Array.isArray(dateArray) || dateArray.length < 3) {
+      return "";
+    }
+    const [year, month, day, hour = 0, minute = 0] = dateArray;
+    return new Date(year, month - 1, day, hour, minute)
+      .toISOString()
+      .split("T")[0];
   };
 
   return (
-    <div className="bg-white shadow-lg rounded-lg overflow-hidden w-full mx-auto">
-      <div className="p-4">
-        <h2 className="text-xl font-semibold mb-2">{project.title}</h2>
-        <p>
-          <strong>Description:</strong> {project.description}
-        </p>
-        <p>
-          <strong>Status:</strong> {getStatusString(project.status)}
-        </p>
-        <p>
-          <strong>Approved:</strong> {project.approved ? "Yes" : "No"}
-        </p>
-        <p>
-          <strong>Creation Date:</strong> {formatDate(project.creationDate)}
-        </p>
-        <p>
-          <strong>Planned End Date:</strong>{" "}
-          {formatDate(project.plannedEndDate)}
-        </p>
+    <Card className="bg-gray-200 transition-colors duration-200 h-auto">
+      <div className="flex flex-col pb-10">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold">{projectDetails.title}</h2>
+          <MdOutlineEdit
+            className="h-6 w-6 text-black cursor-pointer"
+            onClick={() => setEditMode(true)}
+          />
+        </div>
+        <div className="flex flex-col gap-4">
+          <div>
+            <Label htmlFor="title" value="Title" />
+            {editMode ? (
+              <TextInput
+                id="title"
+                type="text"
+                name="title"
+                value={projectDetails.title}
+                onChange={handleChange}
+              />
+            ) : (
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {projectDetails.title}
+              </p>
+            )}
+          </div>
+          <div>
+            <Label htmlFor="status" value="Status" />
+            {editMode ? (
+              <Select
+                id="status"
+                name="status"
+                value={projectDetails.status}
+                onChange={handleChange}
+              >
+                {statusOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </Select>
+            ) : (
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {
+                  statusOptions.find(
+                    (option) => option.value === projectDetails.status
+                  )?.label
+                }
+              </p>
+            )}
+          </div>
+          <div>
+            <Label htmlFor="description" value="Description" />
+            {editMode ? (
+              <Textarea
+                id="description"
+                name="description"
+                value={projectDetails.description}
+                onChange={handleChange}
+                rows={3}
+              />
+            ) : (
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {projectDetails.description}
+              </p>
+            )}
+          </div>
+          <div>
+            <Label htmlFor="plannedEndDate" value="Planned End Date" />
+            {editMode ? (
+              <TextInput
+                id="plannedEndDate"
+                type="date"
+                name="plannedEndDate"
+                value={formatDateForInput(projectDetails.plannedEndDate)}
+                onChange={handleChange}
+              />
+            ) : (
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {formatDateForInput(projectDetails.plannedEndDate)}
+              </p>
+            )}
+          </div>
+          <div>
+            <Label htmlFor="creationDate" value="Creation Date" />
+            {editMode ? (
+              <TextInput
+                id="creationDate"
+                type="date"
+                name="creationDate"
+                value={formatDateForInput(projectDetails.creationDate)}
+                onChange={handleChange}
+              />
+            ) : (
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {formatDateForInput(projectDetails.creationDate)}
+              </p>
+            )}
+          </div>
+          <div>
+            <Label htmlFor="approved" value="Approved" />
+            {editMode ? (
+              <Select
+                id="approved"
+                name="approved"
+                value={projectDetails.approved.toString()}
+                onChange={handleChange}
+              >
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </Select>
+            ) : (
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {projectDetails.approved ? "Yes" : "No"}
+              </p>
+            )}
+          </div>
+        </div>
+        {project.userProjectDtos?.map((up) => (
+          <div key={up.userId} className="flex items-center mb-2">
+            {userImages[up.userId] ? (
+              <img
+                src={`data:${userImages[up.userId].type};base64,${
+                  userImages[up.userId].image
+                }`}
+                alt={`${up.username}'s profile`}
+                className="w-8 h-8 rounded-full mr-2"
+              />
+            ) : (
+              <img
+                src={basePhoto}
+                alt="Placeholder"
+                className="w-8 h-8 rounded-full mr-2"
+              />
+            )}
+            <span>{up.username}</span>
+          </div>
+        ))}
+        {editMode && (
+          <div className="flex justify-end mt-4">
+            <Button onClick={handleCancelClick} className="mr-2">
+              Cancel
+            </Button>
+            <Button onClick={handleSaveClick}>Save</Button>
+          </div>
+        )}
       </div>
-    </div>
+    </Card>
   );
 }
 
-export default ProjectDetailsCard
+export default ProjectDetailsCard;

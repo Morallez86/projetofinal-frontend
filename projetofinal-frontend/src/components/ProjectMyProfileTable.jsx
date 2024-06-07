@@ -8,11 +8,12 @@ import { Tooltip } from "react-tooltip";
 // Helper function to convert the date array to a JS Date object
 const formatDate = (dateArray) => {
   if (!Array.isArray(dateArray) || dateArray.length < 3) {
-    return "Invalid Date";
+    return "";
   }
-  // Adjust month value as JS Date months are zero-based
   const [year, month, day, hour = 0, minute = 0] = dateArray;
-  return new Date(year, month - 1, day, hour, minute).toLocaleDateString();
+  return new Date(year, month - 1, day, hour, minute)
+    .toISOString()
+    .split("T")[0];
 };
 
 // Helper function to map status value to status string
@@ -134,6 +135,7 @@ function ProjectMyProfileTable({
         onChangePage={onChangePage}
         onChangeRowsPerPage={onChangeRowsPerPage}
         paginationRowsPerPageOptions={[10, 20, 30, 40, 50]}
+        paginationDefaultRowsPerPage={10}
         paginationPerPage={rowsPerPage}
         responsive
       />

@@ -56,7 +56,7 @@ function MyProfileMyProjects() {
   const decodedToken = token ? jwtDecode(token) : null;
   const userId = decodedToken ? decodedToken.id : null;
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const { projects, loading, totalPages } = useProjects(
     userId,
     page,

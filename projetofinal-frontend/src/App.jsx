@@ -15,7 +15,8 @@ function App() {
   const apiUrl = useApiStore.getState().apiUrl;
   const token = useUserStore((state) => state.token);
   const { workplaces } = useWorkplaces();
-  console.log(workplaces)
+
+  console.log(workplaces);
 
   useEffect(() => {
     const fetchProjects = async () => {

@@ -29,7 +29,8 @@ function Layout({
 }) {
   const navigate = useNavigate();
   const apiUrl = useApiStore((state) => state.apiUrl);
-  const { token, setToken, profileImage, setProfileImage, clearProfileImage } = useUserStore();
+  const { token, setToken, profileImage, setProfileImage, clearProfileImage } =
+    useUserStore();
 
   let userId, username;
   if (token) {
@@ -43,7 +44,7 @@ function Layout({
   }
 
   useEffect(() => {
-     const fetchProfileImage = async () => {
+    const fetchProfileImage = async () => {
       if (token && userId) {
         try {
           const response = await fetch(`${apiUrl}/users/${userId}/image`, {
@@ -101,7 +102,11 @@ function Layout({
   return (
     <div className="grid grid-cols-[1fr_3fr_1fr] gap-4 p-4">
       <div className="flex flex-col items-start">
-        <img src={criticalLogo} alt="Critical Logo" className="w-32 rounded h-auto" />
+        <img
+          src={criticalLogo}
+          alt="Critical Logo"
+          className="w-32 rounded h-auto"
+        />
         {username && (
           <div className="flex items-center space-x-2 mt-4">
             <MdWavingHand size={20} />
