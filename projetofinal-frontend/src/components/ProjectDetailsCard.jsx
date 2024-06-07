@@ -11,8 +11,9 @@ import { MdOutlineEdit } from "react-icons/md";
 import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
 import { useParams } from "react-router-dom";
+import basePhoto from "../Assets/092.png";
 
-function ProjectDetailsCard({ project }) {
+function ProjectDetailsCard({ project, userImages }) {
   const { projectId } = useParams();
   const [editMode, setEditMode] = useState(false);
   const [projectDetails, setProjectDetails] = useState({ ...project });
@@ -196,6 +197,26 @@ function ProjectDetailsCard({ project }) {
             )}
           </div>
         </div>
+        {project.userProjectDtos?.map((up) => (
+          <div key={up.userId} className="flex items-center mb-2">
+            {userImages[up.userId] ? (
+              <img
+                src={`data:${userImages[up.userId].type};base64,${
+                  userImages[up.userId].image
+                }`}
+                alt={`${up.username}'s profile`}
+                className="w-8 h-8 rounded-full mr-2"
+              />
+            ) : (
+              <img
+                src={basePhoto}
+                alt="Placeholder"
+                className="w-8 h-8 rounded-full mr-2"
+              />
+            )}
+            <span>{up.username}</span>
+          </div>
+        ))}
         {editMode && (
           <div className="flex justify-end mt-4">
             <Button onClick={handleCancelClick} className="mr-2">

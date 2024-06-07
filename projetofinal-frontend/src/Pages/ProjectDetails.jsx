@@ -1,4 +1,3 @@
-// src/Components/ProjectDetails.js
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Layout from "../Components/Layout";
@@ -11,7 +10,7 @@ function ProjectDetails() {
   const { projectId } = useParams();
   const [project, setProject] = useState(null);
   const [tasks, setTasks] = useState([]);
-  console.log(project);
+  const [userImages, setUserImages] = useState({});
   const [loading, setLoading] = useState(true);
   const apiUrl = useApiStore((state) => state.apiUrl);
   const token = useUserStore((state) => state.token);
@@ -34,7 +33,35 @@ function ProjectDetails() {
 
         const data = await response.json();
         setProject(data);
-        setTasks(data.tasks); // Assuming project data contains tasks array
+        setTasks(data.tasks || []); // Ensure tasks is an array
+        console.log(data);
+
+        const userIds = data.userProjectDtos
+          .map((up) => up.userId)
+          .filter((value, index, self) => self.indexOf(value) === index); // Unique IDs
+
+        console.log(userIds);
+
+        const imagesResponse = await fetch(`${apiUrl}/users/images`, {
+          method: "POST",
+          headers: {
+            Accept: "*/*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(userIds),
+        });
+
+        if (imagesResponse.ok) {
+          const imagesData = await imagesResponse.json();
+          const imagesMap = {};
+          imagesData.forEach((img) => {
+            imagesMap[img.id] = img;
+          });
+          setUserImages(imagesMap);
+        } else {
+          console.error("Error fetching user images");
+        }
       } catch (error) {
         console.error("Error fetching project details:", error);
       } finally {
@@ -58,11 +85,13 @@ function ProjectDetails() {
       <Layout activeTab={0} activeSubProjects={0} />
       <div className="flex flex-wrap justify-center">
         <div className="w-full md:w-1/3 p-4">
-          <ProjectDetailsCard project={project} />
+          <ProjectDetailsCard project={project} userImages={userImages} />
         </div>
         <div className="w-full md:w-1/3 p-4">
           {tasks.length > 0 ? (
-            tasks.map((task) => <TaskCard key={task.id} task={task} />)
+            tasks.map((task) => (
+              <TaskCard key={task.id} task={task} userImages={userImages} />
+            ))
           ) : (
             <p>No tasks available</p>
           )}
