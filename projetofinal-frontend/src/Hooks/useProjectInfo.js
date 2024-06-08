@@ -4,6 +4,8 @@ import useProjectStore from "../Stores/ProjectStore";
 const useProjectInfo = () => {
   const projectSkills = useProjectStore((state) => state.projectSkills);
   const projectInterests = useProjectStore((state) => state.projectInterests);
+  const projectComponents = useProjectStore((state) => state.projectComponents);
+  const projectResources = useProjectStore((state) => state.projectResources);
 
   const [projectInfo, setProjectInfo] = useState({
     title: "",
@@ -24,8 +26,10 @@ const useProjectInfo = () => {
       ...prevInfo,
       skills: projectSkills,
       interests: projectInterests,
+      components: projectComponents,
+      resources: projectResources,
     }));
-  }, [projectSkills, projectInterests]);
+  }, [projectSkills, projectInterests, projectComponents, projectResources]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
