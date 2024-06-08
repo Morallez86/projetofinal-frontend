@@ -37,6 +37,8 @@ const useProjectInfo = () => {
       ...prevInfo,
       [name]: value,
     }));
+      console.log(`Updating ${name} to ${value}`);
+
   };
 
   const handleDropdownChange = (name, value) => {

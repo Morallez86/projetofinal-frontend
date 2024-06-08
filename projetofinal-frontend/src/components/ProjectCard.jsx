@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Card,
   TextInput,
@@ -12,6 +11,7 @@ import useProjectInfo from "../Hooks/useProjectInfo";
 import { createProject } from "../Services/projectService";
 import { LuPlusCircle } from "react-icons/lu";
 import { MdOutlineRemoveCircleOutline } from "react-icons/md";
+import useUserStore from "../Stores/UserStore";
 
 function ProjectCard({
   openPopUpSkills,
@@ -25,12 +25,33 @@ function ProjectCard({
 }) {
   const { projectInfo, handleChange, handleDropdownChange } = useProjectInfo();
 
+  const formatDateForBackend = (dateString) => {
+    if (!dateString) {
+      return null; // Handle the case where dateString is null or undefined
+    }
+
+    // Append the time part to the date string
+    const formattedDate = `${dateString} 00:00:00`;
+
+    return formattedDate;
+  };
+
+  const token = useUserStore((state) => state.token);
+
   const handleSubmit = async () => {
+    const formattedProjectInfo = {
+      ...projectInfo,
+      startingDate: formatDateForBackend(projectInfo.startingDate),
+      plannedEndDate: formatDateForBackend(projectInfo.plannedEndDate),
+    };
+
+    console.log("Formatted project info:", formattedProjectInfo);
+
+
     try {
-      const newProject = await createProject(projectInfo);
+      const newProject = await createProject(formattedProjectInfo, token);
       if (newProject) {
         console.log("Project created successfully");
-        openPopUpSkills(newProject.id);
       } else {
         console.error("Error creating project");
       }
@@ -79,9 +100,11 @@ function ProjectCard({
             onChange={(e) => handleDropdownChange("status", e.target.value)}
           >
             <option value="">Select Status</option>
-            <option value="Pending">Pending</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Completed">Completed</option>
+            <option value="100">Planning</option>
+            <option value="200">Ready</option>
+            <option value="300">In Progress</option>
+            <option value="400">Finished</option>
+            <option value="500">Cancelled</option>
           </Select>
         </div>
         <div>

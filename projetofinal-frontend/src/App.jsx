@@ -43,6 +43,7 @@ function App() {
         const data = await response.json();
         setProjects(data.projects);
         setTotalPages(data.totalPages);
+        console.log(data);
       } catch (error) {
         console.error("Error fetching projects:", error);
       } finally {
