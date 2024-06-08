@@ -14,17 +14,18 @@ function ComponentesComponents() {
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [loading, setLoading] = useState(true);
+  const [filterText, setFilterText] = useState("");
 
   useEffect(() => {
     getComponents();
   }
-  , [page, rowsPerPage]);
+  , [page, rowsPerPage, filterText]);
 
 
 
   const getComponents = async () => {
     try {
-    const response = await fetch(`${apiUrl}/components?page=${page}&limit=${rowsPerPage}`, {
+    const response = await fetch(`${apiUrl}/components?page=${page}&limit=${rowsPerPage}&filter=${encodeURIComponent(filterText)}`, {
       method: "GET",
       headers: {
         Accept: "*/*",
@@ -61,6 +62,8 @@ function ComponentesComponents() {
           onChangePage={(newPage) => setPage(newPage)}
           onChangeRowsPerPage={(newRowsPerPage) => setRowsPerPage(newRowsPerPage)}
           rowsPerPage={rowsPerPage}
+          filterText={filterText}
+          setFilterText={setFilterText}
         />
       </div>
     </div>

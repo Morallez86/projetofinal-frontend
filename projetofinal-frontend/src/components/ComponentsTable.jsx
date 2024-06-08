@@ -13,6 +13,8 @@ function ComponentsTable({
   onChangePage,
   onChangeRowsPerPage,
   rowsPerPage,
+  filterText,
+  setFilterText,
 }) {
 
   console.log(data);
@@ -39,16 +41,14 @@ function ComponentsTable({
     },
   ];
 
-  const [filterText, setFilterText] = useState("");
-
-  const filteredItems = data.filter(
-    (item) =>
-      item.name && item.name.toLowerCase().includes(filterText.toLowerCase())
-  );
-
-  const handleFilter = (e) => {
-    setFilterText(e.target.value);
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      setFilterText(searchKeyword);
+    }
   };
+
+  
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg">
@@ -56,14 +56,15 @@ function ComponentsTable({
         <h2 className="text-2xl font-semibold">Components</h2>
         <TextInput
           placeholder="Search by name, brand, supplier or identifier..."
-          onChange={handleFilter}
-          value={filterText}
+          onKeyDown={handleKeyDown}
+          onChange={(e) => setSearchKeyword(e.target.value)}
+          value={searchKeyword}
           className="w-1/4"
         />
       </div>
       <DataTable
         columns={columns}
-        data={filteredItems}
+        data={data}
         progressPending={loading}
         pagination={pagination}
         paginationServer={paginationServer}
