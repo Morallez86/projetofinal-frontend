@@ -2,7 +2,7 @@ import React from "react";
 import DataTable from "react-data-table-component";
 import { TextInput } from "flowbite-react";
 import { useState } from "react";
-
+import ComponentResourceCardDetails from "./ComponentResourceCardDetails";
 
 function ComponentsTable({
   data,
@@ -14,9 +14,8 @@ function ComponentsTable({
   onChangeRowsPerPage,
   rowsPerPage,
   setFilterText,
-  context
+  context,
 }) {
-
   console.log(data);
   const columns = [
     {
@@ -42,19 +41,26 @@ function ComponentsTable({
   ];
 
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       setFilterText(searchKeyword);
     }
   };
 
-  
-
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg">
       <div className="mb-6 flex justify-between items-center">
-        <h2 className="text-2xl font-semibold">  {context === 'components' ? 'Components' : context === 'resources' ? 'Resources' : ''}
-</h2>
+        <h2 className="text-2xl font-semibold">
+          {" "}
+          {context === "components"
+            ? "Components"
+            : context === "resources"
+            ? "Resources"
+            : ""}
+        </h2>
         <TextInput
           placeholder="Search by name, brand, supplier or identifier..."
           onKeyDown={handleKeyDown}
@@ -75,7 +81,35 @@ function ComponentsTable({
         paginationRowsPerPageOptions={[10, 20, 30, 40, 50]}
         paginationPerPage={rowsPerPage}
         responsive
+        onRowClicked={(row) => {
+          setSelectedRow(row);
+          setIsModalOpen(true);
+        }}
+        customStyles={{
+          rows: {
+            style: {
+              cursor: "pointer",
+            },
+          },
+        }}
       />
+      {isModalOpen && (
+        <div className="modal">
+          <div className="modal-content">
+            <span
+              className="close-button"
+              onClick={() => setIsModalOpen(false)}
+            >
+              &times;
+            </span>
+            <ComponentResourceCardDetails
+              data={selectedRow}
+              context={context}
+              onClose={() => setIsModalOpen(false)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
