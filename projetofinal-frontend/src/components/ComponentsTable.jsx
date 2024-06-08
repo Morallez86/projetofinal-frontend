@@ -14,10 +14,12 @@ function ComponentsTable({
   onChangeRowsPerPage,
   rowsPerPage,
 }) {
+
+  console.log(data);
   const columns = [
     {
       name: "Name",
-      selector: (row) => row.title,
+      selector: (row) => row.name,
       sortable: true,
     },
     {
@@ -41,7 +43,7 @@ function ComponentsTable({
 
   const filteredItems = data.filter(
     (item) =>
-      item.title && item.title.toLowerCase().includes(filterText.toLowerCase())
+      item.name && item.name.toLowerCase().includes(filterText.toLowerCase())
   );
 
   const handleFilter = (e) => {
