@@ -64,6 +64,7 @@ function ComponentesComponents() {
           rowsPerPage={rowsPerPage}
           filterText={filterText}
           setFilterText={setFilterText}
+          context={"components"}
         />
       </div>
     </div>

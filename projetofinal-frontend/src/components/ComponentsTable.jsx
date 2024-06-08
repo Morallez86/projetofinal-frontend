@@ -13,8 +13,8 @@ function ComponentsTable({
   onChangePage,
   onChangeRowsPerPage,
   rowsPerPage,
-  filterText,
   setFilterText,
+  context
 }) {
 
   console.log(data);
@@ -53,7 +53,8 @@ function ComponentsTable({
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg">
       <div className="mb-6 flex justify-between items-center">
-        <h2 className="text-2xl font-semibold">Components</h2>
+        <h2 className="text-2xl font-semibold">  {context === 'components' ? 'Components' : context === 'resources' ? 'Resources' : ''}
+</h2>
         <TextInput
           placeholder="Search by name, brand, supplier or identifier..."
           onKeyDown={handleKeyDown}
