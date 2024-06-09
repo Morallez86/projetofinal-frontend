@@ -94,21 +94,11 @@ function ComponentsTable({
         }}
       />
       {isModalOpen && (
-        <div className="modal">
-          <div className="modal-content">
-            <span
-              className="close-button"
-              onClick={() => setIsModalOpen(false)}
-            >
-              &times;
-            </span>
             <ComponentResourceCardDetails
               data={selectedRow}
               context={context}
               onClose={() => setIsModalOpen(false)}
             />
-          </div>
-        </div>
       )}
     </div>
   );

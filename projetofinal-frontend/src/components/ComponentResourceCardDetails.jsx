@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Label } from "flowbite-react";
+import { Label, Modal, Button } from "flowbite-react";
 
 function ComponentResourceCardDetails({ data, context, onClose }) {
   console.log(data.name);
@@ -11,14 +11,14 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
   console.log(data.observation);
   console.log(data.projectIds);
   return (
-    <div className="modal">
-      <div className="modal-content">
-        <span className="close-button" onClick={onClose}>
-          &times;
-        </span>
-        <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-          {data.name}
-        </h5>
+    <Modal show={true} onClose={onClose}>
+      <Modal.Header>
+        {" "}
+        {context === "resources"
+          ? "Resource Information"
+          : "Component Information"}{" "}
+      </Modal.Header>
+      <Modal.Body>
         <div className="grid grid-cols-2 gap-4">
           <div className="mt-4">
             <Label htmlFor="description" value="Description" />
@@ -67,8 +67,13 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
             </div>
           )}
         </div>
-      </div>
-    </div>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button color="gray" onClick={onClose}>
+          Close
+        </Button>
+      </Modal.Footer>
+    </Modal>
   );
 }
 
