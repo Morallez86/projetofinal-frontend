@@ -19,7 +19,7 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
           : "Component Information"}{" "}
       </Modal.Header>
       <Modal.Body>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4 items-center justify-center">
           <div className="mt-4">
             <Label htmlFor="description" value="Description" />
             <p className="font-normal text-gray-700 dark:text-gray-400">
@@ -68,11 +68,6 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
           )}
         </div>
       </Modal.Body>
-      <Modal.Footer>
-        <Button color="gray" onClick={onClose}>
-          Close
-        </Button>
-      </Modal.Footer>
     </Modal>
   );
 }
