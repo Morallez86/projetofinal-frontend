@@ -9,10 +9,14 @@ function CreateLogModal({ onClose, tasks }) {
     <Modal show={true} onClose={onClose}>
       <Modal.Header>Create Log</Modal.Header>
       <Modal.Body>
-        <div className="grid grid-cols-2 gap-4 items-center justify-center">
+        <div className="grid grid-cols-2 gap-4 items-start justify-center h-[16rem] overflow-auto">
           <div className="mt-4">
             <Label htmlFor="description" value="About log" />
-            <Textarea id="description" name="description" />
+            <Textarea
+              id="description"
+              name="description"
+              className="h-[10rem] resize-none"
+            />
           </div>
           <div className="mt-4">
             <Label htmlFor="task" value="Associate to a task" />
@@ -22,6 +26,7 @@ function CreateLogModal({ onClose, tasks }) {
                 onInputChange={handleInputChange}
                 */
               placeholder="Select task name"
+              maxMenuHeight={160} // Assuming each option has a height of 40px
             />
           </div>
         </div>
