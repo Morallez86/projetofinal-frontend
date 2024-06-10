@@ -25,7 +25,7 @@ function ComponentsResources() {
 
   const getResources = async () => {
     try {
-    const response = await fetch(`${apiUrl}/resources?page=${page}&limit=${rowsPerPage}&filter=${encodeURIComponent(filterText)}`, {
+    const response = await fetch(`${apiUrl}/resources/toTables?page=${page}&limit=${rowsPerPage}&filter=${encodeURIComponent(filterText)}`, {
       method: "GET",
       headers: {
         Accept: "*/*",

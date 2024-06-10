@@ -25,7 +25,7 @@ function ComponentesComponents() {
 
   const getComponents = async () => {
     try {
-    const response = await fetch(`${apiUrl}/components?page=${page}&limit=${rowsPerPage}&filter=${encodeURIComponent(filterText)}`, {
+    const response = await fetch(`${apiUrl}/components/toTables?page=${page}&limit=${rowsPerPage}&filter=${encodeURIComponent(filterText)}`, {
       method: "GET",
       headers: {
         Accept: "*/*",
