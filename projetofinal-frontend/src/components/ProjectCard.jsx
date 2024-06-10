@@ -3,9 +3,12 @@ import {
   TextInput,
   Label,
   Button,
-  Select,
   Textarea,
+  Modal,
+  Table,
+  Pagination,
 } from "flowbite-react";
+import { useState } from "react";
 import { Tooltip } from "react-tooltip";
 import useProjectInfo from "../Hooks/useProjectInfo";
 import { createProject } from "../Services/projectService";
@@ -22,8 +25,15 @@ function ProjectCard({
   openPopUpComponentsRemove,
   openPopUpResources,
   openPopUpResourcesRemove,
+  openPopUpUsers,
+  openPopUpUsersRemove,
 }) {
-  const { projectInfo, handleChange, handleDropdownChange } = useProjectInfo();
+  const { projectInfo, handleChange } = useProjectInfo();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [users, setUsers] = useState([]);
+  const [selectedUsers, setSelectedUsers] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const formatDateForBackend = (dateString) => {
     if (!dateString) {
@@ -43,10 +53,10 @@ function ProjectCard({
       ...projectInfo,
       startingDate: formatDateForBackend(projectInfo.startingDate),
       plannedEndDate: formatDateForBackend(projectInfo.plannedEndDate),
+      team: selectedUsers,
     };
 
     console.log("Formatted project info:", formattedProjectInfo);
-
 
     try {
       const newProject = await createProject(formattedProjectInfo, token);
@@ -58,6 +68,32 @@ function ProjectCard({
     } catch (error) {
       console.error("Error creating project:", error);
     }
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const openModal = async () => {
+    setIsModalOpen(true);
+    const fetchedUsers = await fetchUsers(searchQuery, currentPage, token);
+    setUsers(fetchedUsers);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleUserSelect = (user) => {
+    if (selectedUsers.length < projectInfo.maxUsers) {
+      setSelectedUsers([...selectedUsers, user]);
+    } else {
+      alert(`You can only select up to ${projectInfo.maxUsers} users`);
+    }
+  };
+
+  const handleUserRemove = (user) => {
+    setSelectedUsers(selectedUsers.filter((u) => u.id !== user.id));
   };
 
   return (
@@ -90,22 +126,6 @@ function ProjectCard({
             value={projectInfo.motivation}
             onChange={handleChange}
           />
-        </div>
-        <div>
-          <Label htmlFor="status" value="Status" />
-          <Select
-            id="status"
-            name="status"
-            value={projectInfo.status}
-            onChange={(e) => handleDropdownChange("status", e.target.value)}
-          >
-            <option value="">Select Status</option>
-            <option value="100">Planning</option>
-            <option value="200">Ready</option>
-            <option value="300">In Progress</option>
-            <option value="400">Finished</option>
-            <option value="500">Cancelled</option>
-          </Select>
         </div>
         <div>
           <Label htmlFor="maxUsers" value="Max Users" />
@@ -296,6 +316,7 @@ function ProjectCard({
               )}
           </div>
         </div>
+        {/* Resources */}
         <div className="mt-4">
           <div className="flex items-center">
             <Label htmlFor="resources" value="Resources" />
@@ -348,11 +369,60 @@ function ProjectCard({
               )}
           </div>
         </div>
-        {/* Save Button */}
-        <div className="col-span-3 mt-6 flex justify-end">
-          <Button color="primary" onClick={handleSubmit}>
-            Save Project
-          </Button>
+        {/* Users */}
+        <div className="mt-4">
+          <div className="flex items-center">
+            <Label htmlFor="users" value="Users" />
+            <div
+              className="inline-flex items-center cursor-pointer"
+              id="icon-element7"
+              onClick={() => openPopUpUsers("project")}
+            >
+              <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
+            </div>
+            <div
+              className="inline-flex items-center cursor-pointer"
+              id="icon-element-remove7"
+              onClick={() => openPopUpUsersRemove("project")}
+            >
+              <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
+            </div>
+            <Tooltip
+              anchorSelect="#icon-element7"
+              content="Add new user"
+              place="top"
+            />
+            <Tooltip
+              anchorSelect="#icon-element-remove7"
+              content="Remove a user"
+              place="top"
+            />
+          </div>
+          <div className="flex items-center text-sm font-medium text-gray-900 dark:text-gray-400">
+            <p>
+              {Array.isArray(selectedUsers)
+                ? selectedUsers
+                    .slice(0, 3)
+                    .map((user) => user.name)
+                    .join(", ")
+                : ""}
+            </p>
+            {Array.isArray(selectedUsers) && selectedUsers.length > 3 && (
+              <div id="tip-all-users">
+                <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+                  {`+${selectedUsers.length - 3}`}
+                </button>
+                <Tooltip
+                  anchorSelect="#tip-all-users"
+                  content="Check all users"
+                  place="top"
+                />
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="col-span-3 flex justify-end">
+          <Button onClick={handleSubmit}>Submit</Button>
         </div>
       </div>
     </Card>

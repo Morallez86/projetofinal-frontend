@@ -10,6 +10,8 @@ import AddComponents from "../Components/AddComponents";
 import RemoveComponents from "../Components/RemoveComponents";
 import AddResources from "../Components/AddResources";
 import RemoveResources from "../Components/RemoveResources";
+import AddUsers from "../Components/AddUsers"; 
+import RemoveUsers from "../Components/RemoveUsers"; 
 
 function AllProjectsCreateNew() {
   const [statePopUpSkills, setStatePopUpSkills] = useState(false);
@@ -23,6 +25,8 @@ function AllProjectsCreateNew() {
   const [statePopUpResources, setStatePopUpResources] = useState(false);
   const [statePopUpResourcesRemove, setStatePopUpResourcesRemove] =
     useState(false);
+  const [statePopUpUsers, setStatePopUpUsers] = useState(false); 
+  const [statePopUpUsersRemove, setStatePopUpUsersRemove] = useState(false);
 
   function openAddSkillsModal() {
     setStatePopUpSkills(true);
@@ -88,6 +92,22 @@ function AllProjectsCreateNew() {
     setStatePopUpResourcesRemove(false);
   }
 
+  function openAddUsersModal() {
+    setStatePopUpUsers(true); // Add this function
+  }
+
+  function closeAddUsersModal() {
+    setStatePopUpUsers(false); // Add this function
+  }
+
+  function openRemoveUsersModal() {
+    setStatePopUpUsersRemove(true); // Add this function
+  }
+
+  function closeRemoveUsersModal() {
+    setStatePopUpUsersRemove(false); // Add this function
+  }
+
   return (
     <div className="flex flex-col h-screen">
       <Layout activeTab={1} activeSubTabProfile={0} />
@@ -101,6 +121,8 @@ function AllProjectsCreateNew() {
           openPopUpComponentsRemove={openRemoveComponentsModal}
           openPopUpResources={openAddResourcesModal}
           openPopUpResourcesRemove={openRemoveResourcesModal}
+          openPopUpUsers={openAddUsersModal} // Pass these functions
+          openPopUpUsersRemove={openRemoveUsersModal} // Pass these functions
         />
       </div>
       <div className="flex-shrink-0 p-0">
@@ -137,6 +159,14 @@ function AllProjectsCreateNew() {
       <RemoveResources
         openPopUpResourcesRemove={statePopUpResourcesRemove}
         closePopUpResourcesRemove={closeRemoveResourcesModal}
+      />
+      <AddUsers
+        openPopUpUsers={statePopUpUsers} 
+        closePopUpUsers={closeAddUsersModal} 
+      />
+      <RemoveUsers
+        openPopUpUsersRemove={statePopUpUsersRemove} 
+        closePopUpUsersRemove={closeRemoveUsersModal} 
       />
     </div>
   );

@@ -41,17 +41,9 @@ const useProjectInfo = () => {
 
   };
 
-  const handleDropdownChange = (name, value) => {
-    setProjectInfo((prevInfo) => ({
-      ...prevInfo,
-      [name]: value,
-    }));
-  };
-
   return {
     projectInfo,
     handleChange,
-    handleDropdownChange,
   };
 };
 
