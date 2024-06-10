@@ -53,6 +53,8 @@ function AddComponents({ openPopUpComponent, closePopUpComponent }) {
     setInputValue(value);
   };
 
+  console.log(components);
+
   const options = components.map((component) => ({
     value: component.name,
     label: component.name,
