@@ -3,7 +3,7 @@ import { Button } from "flowbite-react";
 import CreateLogModal from "./CreateLogModal";
 import { useState } from "react";
 
-function ActivityLogs({tasks}) {
+function ActivityLogs({tasks, projectId}) {
     const [showModal, setShowModal] = useState(false);
 
     const handleOpenModal = () => {
@@ -26,7 +26,7 @@ function ActivityLogs({tasks}) {
       <Button onClick={handleOpenModal} className="mb-3">
         Create log
       </Button>
-      {showModal && <CreateLogModal  tasks= {tasks} onClose={handleCloseModal} />}
+      {showModal && <CreateLogModal  tasks= {tasks} onClose={handleCloseModal} projectId={projectId} />}
     </div>
   );
 }

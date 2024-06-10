@@ -3,7 +3,7 @@ import { Modal, Label, Textarea, Button } from "flowbite-react";
 import Select from "react-select";
 import { useState } from "react";
 
-function CreateLogModal({ onClose, tasks }) {
+function CreateLogModal({ onClose, tasks, projectId }) {
   const options = tasks.map((task) => ({ value: task.id, label: task.title }));
 
   const [formData, setFormData] = useState({
@@ -11,7 +11,7 @@ function CreateLogModal({ onClose, tasks }) {
     type: "",
     timestamp: "",
     userId: "",
-    projectId: "",
+    projectId: projectId,
     taskId: "",
   });
 

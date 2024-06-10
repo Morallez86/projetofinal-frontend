@@ -98,7 +98,7 @@ function ProjectDetails() {
           )}
         </div>
         <div className="w-full md:w-1/3 p-4">
-          <ActivityLogs tasks={tasks}/>
+          <ActivityLogs tasks={tasks} projectId={project.id}/>
         </div>
       </div>
     </div>
