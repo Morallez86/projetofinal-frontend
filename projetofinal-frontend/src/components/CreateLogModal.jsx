@@ -2,12 +2,14 @@ import React from "react";
 import { Modal, Label, Textarea, Button } from "flowbite-react";
 import Select from "react-select";
 import { useState } from "react";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import useUserStore from "../Stores/UserStore";
+import useApiStore from "../Stores/ApiStore";
 
 function CreateLogModal({ onClose, tasks, projectId }) {
   const options = tasks.map((task) => ({ value: task.id, label: task.title }));
   const token = useUserStore((state) => state.token);
+  const apiUrl = useApiStore((state) => state.apiUrl);
 
   let userIdFromToken;
 
@@ -34,7 +36,30 @@ function CreateLogModal({ onClose, tasks, projectId }) {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  const addLog = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/projectHistory/${projectId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create log");
+      }
+
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error("Failed to create log", error);
+    }
+  };
+
   const handleSubmit = () => {
+    addLog();
     console.log(formData);
   };
 
