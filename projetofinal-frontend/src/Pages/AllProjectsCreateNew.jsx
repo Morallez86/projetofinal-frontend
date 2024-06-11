@@ -93,19 +93,20 @@ function AllProjectsCreateNew() {
   }
 
   function openAddUsersModal() {
-    setStatePopUpUsers(true); // Add this function
+    setStatePopUpUsers(true); 
   }
 
   function closeAddUsersModal() {
-    setStatePopUpUsers(false); // Add this function
+    setStatePopUpUsers(false); 
   }
 
   function openRemoveUsersModal() {
-    setStatePopUpUsersRemove(true); // Add this function
+    console.log("Opening remove users modal");
+    setStatePopUpUsersRemove(true); 
   }
 
   function closeRemoveUsersModal() {
-    setStatePopUpUsersRemove(false); // Add this function
+    setStatePopUpUsersRemove(false);
   }
 
   return (
@@ -121,8 +122,8 @@ function AllProjectsCreateNew() {
           openPopUpComponentsRemove={openRemoveComponentsModal}
           openPopUpResources={openAddResourcesModal}
           openPopUpResourcesRemove={openRemoveResourcesModal}
-          openPopUpUsers={openAddUsersModal} // Pass these functions
-          openPopUpUsersRemove={openRemoveUsersModal} // Pass these functions
+          openPopUpUsers={openAddUsersModal} 
+          openPopUpUsersRemove={openRemoveUsersModal}
         />
       </div>
       <div className="flex-shrink-0 p-0">

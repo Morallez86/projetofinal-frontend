@@ -1,14 +1,4 @@
-import {
-  Card,
-  TextInput,
-  Label,
-  Button,
-  Textarea,
-  Modal,
-  Table,
-  Pagination,
-} from "flowbite-react";
-import { useState } from "react";
+import { Card, TextInput, Label, Button, Textarea } from "flowbite-react";
 import { Tooltip } from "react-tooltip";
 import useProjectInfo from "../Hooks/useProjectInfo";
 import { createProject } from "../Services/projectService";
@@ -29,11 +19,7 @@ function ProjectCard({
   openPopUpUsersRemove,
 }) {
   const { projectInfo, handleChange } = useProjectInfo();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [users, setUsers] = useState([]);
-  const [selectedUsers, setSelectedUsers] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  console.log(projectInfo)
 
   const formatDateForBackend = (dateString) => {
     if (!dateString) {
@@ -53,7 +39,6 @@ function ProjectCard({
       ...projectInfo,
       startingDate: formatDateForBackend(projectInfo.startingDate),
       plannedEndDate: formatDateForBackend(projectInfo.plannedEndDate),
-      team: selectedUsers,
     };
 
     console.log("Formatted project info:", formattedProjectInfo);
@@ -70,31 +55,6 @@ function ProjectCard({
     }
   };
 
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
-  const openModal = async () => {
-    setIsModalOpen(true);
-    const fetchedUsers = await fetchUsers(searchQuery, currentPage, token);
-    setUsers(fetchedUsers);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleUserSelect = (user) => {
-    if (selectedUsers.length < projectInfo.maxUsers) {
-      setSelectedUsers([...selectedUsers, user]);
-    } else {
-      alert(`You can only select up to ${projectInfo.maxUsers} users`);
-    }
-  };
-
-  const handleUserRemove = (user) => {
-    setSelectedUsers(selectedUsers.filter((u) => u.id !== user.id));
-  };
 
   return (
     <Card className="bg-gray-200 transition-colors duration-200 w-3/4 h-auto mx-auto mt-10">
@@ -164,14 +124,14 @@ function ProjectCard({
             <div
               className="inline-flex items-center cursor-pointer"
               id="icon-element2"
-              onClick={() => openPopUpSkills("project")}
+              onClick={openPopUpSkills}
             >
               <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
             </div>
             <div
               className="inline-flex items-center cursor-pointer"
               id="icon-element-remove2"
-              onClick={() => openPopUpSkillsRemove("project")}
+              onClick={openPopUpSkillsRemove}
             >
               <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
             </div>
@@ -217,14 +177,14 @@ function ProjectCard({
             <div
               className="inline-flex items-center cursor-pointer"
               id="icon-element4"
-              onClick={() => openPopUpInterests("project")}
+              onClick={openPopUpInterests}
             >
               <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
             </div>
             <div
               className="inline-flex items-center cursor-pointer"
               id="icon-element-remove4"
-              onClick={() => openPopUpInterestRemove("project")}
+              onClick={openPopUpInterestRemove}
             >
               <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
             </div>
@@ -270,14 +230,14 @@ function ProjectCard({
             <div
               className="inline-flex items-center cursor-pointer"
               id="icon-element5"
-              onClick={() => openPopUpComponent("project")}
+              onClick={openPopUpComponent}
             >
               <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
             </div>
             <div
               className="inline-flex items-center cursor-pointer"
               id="icon-element-remove5"
-              onClick={() => openPopUpComponentsRemove("project")}
+              onClick={openPopUpComponentsRemove}
             >
               <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
             </div>
@@ -322,25 +282,25 @@ function ProjectCard({
             <Label htmlFor="resources" value="Resources" />
             <div
               className="inline-flex items-center cursor-pointer"
-              id="icon-element6"
-              onClick={() => openPopUpResources("project")}
+              id="icon-element3"
+              onClick={openPopUpResources}
             >
               <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
             </div>
             <div
               className="inline-flex items-center cursor-pointer"
-              id="icon-element-remove6"
-              onClick={() => openPopUpResourcesRemove("project")}
+              id="icon-element-remove3"
+              onClick={openPopUpResourcesRemove}
             >
               <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
             </div>
             <Tooltip
-              anchorSelect="#icon-element6"
+              anchorSelect="#icon-element3"
               content="Add new resource"
               place="top"
             />
             <Tooltip
-              anchorSelect="#icon-element-remove6"
+              anchorSelect="#icon-element-remove3"
               content="Remove a resource"
               place="top"
             />
@@ -369,61 +329,64 @@ function ProjectCard({
               )}
           </div>
         </div>
-        {/* Users */}
+        {/* Adding the users */}
         <div className="mt-4">
           <div className="flex items-center">
-            <Label htmlFor="users" value="Users" />
+            <Label htmlFor="team" value="Team" />
             <div
               className="inline-flex items-center cursor-pointer"
-              id="icon-element7"
-              onClick={() => openPopUpUsers("project")}
+              id="icon-element6"
+              onClick={openPopUpUsers}
             >
               <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
             </div>
             <div
               className="inline-flex items-center cursor-pointer"
-              id="icon-element-remove7"
-              onClick={() => openPopUpUsersRemove("project")}
+              id="icon-element-remove6"
+              onClick={openPopUpUsersRemove}
             >
               <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
             </div>
             <Tooltip
-              anchorSelect="#icon-element7"
+              anchorSelect="#icon-element6"
               content="Add new user"
               place="top"
             />
             <Tooltip
-              anchorSelect="#icon-element-remove7"
+              anchorSelect="#icon-element-remove6"
               content="Remove a user"
               place="top"
             />
           </div>
           <div className="flex items-center text-sm font-medium text-gray-900 dark:text-gray-400">
             <p>
-              {Array.isArray(selectedUsers)
-                ? selectedUsers
+              {Array.isArray(projectInfo.userProjectDtos)
+                ? projectInfo.userProjectDtos
                     .slice(0, 3)
-                    .map((user) => user.name)
+                    .map((user) => user.username)
                     .join(", ")
                 : ""}
             </p>
-            {Array.isArray(selectedUsers) && selectedUsers.length > 3 && (
-              <div id="tip-all-users">
-                <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
-                  {`+${selectedUsers.length - 3}`}
-                </button>
-                <Tooltip
-                  anchorSelect="#tip-all-users"
-                  content="Check all users"
-                  place="top"
-                />
-              </div>
-            )}
+            {Array.isArray(projectInfo.userProjectDtos) &&
+              projectInfo.userProjectDtos.length > 3 && (
+                <div id="tip-all-users">
+                  <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+                    {`+${projectInfo.userProjectDtos.length - 3}`}
+                  </button>
+                  <Tooltip
+                    anchorSelect="#tip-all-users"
+                    content="Check all users"
+                    place="top"
+                  />
+                </div>
+              )}
           </div>
         </div>
-        <div className="col-span-3 flex justify-end">
-          <Button onClick={handleSubmit}>Submit</Button>
-        </div>
+      </div>
+      <div className="flex justify-center">
+        <Button onClick={handleSubmit} className="mt-4">
+          Submit
+        </Button>
       </div>
     </Card>
   );

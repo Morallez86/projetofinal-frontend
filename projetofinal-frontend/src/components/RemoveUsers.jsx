@@ -1,75 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Modal, Button, TextInput } from "flowbite-react";
-import useUserStore from "../Stores/UserStore";
-import useProjectStore from "../Stores/ProjectStore";
 import { Checkbox, Label } from "flowbite-react";
-import useApiStore from "../Stores/ApiStore";
-import RemovedAnimation from "../Assets/Removed.json";
+import useProjectStore from "../Stores/ProjectStore";
 import Lottie from "react-lottie";
-import { Tooltip } from "react-tooltip";
+import RemovedAnimation from "../Assets/Removed.json";
 
-function RemoveUsers({ openPopUpUserRemove, closePopUpUserRemove, context }) {
-  const apiUrl = useApiStore((state) => state.apiUrl);
-  const userContacts = useUserStore((state) => state.contacts);
-  const projectMembers = useProjectStore((state) => state.projectMembers);
-  const token = useUserStore((state) => state.token);
-  const setUserContacts = useUserStore((state) => state.setContacts);
-  const setProjectMembers = useProjectStore((state) => state.setProjectMembers);
+function RemoveUsers({ openPopUpUsersRemove, closePopUpUsersRemove }) {
+  const projectUsers = useProjectStore((state) => state.projectUsers);
+  const setProjectUsers = useProjectStore((state) => state.setProjectUsers);
 
+  const [animationPlayed, setAnimationPlayed] = useState(false);
   const [filter, setFilter] = useState("");
   const [selectedUserIds, setSelectedUserIds] = useState([]);
-  const [animationPlayed, setAnimationPlayed] = useState(false);
   const [showSuccessText, setShowSuccessText] = useState(false);
-
-  useEffect(() => {
-    console.log("User contacts:", userContacts);
-    console.log("Project members:", projectMembers);
-  }, [userContacts, projectMembers]);
-
-  const filteredUsers =
-    (context === "user" ? userContacts : projectMembers)?.filter((user) =>
-      user.username.toLowerCase().includes(filter.toLowerCase())
-    ) || [];
+  const filteredUsers = projectUsers.filter((user) =>
+    user.username.toLowerCase().includes(filter.toLowerCase())
+  );
 
   const handleCheckboxChange = (idOrIndex) => {
     if (selectedUserIds.includes(idOrIndex)) {
       setSelectedUserIds(selectedUserIds.filter((id) => id !== idOrIndex));
     } else {
       setSelectedUserIds([...selectedUserIds, idOrIndex]);
-    }
-  };
-
-  const handleRemoveUsers = async () => {
-    console.log(selectedUserIds);
-    if (context === "user") {
-      try {
-        const response = await fetch(`${apiUrl}/users`, {
-          method: "DELETE",
-          headers: {
-            Accept: "*/*",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(selectedUserIds),
-        });
-        if (response.status === 204) {
-          const updatedContacts = userContacts.filter(
-            (user) => !selectedUserIds.includes(user.id)
-          );
-          setUserContacts(updatedContacts);
-          setAnimationPlayed(true);
-        } else if (response.status === 500) {
-          console.log("Internet server error");
-        }
-      } catch (error) {
-        console.error("Error deleting users:", error);
-      }
-    } else {
-      const updatedProjectMembers = projectMembers.filter(
-        (_, index) => !selectedUserIds.includes(index)
-      );
-      setProjectMembers(updatedProjectMembers);
-      setAnimationPlayed(true);
     }
   };
 
@@ -82,13 +34,21 @@ function RemoveUsers({ openPopUpUserRemove, closePopUpUserRemove, context }) {
     },
   };
 
+  const handleRemoveUsers = () => {
+    const updatedProjectUsers = projectUsers.filter(
+      (_, index) => !selectedUserIds.includes(index)
+    );
+    setProjectUsers(updatedProjectUsers);
+    setAnimationPlayed(true);
+  };
+
   return (
     <>
       <Modal
-        show={openPopUpUserRemove}
+        show={openPopUpUsersRemove}
         size="xl"
         onClose={() => {
-          closePopUpUserRemove();
+          closePopUpUsersRemove();
           setSelectedUserIds([]);
         }}
         popup
@@ -110,34 +70,13 @@ function RemoveUsers({ openPopUpUserRemove, closePopUpUserRemove, context }) {
                 />
                 <div className="flex flex-col items-start overflow-y-auto h-36 space-y-2">
                   {filteredUsers.map((user, index) => (
-                    <div
-                      key={context === "user" ? user.id : index}
-                      className="flex items-center gap-2"
-                    >
+                    <div key={index} className="flex items-center gap-2">
                       <Checkbox
-                        id={
-                          context === "user"
-                            ? user.id.toString()
-                            : index.toString()
-                        }
-                        checked={selectedUserIds.includes(
-                          context === "user" ? user.id : index
-                        )}
-                        onChange={() =>
-                          handleCheckboxChange(
-                            context === "user" ? user.id : index
-                          )
-                        }
+                        id={index.toString()}
+                        checked={selectedUserIds.includes(index)}
+                        onChange={() => handleCheckboxChange(index)}
                       />
-                      <Label
-                        htmlFor={
-                          context === "user"
-                            ? user.id.toString()
-                            : index.toString()
-                        }
-                      >
-                        {user.username}
-                      </Label>
+                      <Label htmlFor={index.toString()}>{user.username}</Label>
                     </div>
                   ))}
                 </div>
@@ -171,11 +110,6 @@ function RemoveUsers({ openPopUpUserRemove, closePopUpUserRemove, context }) {
                     Removed with success
                   </div>
                 )}
-                <Tooltip
-                  anchorSelect="#icon-element"
-                  content="Click to delete this user from your profile"
-                  place="top"
-                />
               </div>
             </div>
           </div>

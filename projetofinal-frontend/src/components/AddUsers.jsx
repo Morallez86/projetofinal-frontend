@@ -1,13 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Modal, Button, TextInput } from "flowbite-react";
 import useUserStore from "../Stores/UserStore";
+import useProjectStore from "../Stores/ProjectStore";
 import useApiStore from "../Stores/ApiStore";
+import basePhoto from "../Assets/092.png";
 
-function AddUsers({ openPopUpUsers, closePopUpUsers, context }) {
+function AddUsers({ openPopUpUsers, closePopUpUsers }) {
   const token = useUserStore((state) => state.token);
   const apiUrl = useApiStore((state) => state.apiUrl);
+  const projectUsers = useProjectStore((state) => state.projectUsers);
+  const setProjectUsers = useProjectStore((state) => state.setProjectUsers);
 
   const [users, setUsers] = useState([]);
+  const [userImages, setUserImages] = useState({});
   const [inputValue, setInputValue] = useState("");
 
   const handleSearch = async () => {
@@ -28,14 +33,46 @@ function AddUsers({ openPopUpUsers, closePopUpUsers, context }) {
         if (response.status === 200) {
           const data = await response.json();
           setUsers(data);
+          fetchUserImages(data);
         } else if (response.status === 404) {
           console.log("Users not found");
+          setUsers([]);
+          setUserImages({});
         }
       } catch (error) {
         console.error("Error searching users:", error);
       }
     } else {
       setUsers([]);
+      setUserImages({});
+    }
+  };
+
+  const fetchUserImages = async (users) => {
+    const userIds = users.map((user) => user.id);
+    try {
+      const response = await fetch(`${apiUrl}/users/images`, {
+        method: "POST",
+        headers: {
+          Accept: "*/*",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(userIds),
+      });
+
+      if (response.ok) {
+        const imagesData = await response.json();
+        const imagesMap = {};
+        imagesData.forEach((img) => {
+          imagesMap[img.id] = img;
+        });
+        setUserImages(imagesMap);
+      } else {
+        console.error("Error fetching user images");
+      }
+    } catch (error) {
+      console.error("Error fetching user images:", error);
     }
   };
 
@@ -43,33 +80,17 @@ function AddUsers({ openPopUpUsers, closePopUpUsers, context }) {
     setInputValue(event.target.value);
   };
 
-  const handleAddUser = async (user) => {
-    const data = [{ id: user.id, username: user.username }];
+  const handleAddUser = (user) => {
+    const userData = { userId: user.id, username: user.username };
 
-    if (context === "user") {
-      try {
-        const response = await fetch(`${apiUrl}/users`, {
-          method: "POST",
-          headers: {
-            Accept: "*/*",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(data),
-        });
+    // Add the user to the project users
+    setProjectUsers([...projectUsers, userData]);
 
-        if (response.status === 201) {
-          const newUsers = await response.json();
-          setUsers([...users, ...newUsers]);
-        } else if (response.status === 500) {
-          console.error("Internal Server Error");
-        }
-      } catch (error) {
-        console.error("Error adding user:", error);
-      }
-    } else {
-      // Handle project user addition logic
-    }
+    // Clear the input field and close the modal
+    setInputValue("");
+    setUsers([]);
+    setUserImages({});
+    closePopUpUsers();
   };
 
   return (
@@ -80,6 +101,7 @@ function AddUsers({ openPopUpUsers, closePopUpUsers, context }) {
         closePopUpUsers();
         setUsers([]);
         setInputValue("");
+        setUserImages({});
       }}
       popup
     >
@@ -111,14 +133,29 @@ function AddUsers({ openPopUpUsers, closePopUpUsers, context }) {
                       onClick={() => handleAddUser(user)}
                     >
                       <div className="flex items-center">
-                        <img
-                          src={user.photo}
-                          alt={user.username}
-                          className="w-8 h-8 rounded-full mr-2"
-                        />
+                        {userImages[user.id] ? (
+                          <img
+                            src={`data:${userImages[user.id].type};base64,${
+                              userImages[user.id].image
+                            }`}
+                            alt={`${user.username}'s profile`}
+                            className="w-8 h-8 rounded-full mr-2"
+                          />
+                        ) : (
+                          <img
+                            src={basePhoto}
+                            alt="Placeholder"
+                            className="w-8 h-8 rounded-full mr-2"
+                          />
+                        )}
                         <span>{user.username}</span>
                       </div>
-                      <Button size="xs">Add</Button>
+                      <Button
+                        size="xs"
+                        onClick={handleAddUser}
+                      >
+                        Add
+                      </Button>
                     </li>
                   ))}
                 </ul>
