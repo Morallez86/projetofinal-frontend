@@ -5,6 +5,7 @@ import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
 import ProjectDetailsCard from "../Components/ProjectDetailsCard";
 import TaskCard from "../Components/TaskCard";
+import ActivityLogs from "../Components/ActivityLogs";
 
 function ProjectDetails() {
   const { projectId } = useParams();
@@ -97,7 +98,7 @@ function ProjectDetails() {
           )}
         </div>
         <div className="w-full md:w-1/3 p-4">
-          {/* Sidebar or additional content */}
+          <ActivityLogs tasks={tasks} projectId={project.id} logs={project.historyrecords}/>
         </div>
       </div>
     </div>
