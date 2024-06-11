@@ -1,11 +1,4 @@
-import {
-  Card,
-  TextInput,
-  Label,
-  Button,
-  Select,
-  Textarea,
-} from "flowbite-react";
+import { Card, TextInput, Label, Button, Textarea } from "flowbite-react";
 import { Tooltip } from "react-tooltip";
 import useProjectInfo from "../Hooks/useProjectInfo";
 import { createProject } from "../Services/projectService";
@@ -22,8 +15,11 @@ function ProjectCard({
   openPopUpComponentsRemove,
   openPopUpResources,
   openPopUpResourcesRemove,
+  openPopUpUsers,
+  openPopUpUsersRemove,
 }) {
-  const { projectInfo, handleChange, handleDropdownChange } = useProjectInfo();
+  const { projectInfo, handleChange } = useProjectInfo();
+  console.log(projectInfo)
 
   const formatDateForBackend = (dateString) => {
     if (!dateString) {
@@ -47,7 +43,6 @@ function ProjectCard({
 
     console.log("Formatted project info:", formattedProjectInfo);
 
-
     try {
       const newProject = await createProject(formattedProjectInfo, token);
       if (newProject) {
@@ -59,6 +54,7 @@ function ProjectCard({
       console.error("Error creating project:", error);
     }
   };
+
 
   return (
     <Card className="bg-gray-200 transition-colors duration-200 w-3/4 h-auto mx-auto mt-10">
@@ -90,22 +86,6 @@ function ProjectCard({
             value={projectInfo.motivation}
             onChange={handleChange}
           />
-        </div>
-        <div>
-          <Label htmlFor="status" value="Status" />
-          <Select
-            id="status"
-            name="status"
-            value={projectInfo.status}
-            onChange={(e) => handleDropdownChange("status", e.target.value)}
-          >
-            <option value="">Select Status</option>
-            <option value="100">Planning</option>
-            <option value="200">Ready</option>
-            <option value="300">In Progress</option>
-            <option value="400">Finished</option>
-            <option value="500">Cancelled</option>
-          </Select>
         </div>
         <div>
           <Label htmlFor="maxUsers" value="Max Users" />
@@ -144,14 +124,14 @@ function ProjectCard({
             <div
               className="inline-flex items-center cursor-pointer"
               id="icon-element2"
-              onClick={() => openPopUpSkills("project")}
+              onClick={openPopUpSkills}
             >
               <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
             </div>
             <div
               className="inline-flex items-center cursor-pointer"
               id="icon-element-remove2"
-              onClick={() => openPopUpSkillsRemove("project")}
+              onClick={openPopUpSkillsRemove}
             >
               <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
             </div>
@@ -197,14 +177,14 @@ function ProjectCard({
             <div
               className="inline-flex items-center cursor-pointer"
               id="icon-element4"
-              onClick={() => openPopUpInterests("project")}
+              onClick={openPopUpInterests}
             >
               <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
             </div>
             <div
               className="inline-flex items-center cursor-pointer"
               id="icon-element-remove4"
-              onClick={() => openPopUpInterestRemove("project")}
+              onClick={openPopUpInterestRemove}
             >
               <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
             </div>
@@ -250,14 +230,14 @@ function ProjectCard({
             <div
               className="inline-flex items-center cursor-pointer"
               id="icon-element5"
-              onClick={() => openPopUpComponent("project")}
+              onClick={openPopUpComponent}
             >
               <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
             </div>
             <div
               className="inline-flex items-center cursor-pointer"
               id="icon-element-remove5"
-              onClick={() => openPopUpComponentsRemove("project")}
+              onClick={openPopUpComponentsRemove}
             >
               <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
             </div>
@@ -296,30 +276,31 @@ function ProjectCard({
               )}
           </div>
         </div>
+        {/* Resources */}
         <div className="mt-4">
           <div className="flex items-center">
             <Label htmlFor="resources" value="Resources" />
             <div
               className="inline-flex items-center cursor-pointer"
-              id="icon-element6"
-              onClick={() => openPopUpResources("project")}
+              id="icon-element3"
+              onClick={openPopUpResources}
             >
               <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
             </div>
             <div
               className="inline-flex items-center cursor-pointer"
-              id="icon-element-remove6"
-              onClick={() => openPopUpResourcesRemove("project")}
+              id="icon-element-remove3"
+              onClick={openPopUpResourcesRemove}
             >
               <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
             </div>
             <Tooltip
-              anchorSelect="#icon-element6"
+              anchorSelect="#icon-element3"
               content="Add new resource"
               place="top"
             />
             <Tooltip
-              anchorSelect="#icon-element-remove6"
+              anchorSelect="#icon-element-remove3"
               content="Remove a resource"
               place="top"
             />
@@ -348,12 +329,64 @@ function ProjectCard({
               )}
           </div>
         </div>
-        {/* Save Button */}
-        <div className="col-span-3 mt-6 flex justify-end">
-          <Button color="primary" onClick={handleSubmit}>
-            Save Project
-          </Button>
+        {/* Adding the users */}
+        <div className="mt-4">
+          <div className="flex items-center">
+            <Label htmlFor="team" value="Team" />
+            <div
+              className="inline-flex items-center cursor-pointer"
+              id="icon-element6"
+              onClick={openPopUpUsers}
+            >
+              <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
+            </div>
+            <div
+              className="inline-flex items-center cursor-pointer"
+              id="icon-element-remove6"
+              onClick={openPopUpUsersRemove}
+            >
+              <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
+            </div>
+            <Tooltip
+              anchorSelect="#icon-element6"
+              content="Add new user"
+              place="top"
+            />
+            <Tooltip
+              anchorSelect="#icon-element-remove6"
+              content="Remove a user"
+              place="top"
+            />
+          </div>
+          <div className="flex items-center text-sm font-medium text-gray-900 dark:text-gray-400">
+            <p>
+              {Array.isArray(projectInfo.userProjectDtos)
+                ? projectInfo.userProjectDtos
+                    .slice(0, 3)
+                    .map((user) => user.username)
+                    .join(", ")
+                : ""}
+            </p>
+            {Array.isArray(projectInfo.userProjectDtos) &&
+              projectInfo.userProjectDtos.length > 3 && (
+                <div id="tip-all-users">
+                  <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+                    {`+${projectInfo.userProjectDtos.length - 3}`}
+                  </button>
+                  <Tooltip
+                    anchorSelect="#tip-all-users"
+                    content="Check all users"
+                    place="top"
+                  />
+                </div>
+              )}
+          </div>
         </div>
+      </div>
+      <div className="flex justify-center">
+        <Button onClick={handleSubmit} className="mt-4">
+          Submit
+        </Button>
       </div>
     </Card>
   );

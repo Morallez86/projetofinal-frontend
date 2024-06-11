@@ -9,6 +9,7 @@ const useProjectStore = create((set) => ({
   projectInterests: [],
   projectComponents: [],
   projectResources: [],
+  projectUsers: [],
 
   // Functions to update the project details
   setProjectId: (projectId) => set({ projectId }),
@@ -16,8 +17,9 @@ const useProjectStore = create((set) => ({
   setProjectDescription: (projectDescription) => set({ projectDescription }),
   setProjectSkills: (skills) => set({ projectSkills: skills }),
   setProjectInterests: (interests) => set({ projectInterests: interests }),
-  setProjectComponents: (components) => set({ projectComponents: components}),
-  setProjectResources: (resources) => set({projectResources: resources}),
+  setProjectComponents: (components) => set({ projectComponents: components }),
+  setProjectResources: (resources) => set({ projectResources: resources }),
+  setProjectUsers: (users) => set({ projectUsers: users }),
 
   // Functions to clear the project details
   clearProjectId: () => set({ projectId: null }),
@@ -26,7 +28,8 @@ const useProjectStore = create((set) => ({
   clearProjectSkills: () => set({ projectSkills: [] }),
   clearProjectInterests: () => set({ projectInterests: [] }),
   clearProjectComponents: () => set({ projectComponents: [] }),
-  clearProjectResources: () => set({ projectResouirces: [] }),
+  clearProjectResources: () => set({ projectResources: [] }),
+  clearProjectUsers: () => set({ projectUsers: [] }),
 }));
 
 export default useProjectStore;

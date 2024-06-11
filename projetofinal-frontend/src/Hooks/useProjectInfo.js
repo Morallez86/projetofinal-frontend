@@ -6,6 +6,7 @@ const useProjectInfo = () => {
   const projectInterests = useProjectStore((state) => state.projectInterests);
   const projectComponents = useProjectStore((state) => state.projectComponents);
   const projectResources = useProjectStore((state) => state.projectResources);
+  const projectUsers = useProjectStore((state) => state.projectUsers);
 
   const [projectInfo, setProjectInfo] = useState({
     title: "",
@@ -19,6 +20,7 @@ const useProjectInfo = () => {
     resources: [],
     interests: [],
     skills: [],
+    userProjectDtos: [],
   });
 
   useEffect(() => {
@@ -28,20 +30,12 @@ const useProjectInfo = () => {
       interests: projectInterests,
       components: projectComponents,
       resources: projectResources,
+      userProjectDtos: projectUsers,
     }));
-  }, [projectSkills, projectInterests, projectComponents, projectResources]);
+  }, [projectSkills, projectInterests, projectComponents, projectResources, projectUsers]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProjectInfo((prevInfo) => ({
-      ...prevInfo,
-      [name]: value,
-    }));
-      console.log(`Updating ${name} to ${value}`);
-
-  };
-
-  const handleDropdownChange = (name, value) => {
     setProjectInfo((prevInfo) => ({
       ...prevInfo,
       [name]: value,
@@ -51,7 +45,6 @@ const useProjectInfo = () => {
   return {
     projectInfo,
     handleChange,
-    handleDropdownChange,
   };
 };
 
