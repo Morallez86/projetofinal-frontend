@@ -7,7 +7,7 @@ import useUserStore from "../Stores/UserStore";
 import useApiStore from "../Stores/ApiStore";
 
 function CreateLogModal({ onClose, tasks, projectId }) {
-  const options = tasks.map((task) => ({ value: task.id, label: task.title }));
+  const options = [{ value: null, label: "None" }, ...tasks.map((task) => ({ value: task.id, label: task.title }))];
   const token = useUserStore((state) => state.token);
   const apiUrl = useApiStore((state) => state.apiUrl);
 
@@ -51,8 +51,8 @@ function CreateLogModal({ onClose, tasks, projectId }) {
         throw new Error("Failed to create log");
       }
 
-      const data = await response.json();
-      console.log(data);
+     /* const data = await response.json();
+      console.log(data);*/
     } catch (error) {
       console.error("Failed to create log", error);
     }
