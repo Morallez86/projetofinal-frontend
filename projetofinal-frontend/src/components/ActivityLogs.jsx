@@ -6,7 +6,7 @@ import { useState } from "react";
 function ActivityLogs({ tasks, projectId, logs }) {
   const [showModal, setShowModal] = useState(false);
   const [totalLogs, setTotalLogs] = useState(logs);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [expandedLogs, setExpandedLogs] = useState({});
 
 
   const handleOpenModal = () => {
@@ -45,12 +45,12 @@ function ActivityLogs({ tasks, projectId, logs }) {
               key={log.id}
               className={`w-72 rounded-md border border-black ${
                 logColors[log.type]
-              } ${isExpanded ? "h-auto" : "h-24"}`}
-              onMouseEnter={() => !log.title && setIsExpanded(true)}
-              onMouseLeave={() => !log.title && setIsExpanded(false)}
+              } ${expandedLogs[log.id] ? "h-auto" : "h-24"}`}
+              onMouseEnter={() => !log.title && setExpandedLogs(prev => ({ ...prev, [log.id]: true }))}
+              onMouseLeave={() => !log.title && setExpandedLogs(prev => ({ ...prev, [log.id]: false }))}
             >
               <p className="text-center font-bold">{displayText}</p>
-              {isExpanded && (
+              {expandedLogs[log.id] && (
                 <p className="text-center">{log.newDescription}</p>
               )}
               <p className="text-center">{formattedDate}</p>
