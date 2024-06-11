@@ -33,7 +33,7 @@ function CreateLogModal({ onClose, tasks, projectId }) {
             <Label htmlFor="description" value="About log" />
             <Textarea
               id="description"
-              name="description"
+              name="newDescription"
               className="h-[10rem] resize-none"
               defaultValue={""}
               onChange={handleChange}
