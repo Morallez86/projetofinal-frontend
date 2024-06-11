@@ -24,16 +24,18 @@ function ActivityLogs({ tasks, projectId, logs }) {
   };
 
   return (
-    <div className="flex flex-col items-center space-y-4 rounded-md bg-white">
+    <div className="flex flex-col items-center p-4 space-y-4 rounded-md bg-white">
       <h1 className="text-4xl font-bold underline mb-4">Activity Log</h1>
       <div className="overflow-auto space-y-4 h-[30rem]">
         {totalLogs.map((log) => {
           const date = new Date(...log.timestamp);
           const formattedDate = date.toLocaleDateString();
-          const formattedTime = date.toLocaleTimeString().slice(0, 5); 
-          const shortDescription = log.newDescription.length > 15
-          ? log.newDescription.slice(0, 15) + "(...)"
-          : log.newDescription;
+          const formattedTime = date.toLocaleTimeString().slice(0, 5);
+          const shortDescription = log.newDescription
+            ? log.newDescription.length > 15
+              ? log.newDescription.slice(0, 15) + " (...)"
+              : log.newDescription
+            : "";
           return (
             <div
               key={log.id}
