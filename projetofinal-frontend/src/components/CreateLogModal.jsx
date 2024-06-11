@@ -2,15 +2,29 @@ import React from "react";
 import { Modal, Label, Textarea, Button } from "flowbite-react";
 import Select from "react-select";
 import { useState } from "react";
+import {jwtDecode} from "jwt-decode";
+import useUserStore from "../Stores/UserStore";
 
 function CreateLogModal({ onClose, tasks, projectId }) {
   const options = tasks.map((task) => ({ value: task.id, label: task.title }));
+  const token = useUserStore((state) => state.token);
+
+  let userIdFromToken;
+
+  if (token) {
+    try {
+      const decodedToken = jwtDecode(token);
+      userIdFromToken = decodedToken.id;
+    } catch (error) {
+      console.error("Invalid token", error);
+    }
+  }
 
   const [formData, setFormData] = useState({
     newDescription: "",
     type: "",
     timestamp: "",
-    userId: "",
+    userId: userIdFromToken,
     projectId: projectId,
     taskId: "",
   });
