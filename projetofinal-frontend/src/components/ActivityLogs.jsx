@@ -8,7 +8,6 @@ function ActivityLogs({ tasks, projectId, logs }) {
   const [totalLogs, setTotalLogs] = useState(logs);
   const [expandedLogs, setExpandedLogs] = useState({});
 
-
   const handleOpenModal = () => {
     setShowModal(true);
   };
@@ -25,14 +24,36 @@ function ActivityLogs({ tasks, projectId, logs }) {
     500: "bg-gray-400",
   };
 
+  const formatDateForInput = (dateArray) => {
+    if (!Array.isArray(dateArray) || dateArray.length < 3) {
+      return "";
+    }
+    const [year, month, day, hour, minute] = dateArray;
+    const date = new Date(year, month - 1, day, hour, minute);
+    const dateFinal = date.toLocaleDateString("pt-BR");
+    return dateFinal;
+  };
+
+  const formatTimeForInput = (dateArray) => {
+    if (!Array.isArray(dateArray) || dateArray.length < 5) {
+      return "";
+    }
+    const [year, month, day, hour, minute] = dateArray;
+    const date = new Date(year, month - 1, day, hour, minute);
+    return date.toLocaleTimeString("pt-BR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
   return (
     <div className="flex flex-col items-center p-4 space-y-4 rounded-md bg-white">
       <h1 className="text-4xl font-bold underline mb-4">Activity Log</h1>
       <div className="overflow-auto space-y-4 h-[30rem]">
         {totalLogs.map((log) => {
-          const date = new Date(...log.timestamp);
-          const formattedDate = date.toLocaleDateString();
-          const formattedTime = date.toLocaleTimeString().slice(0, 5);
+          const formattedDate = formatDateForInput(log.timestamp);
+          const formattedTime = formatTimeForInput(log.timestamp);
+
           const shortDescription = log.newDescription
             ? log.newDescription.length > 15
               ? log.newDescription.slice(0, 15) + " (...)"
@@ -46,8 +67,14 @@ function ActivityLogs({ tasks, projectId, logs }) {
               className={`w-72 rounded-md border border-black ${
                 logColors[log.type]
               } ${expandedLogs[log.id] ? "h-auto" : "h-24"}`}
-              onMouseEnter={() => !log.title && setExpandedLogs(prev => ({ ...prev, [log.id]: true }))}
-              onMouseLeave={() => !log.title && setExpandedLogs(prev => ({ ...prev, [log.id]: false }))}
+              onMouseEnter={() =>
+                !log.title &&
+                setExpandedLogs((prev) => ({ ...prev, [log.id]: true }))
+              }
+              onMouseLeave={() =>
+                !log.title &&
+                setExpandedLogs((prev) => ({ ...prev, [log.id]: false }))
+              }
             >
               <p className="text-center font-bold">{displayText}</p>
               {expandedLogs[log.id] && (
@@ -68,6 +95,7 @@ function ActivityLogs({ tasks, projectId, logs }) {
           tasks={tasks}
           onClose={handleCloseModal}
           projectId={projectId}
+          addNewLog={setTotalLogs}
         />
       )}
     </div>
