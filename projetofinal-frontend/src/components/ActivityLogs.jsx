@@ -2,6 +2,7 @@ import React from "react";
 import { Button, ToggleSwitch, TextInput } from "flowbite-react";
 import CreateLogModal from "./CreateLogModal";
 import { useState } from "react";
+import { FaInfoCircle } from "react-icons/fa";
 
 function ActivityLogs({ tasks, projectId, logs }) {
   const [showModal, setShowModal] = useState(false);
@@ -11,19 +12,29 @@ function ActivityLogs({ tasks, projectId, logs }) {
   const [switch2, setSwitch2] = useState(true);
   const [taskSearch, setTaskSearch] = useState("");
   const [userSearch, setUserSearch] = useState("");
+  const [showLegend, setShowLegend] = useState(false);
 
   console.log(logs);
 
   const handleFilter = (log) => {
-    if (switch1 && taskSearch && (!log.taskName || !log.taskName.toLowerCase().includes(taskSearch.toLowerCase()))) {
+    if (
+      switch1 &&
+      taskSearch &&
+      (!log.taskName ||
+        !log.taskName.toLowerCase().includes(taskSearch.toLowerCase()))
+    ) {
       return false;
     }
-    if (switch2 && userSearch && (!log.userName || !log.userName.toLowerCase().includes(userSearch.toLowerCase()))) {
+    if (
+      switch2 &&
+      userSearch &&
+      (!log.userName ||
+        !log.userName.toLowerCase().includes(userSearch.toLowerCase()))
+    ) {
       return false;
     }
     return true;
   };
-
 
   const handleOpenModal = () => {
     setShowModal(true);
@@ -65,10 +76,46 @@ function ActivityLogs({ tasks, projectId, logs }) {
 
   return (
     <div className="flex flex-col items-center p-4 space-y-4 rounded-md bg-white">
+      <div
+        className="relative top-0 right-0 cursor-pointer"
+        onMouseEnter={() => setShowLegend(true)}
+        onMouseLeave={() => setShowLegend(false)}
+      >
+        <FaInfoCircle size={30} />
+        {showLegend && (
+          <div className="absolute top-full right-0 bg-white p-4 rounded-md shadow-lg z-10 w-64">
+            <p>
+              <span className="inline-block w-4 h-4 bg-blue-300 mr-2"></span>
+              Blue: Tasks
+            </p>
+            <p>
+              <span className="inline-block w-4 h-4 bg-yellow-300 mr-2"></span>
+              Yellow: Additions
+            </p>
+            <p>
+              <span className="inline-block w-4 h-4 bg-red-400 mr-2"></span>
+              Red: Removals
+            </p>
+            <p>
+              <span className="inline-block w-4 h-4 bg-orange-400 mr-2"></span>
+              Orange: Project State
+            </p>
+            <p>
+              <span className="inline-block w-4 h-4 bg-gray-400 mr-2"></span>
+              Gray: Personal logs
+            </p>
+          </div>
+        )}
+      </div>
       <h1 className="text-4xl font-bold underline mb-4">Activity Log</h1>
+
       <div className="flex max-w-md flex-col gap-4">
-      <div className="flex items-center gap-4">
-          <ToggleSwitch checked={switch1} label="Filter by task" onChange={setSwitch1} />
+        <div className="flex items-center gap-4">
+          <ToggleSwitch
+            checked={switch1}
+            label="Filter by task"
+            onChange={setSwitch1}
+          />
           {switch1 && (
             <TextInput
               placeholder="Search by task"
@@ -78,7 +125,11 @@ function ActivityLogs({ tasks, projectId, logs }) {
           )}
         </div>
         <div className="flex items-center gap-4">
-          <ToggleSwitch checked={switch2} label="Filter by user" onChange={setSwitch2} />
+          <ToggleSwitch
+            checked={switch2}
+            label="Filter by user"
+            onChange={setSwitch2}
+          />
           {switch2 && (
             <TextInput
               placeholder="Search by user"
@@ -87,9 +138,9 @@ function ActivityLogs({ tasks, projectId, logs }) {
             />
           )}
         </div>
-    </div>
+      </div>
       <div className="overflow-auto space-y-4 h-[30rem]">
-      {totalLogs.filter(handleFilter).map((log) => {
+        {totalLogs.filter(handleFilter).map((log) => {
           const formattedDate = formatDateForInput(log.timestamp);
           const formattedTime = formatTimeForInput(log.timestamp);
 
