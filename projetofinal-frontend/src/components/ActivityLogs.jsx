@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "flowbite-react";
+import { Button, ToggleSwitch, TextInput } from "flowbite-react";
 import CreateLogModal from "./CreateLogModal";
 import { useState } from "react";
 
@@ -7,6 +7,23 @@ function ActivityLogs({ tasks, projectId, logs }) {
   const [showModal, setShowModal] = useState(false);
   const [totalLogs, setTotalLogs] = useState(logs);
   const [expandedLogs, setExpandedLogs] = useState({});
+  const [switch1, setSwitch1] = useState(false);
+  const [switch2, setSwitch2] = useState(true);
+  const [taskSearch, setTaskSearch] = useState("");
+  const [userSearch, setUserSearch] = useState("");
+
+  console.log(logs);
+
+  const handleFilter = (log) => {
+    if (switch1 && taskSearch && (!log.taskName || !log.taskName.toLowerCase().includes(taskSearch.toLowerCase()))) {
+      return false;
+    }
+    if (switch2 && userSearch && (!log.userName || !log.userName.toLowerCase().includes(userSearch.toLowerCase()))) {
+      return false;
+    }
+    return true;
+  };
+
 
   const handleOpenModal = () => {
     setShowModal(true);
@@ -49,8 +66,30 @@ function ActivityLogs({ tasks, projectId, logs }) {
   return (
     <div className="flex flex-col items-center p-4 space-y-4 rounded-md bg-white">
       <h1 className="text-4xl font-bold underline mb-4">Activity Log</h1>
+      <div className="flex max-w-md flex-col gap-4">
+      <div className="flex items-center gap-4">
+          <ToggleSwitch checked={switch1} label="Filter by task" onChange={setSwitch1} />
+          {switch1 && (
+            <TextInput
+              placeholder="Search by task"
+              value={taskSearch}
+              onChange={(e) => setTaskSearch(e.target.value)}
+            />
+          )}
+        </div>
+        <div className="flex items-center gap-4">
+          <ToggleSwitch checked={switch2} label="Filter by user" onChange={setSwitch2} />
+          {switch2 && (
+            <TextInput
+              placeholder="Search by user"
+              value={userSearch}
+              onChange={(e) => setUserSearch(e.target.value)}
+            />
+          )}
+        </div>
+    </div>
       <div className="overflow-auto space-y-4 h-[30rem]">
-        {totalLogs.map((log) => {
+      {totalLogs.filter(handleFilter).map((log) => {
           const formattedDate = formatDateForInput(log.timestamp);
           const formattedTime = formatTimeForInput(log.timestamp);
 
