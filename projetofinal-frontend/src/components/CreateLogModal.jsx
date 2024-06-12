@@ -1,15 +1,21 @@
 import React from "react";
-import { Modal, Label, Textarea, Button } from "flowbite-react";
+import { Modal, Label, Textarea, Button, Alert } from "flowbite-react";
 import Select from "react-select";
 import { useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import useUserStore from "../Stores/UserStore";
 import useApiStore from "../Stores/ApiStore";
+import { HiInformationCircle} from "react-icons/hi";
+
 
 function CreateLogModal({ onClose, tasks, projectId, addNewLog }) {
-  const options = [{ value: null, label: "None" }, ...tasks.map((task) => ({ value: task.id, label: task.title }))];
+  const options = [
+    { value: null, label: "None" },
+    ...tasks.map((task) => ({ value: task.id, label: task.title })),
+  ];
   const token = useUserStore((state) => state.token);
   const apiUrl = useApiStore((state) => state.apiUrl);
+  const [warning, setWarning] = useState(0);
 
   let userIdFromToken;
 
@@ -37,6 +43,10 @@ function CreateLogModal({ onClose, tasks, projectId, addNewLog }) {
   };
 
   const addLog = async () => {
+    if (formData.newDescription === "") {
+      setWarning(1);
+      return;
+    }
     try {
       const response = await fetch(`${apiUrl}/projectHistory/${projectId}`, {
         method: "POST",
@@ -54,6 +64,7 @@ function CreateLogModal({ onClose, tasks, projectId, addNewLog }) {
       const data = await response.json();
       console.log(data);
       addNewLog(data);
+      setWarning(0);
       onClose();
     } catch (error) {
       console.error("Failed to create log", error);
@@ -95,9 +106,16 @@ function CreateLogModal({ onClose, tasks, projectId, addNewLog }) {
             />
           </div>
         </div>
+        {warning === 1 && (
+          <Alert color="failure" icon={HiInformationCircle}>
+            <span className="font-medium">At least the description about log is required</span>
+          </Alert>
+        )}
       </Modal.Body>
       <Modal.Footer>
-        <Button color="gray" onClick={onClose}>Cancel</Button>
+      <Button color="gray" onClick={() => {setWarning(0); onClose(); }}>
+          Cancel
+        </Button>
         <Button color="gray" onClick={handleSubmit}>
           Create
         </Button>
