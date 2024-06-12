@@ -8,8 +8,11 @@ import {
   Textarea,
 } from "flowbite-react";
 import { MdOutlineEdit } from "react-icons/md";
+import { LuBadge, LuBadgeCheck, LuBadgeX } from "react-icons/lu";
+import { Tooltip } from "react-tooltip";
 import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
+import useWorkplaceStore from "../Stores/WorkplaceStore";
 import { useParams } from "react-router-dom";
 import basePhoto from "../Assets/092.png";
 
@@ -19,24 +22,54 @@ function ProjectDetailsCard({ project, userImages }) {
   const [projectDetails, setProjectDetails] = useState({ ...project });
   const apiUrl = useApiStore((state) => state.apiUrl);
   const token = useUserStore((state) => state.token);
+  const workplaces = useWorkplaceStore((state) => state.workplaces);
 
   const statusOptions = [
     { value: 100, label: "PLANNING" },
-    { value: 200, label: "READY" },
-    { value: 300, label: "IN PROGRESS" },
-    { value: 400, label: "FINISHED" },
+    ...(projectDetails.status === 100
+      ? [{ value: 200, label: "READY" }]
+      : projectDetails.status === 300
+      ? [{ value: 400, label: "FINISHED" }]
+      : []),
     { value: 500, label: "CANCELLED" },
   ];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProjectDetails((prevDetails) => ({
-      ...prevDetails,
-      [name]: value,
-    }));
+
+    // Special handling for workplace
+    if (name === "workplace") {
+      const selectedWorkplace = workplaces.find(
+        (wp) => wp.id === parseInt(value, 10)
+      );
+      setProjectDetails((prevDetails) => ({
+        ...prevDetails,
+        workplace: selectedWorkplace || { id: null, name: "" },
+      }));
+    } else if (name === "status") {
+      // Check if the status change is valid based on the current status from the backend
+      if (
+        (projectDetails.status === 100 && value === "200") || // Allow change from Planning to Ready
+        (projectDetails.status === 300 && value === "400") // Allow change from In Progress to Finished
+      ) {
+        setProjectDetails((prevDetails) => ({
+          ...prevDetails,
+          [name]: parseInt(value, 10),
+        }));
+      } else {
+        // Show error message or handle invalid status change
+        console.error("Invalid status change");
+      }
+    } else {
+      setProjectDetails((prevDetails) => ({
+        ...prevDetails,
+        [name]: value,
+      }));
+    }
   };
 
   const handleSaveClick = async () => {
+    console.log(projectDetails)
     try {
       const response = await fetch(`${apiUrl}/projects/${projectId}`, {
         method: "PUT",
@@ -78,15 +111,66 @@ function ProjectDetailsCard({ project, userImages }) {
       .split("T")[0];
   };
 
+  const getBadge = (approved) => {
+    if (approved === true) {
+      return (
+        <>
+          <LuBadgeCheck
+            id="badge-approved"
+            className="h-6 w-6 text-white bg-green-500 rounded-full p-1 ml-2"
+          />
+          <Tooltip
+            anchorSelect="#badge-approved"
+            content="Approved"
+            place="top"
+          />
+        </>
+      );
+    } else if (approved === false) {
+      return (
+        <>
+          <LuBadgeX
+            id="badge-not-approved"
+            className="h-6 w-6 text-white bg-red-500 rounded-full p-1 ml-2"
+          />
+          <Tooltip
+            anchorSelect="#badge-not-approved"
+            content="Not Approved"
+            place="top"
+          />
+        </>
+      );
+    } else {
+      return (
+        <>
+          <LuBadge
+            id="badge-under-planning"
+            className="h-6 w-6 text-white bg-gray-500 rounded-full p-1 ml-2"
+          />
+          <Tooltip
+            anchorSelect="#badge-under-planning"
+            content="Under Planning"
+            place="top"
+          />
+        </>
+      );
+    }
+  };
+
   return (
     <Card className="bg-gray-200 transition-colors duration-200 h-auto">
       <div className="flex flex-col pb-10">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">{projectDetails.title}</h2>
-          <MdOutlineEdit
-            className="h-6 w-6 text-black cursor-pointer"
-            onClick={() => setEditMode(true)}
-          />
+          <div className="flex items-center">
+            <h2 className="text-xl font-semibold">{projectDetails.title}</h2>
+            {getBadge(projectDetails.approved)}
+          </div>
+          <div className="flex items-center space-x-2">
+            <MdOutlineEdit
+              className="h-6 w-6 text-black cursor-pointer"
+              onClick={() => setEditMode(true)}
+            />
+          </div>
         </div>
         <div className="flex flex-col gap-4">
           <div>
@@ -147,18 +231,18 @@ function ProjectDetailsCard({ project, userImages }) {
             )}
           </div>
           <div>
-            <Label htmlFor="plannedEndDate" value="Planned End Date" />
+            <Label htmlFor="motivation" value="Motivation" />
             {editMode ? (
-              <TextInput
-                id="plannedEndDate"
-                type="date"
-                name="plannedEndDate"
-                value={formatDateForInput(projectDetails.plannedEndDate)}
+              <Textarea
+                id="motivation"
+                name="motivation"
+                value={projectDetails.motivation}
                 onChange={handleChange}
+                rows={3}
               />
             ) : (
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                {formatDateForInput(projectDetails.plannedEndDate)}
+                {projectDetails.motivation}
               </p>
             )}
           </div>
@@ -171,6 +255,7 @@ function ProjectDetailsCard({ project, userImages }) {
                 name="creationDate"
                 value={formatDateForInput(projectDetails.creationDate)}
                 onChange={handleChange}
+                className="w-1/2"
               />
             ) : (
               <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -179,44 +264,88 @@ function ProjectDetailsCard({ project, userImages }) {
             )}
           </div>
           <div>
-            <Label htmlFor="approved" value="Approved" />
+            <Label htmlFor="plannedEndDate" value="Planned End Date" />
             {editMode ? (
-              <Select
-                id="approved"
-                name="approved"
-                value={projectDetails.approved.toString()}
+              <TextInput
+                id="plannedEndDate"
+                type="date"
+                name="plannedEndDate"
+                value={formatDateForInput(projectDetails.plannedEndDate)}
                 onChange={handleChange}
-              >
-                <option value="true">Yes</option>
-                <option value="false">No</option>
-              </Select>
+                className="w-1/2"
+              />
             ) : (
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                {projectDetails.approved ? "Yes" : "No"}
+                {formatDateForInput(projectDetails.plannedEndDate)}
               </p>
             )}
           </div>
-        </div>
-        {project.userProjectDtos?.map((up) => (
-          <div key={up.userId} className="flex items-center mb-2">
-            {userImages[up.userId] ? (
-              <img
-                src={`data:${userImages[up.userId].type};base64,${
-                  userImages[up.userId].image
-                }`}
-                alt={`${up.username}'s profile`}
-                className="w-8 h-8 rounded-full mr-2"
+          <div>
+            <Label htmlFor="workplace" value="Workplace" />
+            {editMode ? (
+              <Select
+                id="workplace"
+                name="workplace"
+                value={projectDetails.workplace?.id || ""}
+                onChange={handleChange}
+                className="w-1/2"
+              >
+                <option value="" disabled>
+                  Select Workplace
+                </option>
+                {workplaces.map((workplace) => (
+                  <option key={workplace.id} value={workplace.id}>
+                    {workplace.name}
+                  </option>
+                ))}
+              </Select>
+            ) : (
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {projectDetails.workplace?.name || "No workplace assigned"}
+              </p>
+            )}
+          </div>
+          <div>
+            <Label htmlFor="maxUsers" value="Max Users" />
+            {editMode ? (
+              <TextInput
+                id="maxUsers"
+                type="number"
+                name="maxUsers"
+                value={projectDetails.maxUsers}
+                onChange={handleChange}
+                className="w-1/2"
               />
             ) : (
-              <img
-                src={basePhoto}
-                alt="Placeholder"
-                className="w-8 h-8 rounded-full mr-2"
-              />
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {projectDetails.maxUsers}
+              </p>
             )}
-            <span>{up.username}</span>
           </div>
-        ))}
+          <div>
+            <Label htmlFor="Team" value="Team" />
+            {project.userProjectDtos?.map((up) => (
+              <div key={up.userId} className="flex items-center mb-2">
+                {userImages[up.userId] ? (
+                  <img
+                    src={`data:${userImages[up.userId].type};base64,${
+                      userImages[up.userId].image
+                    }`}
+                    alt={`${up.username}'s profile`}
+                    className="w-8 h-8 rounded-full mr-2"
+                  />
+                ) : (
+                  <img
+                    src={basePhoto}
+                    alt="Placeholder"
+                    className="w-8 h-8 rounded-full mr-2"
+                  />
+                )}
+                <span>{up.username}</span>
+              </div>
+            ))}
+          </div>
+        </div>
         {editMode && (
           <div className="flex justify-end mt-4">
             <Button onClick={handleCancelClick} className="mr-2">

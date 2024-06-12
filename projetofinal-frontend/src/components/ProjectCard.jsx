@@ -1,9 +1,18 @@
-import { Card, TextInput, Label, Button, Textarea } from "flowbite-react";
+import {
+  Card,
+  TextInput,
+  Label,
+  Button,
+  Textarea,
+  Select,
+} from "flowbite-react";
+import { useState } from "react";
 import { Tooltip } from "react-tooltip";
 import useProjectInfo from "../Hooks/useProjectInfo";
 import { createProject } from "../Services/projectService";
 import { LuPlusCircle } from "react-icons/lu";
 import { MdOutlineRemoveCircleOutline } from "react-icons/md";
+import useWorkplaceStore from "../Stores/WorkplaceStore";
 import useUserStore from "../Stores/UserStore";
 
 function ProjectCard({
@@ -18,8 +27,12 @@ function ProjectCard({
   openPopUpUsers,
   openPopUpUsersRemove,
 }) {
-  const { projectInfo, handleChange } = useProjectInfo();
-  console.log(projectInfo)
+  const { projectInfo, handleChange, handleWorkplaceChange } = useProjectInfo();
+  console.log(projectInfo);
+  const { workplaces } = useWorkplaceStore();
+  const [selectedWorkLocation, setSelectedWorkLocation] = useState("");
+
+  console.log(workplaces);
 
   const formatDateForBackend = (dateString) => {
     if (!dateString) {
@@ -54,7 +67,6 @@ function ProjectCard({
       console.error("Error creating project:", error);
     }
   };
-
 
   return (
     <Card className="bg-gray-200 transition-colors duration-200 w-3/4 h-auto mx-auto mt-10">
@@ -116,6 +128,28 @@ function ProjectCard({
             value={projectInfo.plannedEndDate}
             onChange={handleChange}
           />
+        </div>
+        <div>
+          <Label htmlFor="workplace" value="Workplace" />
+          <Select
+            id="workplace"
+            name="workplace"
+            value={JSON.stringify(projectInfo.workplace)}
+            onChange={(e) => {
+              setSelectedWorkLocation(e.target.value);
+              handleWorkplaceChange(e);
+            }}
+            className="w-1/2"
+          >
+            <option value={JSON.stringify({ id: null, name: "" })} disabled>
+              Select Workplace
+            </option>
+            {workplaces.map((location) => (
+              <option key={location.id} value={JSON.stringify(location)}>
+                {location.name}
+              </option>
+            ))}
+          </Select>
         </div>
         {/* Skills */}
         <div className="mt-4">
@@ -282,25 +316,25 @@ function ProjectCard({
             <Label htmlFor="resources" value="Resources" />
             <div
               className="inline-flex items-center cursor-pointer"
-              id="icon-element3"
+              id="icon-element6"
               onClick={openPopUpResources}
             >
               <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
             </div>
             <div
               className="inline-flex items-center cursor-pointer"
-              id="icon-element-remove3"
+              id="icon-element-remove6"
               onClick={openPopUpResourcesRemove}
             >
               <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
             </div>
             <Tooltip
-              anchorSelect="#icon-element3"
+              anchorSelect="#icon-element6"
               content="Add new resource"
               place="top"
             />
             <Tooltip
-              anchorSelect="#icon-element-remove3"
+              anchorSelect="#icon-element-remove6"
               content="Remove a resource"
               place="top"
             />
@@ -329,31 +363,31 @@ function ProjectCard({
               )}
           </div>
         </div>
-        {/* Adding the users */}
+        {/* Team */}
         <div className="mt-4">
           <div className="flex items-center">
             <Label htmlFor="team" value="Team" />
             <div
               className="inline-flex items-center cursor-pointer"
-              id="icon-element6"
+              id="icon-element7"
               onClick={openPopUpUsers}
             >
               <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
             </div>
             <div
               className="inline-flex items-center cursor-pointer"
-              id="icon-element-remove6"
+              id="icon-element-remove7"
               onClick={openPopUpUsersRemove}
             >
               <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
             </div>
             <Tooltip
-              anchorSelect="#icon-element6"
+              anchorSelect="#icon-element7"
               content="Add new user"
               place="top"
             />
             <Tooltip
-              anchorSelect="#icon-element-remove6"
+              anchorSelect="#icon-element-remove7"
               content="Remove a user"
               place="top"
             />
@@ -383,11 +417,9 @@ function ProjectCard({
           </div>
         </div>
       </div>
-      <div className="flex justify-center">
-        <Button onClick={handleSubmit} className="mt-4">
-          Submit
-        </Button>
-      </div>
+      <Button onClick={handleSubmit} className="mt-4 mx-auto">
+        Create Project
+      </Button>
     </Card>
   );
 }

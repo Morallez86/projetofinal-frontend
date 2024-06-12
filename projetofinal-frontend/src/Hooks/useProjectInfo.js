@@ -12,10 +12,10 @@ const useProjectInfo = () => {
     title: "",
     description: "",
     motivation: "",
-    status: "",
     maxUsers: 0,
     startingDate: "",
     plannedEndDate: "",
+    workplace: { id: null, name: "" },
     components: [],
     resources: [],
     interests: [],
@@ -32,7 +32,13 @@ const useProjectInfo = () => {
       resources: projectResources,
       userProjectDtos: projectUsers,
     }));
-  }, [projectSkills, projectInterests, projectComponents, projectResources, projectUsers]);
+  }, [
+    projectSkills,
+    projectInterests,
+    projectComponents,
+    projectResources,
+    projectUsers,
+  ]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -42,9 +48,18 @@ const useProjectInfo = () => {
     }));
   };
 
+  const handleWorkplaceChange = (e) => {
+    const selectedWorkplace = JSON.parse(e.target.value);
+    setProjectInfo((prevInfo) => ({
+      ...prevInfo,
+      workplace: selectedWorkplace,
+    }));
+  };
+
   return {
     projectInfo,
     handleChange,
+    handleWorkplaceChange,
   };
 };
 
