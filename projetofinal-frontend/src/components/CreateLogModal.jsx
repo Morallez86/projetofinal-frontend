@@ -54,6 +54,7 @@ function CreateLogModal({ onClose, tasks, projectId, addNewLog }) {
       const data = await response.json();
       console.log(data);
       addNewLog(data);
+      onClose();
     } catch (error) {
       console.error("Failed to create log", error);
     }
@@ -96,7 +97,7 @@ function CreateLogModal({ onClose, tasks, projectId, addNewLog }) {
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <Button color="gray">Cancel</Button>
+        <Button color="gray" onClick={onClose}>Cancel</Button>
         <Button color="gray" onClick={handleSubmit}>
           Create
         </Button>
