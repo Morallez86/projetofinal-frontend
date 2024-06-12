@@ -9,7 +9,7 @@ function ActivityLogs({ tasks, projectId, logs }) {
   const [totalLogs, setTotalLogs] = useState(logs);
   const [expandedLogs, setExpandedLogs] = useState({});
   const [switch1, setSwitch1] = useState(false);
-  const [switch2, setSwitch2] = useState(true);
+  const [switch2, setSwitch2] = useState(false);
   const [taskSearch, setTaskSearch] = useState("");
   const [userSearch, setUserSearch] = useState("");
   const [showLegend, setShowLegend] = useState(false);
@@ -86,23 +86,23 @@ function ActivityLogs({ tasks, projectId, logs }) {
           <div className="absolute top-full right-0 bg-white p-4 rounded-md shadow-lg z-10 w-64">
             <p>
               <span className="inline-block w-4 h-4 bg-blue-300 mr-2"></span>
-              Blue: Tasks
+               Tasks
             </p>
             <p>
               <span className="inline-block w-4 h-4 bg-yellow-300 mr-2"></span>
-              Yellow: Additions
+               Additions
             </p>
             <p>
               <span className="inline-block w-4 h-4 bg-red-400 mr-2"></span>
-              Red: Removals
+               Removals
             </p>
             <p>
               <span className="inline-block w-4 h-4 bg-orange-400 mr-2"></span>
-              Orange: Project State
+               Project State
             </p>
             <p>
               <span className="inline-block w-4 h-4 bg-gray-400 mr-2"></span>
-              Gray: Personal logs
+               Personal logs
             </p>
           </div>
         )}
