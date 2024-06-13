@@ -5,7 +5,7 @@ import useProjectStore from "../Stores/ProjectStore";
 import useApiStore from "../Stores/ApiStore";
 import basePhoto from "../Assets/092.png";
 
-function AddUsers({ openPopUpUsers, closePopUpUsers }) {
+function AddUsers({ openPopUpUsers, closePopUpUsers, projectInfo }) {
   const token = useUserStore((state) => state.token);
   const apiUrl = useApiStore((state) => state.apiUrl);
   const projectUsers = useProjectStore((state) => state.projectUsers);
@@ -14,6 +14,7 @@ function AddUsers({ openPopUpUsers, closePopUpUsers }) {
   const [users, setUsers] = useState([]);
   const [userImages, setUserImages] = useState({});
   const [inputValue, setInputValue] = useState("");
+  const [error, setError] = useState("");
 
   const handleSearch = async () => {
     if (inputValue.length >= 3) {
@@ -81,6 +82,11 @@ function AddUsers({ openPopUpUsers, closePopUpUsers }) {
   };
 
   const handleAddUser = (user) => {
+    if (projectUsers.length >= projectInfo.maxUsers) {
+      setError(`Cannot add more than ${projectInfo.maxUsers} users`);
+      return;
+    }
+
     const userData = { userId: user.id, username: user.username };
 
     // Add the user to the project users
@@ -88,6 +94,7 @@ function AddUsers({ openPopUpUsers, closePopUpUsers }) {
 
     // Clear the input field and close the modal
     setInputValue("");
+    setError("");
     setUsers([]);
     setUserImages({});
     closePopUpUsers();
@@ -100,6 +107,7 @@ function AddUsers({ openPopUpUsers, closePopUpUsers }) {
       onClose={() => {
         closePopUpUsers();
         setUsers([]);
+        setError("");
         setInputValue("");
         setUserImages({});
       }}
@@ -150,10 +158,7 @@ function AddUsers({ openPopUpUsers, closePopUpUsers }) {
                         )}
                         <span>{user.username}</span>
                       </div>
-                      <Button
-                        size="xs"
-                        onClick={handleAddUser}
-                      >
+                      <Button size="xs" onClick={handleAddUser}>
                         Add
                       </Button>
                     </li>
@@ -163,6 +168,7 @@ function AddUsers({ openPopUpUsers, closePopUpUsers }) {
                 <p className="text-gray-500">No users found</p>
               )}
             </div>
+            {error && <p className="text-red-500">{error}</p>}
           </div>
         </div>
       </Modal.Body>

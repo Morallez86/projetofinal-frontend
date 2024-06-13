@@ -8,7 +8,6 @@ import {
 } from "flowbite-react";
 import { useState } from "react";
 import { Tooltip } from "react-tooltip";
-import useProjectInfo from "../Hooks/useProjectInfo";
 import { createProject } from "../Services/projectService";
 import { LuPlusCircle } from "react-icons/lu";
 import { MdOutlineRemoveCircleOutline } from "react-icons/md";
@@ -26,9 +25,11 @@ function ProjectCard({
   openPopUpResourcesRemove,
   openPopUpUsers,
   openPopUpUsersRemove,
+  projectInfo,
+  handleChange,
+  handleWorkplaceChange,
 }) {
-  const { projectInfo, handleChange, handleWorkplaceChange } = useProjectInfo();
-  console.log(projectInfo);
+
   const { workplaces } = useWorkplaceStore();
   const [selectedWorkLocation, setSelectedWorkLocation] = useState("");
 
@@ -107,7 +108,17 @@ function ProjectCard({
             type="number"
             name="maxUsers"
             value={projectInfo.maxUsers}
-            onChange={handleChange}
+            min={0}
+            max={10}
+            onChange={(e) => {
+              const value = Math.max(0, Math.min(10, e.target.value));
+              handleChange({
+                target: {
+                  name: "maxUsers",
+                  value,
+                },
+              });
+            }}
           />
         </div>
         <div>
