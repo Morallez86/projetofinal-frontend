@@ -11,7 +11,8 @@ import RemoveComponents from "../Components/RemoveComponents";
 import AddResources from "../Components/AddResources";
 import RemoveResources from "../Components/RemoveResources";
 import AddUsers from "../Components/AddUsers"; 
-import RemoveUsers from "../Components/RemoveUsers"; 
+import RemoveUsers from "../Components/RemoveUsers";
+import useProjectInfo from "../Hooks/useProjectInfo";
 
 function AllProjectsCreateNew() {
   const [statePopUpSkills, setStatePopUpSkills] = useState(false);
@@ -27,6 +28,9 @@ function AllProjectsCreateNew() {
     useState(false);
   const [statePopUpUsers, setStatePopUpUsers] = useState(false); 
   const [statePopUpUsersRemove, setStatePopUpUsersRemove] = useState(false);
+
+  const { projectInfo, handleChange, handleWorkplaceChange } = useProjectInfo();
+  console.log(projectInfo);
 
   function openAddSkillsModal() {
     setStatePopUpSkills(true);
@@ -122,8 +126,11 @@ function AllProjectsCreateNew() {
           openPopUpComponentsRemove={openRemoveComponentsModal}
           openPopUpResources={openAddResourcesModal}
           openPopUpResourcesRemove={openRemoveResourcesModal}
-          openPopUpUsers={openAddUsersModal} 
+          openPopUpUsers={openAddUsersModal}
           openPopUpUsersRemove={openRemoveUsersModal}
+          projectInfo={projectInfo}
+          handleChange={handleChange}
+          handleWorkplaceChange={handleWorkplaceChange}
         />
       </div>
       <div className="flex-shrink-0 p-0">
@@ -162,12 +169,13 @@ function AllProjectsCreateNew() {
         closePopUpResourcesRemove={closeRemoveResourcesModal}
       />
       <AddUsers
-        openPopUpUsers={statePopUpUsers} 
-        closePopUpUsers={closeAddUsersModal} 
+        openPopUpUsers={statePopUpUsers}
+        closePopUpUsers={closeAddUsersModal}
+        projectInfo={projectInfo}
       />
       <RemoveUsers
-        openPopUpUsersRemove={statePopUpUsersRemove} 
-        closePopUpUsersRemove={closeRemoveUsersModal} 
+        openPopUpUsersRemove={statePopUpUsersRemove}
+        closePopUpUsersRemove={closeRemoveUsersModal}
       />
     </div>
   );

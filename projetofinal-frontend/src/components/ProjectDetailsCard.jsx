@@ -25,13 +25,36 @@ function ProjectDetailsCard({ project, userImages }) {
   const workplaces = useWorkplaceStore((state) => state.workplaces);
 
   const statusOptions = [
-    { value: 100, label: "PLANNING" },
     ...(projectDetails.status === 100
-      ? [{ value: 200, label: "READY" }]
-      : projectDetails.status === 300
+      ? [
+          { value: 100, label: "PLANNING" },
+          { value: 200, label: "READY" },
+          { value: 500, label: "CANCELLED" },
+        ]
+      : []),
+    ...(projectDetails.status === 200
+      ? [
+          { value: 100, label: "PLANNING" },
+          { value: 200, label: "READY" },
+          { value: 500, label: "CANCELLED" },
+        ]
+      : []),
+    ...(projectDetails.status === 300
+      ? [
+          { value: 300, label: "IN PROGRESS" },
+          { value: 400, label: "FINISHED" },
+          { value: 500, label: "CANCELLED" },
+        ]
+      : []),
+    ...(projectDetails.status === 400
       ? [{ value: 400, label: "FINISHED" }]
       : []),
-    { value: 500, label: "CANCELLED" },
+    ...(projectDetails.status === 500
+      ? [
+          { value: 100, label: "PLANNING" },
+          { value: 500, label: "CANCELLED" },
+        ]
+      : []),
   ];
 
   const handleChange = (e) => {
@@ -47,19 +70,11 @@ function ProjectDetailsCard({ project, userImages }) {
         workplace: selectedWorkplace || { id: null, name: "" },
       }));
     } else if (name === "status") {
-      // Check if the status change is valid based on the current status from the backend
-      if (
-        (projectDetails.status === 100 && value === "200") || // Allow change from Planning to Ready
-        (projectDetails.status === 300 && value === "400") // Allow change from In Progress to Finished
-      ) {
-        setProjectDetails((prevDetails) => ({
-          ...prevDetails,
-          [name]: parseInt(value, 10),
-        }));
-      } else {
-        // Show error message or handle invalid status change
-        console.error("Invalid status change");
-      }
+      // Handle status change
+      setProjectDetails((prevDetails) => ({
+        ...prevDetails,
+        status: parseInt(value, 10), // Ensure value is parsed to integer
+      }));
     } else {
       setProjectDetails((prevDetails) => ({
         ...prevDetails,
