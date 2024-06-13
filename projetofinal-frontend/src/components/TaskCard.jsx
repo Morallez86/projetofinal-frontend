@@ -20,7 +20,7 @@ const TaskCard = ({ task }) => {
       .split("T")[0];
   };
 
-  console.log(task.status);
+  console.log(task);
 
   const getStatusString = (statusValue) => {
     switch (statusValue) {
@@ -95,6 +95,10 @@ const TaskCard = ({ task }) => {
           <p>
             <strong>Planned End Date:</strong>{" "}
             {formatDate(task.plannedEndingDate)}
+          </p>
+          <p>
+            <strong>Responsible:</strong>{" "}
+            {task.userName}
           </p>
         </>
       )}
