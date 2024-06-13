@@ -52,6 +52,7 @@ function ProjectCard({
       ...projectInfo,
       startingDate: formatDateForBackend(projectInfo.startingDate),
       plannedEndDate: formatDateForBackend(projectInfo.plannedEndDate),
+      workplace: JSON.parse(selectedWorkLocation),
     };
 
     console.log("Formatted project info:", formattedProjectInfo);
