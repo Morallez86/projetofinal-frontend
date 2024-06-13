@@ -1,8 +1,15 @@
 // src/Components/TaskCard.js
 import React from "react";
 import { Card } from "flowbite-react";
+import { useState } from "react";
+import {
+  FcLowPriority,
+  FcMediumPriority,
+  FcHighPriority,
+} from "react-icons/fc";
 
 const TaskCard = ({ task }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
   const formatDate = (dateArray) => {
     if (!Array.isArray(dateArray) || dateArray.length < 3) {
       return "";
@@ -15,20 +22,27 @@ const TaskCard = ({ task }) => {
 
   const getStatusString = (statusValue) => {
     switch (statusValue) {
-      case 0:
-        return "NOT STARTED";
       case 100:
-        return "PLANNING";
+        return "PLANNED";
       case 200:
-        return "READY";
-      case 300:
         return "IN PROGRESS";
-      case 400:
+      case 300:
         return "FINISHED";
-      case 500:
-        return "CANCELLED";
       default:
         return "UNKNOWN";
+    }
+  };
+
+  const getPriorityIcon = (priorityValue) => {
+    switch (priorityValue) {
+      case 100:
+        return <FcLowPriority size={30} className="priority-icon" />;
+      case 200:
+        return <FcMediumPriority  size={30} className="priority-icon" />;
+      case 300:
+        return <FcHighPriority  size={30} className="priority-icon" />;
+      default:
+        return null;
     }
   };
 
@@ -46,24 +60,36 @@ const TaskCard = ({ task }) => {
   };
 
   return (
-    <Card className="max-w p-4 mb-4">
+    <Card
+      className={`relative max-w p-4 mb-4 ${isExpanded ? "expanded" : ""}`}
+      onMouseEnter={() => setIsExpanded(true)}
+      onMouseLeave={() => setIsExpanded(false)}
+    >
+      <div className="absolute top-0 right-0 mt-2 mr-2">
+        {getPriorityIcon(task.priority)}
+      </div>
       <h3 className="text-xl font-semibold mb-2">{task.title}</h3>
       <p>
         <strong>Description:</strong> {task.description}
       </p>
-      <p>
-        <strong>Status:</strong> {getStatusString(task.status)}
-      </p>
-      <p>
-        <strong>Priority:</strong> {getPriorityString(task.priority)}
-      </p>
-      <p>
-        <strong>Planned Start Date:</strong>{" "}
-        {formatDate(task.plannedStartingDate)}
-      </p>
-      <p>
-        <strong>Planned End Date:</strong> {formatDate(task.plannedEndingDate)}
-      </p>
+      {isExpanded && (
+        <>
+          <p>
+            <strong>Status:</strong> {getStatusString(task.status)}
+          </p>
+          <p>
+            <strong>Priority:</strong> {getPriorityString(task.priority)}
+          </p>
+          <p>
+            <strong>Planned Start Date:</strong>{" "}
+            {formatDate(task.plannedStartingDate)}
+          </p>
+          <p>
+            <strong>Planned End Date:</strong>{" "}
+            {formatDate(task.plannedEndingDate)}
+          </p>
+        </>
+      )}
     </Card>
   );
 };
