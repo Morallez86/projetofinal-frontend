@@ -89,16 +89,22 @@ function ProjectDetails() {
           <ProjectDetailsCard project={project} userImages={userImages} />
         </div>
         <div className="w-full md:w-1/3 p-4">
-          {tasks.length > 0 ? (
-            tasks.map((task) => (
-              <TaskCard key={task.id} task={task} userImages={userImages} />
-            ))
-          ) : (
-            <p>No tasks available</p>
-          )}
+          <div className="flex flex-col overflow-y-auto bg-transparent h-[45rem]">
+            {tasks.length > 0 ? (
+              tasks.map((task) => (
+                <TaskCard key={task.id} task={task} userImages={userImages} />
+              ))
+            ) : (
+              <p>No tasks available</p>
+            )}
+          </div>
         </div>
         <div className="w-full md:w-1/3 p-4">
-          <ActivityLogs tasks={tasks} projectId={project.id} logs={project.historyrecords}/>
+          <ActivityLogs
+            tasks={tasks}
+            projectId={project.id}
+            logs={project.historyrecords}
+          />
         </div>
       </div>
     </div>
