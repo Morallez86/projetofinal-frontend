@@ -76,38 +76,41 @@ function ActivityLogs({ tasks, projectId, logs }) {
 
   return (
     <div className="flex flex-col items-center p-4 space-y-4 rounded-md bg-white">
-      <div
-        className="relative top-0 right-0 cursor-pointer"
-        onMouseEnter={() => setShowLegend(true)}
-        onMouseLeave={() => setShowLegend(false)}
-      >
-        <FaInfoCircle size={30} />
-        {showLegend && (
-          <div className="absolute top-full right-0 bg-white p-4 rounded-md shadow-lg z-10 w-64">
-            <p>
-              <span className="inline-block w-4 h-4 bg-blue-300 mr-2"></span>
-               Tasks
-            </p>
-            <p>
-              <span className="inline-block w-4 h-4 bg-yellow-300 mr-2"></span>
-               Additions
-            </p>
-            <p>
-              <span className="inline-block w-4 h-4 bg-red-400 mr-2"></span>
-               Removals
-            </p>
-            <p>
-              <span className="inline-block w-4 h-4 bg-orange-400 mr-2"></span>
-               Project State
-            </p>
-            <p>
-              <span className="inline-block w-4 h-4 bg-gray-400 mr-2"></span>
-               Personal logs
-            </p>
-          </div>
-        )}
+      <div className="flex flex-row items-center">
+        <h1 className="text-4xl font-bold underline mb-4">Activity Log</h1>
+        <div
+          className="relative top-0 right-0 cursor-pointer ml-2 mb-2"
+          onMouseEnter={() => setShowLegend(true)}
+          onMouseLeave={() => setShowLegend(false)}
+        >
+          <FaInfoCircle size={30} />
+          {showLegend && (
+            <div className="absolute top-full right-0 bg-white p-4 rounded-md shadow-lg z-10 w-64">
+              <p>
+                <span className="inline-block w-4 h-4 bg-blue-300 mr-2"></span>
+                Tasks
+              </p>
+              <p>
+                <span className="inline-block w-4 h-4 bg-yellow-300 mr-2"></span>
+                Additions
+              </p>
+              <p>
+                <span className="inline-block w-4 h-4 bg-red-400 mr-2"></span>
+                Removals
+              </p>
+              <p>
+                <span className="inline-block w-4 h-4 bg-orange-400 mr-2"></span>
+                Project State
+              </p>
+              <p>
+                <span className="inline-block w-4 h-4 bg-gray-400 mr-2"></span>
+                Personal logs
+              </p>
+            </div>
+          )}
+        </div>
+        
       </div>
-      <h1 className="text-4xl font-bold underline mb-4">Activity Log</h1>
 
       <div className="flex max-w-md flex-col gap-4">
         <div className="flex items-center gap-4">

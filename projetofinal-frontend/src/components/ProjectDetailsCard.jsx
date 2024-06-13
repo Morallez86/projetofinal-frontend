@@ -51,7 +51,6 @@ function ProjectDetailsCard({ project, userImages }) {
       : []),
     ...(projectDetails.status === 500
       ? [
-          { value: 100, label: "PLANNING" },
           { value: 500, label: "CANCELLED" },
         ]
       : []),

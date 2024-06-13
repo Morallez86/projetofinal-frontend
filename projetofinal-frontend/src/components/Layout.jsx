@@ -4,8 +4,6 @@ import { AiOutlineFundProjectionScreen } from "react-icons/ai";
 import { GrResources } from "react-icons/gr";
 import { PiProjectorScreenChartLight } from "react-icons/pi";
 import { Tabs } from "flowbite-react";
-import { GiSkills } from "react-icons/gi";
-import { LuMessagesSquare } from "react-icons/lu";
 import { useNavigate } from "react-router-dom";
 import { IoCreateOutline } from "react-icons/io5";
 import { CiSettings } from "react-icons/ci";
@@ -20,6 +18,7 @@ import criticalLogo from "../Assets/CriticalLogo.jpg";
 import useApiStore from "../Stores/ApiStore";
 import { TbLogin2 } from "react-icons/tb";
 import { jwtDecode } from "jwt-decode";
+
 
 function Layout({
   activeTab,
@@ -100,7 +99,7 @@ function Layout({
   };
 
   return (
-    <div className="grid grid-cols-[1fr_3fr_1fr] gap-4 p-4">
+    <div className="grid grid-cols-[1fr_2fr_1fr] gap-4 p-4">
       <div className="flex flex-col items-start">
         <img
           src={criticalLogo}
@@ -167,12 +166,6 @@ function Layout({
                       navigate("/changePassword");
                       break;
                     case 2:
-                      navigate("/registerSkillInterest");
-                      break;
-                    case 3:
-                      navigate("/messages");
-                      break;
-                    case 4:
                       navigate("/aboutMe");
                       break;
                     default:
@@ -194,20 +187,6 @@ function Layout({
                 ></Tabs.Item>
                 <Tabs.Item
                   active={activeSubTabProfile === 2}
-                  value={2}
-                  title={
-                    <span className="text-black">Register Skill/Interest</span>
-                  }
-                  icon={GiSkills}
-                ></Tabs.Item>
-                <Tabs.Item
-                  active={activeSubTabProfile === 3}
-                  value={3}
-                  title={<span className="text-black">Messages</span>}
-                  icon={LuMessagesSquare}
-                ></Tabs.Item>
-                <Tabs.Item
-                  active={activeSubTabProfile === 4}
                   value={4}
                   title={<span className="text-black">About me</span>}
                   icon={CgProfile}
