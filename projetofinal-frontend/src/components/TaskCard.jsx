@@ -20,6 +20,8 @@ const TaskCard = ({ task }) => {
       .split("T")[0];
   };
 
+  console.log(task.status);
+
   const getStatusString = (statusValue) => {
     switch (statusValue) {
       case 100:
@@ -38,9 +40,9 @@ const TaskCard = ({ task }) => {
       case 100:
         return <FcLowPriority size={30} className="priority-icon" />;
       case 200:
-        return <FcMediumPriority  size={30} className="priority-icon" />;
+        return <FcMediumPriority size={30} className="priority-icon" />;
       case 300:
-        return <FcHighPriority  size={30} className="priority-icon" />;
+        return <FcHighPriority size={30} className="priority-icon" />;
       default:
         return null;
     }
@@ -61,15 +63,21 @@ const TaskCard = ({ task }) => {
 
   return (
     <Card
-      className={`relative max-w p-4 mb-4 ${isExpanded ? "expanded" : ""}`}
+      className={`relative max-w p-4 mb-4 ${isExpanded ? "expanded" : ""} ${task.status === 300 ? 'opacity-50' : ''}`}
       onMouseEnter={() => setIsExpanded(true)}
       onMouseLeave={() => setIsExpanded(false)}
     >
       <div className="absolute top-0 right-0 mt-2 mr-2">
         {getPriorityIcon(task.priority)}
       </div>
-      <h3 className="text-xl font-semibold mb-2">{task.title}</h3>
-      <p>
+      <h3
+        className={`text-xl font-semibold mb-2 ${
+          task.status === 300 ? "line-through" : ""
+        }`}
+      >
+        {task.title}
+      </h3>
+      <p className={`${task.status === 300 ? "line-through" : ""}`}>
         <strong>Description:</strong> {task.description}
       </p>
       {isExpanded && (

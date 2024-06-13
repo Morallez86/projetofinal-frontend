@@ -95,7 +95,7 @@ function ProjectDetails() {
                 <TaskCard key={task.id} task={task} userImages={userImages} />
               ))
             ) : (
-              <p>No tasks available</p>
+              <p>No tasks available</p> 
             )}
           </div>
         </div>
