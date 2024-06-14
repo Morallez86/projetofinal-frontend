@@ -129,7 +129,11 @@ const TaskCard = ({ task }) => {
             </Select> ) : (getStatusString(task.status))}
           </p>
           <p>
-            <strong>Priority:</strong> {getPriorityString(task.priority)}
+            <strong>Priority:</strong> {editMode ? (<Select id="taskPriority" name="priority" value={taskData.priority} onChange={handleChange}>
+              <option value="100">LOW</option>
+              <option value="200">MEDIUM</option>
+              <option value="300">HIGH</option>
+            </Select> ) : (getPriorityString(task.priority))}
           </p>
           <p>
             <strong>Planned Start Date:</strong>{" "}
