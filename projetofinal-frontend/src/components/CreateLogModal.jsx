@@ -6,6 +6,7 @@ import { jwtDecode } from "jwt-decode";
 import useUserStore from "../Stores/UserStore";
 import useApiStore from "../Stores/ApiStore";
 import { HiInformationCircle} from "react-icons/hi";
+import { MdOutlineEdit } from "react-icons/md";
 
 
 function CreateLogModal({ onClose, tasks, projectId, addNewLog }) {

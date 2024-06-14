@@ -1,15 +1,34 @@
 // src/Components/TaskCard.js
 import React from "react";
-import { Card } from "flowbite-react";
+import { Card, TextInput, Textarea } from "flowbite-react";
+
 import { useState } from "react";
 import {
   FcLowPriority,
   FcMediumPriority,
   FcHighPriority,
 } from "react-icons/fc";
+import { MdOutlineEdit } from "react-icons/md";
+
 
 const TaskCard = ({ task }) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [taskData, setTaskData] = useState({
+    title: task.title,
+    description: task.description,
+    status: task.status,
+    priority: task.priority,
+    contributors: task.contributors,
+    userName: task.userName,
+  });
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setTaskData((prevData) => ({ ...prevData, [name]: value }));
+  };
+  
+
   const formatDate = (dateArray) => {
     if (!Array.isArray(dateArray) || dateArray.length < 3) {
       return "";
@@ -38,11 +57,26 @@ const TaskCard = ({ task }) => {
   const getPriorityIcon = (priorityValue) => {
     switch (priorityValue) {
       case 100:
-        return <FcLowPriority size={30} className="priority-icon" />;
+        return (
+          <>
+            <FcLowPriority size={30} className="priority-icon" />
+            <MdOutlineEdit size={30} className="edit-icon cursor-pointer" onClick={() => setEditMode(true)} />
+          </>
+        );
       case 200:
-        return <FcMediumPriority size={30} className="priority-icon" />;
+        return (
+          <>
+            <FcMediumPriority size={30} className="priority-icon" />
+            <MdOutlineEdit size={30} className="edit-icon cursor-pointer" />
+          </>
+        );
       case 300:
-        return <FcHighPriority size={30} className="priority-icon" />;
+        return (
+          <>
+            <FcHighPriority size={30} className="priority-icon" />
+            <MdOutlineEdit size={30} className="edit-icon cursor-pointer" />
+          </>
+        );
       default:
         return null;
     }
@@ -63,7 +97,9 @@ const TaskCard = ({ task }) => {
 
   return (
     <Card
-      className={`relative max-w p-4 mb-4 ${isExpanded ? "expanded" : ""} ${task.status === 300 ? 'opacity-50' : ''}`}
+      className={`relative max-w p-4 mb-4 ${isExpanded ? "expanded" : ""} ${
+        task.status === 300 ? "opacity-50" : ""
+      }`}
       onMouseEnter={() => setIsExpanded(true)}
       onMouseLeave={() => setIsExpanded(false)}
     >
@@ -75,10 +111,12 @@ const TaskCard = ({ task }) => {
           task.status === 300 ? "line-through" : ""
         }`}
       >
-        {task.title}
+        {editMode ? ( <TextInput id = "taskTitle" name="title" value={taskData.title} onChange={handleChange} />) : 
+        (task.title)}
       </h3>
       <p className={`${task.status === 300 ? "line-through" : ""}`}>
-        <strong>Description:</strong> {task.description}
+        <strong>Description:</strong>  {editMode ? (<Textarea id = "taskDescription" name="description" value={taskData.description} onChange={handleChange} />) : 
+        (task.description)}
       </p>
       {isExpanded && (
         <>
@@ -97,8 +135,7 @@ const TaskCard = ({ task }) => {
             {formatDate(task.plannedEndingDate)}
           </p>
           <p>
-            <strong>Responsible:</strong>{" "}
-            {task.userName}
+            <strong>Responsible:</strong> {task.userName}
           </p>
         </>
       )}
