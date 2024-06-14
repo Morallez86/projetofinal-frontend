@@ -1,6 +1,6 @@
 // src/Components/TaskCard.js
 import React from "react";
-import { Card, TextInput, Textarea, Select } from "flowbite-react";
+import { Card, TextInput, Textarea, Select, Button} from "flowbite-react";
 
 import { useState } from "react";
 import {
@@ -26,6 +26,18 @@ const TaskCard = ({ task, projectUsers }) => {
   const handleChange = (event) => {
     const { name, value } = event.target;
     setTaskData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const handleCancelClick = () => {
+    setEditMode(false);
+    setTaskData({
+      title: task.title,
+      description: task.description,
+      status: task.status,
+      priority: task.priority,
+      contributors: task.contributors,
+      userName: task.userName,
+    });
   };
   
 
@@ -68,14 +80,14 @@ const TaskCard = ({ task, projectUsers }) => {
         return (
           <>
             <FcMediumPriority size={30} className="priority-icon" />
-            <MdOutlineEdit size={30} className="edit-icon cursor-pointer" />
+            <MdOutlineEdit size={30} className="edit-icon cursor-pointer" onClick={() => setEditMode(true)} />
           </>
         );
       case 300:
         return (
           <>
             <FcHighPriority size={30} className="priority-icon" />
-            <MdOutlineEdit size={30} className="edit-icon cursor-pointer" />
+            <MdOutlineEdit size={30} className="edit-icon cursor-pointer" onClick={() => setEditMode(true)} />
           </>
         );
       default:
@@ -153,6 +165,14 @@ const TaskCard = ({ task, projectUsers }) => {
               ))}
             </Select>) : (task.userName)}
           </p>
+          {editMode && (
+          <div className="flex justify-end mt-4">
+            <Button onClick={handleCancelClick} className="mr-2">
+              Cancel
+            </Button>
+            <Button>Save</Button>
+          </div>
+        )}
         </>
       )}
     </Card>
