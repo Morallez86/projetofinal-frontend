@@ -230,9 +230,9 @@ function Layout({
                   icon={CiBoxList}
                 ></Tabs.Item>
                 <Tabs.Item
-                  active={activeTab === 2}
+                  active={activeSubProjects === 2}
                   value={2}
-                  title="Users"
+                  title={<span className="text-black">Users</span>}
                   icon={PiUsersThreeBold}
                 ></Tabs.Item>
               </Tabs>
