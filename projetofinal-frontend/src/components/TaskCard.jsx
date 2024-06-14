@@ -1,6 +1,6 @@
 // src/Components/TaskCard.js
 import React from "react";
-import { Card, TextInput, Textarea } from "flowbite-react";
+import { Card, TextInput, Textarea, Select } from "flowbite-react";
 
 import { useState } from "react";
 import {
@@ -121,7 +121,12 @@ const TaskCard = ({ task }) => {
       {isExpanded && (
         <>
           <p>
-            <strong>Status:</strong> {getStatusString(task.status)}
+            <strong>Status:</strong> {editMode ? (<Select id="taskStatus" name="status" value={taskData.status} onChange={handleChange}> 
+              <option value="100">PLANNED</option>
+              <option value="200">IN PROGRESS</option>
+              <option value="300">FINISHED</option>
+
+            </Select> ) : (getStatusString(task.status))}
           </p>
           <p>
             <strong>Priority:</strong> {getPriorityString(task.priority)}
