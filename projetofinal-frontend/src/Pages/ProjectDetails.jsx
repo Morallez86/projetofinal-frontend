@@ -81,6 +81,8 @@ function ProjectDetails() {
     return <div>No project found</div>;
   }
 
+  console.log(project.userProjects);
+
   return (
     <div className="flex flex-col min-h-screen">
       <Layout activeTab={0} activeSubProjects={0} />
@@ -92,10 +94,15 @@ function ProjectDetails() {
           <div className="flex flex-col overflow-y-auto bg-transparent h-[45rem]">
             {tasks.length > 0 ? (
               tasks.map((task) => (
-                <TaskCard key={task.id} task={task} userImages={userImages} />
+                <TaskCard
+                  key={task.id}
+                  task={task}
+                  userImages={userImages}
+                  projectUsers={project.userProjectDtos}
+                />
               ))
             ) : (
-              <p>No tasks available</p> 
+              <p>No tasks available</p>
             )}
           </div>
         </div>

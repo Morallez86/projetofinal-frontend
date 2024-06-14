@@ -11,7 +11,7 @@ import {
 import { MdOutlineEdit } from "react-icons/md";
 
 
-const TaskCard = ({ task }) => {
+const TaskCard = ({ task, projectUsers }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [taskData, setTaskData] = useState({
@@ -40,6 +40,7 @@ const TaskCard = ({ task }) => {
   };
 
   console.log(task);
+  console.log(projectUsers);
 
   const getStatusString = (statusValue) => {
     switch (statusValue) {
@@ -144,7 +145,13 @@ const TaskCard = ({ task }) => {
             {formatDate(task.plannedEndingDate)}
           </p>
           <p>
-            <strong>Responsible:</strong> {task.userName}
+            <strong>Responsible:</strong> {editMode ? (<Select id="taskResponsible" name="userName" value={taskData.userName} onChange={handleChange}>
+              {projectUsers.map((user) => (
+                <option key={user.id} value={user.username}>
+                  {user.username}
+                </option>
+              ))}
+            </Select>) : (task.userName)}
           </p>
         </>
       )}
