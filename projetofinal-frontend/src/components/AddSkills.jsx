@@ -17,7 +17,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
   const projectSkills = useProjectStore((state) => state.projectSkills);
   const setProjectSkills = useProjectStore((state) => state.setProjectSkills);
 
-  const { skills } = useSkillStore();
+  const { skills, addSkill } = useSkillStore();
 
   const [selectedSkill, setSelectedSkill] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -105,6 +105,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
         if (response.status === 201) {
           const newSkills = await response.json();
           setUserSkills([...userSkills, ...newSkills]);
+          addSkill(newSkills[0]);
           setAnimationPlayed(true);
           setShowSuccessText(true);
           setSelectedSkill(null);
@@ -118,6 +119,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
     } else {
       // If context is not for users, save project skills to Zustand store
       setProjectSkills([...projectSkills, ...data]);
+      addSkill(data[0]);
       setAnimationPlayed(true);
       setShowSuccessText(true);
       setSelectedSkill(null);

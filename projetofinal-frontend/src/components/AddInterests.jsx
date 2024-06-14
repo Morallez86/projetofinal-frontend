@@ -7,7 +7,7 @@ import { TbLockFilled } from "react-icons/tb";
 import useApiStore from "../Stores/ApiStore";
 import AddedAnimation from "../Assets/Added.json";
 import Lottie from "react-lottie";
-import useInterestStore from "../Stores/InterestStore"; 
+import useInterestStore from "../Stores/InterestStore";
 
 function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
   const token = useUserStore((state) => state.token);
@@ -21,7 +21,7 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
     (state) => state.setProjectInterests
   );
 
-  const { interests } = useInterestStore();
+  const { interests, addInterest } = useInterestStore();
 
   const [selectedInterest, setSelectedInterest] = useState(null);
   const [inputValue, setInputValue] = useState("");
@@ -86,6 +86,8 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
         if (response.status === 201) {
           const newInterests = await response.json();
           setUserInterests([...userInterests, ...newInterests]);
+          addInterest(newInterests[0]);
+          console.log(newInterests);
           setAnimationPlayed(true);
           setShowSuccessText(true);
           setSelectedInterest(null);
@@ -97,6 +99,7 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
       }
     } else {
       setProjectInterests([...projectInterests, ...data]);
+      addInterest(data[0]);
       setAnimationPlayed(true);
       setShowSuccessText(true);
       setSelectedInterest(null);

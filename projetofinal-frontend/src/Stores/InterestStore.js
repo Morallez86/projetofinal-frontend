@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import create from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
 const useInterestStore = create(
@@ -6,6 +6,10 @@ const useInterestStore = create(
     (set) => ({
       interests: [],
       setInterests: (interests) => set({ interests }),
+      addInterest: (newInterest) =>
+        set((state) => ({
+          interests: [...state.interests, newInterest],
+        })),
     }),
     {
       name: "interestStorage",
