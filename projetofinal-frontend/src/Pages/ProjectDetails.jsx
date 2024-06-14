@@ -99,6 +99,8 @@ function ProjectDetails() {
                   task={task}
                   userImages={userImages}
                   projectUsers={project.userProjectDtos}
+                  totalTasks = {tasks}
+                  setTotalTasks = {setTasks}
                 />
               ))
             ) : (

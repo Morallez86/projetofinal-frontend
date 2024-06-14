@@ -14,7 +14,7 @@ import useUserStore from '../Stores/UserStore';
 
 
 
-const TaskCard = ({ task, projectUsers }) => {
+const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const apiUrl = useApiStore((state) => state.apiUrl);
@@ -44,11 +44,13 @@ const TaskCard = ({ task, projectUsers }) => {
       },
       body: JSON.stringify(taskData),
     })
-    .then((response) => {
+    .then(async (response) => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       console.log("task updated successfully");
+      const updatedTask = await response.json();
+      setTotalTasks(totalTasks.map(task => task.id === updatedTask.id ? updatedTask : task));
       setEditMode(false);
     })
   }
