@@ -2,9 +2,9 @@ import useApiStore from "../Stores/ApiStore";
 
 const apiUrl = useApiStore.getState().apiUrl;
 
-export const getSkills = async (token) => {
+export const getInterests = async (token) => {
   try {
-    const response = await fetch(`${apiUrl}/skills`, {
+    const response = await fetch(`${apiUrl}/interests`, {
       method: "GET",
       headers: {
         Accept: "*/*",
@@ -17,13 +17,13 @@ export const getSkills = async (token) => {
       const data = await response.json();
       return data;
     } else if (response.status === 404) {
-      console.log("Skills not found");
+      console.log("Interests not found");
       return [];
     } else {
-      throw new Error("Failed to fetch skills");
+      throw new Error("Failed to fetch interests");
     }
   } catch (error) {
-    console.error("Error fetching skills:", error);
+    console.error("Error fetching interests:", error);
     throw error;
   }
 };

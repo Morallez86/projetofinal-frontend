@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Dropdown, Modal, Button } from "flowbite-react";
 import CreatableSelect from "react-select/creatable";
 import useUserStore from "../Stores/UserStore";
@@ -7,6 +7,7 @@ import { TbLockFilled } from "react-icons/tb";
 import useApiStore from "../Stores/ApiStore";
 import AddedAnimation from "../Assets/Added.json";
 import Lottie from "react-lottie";
+import useSkillStore from "../Stores/SkillStore";
 
 function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
   const token = useUserStore((state) => state.token);
@@ -16,13 +17,13 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
   const projectSkills = useProjectStore((state) => state.projectSkills);
   const setProjectSkills = useProjectStore((state) => state.setProjectSkills);
 
-  const [skills, setSkills] = useState([]);
+  const { skills } = useSkillStore();
+
   const [selectedSkill, setSelectedSkill] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [animationPlayed, setAnimationPlayed] = useState(false);
   const [showSuccessText, setShowSuccessText] = useState(false);
-
 
   const skillCategoryMapping = {
     Software: 200,
@@ -30,32 +31,6 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
     Hardware: 300,
     Tools: 400,
   };
-
-  useEffect(() => {
-    const getAllSkills = async () => {
-      try {
-        const response = await fetch(`${apiUrl}/skills`, {
-          method: "GET",
-          headers: {
-            Accept: "*/*",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.status === 200) {
-          const data = await response.json();
-          setSkills(data);
-        } else if (response.status === 404) {
-          console.log("Skills not found");
-        }
-      } catch (error) {
-        console.error("Error fetching skills:", error);
-      }
-    };
-
-    getAllSkills();
-  }, [apiUrl, token]);
 
   const handleInputChange = (value) => {
     setInputValue(value);
@@ -66,9 +41,12 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
     label: skill.name,
     type: skill.type,
     id: skill.id,
-    isDisabled: context === 'user' 
-      ? userSkills.some((userSkill) => userSkill.name === skill.name)
-      : projectSkills.some((projectSkill) => projectSkill.name === skill.name),
+    isDisabled:
+      context === "user"
+        ? userSkills.some((userSkill) => userSkill.name === skill.name)
+        : projectSkills.some(
+            (projectSkill) => projectSkill.name === skill.name
+          ),
   }));
 
   const defaultOptions = {
