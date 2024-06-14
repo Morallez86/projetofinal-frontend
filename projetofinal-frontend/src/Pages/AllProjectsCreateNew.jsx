@@ -155,6 +155,7 @@ function AllProjectsCreateNew() {
       <AddComponents
         openPopUpComponent={statePopUpComponent}
         closePopUpComponent={closeAddComponentModal}
+        projectInfo={projectInfo}
       />
       <RemoveComponents
         openPopUpComponentsRemove={statePopUpComponentsRemove}

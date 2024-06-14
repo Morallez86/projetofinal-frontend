@@ -17,7 +17,6 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
   
   const projectInterests = useProjectStore((state) => state.projectInterests);
   const setProjectInterests = useProjectStore((state) => state.setProjectInterests);
-  console.log(projectInterests);
   
   const [interests, setInterests] = useState([]);
   const [selectedInterest, setSelectedInterest] = useState(null);

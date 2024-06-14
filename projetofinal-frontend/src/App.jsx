@@ -15,7 +15,6 @@ function App() {
   const apiUrl = useApiStore.getState().apiUrl;
   const token = useUserStore((state) => state.token);
   const { workplaces } = useWorkplaces();
-
   console.log(workplaces);
 
   useEffect(() => {

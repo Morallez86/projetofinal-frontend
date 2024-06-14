@@ -17,6 +17,7 @@ import ForgotPassword from "./Pages/ForgotPassword";
 import Login from "./Pages/Login"
 import GanttChartPage from "./Pages/GanttChartPage";
 import ProjectDetails from "./Pages/ProjectDetails";
+import UsersTable from "./Pages/UsersTable";
 
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -39,6 +40,7 @@ root.render(
         <Route path="/login" element={<Login/>} />
         <Route path="/myProjects/:projectId" element={<ProjectDetails />} />
         <Route path="/myProjects/:projectId/ganttChart" element={<GanttChartPage />} />
+        <Route path="/users" element={<UsersTable/>} />
       </Routes>
     </Router>
   </React.StrictMode>
