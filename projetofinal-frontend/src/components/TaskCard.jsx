@@ -9,12 +9,19 @@ import {
   FcHighPriority,
 } from "react-icons/fc";
 import { MdOutlineEdit } from "react-icons/md";
+import useApiStore from '../Stores/ApiStore';
+import useUserStore from '../Stores/UserStore';
+
 
 
 const TaskCard = ({ task, projectUsers }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const apiUrl = useApiStore((state) => state.apiUrl);
+  const token = useUserStore((state) => state.token);
+
   const [taskData, setTaskData] = useState({
+    id: task.id,
     title: task.title,
     description: task.description,
     status: task.status,
@@ -27,6 +34,24 @@ const TaskCard = ({ task, projectUsers }) => {
     const { name, value } = event.target;
     setTaskData((prevData) => ({ ...prevData, [name]: value }));
   };
+
+  const handleSubmitClick = () => {
+    fetch (`${apiUrl}/tasks`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(taskData),
+    })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      console.log("task updated successfully");
+      setEditMode(false);
+    })
+  }
 
   const handleCancelClick = () => {
     setEditMode(false);
@@ -170,7 +195,7 @@ const TaskCard = ({ task, projectUsers }) => {
             <Button onClick={handleCancelClick} className="mr-2">
               Cancel
             </Button>
-            <Button>Save</Button>
+            <Button onClick={handleSubmitClick}  >Save</Button>
           </div>
         )}
         </>
