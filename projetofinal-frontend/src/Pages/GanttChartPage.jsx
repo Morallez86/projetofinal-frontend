@@ -7,6 +7,8 @@ import { useState } from "react";
 import { useEffect } from "react";
 import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
+import { Button } from "flowbite-react";
+import AddTaskCard from "../Components/AddTaskCard";
 
 const GanttChartPage = () => {
   const { projectId } = useParams();
@@ -15,6 +17,12 @@ const GanttChartPage = () => {
   const apiUrl = useApiStore((state) => state.apiUrl);
   const token = useUserStore((state) => state.token);
   const [allTasks, setAllTasks] = useState([]);
+
+  const [popUpShow, setPopUpShow] = useState(false);
+
+  const openPopUpCreateTask = () => {
+    setPopUpShow(true);
+  };
 
   useEffect(() => {
     getTasks();
@@ -79,24 +87,36 @@ const GanttChartPage = () => {
       <Layout activeTab={0} activeSubTabProfile={0} />
       <div className="gantt-outer-container w-full overflow-auto ml-10 mr-10">
         <div className="gantt-container">
-          <select
-            value={viewMode}
-            onChange={(e) => setViewMode(e.target.value)}
-          >
-            <option value={ViewMode.Day}>Day</option>
-            <option value={ViewMode.Week}>Week</option>
-          </select>
+          <div className="flex items-center">
+            <select
+              value={viewMode}
+              onChange={(e) => setViewMode(e.target.value)}
+              className="mb-2 mt-1"
+            >
+              <option value={ViewMode.Day}>Day</option>
+              <option value={ViewMode.Week}>Week</option>
+            </select>
+            <Button
+              onClick={() => {
+                openPopUpCreateTask();
+              }}
+              className="ml-2 mb-2 mt-1"
+            >
+              Create New Task
+            </Button>
+          </div>
           {tasks && tasks.length > 0 && (
-          <Gantt
-            tasks={tasks}
-            viewMode={viewMode}
-            preStepsCount={0}
-            rowHeight={25}
-            todayColor="orange"
-          />
-        )}
+            <Gantt
+              tasks={tasks}
+              viewMode={viewMode}
+              preStepsCount={0}
+              rowHeight={25}
+              todayColor="orange"
+            />
+          )}
         </div>
       </div>
+      <AddTaskCard popUpShow={popUpShow} setPopUpShow={setPopUpShow} />
     </div>
   );
 };
