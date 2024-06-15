@@ -4,6 +4,8 @@ import Layout from "../Components/Layout";
 import ProjectMyProfileTable from "../Components/ProjectMyProfileTable";
 import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
+import useSkills from "../Hooks/useSkills";
+import useInterests from "../Hooks/useInterests";
 import { jwtDecode } from "jwt-decode";
 
 const useProjects = (userId, page, rowsPerPage) => {
@@ -12,6 +14,10 @@ const useProjects = (userId, page, rowsPerPage) => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(0);
+  const { skills } = useSkills();
+  const { interests } = useInterests();
+  console.log(skills);
+  console.log(interests);
 
   useEffect(() => {
     if (!userId) return;

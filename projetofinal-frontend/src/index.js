@@ -17,6 +17,8 @@ import ForgotPassword from "./Pages/ForgotPassword";
 import Login from "./Pages/Login"
 import GanttChartPage from "./Pages/GanttChartPage";
 import ProjectDetails from "./Pages/ProjectDetails";
+import UsersTable from "./Pages/UsersGrid";
+import ProfileOtherUsers from "./Pages/ProfileOtherUsers";
 
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
@@ -28,17 +30,28 @@ root.render(
         <Route index element={<App />} />
         <Route path="/myProjects" element={<MyProfileMyProjects />} />
         <Route path="/changePassword" element={<MyProfileChangePassword />} />
-        <Route path="/registerSkillInterest" element={<MyProfileRegisterSkillInterest />}/>
+        <Route
+          path="/registerSkillInterest"
+          element={<MyProfileRegisterSkillInterest />}
+        />
         <Route path="/messages" element={<MyProfileMessage />} />
         <Route path="/createNewProject" element={<AllProjectsCreateNew />} />
         <Route path="/components" element={<ComponentsComponents />} />
         <Route path="/resources" element={<ComponentsResources />} />
-        <Route path="/aboutMe" element={<MyProfileAboutMe/>}/>
-        <Route path="/registrationStatusPage/:emailToken" element={<RegistrationStatusPage />} />
-        <Route path="/forgotPassword/:token" element={<ForgotPassword/>} />
-        <Route path="/login" element={<Login/>} />
+        <Route path="/aboutMe" element={<MyProfileAboutMe />} />
+        <Route
+          path="/registrationStatusPage/:emailToken"
+          element={<RegistrationStatusPage />}
+        />
+        <Route path="/forgotPassword/:token" element={<ForgotPassword />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/myProjects/:projectId" element={<ProjectDetails />} />
-        <Route path="/myProjects/:projectId/ganttChart" element={<GanttChartPage />} />
+        <Route
+          path="/myProjects/:projectId/ganttChart"
+          element={<GanttChartPage />}
+        />
+        <Route path="/users" element={<UsersTable />} />
+        <Route path="/users/:userId" element={<ProfileOtherUsers />} />
       </Routes>
     </Router>
   </React.StrictMode>

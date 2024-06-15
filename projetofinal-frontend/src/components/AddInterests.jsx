@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Modal, Button } from "flowbite-react";
 import CreatableSelect from "react-select/creatable";
 import useUserStore from "../Stores/UserStore";
@@ -7,19 +7,22 @@ import { TbLockFilled } from "react-icons/tb";
 import useApiStore from "../Stores/ApiStore";
 import AddedAnimation from "../Assets/Added.json";
 import Lottie from "react-lottie";
+import useInterestStore from "../Stores/InterestStore";
 
 function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
   const token = useUserStore((state) => state.token);
   const apiUrl = useApiStore((state) => state.apiUrl);
-  
+
   const userInterests = useUserStore((state) => state.interests);
   const setUserInterests = useUserStore((state) => state.setInterests);
-  
+
   const projectInterests = useProjectStore((state) => state.projectInterests);
-  const setProjectInterests = useProjectStore((state) => state.setProjectInterests);
-  console.log(projectInterests);
-  
-  const [interests, setInterests] = useState([]);
+  const setProjectInterests = useProjectStore(
+    (state) => state.setProjectInterests
+  );
+
+  const { interests, addInterest } = useInterestStore();
+
   const [selectedInterest, setSelectedInterest] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [animationPlayed, setAnimationPlayed] = useState(false);
@@ -34,32 +37,6 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
     },
   };
 
-  useEffect(() => {
-    const getAllInterests = async () => {
-      try {
-        const response = await fetch(`${apiUrl}/interests`, {
-          method: "GET",
-          headers: {
-            Accept: "*/*",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.status === 200) {
-          const data = await response.json();
-          setInterests(data);
-        } else if (response.status === 404) {
-          console.log("Interests not found");
-        }
-      } catch (error) {
-        console.error("Error fetching interests:", error);
-      }
-    };
-
-    getAllInterests();
-  }, [apiUrl, token]);
-
   const handleInputChange = (value) => {
     setInputValue(value);
   };
@@ -68,9 +45,14 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
     value: interest.name,
     label: interest.name,
     id: interest.id,
-    isDisabled: context === 'user' 
-      ? userInterests.some((userInterest) => userInterest.name === interest.name)
-      : projectInterests.some((projectInterest) => projectInterest.name === interest.name),
+    isDisabled:
+      context === "user"
+        ? userInterests.some(
+            (userInterest) => userInterest.name === interest.name
+          )
+        : projectInterests.some(
+            (projectInterest) => projectInterest.name === interest.name
+          ),
   }));
 
   const handleSelectChange = (selectedOption) => {
@@ -79,11 +61,15 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
 
   const handleSubmit = async () => {
     const data = [
-      { 
-        id: selectedInterest.id || null,
-        name: selectedInterest.value
-      }
+      {
+        id: selectedInterest?.id || null,
+        name: selectedInterest?.value,
+      },
     ];
+
+    if (!selectedInterest) {
+      return;
+    }
 
     if (context === "user") {
       try {
@@ -100,6 +86,8 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
         if (response.status === 201) {
           const newInterests = await response.json();
           setUserInterests([...userInterests, ...newInterests]);
+          addInterest(newInterests[0]);
+          console.log(newInterests);
           setAnimationPlayed(true);
           setShowSuccessText(true);
           setSelectedInterest(null);
@@ -111,6 +99,7 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
       }
     } else {
       setProjectInterests([...projectInterests, ...data]);
+      addInterest(data[0]);
       setAnimationPlayed(true);
       setShowSuccessText(true);
       setSelectedInterest(null);

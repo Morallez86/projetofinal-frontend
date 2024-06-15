@@ -8,7 +8,11 @@ import AddedAnimation from "../Assets/Added.json";
 import Lottie from "react-lottie";
 import { TbLockFilled } from "react-icons/tb";
 
-function AddComponents({ openPopUpComponent, closePopUpComponent }) {
+function AddComponents({
+  openPopUpComponent,
+  closePopUpComponent,
+  projectInfo,
+}) {
   const token = useUserStore((state) => state.token);
   const apiUrl = useApiStore((state) => state.apiUrl);
   const projectComponents = useProjectStore((state) => state.projectComponents);
@@ -21,18 +25,27 @@ function AddComponents({ openPopUpComponent, closePopUpComponent }) {
   const [inputValue, setInputValue] = useState("");
   const [animationPlayed, setAnimationPlayed] = useState(false);
   const [showSuccessText, setShowSuccessText] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const getAllComponents = async () => {
+      if (!projectInfo.workplace.name) {
+        setError("Please select a workplace first.");
+        return;
+      }
+
       try {
-        const response = await fetch(`${apiUrl}/components`, {
-          method: "GET",
-          headers: {
-            Accept: "*/*",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          `${apiUrl}/components?workplace=${projectInfo.workplace.id}`,
+          {
+            method: "GET",
+            headers: {
+              Accept: "*/*",
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (response.status === 200) {
           const data = await response.json();
@@ -40,6 +53,7 @@ function AddComponents({ openPopUpComponent, closePopUpComponent }) {
           console.log(data);
         } else if (response.status === 404) {
           console.log("Components not found");
+          setComponents([]);
         }
       } catch (error) {
         console.error("Error fetching components:", error);
@@ -47,7 +61,7 @@ function AddComponents({ openPopUpComponent, closePopUpComponent }) {
     };
 
     getAllComponents();
-  }, [apiUrl, token]);
+  }, [apiUrl, token, projectInfo.workplace]);
 
   const handleInputChange = (value) => {
     setInputValue(value);
@@ -78,6 +92,8 @@ function AddComponents({ openPopUpComponent, closePopUpComponent }) {
   };
 
   const handleSubmit = async () => {
+    if (!selectedComponent) return;
+
     const data = [
       {
         id: selectedComponent.id,
@@ -99,6 +115,7 @@ function AddComponents({ openPopUpComponent, closePopUpComponent }) {
       onClose={() => {
         closePopUpComponent();
         setSelectedComponent(null);
+        setError("");
       }}
       popup
     >
@@ -108,6 +125,7 @@ function AddComponents({ openPopUpComponent, closePopUpComponent }) {
           <h3 className="text-lg font-bold text-gray-500 dark:text-gray-400">
             Register Component
           </h3>
+          {error && <p className="text-red-500">{error}</p>}
           <div className="space-y-3">
             <h4>Create new component or Choose one of the existing ones</h4>
             <div className="flex items-start space-x-4 min-h-[25rem] relative">
@@ -127,6 +145,7 @@ function AddComponents({ openPopUpComponent, closePopUpComponent }) {
                   )}
                   placeholder="Select/write component name"
                   value={selectedComponent}
+                  isDisabled={!projectInfo.workplace}
                 />
               </div>
               <div
@@ -166,7 +185,10 @@ function AddComponents({ openPopUpComponent, closePopUpComponent }) {
               </div>
             </div>
             <div className="flex justify-center mt-4">
-              <Button onClick={handleSubmit} disabled={!selectedComponent}>
+              <Button
+                onClick={handleSubmit}
+                disabled={!selectedComponent || !projectInfo.workplace}
+              >
                 Add Component
               </Button>
             </div>

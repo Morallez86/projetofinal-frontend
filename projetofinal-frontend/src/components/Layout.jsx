@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { ImProfile } from "react-icons/im";
 import { AiOutlineFundProjectionScreen } from "react-icons/ai";
 import { GrResources } from "react-icons/gr";
-import { PiProjectorScreenChartLight } from "react-icons/pi";
+import { PiProjectorScreenChartLight, PiUsersThreeBold } from "react-icons/pi";
 import { Tabs } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
 import { IoCreateOutline } from "react-icons/io5";
@@ -18,6 +18,7 @@ import criticalLogo from "../Assets/CriticalLogo.jpg";
 import useApiStore from "../Stores/ApiStore";
 import { TbLogin2 } from "react-icons/tb";
 import { jwtDecode } from "jwt-decode";
+
 
 
 function Layout({
@@ -208,6 +209,9 @@ function Layout({
                     case 1:
                       navigate("/");
                       break;
+                    case 2:
+                      navigate("/users");
+                      break;
                     default:
                       break;
                   }
@@ -224,6 +228,12 @@ function Layout({
                   value={1}
                   title={<span className="text-black">Projects List</span>}
                   icon={CiBoxList}
+                ></Tabs.Item>
+                <Tabs.Item
+                  active={activeSubProjects === 2}
+                  value={2}
+                  title={<span className="text-black">Users</span>}
+                  icon={PiUsersThreeBold}
                 ></Tabs.Item>
               </Tabs>
             </div>
