@@ -1,6 +1,6 @@
 // src/Components/TaskCard.js
 import React from "react";
-import { Card, TextInput, Textarea, Select, Button} from "flowbite-react";
+import { Card, TextInput, Textarea, Select, Button } from "flowbite-react";
 
 import { useState } from "react";
 import {
@@ -9,10 +9,8 @@ import {
   FcHighPriority,
 } from "react-icons/fc";
 import { MdOutlineEdit } from "react-icons/md";
-import useApiStore from '../Stores/ApiStore';
-import useUserStore from '../Stores/UserStore';
-
-
+import useApiStore from "../Stores/ApiStore";
+import useUserStore from "../Stores/UserStore";
 
 const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -21,6 +19,7 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
   const token = useUserStore((state) => state.token);
 
   const [taskData, setTaskData] = useState({
+    projectId: task.projectId,
     id: task.id,
     title: task.title,
     description: task.description,
@@ -36,24 +35,35 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
   };
 
   const handleSubmitClick = () => {
-    fetch (`${apiUrl}/tasks`, {
+    fetch(`${apiUrl}/tasks`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(taskData),
-    })
-    .then(async (response) => {
+    }).then(async (response) => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       console.log("task updated successfully");
-      const updatedTask = await response.json();
-      setTotalTasks(totalTasks.map(task => task.id === updatedTask.id ? updatedTask : task));
+      const updatedTaskResponse = await response.json();
+      const updatedTask = updatedTaskResponse.taskDto;
+      const updatedTaskIndex = updatedTaskResponse.index;
+      console.log(updatedTaskIndex);
+
+      let newTotalTasks = [...totalTasks];
+      const originalTaskIndex = newTotalTasks.findIndex(
+        (task) => task.id === updatedTask.id
+      );
+      if (originalTaskIndex !== -1) {
+        newTotalTasks.splice(originalTaskIndex, 1);
+      }
+      newTotalTasks.splice(updatedTaskIndex, 0, updatedTask); 
+      setTotalTasks(newTotalTasks);
       setEditMode(false);
-    })
-  }
+    });
+  };
 
   const handleCancelClick = () => {
     setEditMode(false);
@@ -66,7 +76,6 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
       userName: task.userName,
     });
   };
-  
 
   const formatDate = (dateArray) => {
     if (!Array.isArray(dateArray) || dateArray.length < 3) {
@@ -100,21 +109,33 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
         return (
           <>
             <FcLowPriority size={30} className="priority-icon" />
-            <MdOutlineEdit size={30} className="edit-icon cursor-pointer" onClick={() => setEditMode(true)} />
+            <MdOutlineEdit
+              size={30}
+              className="edit-icon cursor-pointer"
+              onClick={() => setEditMode(true)}
+            />
           </>
         );
       case 200:
         return (
           <>
             <FcMediumPriority size={30} className="priority-icon" />
-            <MdOutlineEdit size={30} className="edit-icon cursor-pointer" onClick={() => setEditMode(true)} />
+            <MdOutlineEdit
+              size={30}
+              className="edit-icon cursor-pointer"
+              onClick={() => setEditMode(true)}
+            />
           </>
         );
       case 300:
         return (
           <>
             <FcHighPriority size={30} className="priority-icon" />
-            <MdOutlineEdit size={30} className="edit-icon cursor-pointer" onClick={() => setEditMode(true)} />
+            <MdOutlineEdit
+              size={30}
+              className="edit-icon cursor-pointer"
+              onClick={() => setEditMode(true)}
+            />
           </>
         );
       default:
@@ -151,29 +172,65 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
           task.status === 300 ? "line-through" : ""
         }`}
       >
-        {editMode ? ( <TextInput id = "taskTitle" name="title" value={taskData.title} onChange={handleChange} />) : 
-        (task.title)}
+        {editMode ? (
+          <TextInput
+            id="taskTitle"
+            name="title"
+            value={taskData.title}
+            onChange={handleChange}
+          />
+        ) : (
+          task.title
+        )}
       </h3>
       <p className={`${task.status === 300 ? "line-through" : ""}`}>
-        <strong>Description:</strong>  {editMode ? (<Textarea id = "taskDescription" name="description" value={taskData.description} onChange={handleChange} />) : 
-        (task.description)}
+        <strong>Description:</strong>{" "}
+        {editMode ? (
+          <Textarea
+            id="taskDescription"
+            name="description"
+            value={taskData.description}
+            onChange={handleChange}
+          />
+        ) : (
+          task.description
+        )}
       </p>
       {isExpanded && (
         <>
           <p>
-            <strong>Status:</strong> {editMode ? (<Select id="taskStatus" name="status" value={taskData.status} onChange={handleChange}> 
-              <option value="100">PLANNED</option>
-              <option value="200">IN PROGRESS</option>
-              <option value="300">FINISHED</option>
-
-            </Select> ) : (getStatusString(task.status))}
+            <strong>Status:</strong>{" "}
+            {editMode ? (
+              <Select
+                id="taskStatus"
+                name="status"
+                value={taskData.status}
+                onChange={handleChange}
+              >
+                <option value="100">PLANNED</option>
+                <option value="200">IN PROGRESS</option>
+                <option value="300">FINISHED</option>
+              </Select>
+            ) : (
+              getStatusString(task.status)
+            )}
           </p>
           <p>
-            <strong>Priority:</strong> {editMode ? (<Select id="taskPriority" name="priority" value={taskData.priority} onChange={handleChange}>
-              <option value="100">LOW</option>
-              <option value="200">MEDIUM</option>
-              <option value="300">HIGH</option>
-            </Select> ) : (getPriorityString(task.priority))}
+            <strong>Priority:</strong>{" "}
+            {editMode ? (
+              <Select
+                id="taskPriority"
+                name="priority"
+                value={taskData.priority}
+                onChange={handleChange}
+              >
+                <option value="100">LOW</option>
+                <option value="200">MEDIUM</option>
+                <option value="300">HIGH</option>
+              </Select>
+            ) : (
+              getPriorityString(task.priority)
+            )}
           </p>
           <p>
             <strong>Planned Start Date:</strong>{" "}
@@ -184,22 +241,32 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
             {formatDate(task.plannedEndingDate)}
           </p>
           <p>
-            <strong>Responsible:</strong> {editMode ? (<Select id="taskResponsible" name="userName" value={taskData.userName} onChange={handleChange}>
-              {projectUsers.map((user) => (
-                <option key={user.id} value={user.username}>
-                  {user.username}
-                </option>
-              ))}
-            </Select>) : (task.userName)}
+            <strong>Responsible:</strong>{" "}
+            {editMode ? (
+              <Select
+                id="taskResponsible"
+                name="userName"
+                value={taskData.userName}
+                onChange={handleChange}
+              >
+                {projectUsers.map((user) => (
+                  <option key={user.id} value={user.username}>
+                    {user.username}
+                  </option>
+                ))}
+              </Select>
+            ) : (
+              task.userName
+            )}
           </p>
           {editMode && (
-          <div className="flex justify-end mt-4">
-            <Button onClick={handleCancelClick} className="mr-2">
-              Cancel
-            </Button>
-            <Button onClick={handleSubmitClick}  >Save</Button>
-          </div>
-        )}
+            <div className="flex justify-end mt-4">
+              <Button onClick={handleCancelClick} className="mr-2">
+                Cancel
+              </Button>
+              <Button onClick={handleSubmitClick}>Save</Button>
+            </div>
+          )}
         </>
       )}
     </Card>
