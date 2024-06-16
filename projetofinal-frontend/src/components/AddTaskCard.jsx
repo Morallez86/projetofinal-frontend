@@ -12,6 +12,8 @@ import useUserStore from "../Stores/UserStore";
 import useApiStore from "../Stores/ApiStore";
 import Lottie from "react-lottie";
 import Select from "react-select";
+import { useParams } from "react-router-dom";
+
 
 function AddTaskCard({ popUpShow, setPopUpShow }) {
   const token = useUserStore((state) => state.token);
@@ -19,6 +21,7 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
   const [animationPlayed, setAnimationPlayed] = useState(false);
   const [showSuccessText, setShowSuccessText] = useState(false);
 
+  const {projectId} = useParams();
 
 
   const defaultOptions = {
