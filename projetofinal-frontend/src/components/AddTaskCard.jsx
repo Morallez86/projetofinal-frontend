@@ -6,12 +6,12 @@ import {
   Label,
   TextInput,
   Textarea,
-  Select,
 } from "flowbite-react";
 import { useState } from "react";
 import useUserStore from "../Stores/UserStore";
 import useApiStore from "../Stores/ApiStore";
 import Lottie from "react-lottie";
+import Select from "react-select";
 
 function AddTaskCard({ popUpShow, setPopUpShow }) {
   const token = useUserStore((state) => state.token);
@@ -19,14 +19,7 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
   const [animationPlayed, setAnimationPlayed] = useState(false);
   const [showSuccessText, setShowSuccessText] = useState(false);
 
-  /*const options = resources.map((resource) => ({
-      value: resource.name,
-      label: resource.name,
-      id: resource.id,
-      isDisabled: projectResources.some(
-        (projectResource) => projectResource.name === resource.name
-      ),
-    }));*/
+
 
   const defaultOptions = {
     loop: false,
@@ -113,6 +106,18 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
                   defaultValue={""}
                 />
               </div>
+              <div>
+                <Label htmlFor="priority" value="Priority" />
+                <Select
+                  options={[
+                    { value: 100, label: "Low" },
+                    { value: 200, label: "Medium" },
+                    { value: 300, label: "High" },
+                  ]}
+                  placeholder="Select a priority"
+                  maxMenuHeight={160}
+                />
+                </div>
             </div>
             <div className="flex justify-center items-center space-x-2 mt-0">
               <Button onClick={handleSubmit}>Add task</Button>
