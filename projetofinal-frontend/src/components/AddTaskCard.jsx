@@ -1,6 +1,6 @@
 import React from "react";
 import AddedAnimation from "../Assets/Added.json";
-import { Modal, Button, Label, TextInput, Textarea } from "flowbite-react";
+import { Modal, Button, Label, TextInput, Textarea, Select } from "flowbite-react";
 import { useState } from "react";
 import useUserStore from "../Stores/UserStore";
 import  useApiStore  from "../Stores/ApiStore";
@@ -51,119 +51,75 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
   
     return (
       <Modal
-        show={popUpShow}
-        size="xl"
-        onClose={() => {
-            setPopUpShow(false);
-        }}
-        popup
-      >
-        <Modal.Header />
-        <Modal.Body>
-          <div className="flex flex-col items-center justify-center space-y-5 overflow-x-hidden overflow-y-hidden">
-            <h3 className="text-lg font-bold text-gray-500 dark:text-gray-400">
-              Create a task
-            </h3>
-            <div className="space-y-3">
-              <div className="flex items-start space-x-4 min-h-[25rem] relative">
-              <div className="mt-4">
-                <Label htmlFor="title" value="Task tile"/>
-                <TextInput
+  show={popUpShow}
+  size="xl"
+  onClose={() => {
+    setPopUpShow(false);
+  }}
+  popup
+>
+  <Modal.Header />
+  <Modal.Body>
+    <div className="flex flex-col items-center justify-center space-y-5 overflow-x-hidden overflow-y-hidden">
+      <h3 className="text-lg font-bold text-gray-500 dark:text-gray-400">
+        Create a task
+      </h3>
+      <form className="space-y-3">
+        <div className="flex flex-col space-y-4">
+          <div>
+            <Label htmlFor="title" value="Task tile"/>
+            <TextInput
               placeholder="Choose a title for the task"
               id="title"
               name="title"
               defaultValue={""}
             />
-              </div>
-              <div className="mt-4">
-                <Label htmlFor="description" value="Task description"/>
-                <Textarea 
-                id="description"
-                name="description"
-                className="h-[10rem] resize-none"
-                defaultValue={""}
-                />
-              </div>
-              <div className="mt-4">
-                <Label htmlFor="responsible" value="Responsible"/>
-                <select
-                id="responsible"
-                name="responsible"
-                defaultValue={""}
-                >
-                  
-                  <option value="" disabled>
-                    Choose a responsible
-                  </option>
-                  <option value="1">John Doe</option>
-                  <option value="2">Jane Doe</option>
-                </select>
-              </div>
-              <div className="mt-4">
-                <Label htmlFor="plannedStartingDate" value="Planned Starting Date"/>
-                <TextInput 
-                id="plannedStartingDate"
-                name="plannedStartingDate"
-                type="date"
-                defaultValue={""}
-                />
-              </div>
-              <div className="mt-4">
-                <Label htmlFor="plannedEndingDate" value="Planned Ending Date"/>
-                <TextInput
-                id="plannedEndingDate"
-                name="plannedEndingDate"
-                type="date"
-                defaultValue={""}
-                />
-              </div>
-                <div className="text center z-10">
-                </div>
-                <div
-                  id="icon-element"
-                  className="pointer-events-none flex items-center justify-center h-full absolute"
-                  style={{
-                    zIndex: 1,
-                    left: 0,
-                    right: 0,
-                    marginLeft: "auto",
-                    marginRight: "auto",
-                  }}
-                >
-                  <div style={{ transform: "scale(3.5)" }}>
-                    <Lottie
-                      options={defaultOptions}
-                      height={200}
-                      width={200}
-                      isStopped={!animationPlayed}
-                      isPaused={!animationPlayed}
-                      eventListeners={[
-                        {
-                          eventName: "complete",
-                          callback: () => {
-                            setAnimationPlayed(false);
-                            setTimeout(() => setShowSuccessText(false), 500);
-                          },
-                        },
-                      ]}
-                    />
-                  </div>
-                  {showSuccessText && (
-                    <div className="animate-pulse text-green-500 font-bold absolute bottom-0">
-                      Added with success
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="flex justify-center mt-4">
-                <Button onClick={handleSubmit}>
-                  Add task
-                </Button>
-              </div>
-            </div>
           </div>
-        </Modal.Body>
-      </Modal>
+          <div>
+            <Label htmlFor="description" value="Task description"/>
+            <Textarea 
+              id="description"
+              name="description"
+              className="h-[10rem] resize-none"
+              defaultValue={""}
+            />
+          </div>
+          <div>
+            <Label htmlFor="responsible" value="Responsible"/>
+            <Select
+            options={""}
+            placeholder="Select a responsible"
+            maxMenuHeight={160}
+            />
+          </div>
+          <div>
+            <Label htmlFor="plannedStartingDate" value="Planned Starting Date"/>
+            <TextInput 
+              id="plannedStartingDate"
+              name="plannedStartingDate"
+              type="date"
+              defaultValue={""}
+            />
+          </div>
+          <div>
+            <Label htmlFor="plannedEndingDate" value="Planned Ending Date"/>
+            <TextInput
+              id="plannedEndingDate"
+              name="plannedEndingDate"
+              type="date"
+              defaultValue={""}
+            />
+          </div>
+        </div>
+        <div className="flex justify-center mt-4">
+          <Button onClick={handleSubmit}>
+            Add task
+          </Button>
+        </div>
+      </form>
+    </div>
+  </Modal.Body>
+</Modal>
     );
 }
 
