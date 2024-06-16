@@ -1,6 +1,6 @@
 import React from "react";
 import AddedAnimation from "../Assets/Added.json";
-import { Modal, Button } from "flowbite-react";
+import { Modal, Button, Label, TextInput, Textarea } from "flowbite-react";
 import { useState } from "react";
 import useUserStore from "../Stores/UserStore";
 import  useApiStore  from "../Stores/ApiStore";
@@ -66,6 +66,24 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
             </h3>
             <div className="space-y-3">
               <div className="flex items-start space-x-4 min-h-[25rem] relative">
+              <div className="mt-4">
+                <Label htmlFor="title" value="Task tile"/>
+                <TextInput
+              placeholder="Choose a title for the task"
+              id="title"
+              name="title"
+              defaultValue={""}
+            />
+              </div>
+              <div className="mt-4">
+                <Label htmlFor="description" value="Task description"/>
+                <Textarea 
+                id="description"
+                name="description"
+                className="h-[10rem] resize-none"
+                defaultValue={""}
+                />
+              </div>
                 <div className="text center z-10">
                 </div>
                 <div
