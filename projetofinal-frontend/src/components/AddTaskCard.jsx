@@ -42,6 +42,7 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
     setShowSuccessText(true);
     setTimeout(() => {
       setPopUpShow(false);
+      setShowSuccessText(false);
     }, 2000);
   };
 
@@ -134,7 +135,6 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
                       eventName: "complete",
                       callback: () => {
                         setAnimationPlayed(false);
-                        setTimeout(() => setShowSuccessText(false), 500);
                       },
                     },
                   ]}
