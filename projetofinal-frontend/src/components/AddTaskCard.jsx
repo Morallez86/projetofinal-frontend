@@ -84,6 +84,39 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
                 defaultValue={""}
                 />
               </div>
+              <div className="mt-4">
+                <Label htmlFor="responsible" value="Responsible"/>
+                <select
+                id="responsible"
+                name="responsible"
+                defaultValue={""}
+                >
+                  
+                  <option value="" disabled>
+                    Choose a responsible
+                  </option>
+                  <option value="1">John Doe</option>
+                  <option value="2">Jane Doe</option>
+                </select>
+              </div>
+              <div className="mt-4">
+                <Label htmlFor="plannedStartingDate" value="Planned Starting Date"/>
+                <TextInput 
+                id="plannedStartingDate"
+                name="plannedStartingDate"
+                type="date"
+                defaultValue={""}
+                />
+              </div>
+              <div className="mt-4">
+                <Label htmlFor="plannedEndingDate" value="Planned Ending Date"/>
+                <TextInput
+                id="plannedEndingDate"
+                name="plannedEndingDate"
+                type="date"
+                defaultValue={""}
+                />
+              </div>
                 <div className="text center z-10">
                 </div>
                 <div
