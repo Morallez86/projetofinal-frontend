@@ -58,7 +58,7 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
       formData.plannedStartingDate
     );
     fetch(
-      `${apiUrl}/projects/${projectId}/possibleDependentTasks?plannedStartingDate=${formData.plannedStartingDate}`,
+      `${apiUrl}/projects/${projectId}/possibleDependentTasks?plannedStartingDate=${plannedStartingDate}`,
       {
         method: "GET",
         headers: {
