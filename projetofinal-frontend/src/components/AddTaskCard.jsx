@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import AddedAnimation from "../Assets/Added.json";
 import {
   Modal,
@@ -20,8 +20,39 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
   const apiUrl = useApiStore((state) => state.apiUrl);
   const [animationPlayed, setAnimationPlayed] = useState(false);
   const [showSuccessText, setShowSuccessText] = useState(false);
+  const [users, setUsers] = useState([]); 
 
   const {projectId} = useParams();
+
+  useEffect(() => {
+    getUsersFromProject();
+  }, []);
+
+  const getUsersFromProject =  () => {
+    fetch (`${apiUrl}/projects/${projectId}/users`, {   
+      method: "GET",
+      headers: {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(async (response) => {
+        if (response.status === 200) {
+          const usersData = await response.json();
+          console.log(usersData);
+          setUsers(usersData);
+        }
+        else {
+          console.log("Error fetching users: " + response.status);
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching users:", error);
+      });
+  };
+
+
 
 
   const defaultOptions = {
@@ -80,7 +111,10 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
               <div>
                 <Label htmlFor="responsible" value="Responsible" />
                 <Select
-                  options={""}
+                  options={users.map((user) => ({
+                    value: user.id,
+                    label: user.username,
+                  }))}
                   placeholder="Select a responsible"
                   maxMenuHeight={160}
                 />
