@@ -279,7 +279,7 @@ function Layout({
         <MdOutlineMessage 
         size={35}
         className="mt-3 cursor-pointer"
-        onClick={() => navigate("/")}
+        onClick={() => navigate("/messages")}
         />
         <Avatar img={profileImage} alt="avatar" rounded />
         {token ? (
