@@ -7,6 +7,8 @@ import useApiStore from "../Stores/ApiStore";
 import Lottie from "react-lottie";
 import Select from "react-select";
 import { useParams } from "react-router-dom";
+import CreatableSelect from "react-select/creatable";
+
 
 function AddTaskCard({ popUpShow, setPopUpShow }) {
   const token = useUserStore((state) => state.token);
@@ -15,6 +17,7 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
   const [showSuccessText, setShowSuccessText] = useState(false);
   const [users, setUsers] = useState([]);
   const [dependentTasks, setDependentTasks] = useState([]);
+  const [restUsers, setRestUsers] = useState([]);
 
   const { projectId } = useParams();
 
@@ -26,6 +29,7 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
     plannedEndingDate: "",
     priority: "",
     dependencies: [],
+    contributors:[],
   });
 
   const handleChange = (event) => {
@@ -33,9 +37,30 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  const handleChangeSelect = (selectedOption) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      userName: selectedOption.label,
+    }));
+  };
+
+  const handleRemoveContributor = (selectedOption) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      contributors:formData.contributors.filter((contributor) => contributor.label !== selectedOption.label),   
+    }));
+  
+  }
+
+
+
   useEffect(() => {
     getUsersFromProject();
   }, []);
+
+  useEffect(() => {
+    setRestUsers(users.filter((user) => user.username !== formData.userName));
+  }, [users, formData.userName]);
 
   useEffect(() => {
     getDependentTasks();
@@ -168,6 +193,10 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
                   placeholder="Select a responsible"
                   maxMenuHeight={160}
                   name="userName"
+                  onChange={(selectedOptions) => {
+                    handleChangeSelect(selectedOptions);
+                    handleRemoveContributor(selectedOptions);
+                  }}
                 />
               </div>
               <div>
@@ -218,6 +247,31 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
                   placeholder="Select dependent task"
                   maxMenuHeight={160}
                   name="dependencies"
+                />
+              </div>
+              <div>
+                <Label
+                  htmlFor="additionalExecutors"
+                  value="Additional Executors"
+                />
+                <CreatableSelect
+                key={formData.userName}
+                  isMulti
+                  options={restUsers.map((user) => ({
+                    value: user.id,
+                    label: user.username,
+                  }))}
+                  placeholder="Select additional executors"
+                  maxMenuHeight={160}
+                  name="contributors"
+                  value={formData.contributors}
+                  onChange={(selectedOptions) => {
+                    setFormData((prevData) => ({
+                      ...prevData,
+                      contributors: selectedOptions,
+                    }));
+                  }
+                  }
                 />
               </div>
             </div>
