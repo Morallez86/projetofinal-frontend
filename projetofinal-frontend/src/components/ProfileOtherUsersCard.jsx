@@ -39,7 +39,6 @@ function ProfileOtherUsersCard() {
         console.log("User with this ID is not found");
       } else if (response.status === 200) {
         const userInfoData = await response.json();
-        console.log(userInfoData);
         setUserInfo({
           name: `${userInfoData.firstName} ${userInfoData.lastName}`,
           nickname: userInfoData.username,
@@ -49,10 +48,33 @@ function ProfileOtherUsersCard() {
           skills: userInfoData.skills.map((skill) => skill.name),
           interests: userInfoData.interests.map((interest) => interest.name),
         });
-        setProfileImage(userInfoData.profileImage);
+        fetchProfileImage(userId); // Fetch profile image after user info
       }
     } catch (error) {
       console.error("Error fetching user info:", error);
+    }
+  };
+
+  const fetchProfileImage = async (userId) => {
+    try {
+      const response = await fetch(`${apiUrl}/users/${userId}/image`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 200) {
+        const imageData = await response.blob();
+        const imageObjectURL = URL.createObjectURL(imageData);
+        setProfileImage(imageObjectURL);
+      } else if (response.status === 404) {
+        console.log("User image not found");
+      } else {
+        console.error("Error fetching user image");
+      }
+    } catch (error) {
+      console.error("Error fetching user image:", error);
     }
   };
 

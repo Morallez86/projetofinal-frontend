@@ -95,7 +95,6 @@ function UsersGrid() {
             setUsers(data);
             await fetchUserImages(data);
           } else {
-            // Optionally clear the users or handle the scenario where data is empty
             setUsers([]);
             console.warn("No users found.");
           }
@@ -109,31 +108,13 @@ function UsersGrid() {
     [apiUrl, token, fetchUserImages]
   );
 
+  // Initial fetch on component mount
   useEffect(() => {
     const fetchInitialUsers = async () => {
       await fetchUsers();
     };
-
     fetchInitialUsers();
   }, [fetchUsers]);
-
-  useEffect(() => {
-    const fetchFilteredUsers = async () => {
-      await fetchUsers(searchTerm, {
-        workplace: selectedWorkplace,
-        skills: selectedSkills,
-        interests: selectedInterests,
-      });
-    };
-
-    fetchFilteredUsers();
-  }, [
-    searchTerm,
-    selectedWorkplace,
-    selectedSkills,
-    selectedInterests,
-    fetchUsers,
-  ]);
 
   const handleSearch = () => {
     fetchUsers(searchTerm, {

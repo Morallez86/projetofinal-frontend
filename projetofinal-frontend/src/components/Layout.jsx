@@ -17,6 +17,7 @@ import useUserStore from "../Stores/UserStore";
 import criticalLogo from "../Assets/CriticalLogo.jpg";
 import useApiStore from "../Stores/ApiStore";
 import { TbLogin2 } from "react-icons/tb";
+import { MdOutlineMessage } from "react-icons/md";
 import { jwtDecode } from "jwt-decode";
 
 
@@ -275,6 +276,11 @@ function Layout({
         </div>
       </div>
       <div className="flex justify-end items-start space-x-2">
+        <MdOutlineMessage 
+        size={35}
+        className="mt-3 cursor-pointer"
+        onClick={() => navigate("/")}
+        />
         <Avatar img={profileImage} alt="avatar" rounded />
         {token ? (
           <Button
