@@ -9,7 +9,6 @@ import Select from "react-select";
 import { useParams } from "react-router-dom";
 import CreatableSelect from "react-select/creatable";
 
-
 function AddTaskCard({ popUpShow, setPopUpShow }) {
   const token = useUserStore((state) => state.token);
   const apiUrl = useApiStore((state) => state.apiUrl);
@@ -30,7 +29,9 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
     plannedEndingDate: "",
     priority: "",
     dependencies: [],
-    contributors:[],
+    contributors: [],
+    status: 100,
+    userId: "",
   });
 
   const handleChange = (event) => {
@@ -48,12 +49,18 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
   const handleRemoveContributor = (selectedOption) => {
     setFormData((prevData) => ({
       ...prevData,
-      contributors:formData.contributors.filter((contributor) => contributor.label !== selectedOption.label),   
+      contributors: formData.contributors.filter(
+        (contributor) => contributor.label !== selectedOption.label
+      ),
     }));
-  
+  };
+
+  const handleIdSelect = (selectedOption) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      userId: selectedOption.value,
+    }));
   }
-
-
 
   useEffect(() => {
     getUsersFromProject();
@@ -75,6 +82,7 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
 
     // Append the time part to the date string
     const formattedDate = `${dateString} 00:00:00`;
+    console.log(formattedDate);
 
     return formattedDate;
   };
@@ -141,13 +149,41 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
   };
 
   const handleSubmit = async () => {
-    setAnimationPlayed(true);
-    setShowSuccessText(true);
-    setTimeout(() => {
-      setPopUpShow(false);
-      setShowSuccessText(false);
-      console.log(formData);
-    }, 2000);
+    const contributorsAsString = formData.contributors
+      .map((contributor) => contributor.label)
+      .join(",");
+
+    fetch(`${apiUrl}/tasks`, {
+      method: "POST",
+      headers: {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        ...formData,
+        contributors: contributorsAsString,
+        plannedStartingDate: formatDateForBackend(formData.plannedStartingDate),
+        plannedEndingDate: formatDateForBackend(formData.plannedEndingDate),
+      }),
+    })
+      .then(async (response) => {
+        if (response.status === 201) {
+          console.log("Task added with success");
+          setAnimationPlayed(true);
+          setShowSuccessText(true);
+          setTimeout(() => {
+            setPopUpShow(false);
+            setShowSuccessText(false);
+            console.log(formData);
+          }, 2000);
+        } else {
+          console.log("Error adding task: " + response.status);
+        }
+      })
+      .catch((error) => {
+        console.error("Error adding task:", error);
+      });
   };
 
   return (
@@ -200,6 +236,7 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
                   onChange={(selectedOptions) => {
                     handleChangeSelect(selectedOptions);
                     handleRemoveContributor(selectedOptions);
+                    handleIdSelect(selectedOptions);
                   }}
                 />
               </div>
@@ -260,9 +297,10 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
                   name="dependencies"
                   isMulti
                   onChange={(selectedOptions) => {
+                    const selectedIds = selectedOptions ? selectedOptions.map(option => option.value) : [];
                     setFormData((prevData) => ({
                       ...prevData,
-                      dependencies: selectedOptions,
+                      dependencies: selectedIds,
                     }));
                   }}
                 />
@@ -273,7 +311,7 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
                   value="Additional Executors"
                 />
                 <CreatableSelect
-                key={formData.userName}
+                  key={formData.userName}
                   isMulti
                   options={restUsers.map((user) => ({
                     value: user.id,
@@ -288,8 +326,7 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
                       ...prevData,
                       contributors: selectedOptions,
                     }));
-                  }
-                  }
+                  }}
                 />
               </div>
             </div>
