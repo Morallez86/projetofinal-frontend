@@ -8,6 +8,7 @@ import useWorkplaceStore from "../Stores/WorkplaceStore";
 import useSkillStore from "../Stores/SkillStore";
 import useInterestStore from "../Stores/InterestStore";
 import basePhoto from "../Assets/092.png";
+import MessageModal from "../Components/MessageModal"; // Make sure to import the modal component
 
 function UsersGrid() {
   const apiUrl = useApiStore((state) => state.apiUrl);
@@ -20,6 +21,8 @@ function UsersGrid() {
   const [selectedWorkplace, setSelectedWorkplace] = useState("");
   const [selectedSkills, setSelectedSkills] = useState("");
   const [selectedInterests, setSelectedInterests] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
+  const [selectedUser, setSelectedUser] = useState(null); // State to store the selected user
 
   const workplaces = useWorkplaceStore((state) => state.workplaces);
   const skills = useSkillStore((state) => state.skills);
@@ -128,6 +131,16 @@ function UsersGrid() {
   const handleSkillsChange = (value) => setSelectedSkills(value);
   const handleInterestsChange = (value) => setSelectedInterests(value);
 
+  const openMessageModal = (user) => {
+    setSelectedUser(user);
+    setIsModalOpen(true);
+  };
+
+  const closeMessageModal = () => {
+    setSelectedUser(null);
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       <Layout activeTab={1} activeSubProjects={2} />
@@ -210,10 +223,7 @@ function UsersGrid() {
                     Profile
                   </Button>
                 )}
-                <Button
-                  size="sm"
-                  onClick={() => alert(`Message to ${user.name}`)}
-                >
+                <Button size="sm" onClick={() => openMessageModal(user)}>
                   Message
                 </Button>
               </div>
@@ -221,6 +231,14 @@ function UsersGrid() {
           ))}
         </div>
       </div>
+
+      {/* Render the NewMessageModal */}
+      <MessageModal
+        isOpen={isModalOpen}
+        closeModal={closeMessageModal}
+        authToken={token}
+        selectedUser={selectedUser}
+      />
     </div>
   );
 }
