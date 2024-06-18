@@ -22,6 +22,7 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
   const { projectId } = useParams();
 
   const [formData, setFormData] = useState({
+    projectId: projectId,
     title: "",
     description: "",
     userName: "",
@@ -145,6 +146,7 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
     setTimeout(() => {
       setPopUpShow(false);
       setShowSuccessText(false);
+      console.log(formData);
     }, 2000);
   };
 
@@ -172,6 +174,7 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
                   id="title"
                   name="title"
                   defaultValue={""}
+                  onChange={handleChange}
                 />
               </div>
               <div>
@@ -181,6 +184,7 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
                   name="description"
                   className="h-[10rem] resize-none"
                   defaultValue={""}
+                  onChange={handleChange}
                 />
               </div>
               <div>
@@ -222,6 +226,7 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
                   name="plannedEndingDate"
                   type="date"
                   defaultValue={""}
+                  onChange={handleChange}
                 />
               </div>
               <div>
@@ -235,6 +240,12 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
                   placeholder="Select a priority"
                   maxMenuHeight={160}
                   name="priority"
+                  onChange={(selectedOption) => {
+                    setFormData((prevData) => ({
+                      ...prevData,
+                      priority: selectedOption.value,
+                    }));
+                  }}
                 />
               </div>
               <div>
@@ -247,6 +258,13 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
                   placeholder="Select dependent task"
                   maxMenuHeight={160}
                   name="dependencies"
+                  isMulti
+                  onChange={(selectedOptions) => {
+                    setFormData((prevData) => ({
+                      ...prevData,
+                      dependencies: selectedOptions,
+                    }));
+                  }}
                 />
               </div>
               <div>
