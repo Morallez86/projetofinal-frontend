@@ -7,9 +7,9 @@ import {
   BsEnvelopeArrowDown,
   BsEnvelopeArrowUp,
   BsFillEnvelopeExclamationFill,
+  BsEnvelopePlus,
 } from "react-icons/bs";
 import { Tooltip } from "react-tooltip";
-
 
 function MessagesPage() {
   const [messages, setMessages] = useState([]);
@@ -18,6 +18,7 @@ function MessagesPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [view, setView] = useState("received"); // Toggle between 'received', 'sent', and 'unread'
   const [usernameFilter, setUsernameFilter] = useState(""); // State for username search filter
+  const [contentFilter, setContentFilter] = useState(""); // State for content search filter
   const [searchActive, setSearchActive] = useState(false); // State to track if search filter is active
   const apiUrl = useApiStore.getState().apiUrl;
   const token = useUserStore((state) => state.token);
@@ -40,6 +41,10 @@ function MessagesPage() {
           url += `&username=${encodeURIComponent(usernameFilter)}`;
         }
 
+        if (searchActive && contentFilter) {
+          url += `&content=${encodeURIComponent(contentFilter)}`;
+        }
+
         const response = await fetch(url, { headers });
 
         if (!response.ok) {
@@ -55,7 +60,16 @@ function MessagesPage() {
     };
 
     fetchMessages();
-  }, [page, rowsPerPage, apiUrl, token, view, usernameFilter, searchActive]);
+  }, [
+    page,
+    rowsPerPage,
+    apiUrl,
+    token,
+    view,
+    usernameFilter,
+    contentFilter,
+    searchActive,
+  ]);
 
   const updateSeenStatus = async (messageId, newStatus) => {
     try {
@@ -130,6 +144,7 @@ function MessagesPage() {
     setPage(1); // Reset page number to 1 when clearing search
     setSearchActive(false);
     setUsernameFilter("");
+    setContentFilter("");
   };
 
   return (
@@ -201,29 +216,34 @@ function MessagesPage() {
               />
             </div>
 
-            {/* Username search filter */}
+            {/* Username and content search filter */}
             <div className="mt-auto">
               <div className="flex flex-col space-y-2">
                 <button
-                  onClick={handleSearchSubmit}
-                  className="btn w-1/2 bg-cyan-500 text-white hover:bg-cyan-700 px-4 py-1 rounded"
+                  onClick={
+                    searchActive ? handleClearSearch : handleSearchSubmit
+                  }
+                  className={`btn w-full ${
+                    searchActive
+                      ? "bg-gray-300 hover:bg-gray-400"
+                      : "bg-cyan-500 text-white hover:bg-cyan-700"
+                  } px-4 py-1 rounded`}
                 >
-                  Search
+                  {searchActive ? "Clear" : "Search"}
                 </button>
-                {searchActive && (
-                  <button
-                    onClick={handleClearSearch}
-                    className="btn bg-gray-300 hover:bg-gray-400 px-4 py-1 rounded"
-                  >
-                    Clear
-                  </button>
-                )}
                 <input
                   type="text"
                   placeholder="Search by username"
                   className="px-2 py-1 border border-cyan-500 rounded"
                   value={usernameFilter}
                   onChange={(e) => setUsernameFilter(e.target.value)}
+                />
+                <input
+                  type="text"
+                  placeholder="Search by content"
+                  className="px-2 py-1 border border-cyan-500 rounded"
+                  value={contentFilter}
+                  onChange={(e) => setContentFilter(e.target.value)}
                 />
               </div>
             </div>

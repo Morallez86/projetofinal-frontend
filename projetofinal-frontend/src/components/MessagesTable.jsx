@@ -146,6 +146,7 @@ const MessagesTable = ({
         closeModal={closeModal}
         message={selectedMessage}
         authToken={authToken}
+        view={view}
       />
     </div>
   );

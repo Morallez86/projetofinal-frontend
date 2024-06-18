@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import useApiStore from "../Stores/ApiStore";
 
-const MessageModal = ({ isOpen, closeModal, message, authToken }) => {
+const MessageModal = ({ isOpen, closeModal, message, authToken, view }) => {
   const [replyContent, setReplyContent] = useState("");
   const apiUrl = useApiStore.getState().apiUrl;
 
-
   const handleReply = async () => {
+    const sendMessageTo =
+      view === "sent" ? message.receiverId : message.senderId;
+
     try {
       const response = await fetch(`${apiUrl}/messages`, {
         method: "POST",
@@ -16,7 +18,7 @@ const MessageModal = ({ isOpen, closeModal, message, authToken }) => {
         },
         body: JSON.stringify({
           content: replyContent,
-          receiverId: message.senderId,
+          receiverId: sendMessageTo,
         }),
       });
 
