@@ -1,39 +1,60 @@
 import React, { useState } from "react";
+import useApiStore from "../Stores/ApiStore";
 
-const MessageModal = ({ isOpen, closeModal, message }) => {
+const MessageModal = ({ isOpen, closeModal, message, authToken }) => {
   const [replyContent, setReplyContent] = useState("");
+  const apiUrl = useApiStore.getState().apiUrl;
 
-  const handleReply = () => {
-    console.log(
-      "Replying to message:",
-      message.id,
-      "with content:",
-      replyContent
-    );
-    // Close the modal after replying
-    closeModal();
+
+  const handleReply = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/messages`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({
+          content: replyContent,
+          receiverId: message.senderId,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to send reply");
+      }
+
+      const savedMessage = await response.json();
+      console.log("Reply sent successfully:", savedMessage);
+
+      // Close the modal after replying
+      closeModal();
+    } catch (error) {
+      console.error("Error replying to message:", error);
+    }
   };
 
-  const formatDateForInput = (dateArray) => {
-    // Implement date formatting function if needed
+  const handleModalClick = (e) => {
+    e.stopPropagation();
   };
 
-  const formatTimeForInput = (dateArray) => {
-    // Implement time formatting function if needed
-  };
+  if (!message) {
+    return null;
+  }
 
   return (
     <div
-      className={`${
-        isOpen
-          ? "fixed inset-0 z-50 flex items-center justify-center"
-          : "hidden"
+      className={`fixed inset-0 ${
+        isOpen ? "flex items-center justify-center" : "hidden"
       }`}
       onClick={closeModal}
     >
       <div className="modal-overlay fixed inset-0 bg-black opacity-50"></div>
 
-      <div className="modal-content bg-white w-full max-w-md p-4 rounded-lg shadow-lg">
+      <div
+        className="modal-content bg-white opacity-90 w-full max-w-md p-4 rounded-lg shadow-lg"
+        onClick={handleModalClick}
+      >
         <h2 className="text-xl font-bold mb-4">Message Details</h2>
 
         <div className="mb-2">
@@ -41,10 +62,6 @@ const MessageModal = ({ isOpen, closeModal, message }) => {
         </div>
         <div className="mb-2">
           <strong>To:</strong> {message.receiverUsername}
-        </div>
-        <div className="mb-2">
-          <strong>Timestamp:</strong> {formatDateForInput(message.timestamp)}{" "}
-          {formatTimeForInput(message.timestamp)}
         </div>
         <div className="mb-2">
           <strong>Content:</strong> {message.content}

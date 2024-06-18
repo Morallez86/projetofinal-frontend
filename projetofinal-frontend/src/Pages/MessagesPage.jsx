@@ -9,7 +9,7 @@ import {
   BsFillEnvelopeExclamationFill,
 } from "react-icons/bs";
 import { Tooltip } from "react-tooltip";
-import "../general.css";
+
 
 function MessagesPage() {
   const [messages, setMessages] = useState([]);
@@ -49,7 +49,6 @@ function MessagesPage() {
         const data = await response.json();
         setMessages(data.messages);
         setTotalPages(data.totalPages);
-        console.log(data);
       } catch (error) {
         console.error("Error fetching messages:", error);
       }
@@ -246,6 +245,7 @@ function MessagesPage() {
             onUpdateSeenStatus={updateSeenStatus}
             view={view}
             onBulkUpdateSeenStatus={bulkUpdateSeenStatus}
+            authToken={token}
           />
         </div>
       </div>

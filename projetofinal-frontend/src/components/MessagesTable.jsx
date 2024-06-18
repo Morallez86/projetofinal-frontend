@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import DataTable from "react-data-table-component";
+import MessageModal from "./MessageModal";
 
 const MessagesTable = ({
   data,
@@ -13,7 +14,21 @@ const MessagesTable = ({
   onUpdateSeenStatus,
   view,
   onBulkUpdateSeenStatus,
+  authToken,
 }) => {
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [selectedMessage, setSelectedMessage] = useState(null);
+
+  const openModal = (message) => {
+    setSelectedMessage(message);
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+    setSelectedMessage(null);
+  };
+
   const formatDateForInput = (dateArray) => {
     if (!Array.isArray(dateArray) || dateArray.length < 3) {
       return "";
@@ -91,6 +106,19 @@ const MessagesTable = ({
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg border-2 border-red-900">
+      <style>
+        {`
+          .clickable-rows {
+            cursor: pointer;
+          }
+          .data-table-row {
+            transition: background-color 0.2s ease;
+          }
+          .data-table-row:hover {
+            background-color: #f0f4f8; /* Adjust as needed */
+          }
+        `}
+      </style>
       <DataTable
         columns={columns}
         data={data}
@@ -101,6 +129,23 @@ const MessagesTable = ({
         onChangePage={onChangePage}
         onChangeRowsPerPage={onChangeRowsPerPage}
         paginationPerPage={rowsPerPage}
+        onRowClicked={(row) => openModal(row)}
+        noHeader={true}
+        className="clickable-rows"
+        customStyles={{
+          rows: {
+            style: {
+              minHeight: "40px",
+            },
+          },
+        }}
+        striped={true}
+      />
+      <MessageModal
+        isOpen={modalIsOpen}
+        closeModal={closeModal}
+        message={selectedMessage}
+        authToken={authToken}
       />
     </div>
   );
