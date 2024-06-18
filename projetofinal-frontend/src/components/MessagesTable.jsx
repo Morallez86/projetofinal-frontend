@@ -12,7 +12,7 @@ const MessagesTable = ({
   rowsPerPage,
   onUpdateSeenStatus,
   view,
-  onBulkUpdateSeenStatus, // Add the bulk update function as a prop
+  onBulkUpdateSeenStatus,
 }) => {
   const formatDateForInput = (dateArray) => {
     if (!Array.isArray(dateArray) || dateArray.length < 3) {
@@ -45,7 +45,8 @@ const MessagesTable = ({
     await onBulkUpdateSeenStatus(newStatus);
   };
 
-  const columns = [
+  // Define columns dynamically based on the view (received or sent)
+  let columns = [
     { name: "Content", selector: (row) => row.content, sortable: true },
     {
       name: "Timestamp",
@@ -55,6 +56,12 @@ const MessagesTable = ({
         const formattedTime = formatTimeForInput(dateArray);
         return `${formattedDate} ${formattedTime}`;
       },
+      sortable: true,
+    },
+    {
+      name: view === "received" ? "From" : "To",
+      selector: (row) =>
+        view === "received" ? row.senderUsername : row.receiverUsername,
       sortable: true,
     },
     {
@@ -83,17 +90,19 @@ const MessagesTable = ({
   ];
 
   return (
-    <DataTable
-      columns={columns}
-      data={data}
-      progressPending={loading}
-      pagination={pagination}
-      paginationServer={paginationServer}
-      paginationTotalRows={paginationTotalRows}
-      onChangePage={onChangePage}
-      onChangeRowsPerPage={onChangeRowsPerPage}
-      paginationPerPage={rowsPerPage}
-    />
+    <div className="p-6 bg-white rounded-lg shadow-lg border-2 border-red-900">
+      <DataTable
+        columns={columns}
+        data={data}
+        progressPending={loading}
+        pagination={pagination}
+        paginationServer={paginationServer}
+        paginationTotalRows={paginationTotalRows}
+        onChangePage={onChangePage}
+        onChangeRowsPerPage={onChangeRowsPerPage}
+        paginationPerPage={rowsPerPage}
+      />
+    </div>
   );
 };
 

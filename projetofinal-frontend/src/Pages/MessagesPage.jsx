@@ -3,21 +3,27 @@ import Layout from "../Components/Layout";
 import MessagesTable from "../Components/MessagesTable";
 import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
+import {
+  BsEnvelopeArrowDown,
+  BsEnvelopeArrowUp,
+  BsFillEnvelopeExclamationFill,
+} from "react-icons/bs";
+import { Tooltip } from "react-tooltip";
 import "../general.css";
 
 function MessagesPage() {
   const [messages, setMessages] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
-  const [view, setView] = useState("received"); // Toggle between 'received' and 'sent'
+  const [view, setView] = useState("received"); // Toggle between 'received', 'sent', and 'unread'
+  const [usernameFilter, setUsernameFilter] = useState(""); // State for username search filter
+  const [searchActive, setSearchActive] = useState(false); // State to track if search filter is active
   const apiUrl = useApiStore.getState().apiUrl;
   const token = useUserStore((state) => state.token);
 
   useEffect(() => {
     const fetchMessages = async () => {
-      setLoading(true);
       try {
         const headers = {
           Accept: "*/*",
@@ -28,10 +34,13 @@ function MessagesPage() {
           headers.Authorization = `Bearer ${token}`;
         }
 
-        const response = await fetch(
-          `${apiUrl}/messages?type=${view}&page=${page}&limit=${rowsPerPage}`,
-          { headers }
-        );
+        let url = `${apiUrl}/messages?type=${view}&page=${page}&limit=${rowsPerPage}`;
+
+        if (searchActive && usernameFilter) {
+          url += `&username=${encodeURIComponent(usernameFilter)}`;
+        }
+
+        const response = await fetch(url, { headers });
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -43,13 +52,11 @@ function MessagesPage() {
         console.log(data);
       } catch (error) {
         console.error("Error fetching messages:", error);
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchMessages();
-  }, [page, rowsPerPage, apiUrl, token, view]);
+  }, [page, rowsPerPage, apiUrl, token, view, usernameFilter, searchActive]);
 
   const updateSeenStatus = async (messageId, newStatus) => {
     try {
@@ -115,41 +122,132 @@ function MessagesPage() {
     }
   };
 
+  const handleSearchSubmit = () => {
+    setPage(1); // Reset page number to 1 when applying a new search
+    setSearchActive(true);
+  };
+
+  const handleClearSearch = () => {
+    setPage(1); // Reset page number to 1 when clearing search
+    setSearchActive(false);
+    setUsernameFilter("");
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       <Layout activeTab={2} activeSubProjects={2} />
-      <div className="p-14">
-        <div className="flex justify-between mb-4">
-          <button
-            onClick={() => setView("received")}
-            className={`btn ${view === "received" ? "btn-active" : ""}`}
-          >
-            Received Messages
-          </button>
-          <button
-            onClick={() => setView("sent")}
-            className={`btn ${view === "sent" ? "btn-active" : ""}`}
-          >
-            Sent Messages
-          </button>
+      <div className="flex p-14">
+        <div className="w-1/5">
+          <div className="flex flex-col h-full bg-white p-4 rounded-lg shadow-lg border-2 border-red-900">
+            <div className="flex flex-col space-y-4 flex-grow">
+              {/* View toggles */}
+              <button
+                onClick={() => setView("received")}
+                className={`btn flex items-center rounded justify-center ${
+                  view === "received"
+                    ? "border border-cyan-500"
+                    : "border border-transparent"
+                }`}
+                data-tip
+                data-for="receivedTooltip"
+                id="receivedBtn"
+              >
+                <BsEnvelopeArrowDown size={25} />
+              </button>
+              <Tooltip
+                anchorSelect="#receivedBtn"
+                content="Received Messages"
+                place="top"
+                effect="solid"
+              />
+
+              <button
+                onClick={() => setView("sent")}
+                className={`btn flex items-center rounded justify-center ${
+                  view === "sent"
+                    ? "border border-cyan-500"
+                    : "border border-transparent"
+                }`}
+                data-tip
+                data-for="sentTooltip"
+                id="sentBtn"
+              >
+                <BsEnvelopeArrowUp size={25} />
+              </button>
+              <Tooltip
+                anchorSelect="#sentBtn"
+                content="Sent Messages"
+                place="top"
+                effect="solid"
+              />
+
+              <button
+                onClick={() => setView("unread")}
+                className={`btn flex items-center rounded justify-center ${
+                  view === "unread"
+                    ? "border border-cyan-500"
+                    : "border border-transparent"
+                }`}
+                data-tip
+                data-for="unreadTooltip"
+                id="unreadBtn"
+              >
+                <BsFillEnvelopeExclamationFill size={25} />
+              </button>
+              <Tooltip
+                anchorSelect="#unreadBtn"
+                content="Unread Messages"
+                place="top"
+                effect="solid"
+              />
+            </div>
+
+            {/* Username search filter */}
+            <div className="mt-auto">
+              <div className="flex flex-col space-y-2">
+                <button
+                  onClick={handleSearchSubmit}
+                  className="btn w-1/2 bg-cyan-500 text-white hover:bg-cyan-700 px-4 py-1 rounded"
+                >
+                  Search
+                </button>
+                {searchActive && (
+                  <button
+                    onClick={handleClearSearch}
+                    className="btn bg-gray-300 hover:bg-gray-400 px-4 py-1 rounded"
+                  >
+                    Clear
+                  </button>
+                )}
+                <input
+                  type="text"
+                  placeholder="Search by username"
+                  className="px-2 py-1 border border-cyan-500 rounded"
+                  value={usernameFilter}
+                  onChange={(e) => setUsernameFilter(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
         </div>
-        <MessagesTable
-          data={messages}
-          loading={loading}
-          pagination
-          paginationServer
-          paginationTotalRows={totalPages}
-          onChangePage={(newPage) => setPage(newPage)}
-          onChangeRowsPerPage={(newRowsPerPage) =>
-            setRowsPerPage(newRowsPerPage)
-          }
-          rowsPerPage={rowsPerPage}
-          page={page}
-          totalPages={totalPages}
-          onUpdateSeenStatus={updateSeenStatus}
-          view={view}
-          onBulkUpdateSeenStatus={bulkUpdateSeenStatus} 
-        />
+        <div className="w-3/4 h-full">
+          <MessagesTable
+            data={messages}
+            pagination
+            paginationServer
+            paginationTotalRows={totalPages}
+            onChangePage={(newPage) => setPage(newPage)}
+            onChangeRowsPerPage={(newRowsPerPage) =>
+              setRowsPerPage(newRowsPerPage)
+            }
+            rowsPerPage={rowsPerPage}
+            page={page}
+            totalPages={totalPages}
+            onUpdateSeenStatus={updateSeenStatus}
+            view={view}
+            onBulkUpdateSeenStatus={bulkUpdateSeenStatus}
+          />
+        </div>
       </div>
     </div>
   );
