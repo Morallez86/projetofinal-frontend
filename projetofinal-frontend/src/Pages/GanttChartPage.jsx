@@ -67,14 +67,16 @@ const GanttChartPage = () => {
         ...task.plannedEndingDate.slice(2)
       );
 
+      console.log(task);
+
       return {
         start: start,
         end: end,
         name: task.title,
-        id: task.id.toString(),
+        id: task.id,
         type: "task",
         progress: 0,
-        dependencies: [],
+        dependencies: task.dependencies || [],
         styles: {
           backgroundSelectedColor: "red",
         },
