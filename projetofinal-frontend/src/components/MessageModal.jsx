@@ -1,13 +1,25 @@
 import React, { useState } from "react";
 import useApiStore from "../Stores/ApiStore";
 
-const MessageModal = ({ isOpen, closeModal, message, authToken, view }) => {
+const MessageModal = ({
+  isOpen,
+  closeModal,
+  message,
+  authToken,
+  selectedUser,
+}) => {
   const [replyContent, setReplyContent] = useState("");
   const apiUrl = useApiStore.getState().apiUrl;
 
   const handleReply = async () => {
-    const sendMessageTo =
-      view === "sent" ? message.receiverId : message.senderId;
+    let sendMessageTo;
+
+    if (message) {
+      sendMessageTo =
+        message.view === "sent" ? message.receiverId : message.senderId;
+    } else if (selectedUser) {
+      sendMessageTo = selectedUser.id;
+    }
 
     try {
       const response = await fetch(`${apiUrl}/messages`, {
@@ -40,10 +52,6 @@ const MessageModal = ({ isOpen, closeModal, message, authToken, view }) => {
     e.stopPropagation();
   };
 
-  if (!message) {
-    return null;
-  }
-
   return (
     <div
       className={`fixed inset-0 ${
@@ -57,20 +65,34 @@ const MessageModal = ({ isOpen, closeModal, message, authToken, view }) => {
         className="modal-content bg-white opacity-90 w-full max-w-md p-4 rounded-lg shadow-lg"
         onClick={handleModalClick}
       >
-        <h2 className="text-xl font-bold mb-4">Message Details</h2>
+        <h2 className="text-xl font-bold mb-4">
+          {message ? "Message Details" : "Send Message"}
+        </h2>
 
-        <div className="mb-2">
-          <strong>From:</strong> {message.senderUsername}
-        </div>
-        <div className="mb-2">
-          <strong>To:</strong> {message.receiverUsername}
-        </div>
-        <div className="mb-2">
-          <strong>Content:</strong> {message.content}
-        </div>
-        <div className="mb-2">
-          <strong>Seen:</strong> {message.seen ? "Yes" : "No"}
-        </div>
+        {message && (
+          <>
+            <div className="mb-2">
+              <strong>From:</strong> {message.senderUsername}
+            </div>
+            <div className="mb-2">
+              <strong>To:</strong> {message.receiverUsername}
+            </div>
+            <div className="mb-2">
+              <strong>Content:</strong> {message.content}
+            </div>
+            <div className="mb-2">
+              <strong>Seen:</strong> {message.seen ? "Yes" : "No"}
+            </div>
+          </>
+        )}
+
+        {selectedUser && (
+          <>
+            <div className="mb-2">
+              <strong>To:</strong> {selectedUser.username}
+            </div>
+          </>
+        )}
 
         <textarea
           value={replyContent}

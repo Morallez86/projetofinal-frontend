@@ -10,6 +10,7 @@ import {
   BsEnvelopePlus,
 } from "react-icons/bs";
 import { Tooltip } from "react-tooltip";
+import NewMessageModal from "../Components/NewMessageModal";
 
 function MessagesPage() {
   const [messages, setMessages] = useState([]);
@@ -20,6 +21,8 @@ function MessagesPage() {
   const [usernameFilter, setUsernameFilter] = useState(""); // State for username search filter
   const [contentFilter, setContentFilter] = useState(""); // State for content search filter
   const [searchActive, setSearchActive] = useState(false); // State to track if search filter is active
+  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+
   const apiUrl = useApiStore.getState().apiUrl;
   const token = useUserStore((state) => state.token);
 
@@ -147,6 +150,14 @@ function MessagesPage() {
     setContentFilter("");
   };
 
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       <Layout activeTab={2} activeSubProjects={2} />
@@ -155,6 +166,21 @@ function MessagesPage() {
           <div className="flex flex-col h-full bg-white p-4 rounded-lg shadow-lg border-2 border-red-900">
             <div className="flex flex-col space-y-4 flex-grow">
               {/* View toggles */}
+              <button
+                onClick={handleOpenModal} // Open the modal on button click
+                className={`btn flex items-center rounded justify-center border border-transparent`}
+                data-tip
+                data-for="newMessageTooltip"
+                id="newMessageBtn"
+              >
+                <BsEnvelopePlus size={25} />
+              </button>
+              <Tooltip
+                anchorSelect="#newMessageBtn"
+                content="New Message"
+                place="top"
+                effect="solid"
+              />
               <button
                 onClick={() => setView("received")}
                 className={`btn flex items-center rounded justify-center ${
@@ -269,6 +295,12 @@ function MessagesPage() {
           />
         </div>
       </div>
+      {/* Add the MessageModal component */}
+      <NewMessageModal
+        isOpen={isModalOpen}
+        closeModal={handleCloseModal}
+        authToken={token}
+      />
     </div>
   );
 }
