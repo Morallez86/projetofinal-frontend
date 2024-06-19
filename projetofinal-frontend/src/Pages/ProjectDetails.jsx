@@ -131,7 +131,7 @@ function ProjectDetails() {
       >
         <button
           onClick={() => {
-            setIsChatOpen(true);
+            setIsChatOpen(!isChatOpen);
           }}
         >
           <SiGooglemessages size={60} />

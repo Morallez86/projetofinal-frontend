@@ -14,6 +14,8 @@ import {
   TypingIndicator,
   AvatarGroup,
 } from "@chatscope/chat-ui-kit-react";
+import { Tooltip } from "react-tooltip";
+
 
 function GroupProjectChat({ photos, users }) {
   const [isSeparated, setIsSeparated] = useState(false);
@@ -36,7 +38,7 @@ function GroupProjectChat({ photos, users }) {
       }}
     >
       <div
-        className=" bg-slate-500  "
+        className=" bg-slate-500 overscroll-y-auto "
         style={{
           width: "100px",
           borderRight: "1px solid black",
@@ -44,13 +46,18 @@ function GroupProjectChat({ photos, users }) {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          justifyContent: "center",
+          justifyContent: "flex-start",
+          overflow:"hidden",
         }}
       >
-        <button onClick={() => setIsSeparated(!isSeparated)}>
+        <button onClick={() => setIsSeparated(!isSeparated)} id="eye-icon">
           <TbEyeSearch size={60} />
         </button>
-
+        <Tooltip 
+            place="top"
+            content="Separate Avatars"
+            anchorSelect="#eye-icon"
+/>
         <AvatarGroup size="md" hoverToFront={true}>
           {users.map((user) => (
             <Avatar
