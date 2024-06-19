@@ -284,7 +284,7 @@ function MessagesPage() {
             data={messages}
             pagination
             paginationServer
-            paginationTotalRows={totalPages}
+            paginationTotalRows={totalPages * rowsPerPage}
             onChangePage={(newPage) => setPage(newPage)}
             onChangeRowsPerPage={(newRowsPerPage) =>
               setRowsPerPage(newRowsPerPage)

@@ -3,7 +3,6 @@ import DataTable from "react-data-table-component";
 
 const NotificationsTable = ({
   data,
-  loading,
   pagination,
   paginationServer,
   paginationTotalRows,
@@ -12,7 +11,6 @@ const NotificationsTable = ({
   rowsPerPage,
   onUpdateSeenStatus,
   onBulkUpdateSeenStatus,
-  authToken,
 }) => {
   const formatDateForInput = (dateArray) => {
     if (!Array.isArray(dateArray) || dateArray.length < 3) {
@@ -97,12 +95,11 @@ const NotificationsTable = ({
       <DataTable
         columns={columns}
         data={data}
-        progressPending={loading}
         pagination={pagination}
         paginationServer={paginationServer}
         paginationTotalRows={paginationTotalRows}
         onChangePage={onChangePage}
-        onChangeRowsPerPage={onChangeRowsPerPage}
+        onChangeRowsPerPage={onChangeRowsPerPage} 
         paginationPerPage={rowsPerPage}
         noHeader={true}
         className="clickable-rows"

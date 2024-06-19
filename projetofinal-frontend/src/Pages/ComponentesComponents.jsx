@@ -51,16 +51,18 @@ function ComponentesComponents() {
 
   return (
     <div className="flex flex-col min-h-screen">
-       <Layout activeTab={2} activeSubComponents={0} />
+      <Layout activeTab={2} activeSubComponents={0} />
       <div className="p-14">
         <ComponentsTable
           data={components}
           loading={loading}
           pagination
           paginationServer
-          paginationTotalRows={totalPages}
+          paginationTotalRows={totalPages * rowsPerPage}
           onChangePage={(newPage) => setPage(newPage)}
-          onChangeRowsPerPage={(newRowsPerPage) => setRowsPerPage(newRowsPerPage)}
+          onChangeRowsPerPage={(newRowsPerPage) =>
+            setRowsPerPage(newRowsPerPage)
+          }
           rowsPerPage={rowsPerPage}
           filterText={filterText}
           setFilterText={setFilterText}

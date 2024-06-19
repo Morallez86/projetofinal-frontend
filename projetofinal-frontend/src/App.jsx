@@ -62,7 +62,7 @@ function App() {
           loading={loading}
           pagination
           paginationServer
-          paginationTotalRows={totalPages}
+          paginationTotalRows={totalPages * rowsPerPage}
           onChangePage={(newPage) => setPage(newPage)}
           onChangeRowsPerPage={(newRowsPerPage) => setRowsPerPage(newRowsPerPage)}
           rowsPerPage={rowsPerPage}
