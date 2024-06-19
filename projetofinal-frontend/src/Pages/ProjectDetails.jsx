@@ -7,6 +7,7 @@ import ProjectDetailsCard from "../Components/ProjectDetailsCard";
 import TaskCard from "../Components/TaskCard";
 import ActivityLogs from "../Components/ActivityLogs";
 import { SiGooglemessages } from "react-icons/si";
+import GroupProjectChat from "../Components/GroupProjectChat";
 
 function ProjectDetails() {
   const { projectId } = useParams();
@@ -16,6 +17,7 @@ function ProjectDetails() {
   const [loading, setLoading] = useState(true);
   const apiUrl = useApiStore((state) => state.apiUrl);
   const token = useUserStore((state) => state.token);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -127,14 +129,13 @@ function ProjectDetails() {
       >
         <button
           onClick={() => {
-            console.log("Icon clicked!");
+            setIsChatOpen(true);
           }}
         >
-          <SiGooglemessages size={60} 
-          
-          />
+          <SiGooglemessages size={60} />
         </button>
       </div>
+      {isChatOpen && <GroupProjectChat />}
     </div>
   );
 }
