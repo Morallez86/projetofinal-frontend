@@ -65,7 +65,8 @@ function GroupProjectChat({ photos, users }) {
               alt={`${user.username}'s profile`}
               style={avatarStyle}
               title={user.username}
-            />
+              status={user.active ? "available" : "dnd"}
+              />
           ))}
         </AvatarGroup>
       </div>
