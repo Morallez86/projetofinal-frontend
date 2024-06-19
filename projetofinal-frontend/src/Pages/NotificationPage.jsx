@@ -3,12 +3,12 @@ import Layout from "../Components/Layout";
 import NotificationsTable from "../Components/NotificationsTable";
 import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
-import { BsBellSlash, BsEnvelopePlus } from "react-icons/bs";
+import { BsEnvelopePlus } from "react-icons/bs";
 import { AiOutlineFundProjectionScreen } from "react-icons/ai";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { MdOutlineManageAccounts } from "react-icons/md";
 import { Tooltip } from "react-tooltip";
-import { FaRegEye } from "react-icons/fa6";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 
 function NotificationsPage() {
   const [notifications, setNotifications] = useState([]);
@@ -21,38 +21,39 @@ function NotificationsPage() {
   const apiUrl = useApiStore.getState().apiUrl;
   const token = useUserStore((state) => state.token);
 
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const headers = {
-          Accept: "*/*",
-          "Content-Type": "application/json",
-        };
+  // Fetch notifications function
+  const fetchNotifications = async () => {
+    try {
+      const headers = {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      };
 
-        if (token) {
-          headers.Authorization = `Bearer ${token}`;
-        }
-
-        // Construct the URL with conditional query parameters
-        let url = `${apiUrl}/notifications?seen=${seen}&page=${page}&limit=${rowsPerPage}`;
-        if (type !== null) {
-          url += `&type=${type}`;
-        }
-
-        const response = await fetch(url, { headers });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        console.log(data);
-        setNotifications(data.notifications);
-        setTotalPages(data.totalPages);
-      } catch (error) {
-        console.error("Error fetching notifications:", error);
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
       }
-    };
 
+      // Construct the URL with conditional query parameters
+      let url = `${apiUrl}/notifications?seen=${seen}&page=${page}&limit=${rowsPerPage}`;
+      if (type !== null) {
+        url += `&type=${type}`;
+      }
+
+      const response = await fetch(url, { headers });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log(data);
+      setNotifications(data.notifications);
+      setTotalPages(data.totalPages);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  };
+
+  useEffect(() => {
     fetchNotifications();
   }, [page, rowsPerPage, apiUrl, token, type, seen]);
 
@@ -80,14 +81,8 @@ function NotificationsPage() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // Update the local state with the new seen status
-      setNotifications((prevNotifications) =>
-        prevNotifications.map((notification) =>
-          notification.id === notificationId
-            ? { ...notification, seen: newStatus }
-            : notification
-        )
-      );
+      // Fetch the latest notifications after updating the seen status
+      await fetchNotifications();
     } catch (error) {
       console.error("Error updating seen status:", error);
     }
@@ -121,13 +116,8 @@ function NotificationsPage() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // Update the local state with the new seen status for all notifications
-      setNotifications((prevNotifications) =>
-        prevNotifications.map((notification) => ({
-          ...notification,
-          seen: newStatus,
-        }))
-      );
+      // Fetch the latest notifications after updating the seen status
+      await fetchNotifications();
     } catch (error) {
       console.error("Error updating seen status:", error);
     }
@@ -152,14 +142,18 @@ function NotificationsPage() {
                         : "border border-transparent"
                     }`}
                     data-tip
-                    data-for="notSeenTooltip"
-                    id="notSeenBtn"
+                    data-for="seenTooltip"
+                    id="seenBtn"
                   >
-                    <FaRegEye size={20} />
+                    {seen ? (
+                      <FaRegEye size={20} />
+                    ) : (
+                      <FaRegEyeSlash size={20} />
+                    )}
                   </button>
                   <Tooltip
-                    anchorSelect="#notSeenBtn"
-                    content="Not Seen Notifications"
+                    anchorSelect="#seenBtn"
+                    content={seen ? "Seen" : "Not Seen"}
                     place="top"
                     effect="solid"
                   />
@@ -180,7 +174,7 @@ function NotificationsPage() {
               </button>
               <Tooltip
                 anchorSelect="#allBtn"
-                content="All Notifications"
+                content="All"
                 place="top"
                 effect="solid"
               />
@@ -200,7 +194,7 @@ function NotificationsPage() {
               </button>
               <Tooltip
                 anchorSelect="#projectBtn"
-                content="Project Notifications"
+                content="Projects"
                 place="top"
                 effect="solid"
               />
@@ -220,7 +214,7 @@ function NotificationsPage() {
               </button>
               <Tooltip
                 anchorSelect="#managingBtn"
-                content="Managing Notifications"
+                content="Managing"
                 place="top"
                 effect="solid"
               />
@@ -240,7 +234,7 @@ function NotificationsPage() {
               </button>
               <Tooltip
                 anchorSelect="#invitationBtn"
-                content="Invitation Notifications"
+                content="Invitations"
                 place="top"
                 effect="solid"
               />

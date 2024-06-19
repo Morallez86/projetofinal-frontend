@@ -14,7 +14,6 @@ const NotificationsTable = ({
   onBulkUpdateSeenStatus,
   authToken,
 }) => {
-
   const formatDateForInput = (dateArray) => {
     if (!Array.isArray(dateArray) || dateArray.length < 3) {
       return "";
@@ -45,7 +44,7 @@ const NotificationsTable = ({
     const newStatus = event.target.checked;
     await onBulkUpdateSeenStatus(newStatus);
   };
-
+  
   const columns = [
     { name: "Description", selector: (row) => row.description, sortable: true },
     {
