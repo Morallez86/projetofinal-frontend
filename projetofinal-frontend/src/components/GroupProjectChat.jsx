@@ -18,7 +18,9 @@ import {
 function GroupProjectChat({ photos, users }) {
   const [isSeparated, setIsSeparated] = useState(false);
 
-  const avatarStyle = isSeparated ? { margin: "5px" } : {};
+  const avatarStyle = isSeparated
+    ? { margin: "10px", transition: "margin 0.5s" }
+    : { transition: "margin 0.5s" };
 
   return (
     <div
@@ -45,9 +47,7 @@ function GroupProjectChat({ photos, users }) {
           justifyContent: "center",
         }}
       >
-        <button
-          onClick={() => setIsSeparated(!isSeparated)}
-        >
+        <button onClick={() => setIsSeparated(!isSeparated)}>
           <TbEyeSearch size={60} />
         </button>
 
