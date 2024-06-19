@@ -75,6 +75,7 @@ function MessagesPage() {
   ]);
 
   const updateSeenStatus = async (messageId, newStatus) => {
+    console.log(messageId);
     try {
       const headers = {
         Accept: "*/*",
@@ -88,7 +89,10 @@ function MessagesPage() {
       const response = await fetch(`${apiUrl}/messages/seen`, {
         method: "PUT",
         headers,
-        body: JSON.stringify({ seen: newStatus }),
+        body: JSON.stringify({
+          messageOrNotificationIds: [messageId],
+          seen: newStatus,
+        }),
       });
 
       if (!response.ok) {
@@ -117,12 +121,12 @@ function MessagesPage() {
         headers.Authorization = `Bearer ${token}`;
       }
 
-      const messageIds = messages.map((message) => message.id); // Get all message IDs
+      const messageOrNotificationIds = messages.map((message) => message.id); // Get all message IDs
 
       const response = await fetch(`${apiUrl}/messages/seen`, {
         method: "PUT",
         headers,
-        body: JSON.stringify({ messageIds, seen: newStatus }), // Send message IDs and new status
+        body: JSON.stringify({ messageOrNotificationIds, seen: newStatus }), // Send message IDs and new status
       });
 
       if (!response.ok) {

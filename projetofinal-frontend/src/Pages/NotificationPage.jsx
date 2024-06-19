@@ -3,19 +3,19 @@ import Layout from "../Components/Layout";
 import NotificationsTable from "../Components/NotificationsTable";
 import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
-import { BsBellSlash } from "react-icons/bs";
+import { BsBellSlash, BsEnvelopePlus } from "react-icons/bs";
 import { AiOutlineFundProjectionScreen } from "react-icons/ai";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { MdOutlineManageAccounts } from "react-icons/md";
-import { BsEnvelopePlus } from "react-icons/bs";
 import { Tooltip } from "react-tooltip";
+import { FaRegEye } from "react-icons/fa6";
 
 function NotificationsPage() {
   const [notifications, setNotifications] = useState([]);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
-  const [type, setType] = useState("INFO"); // Toggle between notification types
+  const [type, setType] = useState(null); // Initialize with null
   const [seen, setSeen] = useState(false); // State for seen filter
 
   const apiUrl = useApiStore.getState().apiUrl;
@@ -33,15 +33,19 @@ function NotificationsPage() {
           headers.Authorization = `Bearer ${token}`;
         }
 
-        let url = `${apiUrl}/notifications?type=${type}&seen=${seen}&page=${page}&limit=${rowsPerPage}`;
+        // Construct the URL with conditional query parameters
+        let url = `${apiUrl}/notifications?seen=${seen}&page=${page}&limit=${rowsPerPage}`;
+        if (type !== null) {
+          url += `&type=${type}`;
+        }
 
         const response = await fetch(url, { headers });
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-
         const data = await response.json();
+        console.log(data);
         setNotifications(data.notifications);
         setTotalPages(data.totalPages);
       } catch (error) {
@@ -66,7 +70,10 @@ function NotificationsPage() {
       const response = await fetch(`${apiUrl}/notifications/seen`, {
         method: "PUT",
         headers,
-        body: JSON.stringify({ seen: newStatus }),
+        body: JSON.stringify({
+          messageOrNotificationIds: [notificationId],
+          seen: newStatus,
+        }),
       });
 
       if (!response.ok) {
@@ -104,7 +111,10 @@ function NotificationsPage() {
       const response = await fetch(`${apiUrl}/notifications/seen`, {
         method: "PUT",
         headers,
-        body: JSON.stringify({ notificationIds, seen: newStatus }), // Send notification IDs and new status
+        body: JSON.stringify({
+          messageOrNotificationIds: notificationIds,
+          seen: newStatus,
+        }), // Send notification IDs and new status
       });
 
       if (!response.ok) {
@@ -127,14 +137,38 @@ function NotificationsPage() {
     <div className="flex flex-col min-h-screen">
       <Layout activeTab={2} activeSubProjects={3} />
       <div className="flex p-14">
-        <div className="w-1/5">
+        <div className="w-1/6">
           <div className="flex flex-col h-full bg-white p-4 rounded-lg shadow-lg border-2 border-red-900">
-            <div className="flex flex-col space-y-1 flex-grow">
+            <div className="flex flex-col space-y-2 flex-grow">
               {/* Type toggles */}
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="text-center">Notifications</h2>
+                <div className="text-right">
+                  <button
+                    onClick={() => setSeen(!seen)}
+                    className={`btn flex items-center rounded justify-center ${
+                      seen
+                        ? "border border-cyan-500"
+                        : "border border-transparent"
+                    }`}
+                    data-tip
+                    data-for="notSeenTooltip"
+                    id="notSeenBtn"
+                  >
+                    <FaRegEye size={20} />
+                  </button>
+                  <Tooltip
+                    anchorSelect="#notSeenBtn"
+                    content="Not Seen Notifications"
+                    place="top"
+                    effect="solid"
+                  />
+                </div>
+              </div>
               <button
-                onClick={() => setType("ALL")}
+                onClick={() => setType(null)}
                 className={`btn flex items-center rounded justify-center ${
-                  type === "ALL"
+                  type === null // Check for null instead of "ALL"
                     ? "border border-cyan-500"
                     : "border border-transparent"
                 }`}
@@ -190,6 +224,7 @@ function NotificationsPage() {
                 place="top"
                 effect="solid"
               />
+
               <button
                 onClick={() => setType("INVITATION")}
                 className={`btn flex items-center rounded justify-center ${
@@ -206,23 +241,6 @@ function NotificationsPage() {
               <Tooltip
                 anchorSelect="#invitationBtn"
                 content="Invitation Notifications"
-                place="top"
-                effect="solid"
-              />
-              <button
-                onClick={() => setSeen(!seen)}
-                className={`btn flex items-center rounded justify-center ${
-                  seen ? "border border-cyan-500" : "border border-transparent"
-                }`}
-                data-tip
-                data-for="notSeenTooltip"
-                id="notSeenBtn"
-              >
-                <BsBellSlash size={30} />
-              </button>
-              <Tooltip
-                anchorSelect="#notSeenBtn"
-                content="Not Seen Notifications"
                 place="top"
                 effect="solid"
               />

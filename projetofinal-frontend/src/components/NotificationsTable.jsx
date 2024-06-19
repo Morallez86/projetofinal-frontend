@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import DataTable from "react-data-table-component";
 
 const NotificationsTable = ({
@@ -47,7 +47,7 @@ const NotificationsTable = ({
   };
 
   const columns = [
-    { name: "Content", selector: (row) => row.content, sortable: true },
+    { name: "Description", selector: (row) => row.description, sortable: true },
     {
       name: "Timestamp",
       selector: (row) => {
