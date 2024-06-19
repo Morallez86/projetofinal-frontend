@@ -18,6 +18,7 @@ function ProjectDetails() {
   const apiUrl = useApiStore((state) => state.apiUrl);
   const token = useUserStore((state) => state.token);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [team, setTeam] = useState([]);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -38,6 +39,7 @@ function ProjectDetails() {
         const data = await response.json();
         setProject(data);
         setTasks(data.tasks || []); // Ensure tasks is an array
+        setTeam(data.userProjectDtos || []);
         console.log(data);
 
         const userIds = data.userProjectDtos
@@ -135,7 +137,7 @@ function ProjectDetails() {
           <SiGooglemessages size={60} />
         </button>
       </div>
-      {isChatOpen && <GroupProjectChat />}
+      {isChatOpen && <GroupProjectChat photos={userImages} users={team} />}
     </div>
   );
 }
