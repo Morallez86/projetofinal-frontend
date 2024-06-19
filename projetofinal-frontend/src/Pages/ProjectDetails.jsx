@@ -6,6 +6,7 @@ import useUserStore from "../Stores/UserStore";
 import ProjectDetailsCard from "../Components/ProjectDetailsCard";
 import TaskCard from "../Components/TaskCard";
 import ActivityLogs from "../Components/ActivityLogs";
+import { SiGooglemessages } from "react-icons/si";
 
 function ProjectDetails() {
   const { projectId } = useParams();
@@ -99,8 +100,8 @@ function ProjectDetails() {
                   task={task}
                   userImages={userImages}
                   projectUsers={project.userProjectDtos}
-                  totalTasks = {tasks}
-                  setTotalTasks = {setTasks}
+                  totalTasks={tasks}
+                  setTotalTasks={setTasks}
                 />
               ))
             ) : (
@@ -115,6 +116,24 @@ function ProjectDetails() {
             logs={project.historyrecords}
           />
         </div>
+      </div>
+      <div
+        style={{
+          position: "fixed",
+          bottom: "30px",
+          right: "25px",
+          zIndex: "1000",
+        }}
+      >
+        <button
+          onClick={() => {
+            console.log("Icon clicked!");
+          }}
+        >
+          <SiGooglemessages size={60} 
+          
+          />
+        </button>
       </div>
     </div>
   );
