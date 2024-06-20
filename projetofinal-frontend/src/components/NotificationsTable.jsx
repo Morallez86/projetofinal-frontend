@@ -63,7 +63,8 @@ const NotificationsTable = ({
     {
       name: (
         <div>
-          Seen <input type="checkbox" onChange={handleBulkSeenChange} />
+          <input type="checkbox" onChange={handleBulkSeenChange} className="mr-2"/>
+          Seen
         </div>
       ),
       selector: (row) => (

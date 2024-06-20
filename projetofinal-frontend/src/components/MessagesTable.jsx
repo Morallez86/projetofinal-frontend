@@ -82,10 +82,10 @@ const MessagesTable = ({
     {
       name: (
         <div>
-          Seen{" "}
           {view === "received" && (
-            <input type="checkbox" onChange={handleBulkSeenChange} />
+            <input type="checkbox" onChange={handleBulkSeenChange} className="mr-2"/>
           )}
+          Seen{" "}
         </div>
       ),
       selector: (row) =>
