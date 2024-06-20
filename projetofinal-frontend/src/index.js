@@ -20,41 +20,44 @@ import UsersTable from "./Pages/UsersGrid";
 import ProfileOtherUsers from "./Pages/ProfileOtherUsers";
 import MessagesPage from "./Pages/MessagesPage";
 import NotificationPage from "./Pages/NotificationPage";
+import { WebSocketProvider } from "./WebSocketContext"; // Import WebSocketProvider
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
   <React.StrictMode>
-    <Router>
-      <Routes>
-        <Route index element={<App />} />
-        <Route path="/myProjects" element={<MyProfileMyProjects />} />
-        <Route path="/changePassword" element={<MyProfileChangePassword />} />
-        <Route
-          path="/registerSkillInterest"
-          element={<MyProfileRegisterSkillInterest />}
-        />
-        <Route path="/messages" element={<MessagesPage />} />
-        <Route path="/notifications" element={<NotificationPage />} />
-        <Route path="/createNewProject" element={<AllProjectsCreateNew />} />
-        <Route path="/components" element={<ComponentsComponents />} />
-        <Route path="/resources" element={<ComponentsResources />} />
-        <Route path="/aboutMe" element={<MyProfileAboutMe />} />
-        <Route
-          path="/registrationStatusPage/:emailToken"
-          element={<RegistrationStatusPage />}
-        />
-        <Route path="/forgotPassword/:token" element={<ForgotPassword />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/myProjects/:projectId" element={<ProjectDetails />} />
-        <Route
-          path="/myProjects/:projectId/ganttChart"
-          element={<GanttChartPage />}
-        />
-        <Route path="/users" element={<UsersTable />} />
-        <Route path="/users/:userId" element={<ProfileOtherUsers />} />
-      </Routes>
-    </Router>
+    <WebSocketProvider>
+      <Router>
+        <Routes>
+          <Route index element={<App />} />
+          <Route path="/myProjects" element={<MyProfileMyProjects />} />
+          <Route path="/changePassword" element={<MyProfileChangePassword />} />
+          <Route
+            path="/registerSkillInterest"
+            element={<MyProfileRegisterSkillInterest />}
+          />
+          <Route path="/messages" element={<MessagesPage />} />
+          <Route path="/notifications" element={<NotificationPage />} />
+          <Route path="/createNewProject" element={<AllProjectsCreateNew />} />
+          <Route path="/components" element={<ComponentsComponents />} />
+          <Route path="/resources" element={<ComponentsResources />} />
+          <Route path="/aboutMe" element={<MyProfileAboutMe />} />
+          <Route
+            path="/registrationStatusPage/:emailToken"
+            element={<RegistrationStatusPage />}
+          />
+          <Route path="/forgotPassword/:token" element={<ForgotPassword />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/myProjects/:projectId" element={<ProjectDetails />} />
+          <Route
+            path="/myProjects/:projectId/ganttChart"
+            element={<GanttChartPage />}
+          />
+          <Route path="/users" element={<UsersTable />} />
+          <Route path="/users/:userId" element={<ProfileOtherUsers />} />
+        </Routes>
+      </Router>
+    </WebSocketProvider>
   </React.StrictMode>
 );
 
