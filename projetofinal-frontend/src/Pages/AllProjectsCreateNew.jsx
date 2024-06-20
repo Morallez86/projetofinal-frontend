@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import Layout from "../Components/Layout";
 import AddSkills from "../Components/AddSkills";
 import AddInterests from "../Components/AddInterests";
 import RemoveSkills from "../Components/RemoveSkills";
 import RemoveInterests from "../Components/RemoveInterests";
-import Footer from "../Components/Footer";
+
 import ProjectCard from "../Components/ProjectCard";
 import AddComponents from "../Components/AddComponents";
 import RemoveComponents from "../Components/RemoveComponents";
@@ -115,7 +114,6 @@ function AllProjectsCreateNew() {
 
   return (
     <div className="flex flex-col h-screen">
-      <Layout activeTab={1} activeSubTabProfile={0} />
       <div className="flex p-4 justify-center h-auto">
         <ProjectCard
           openPopUpSkills={openAddSkillsModal}
@@ -132,9 +130,6 @@ function AllProjectsCreateNew() {
           handleChange={handleChange}
           handleWorkplaceChange={handleWorkplaceChange}
         />
-      </div>
-      <div className="flex-shrink-0 p-0">
-        <Footer />
       </div>
       <AddSkills
         openPopUpSkills={statePopUpSkills}

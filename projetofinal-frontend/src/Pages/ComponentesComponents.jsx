@@ -1,5 +1,4 @@
 import React from "react";
-import Layout from "../Components/Layout";
 import ComponentsTable from "../Components/ComponentsTable";
 import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
@@ -51,7 +50,6 @@ function ComponentesComponents() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Layout activeTab={2} activeSubComponents={0} />
       <div className="p-14">
         <ComponentsTable
           data={components}

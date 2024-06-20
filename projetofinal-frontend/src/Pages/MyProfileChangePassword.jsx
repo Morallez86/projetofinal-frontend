@@ -2,7 +2,6 @@
 import React from "react";
 import { Alert, Button, Card, Label, Spinner, TextInput } from "flowbite-react";
 import { HiInformationCircle } from "react-icons/hi";
-import Layout from "../Components/Layout";
 import useUserStore from "../Stores/UserStore";
 import useApiStore from "../Stores/ApiStore";
 import useForm from "../Hooks/useForm";
@@ -24,9 +23,8 @@ function MyProfileChangePassword() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
-      <Layout activeTab={0} activeSubTabProfile={1} />
-      <div className="flex-grow flex justify-center items-center">
+    <div className="flex flex-col min-h-screen items-center">
+      <div className="p-14">
         <Card className="max-w-sm w-full mx-4">
           <h1 className="text-3xl font-bold text-center mb-6">Change Password</h1>
           <form onSubmit={handleSubmit}>

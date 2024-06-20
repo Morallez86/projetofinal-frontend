@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Layout from "../Components/Layout";
 import NotificationsTable from "../Components/NotificationsTable";
 import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
@@ -125,7 +124,6 @@ function NotificationsPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Layout activeTab={2} activeSubProjects={3} />
       <div className="flex p-14">
         <div className="w-1/6">
           <div className="flex flex-col h-full bg-white p-4 rounded-lg shadow-lg border-2 border-red-900">
@@ -241,7 +239,7 @@ function NotificationsPage() {
             </div>
           </div>
         </div>
-        <div className="w-3/4 h-full">
+        <div className="w-5/6 h-full">
           <NotificationsTable
             data={notifications}
             pagination

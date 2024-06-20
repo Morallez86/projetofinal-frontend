@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import Layout from "../Components/Layout";
 import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
 import ProjectDetailsCard from "../Components/ProjectDetailsCard";
@@ -85,7 +84,6 @@ function ProjectDetails() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Layout activeTab={0} activeSubProjects={0} />
       <div className="flex flex-wrap justify-center">
         <div className="w-full md:w-1/3 p-4">
           <ProjectDetailsCard project={project} userImages={userImages} />
