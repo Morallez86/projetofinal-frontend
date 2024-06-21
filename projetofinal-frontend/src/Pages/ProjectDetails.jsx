@@ -137,7 +137,7 @@ function ProjectDetails() {
           <SiGooglemessages size={60} />
         </button>
       </div>
-      {isChatOpen && <GroupProjectChat photos={userImages} users={team} />}
+      {isChatOpen && <GroupProjectChat photos={userImages} users={team} messages={project.chatMessage} />}
     </div>
   );
 }

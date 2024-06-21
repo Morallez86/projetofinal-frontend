@@ -3,6 +3,8 @@ import styles from "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import basePhoto from "../Assets/092.png";
 import { TbEyeSearch } from "react-icons/tb";
 import { useState } from "react";
+import { jwtDecode } from "jwt-decode";
+
 
 import {
   ChatContainer,
@@ -15,10 +17,22 @@ import {
   AvatarGroup,
 } from "@chatscope/chat-ui-kit-react";
 import { Tooltip } from "react-tooltip";
+import useUserStore from "../Stores/UserStore";
 
-
-function GroupProjectChat({ photos, users }) {
+function GroupProjectChat({ photos, users, messages }) {
   const [isSeparated, setIsSeparated] = useState(false);
+  const token = useUserStore((state) => state.token);
+
+  let userIdFromToken;
+
+  if (token) {
+    try {
+      const decodedToken = jwtDecode(token);
+      userIdFromToken = decodedToken.id;
+    } catch (error) {
+      console.error("Invalid token", error);
+    }
+  }
 
   const avatarStyle = isSeparated
     ? { margin: "10px", transition: "margin 0.5s" }
@@ -47,17 +61,17 @@ function GroupProjectChat({ photos, users }) {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "flex-start",
-          overflow:"hidden",
+          overflow: "hidden",
         }}
       >
         <button onClick={() => setIsSeparated(!isSeparated)} id="eye-icon">
           <TbEyeSearch size={60} />
         </button>
-        <Tooltip 
-            place="top"
-            content="Separate Avatars"
-            anchorSelect="#eye-icon"
-/>
+        <Tooltip
+          place="top"
+          content="Separate Avatars"
+          anchorSelect="#eye-icon"
+        />
         <AvatarGroup size="md" hoverToFront={true}>
           {users.map((user) => (
             <Avatar
@@ -73,7 +87,7 @@ function GroupProjectChat({ photos, users }) {
               style={avatarStyle}
               title={user.username}
               status={user.active ? "available" : "dnd"}
-              />
+            />
           ))}
         </AvatarGroup>
       </div>
@@ -86,132 +100,33 @@ function GroupProjectChat({ photos, users }) {
         <ConversationHeader>
           <ConversationHeader.Content info="Project Chat" />
         </ConversationHeader>
-        <MessageList
-        /*typingIndicator={<TypingIndicator content="Emily is typing" />}*/
-        >
-          <Message
-            model={{
-              direction: "incoming",
-              message: "Hello my friend",
-              position: "single",
-              sender: "Emily",
-              sentTime: "15 mins ago",
-            }}
-          >
-            <Avatar
-              name="Emily"
-              src="https://chatscope.io/storybook/react/assets/emily-xzL8sDL2.svg"
-            />
-          </Message>
-          <Message
-            model={{
-              direction: "outgoing",
-              message: "Hello my friend",
-              position: "single",
-              sener: "Oliver",
-              sentTime: "15 mins ago",
-            }}
-          />
-          <Message
-            avatarSpacer
-            model={{
-              direction: "incoming",
-              message: "Hello my friend",
-              position: "first",
-              sender: "Emily",
-              sentTime: "15 mins ago",
-            }}
-          />
-          <Message
-            avatarSpacer
-            model={{
-              direction: "incoming",
-              message: "Hello my friend",
-              position: "normal",
-              sender: "Emily",
-              sentTime: "15 mins ago",
-            }}
-          />
-          <Message
-            avatarSpacer
-            model={{
-              direction: "incoming",
-              message: "Hello my friend",
-              position: "normal",
-              sender: "Emily",
-              sentTime: "15 mins ago",
-            }}
-          />
-          <Message
-            model={{
-              direction: "incoming",
-              message: "Hello my friend",
-              position: "last",
-              sender: "Emily",
-              sentTime: "15 mins ago",
-            }}
-          >
-            <Avatar
-              name="Emily"
-              src="https://chatscope.io/storybook/react/assets/emily-xzL8sDL2.svg"
-            />
-          </Message>
-          <Message
-            model={{
-              direction: "outgoing",
-              message: "Hello my friend",
-              position: "first",
-              sentTime: "15 mins ago",
-            }}
-          />
-          <Message
-            model={{
-              direction: "outgoing",
-              message: "Hello my friend",
-              position: "normal",
-              sentTime: "15 mins ago",
-            }}
-          />
-          <Message
-            model={{
-              direction: "outgoing",
-              message: "Hello my friend",
-              position: "normal",
-              sentTime: "15 mins ago",
-            }}
-          />
-          <Message
-            model={{
-              direction: "outgoing",
-              message: "Hello my friend",
-              position: "last",
-              sentTime: "15 mins ago",
-            }}
-          />
-          <Message
-            avatarSpacer
-            model={{
-              direction: "incoming",
-              message: "Hello my friend",
-              position: "first",
-              sender: "Emily",
-              sentTime: "15 mins ago",
-            }}
-          />
-          <Message
-            model={{
-              direction: "incoming",
-              message: "Hello my friend",
-              position: "last",
-              sender: "Emily",
-              sentTime: "15 mins ago",
-            }}
-          >
-            <Avatar
-              name="Emily"
-              src="https://chatscope.io/storybook/react/assets/emily-xzL8sDL2.svg"
-            />
-          </Message>
+        {/*typingIndicator={<TypingIndicator content="Emily is typing" />}*/}
+        <MessageList>
+          {messages.map((msg, index) => (
+            <Message
+              key={index}
+              model={{
+                message: msg.content,
+                direction:
+                userIdFromToken === msg.sender.id ? "outgoing" : "incoming",
+                position: "single",
+                sender: msg.sender.username,
+                sentTime: msg.timestamp,
+              }}
+            >  
+              <Avatar
+                name={msg.sender.username}
+                src={
+                  photos[msg.sender.id]
+                    ? `data:${photos[msg.sender.id].type};base64,${
+                        photos[msg.sender.id].image
+                      }`
+                    : basePhoto
+                }
+                status={msg.sender.online ? "available" : "dnd"}
+              />
+            </Message>
+          ))}
         </MessageList>
         <MessageInput placeholder="Type message here" />
       </ChatContainer>
