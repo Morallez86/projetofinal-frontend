@@ -26,12 +26,16 @@ function Layout({
   activeSubTabProfile,
   activeSubProjects,
   activeSubComponents,
+  unreadMessages,
+  unreadNotifications,
   children,
 }) {
   const navigate = useNavigate();
   const apiUrl = useApiStore((state) => state.apiUrl);
-  const { token, setToken, profileImage, setProfileImage, clearProfileImage } =
-    useUserStore();
+  const { token, setToken, profileImage, setProfileImage, clearProfileImage } = useUserStore();
+
+  console.log(unreadMessages);
+  console.log(unreadNotifications)
 
   let userId, username;
   if (token) {
@@ -277,16 +281,25 @@ function Layout({
           </div>
         </div>
         <div className="flex justify-end items-start space-x-2">
-          <MdOutlineMessage
-            size={35}
-            className="mt-3 cursor-pointer"
-            onClick={() => navigate("/messages")}
-          />
-          <IoIosNotificationsOutline
-            size={35}
-            className="mt-3 cursor-pointer"
-            onClick={() => navigate("/notifications")}
-          />
+          <div className="relative mt-3 cursor-pointer">
+            <MdOutlineMessage size={35} onClick={() => navigate("/messages")} />
+            {unreadMessages > 0 && (
+              <div className="absolute top-0 right-0 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+                {unreadMessages}
+              </div>
+            )}
+          </div>
+          <div className="relative mt-3 cursor-pointer">
+            <IoIosNotificationsOutline
+              size={35}
+              onClick={() => navigate("/notifications")}
+            />
+            {unreadNotifications > 0 && (
+              <div className="absolute top-0 right-0 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+                {unreadNotifications}
+              </div>
+            )}
+          </div>
           <Avatar img={profileImage} alt="avatar" rounded />
           {token ? (
             <Button

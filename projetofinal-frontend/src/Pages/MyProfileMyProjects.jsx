@@ -15,8 +15,6 @@ const useProjects = (userId, page, rowsPerPage) => {
   const [totalPages, setTotalPages] = useState(0);
   const { skills } = useSkills();
   const { interests } = useInterests();
-  console.log(skills);
-  console.log(interests);
 
   useEffect(() => {
     if (!userId) return;

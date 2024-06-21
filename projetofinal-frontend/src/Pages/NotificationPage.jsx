@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import NotificationsTable from "../Components/NotificationsTable";
 import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
@@ -8,6 +8,7 @@ import { IoIosNotificationsOutline } from "react-icons/io";
 import { MdOutlineManageAccounts } from "react-icons/md";
 import { Tooltip } from "react-tooltip";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
+import { useWebSocket } from "../WebSocketContext";
 
 function NotificationsPage() {
   const [notifications, setNotifications] = useState([]);
@@ -16,12 +17,13 @@ function NotificationsPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [type, setType] = useState(null); // Initialize with null
   const [seen, setSeen] = useState(false); // State for seen filter
+  const { registerMessageHandler, unregisterMessageHandler } = useWebSocket();
 
   const apiUrl = useApiStore.getState().apiUrl;
   const token = useUserStore((state) => state.token);
 
   // Fetch notifications function
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
     try {
       const headers = {
         Accept: "*/*",
@@ -50,11 +52,26 @@ function NotificationsPage() {
     } catch (error) {
       console.error("Error fetching notifications:", error);
     }
-  };
+  }, [apiUrl, token, seen, page, rowsPerPage, type]);
 
   useEffect(() => {
     fetchNotifications();
-  }, [page, rowsPerPage, apiUrl, token, type, seen]);
+  }, [fetchNotifications]);
+
+  useEffect(() => {
+    const handleNotification = (message) => {
+      if (message.type === "notification") {
+        console.log("Notification received:", message);
+        fetchNotifications(); // Fetch all notifications when a new notification arrives
+      }
+    };
+
+    registerMessageHandler(handleNotification);
+
+    return () => {
+      unregisterMessageHandler(handleNotification);
+    };
+  }, [fetchNotifications, registerMessageHandler, unregisterMessageHandler]);
 
   const updateSeenStatus = async (notificationId, newStatus) => {
     try {
