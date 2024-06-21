@@ -26,9 +26,14 @@ function GroupProjectChat({ photos, users, messages }) {
   console.log(messages);
 
   const convertTimestampToDate = (timestamp) => {
-    return new Date(timestamp[0], timestamp[1] - 1, timestamp[2], timestamp[3], timestamp[4]);
-  }
-  
+    return new Date(
+      timestamp[0],
+      timestamp[1] - 1,
+      timestamp[2],
+      timestamp[3],
+      timestamp[4]
+    );
+  };
 
   let userIdFromToken;
 
@@ -110,9 +115,23 @@ function GroupProjectChat({ photos, users, messages }) {
         {/*typingIndicator={<TypingIndicator content="Emily is typing" />}*/}
         <MessageList>
           {messages.map((msg, index) => {
-             const currentMsgDate = convertTimestampToDate(msg.timestamp);
-             const prevMsgDate = index > 0 ? convertTimestampToDate(messages[index - 1].timestamp) : null;
-             const isNewDay = index === 0 || (prevMsgDate && currentMsgDate.toDateString() !== prevMsgDate.toDateString());
+            const currentMsgDate = convertTimestampToDate(msg.timestamp);
+            const prevMsgDate =
+              index > 0
+                ? convertTimestampToDate(messages[index - 1].timestamp)
+                : null;
+            const isNewDay =
+              index === 0 ||
+              (prevMsgDate &&
+                currentMsgDate.toDateString() !== prevMsgDate.toDateString());
+            const formattedTime = `${currentMsgDate
+              .getHours()
+              .toString()
+              .padStart(2, "0")}:${currentMsgDate
+              .getMinutes()
+              .toString()
+              .padStart(2, "0")}`;
+            console.log(formattedTime);
             return (
               <>
                 {isNewDay && (
@@ -130,7 +149,6 @@ function GroupProjectChat({ photos, users, messages }) {
                         : "incoming",
                     position: "single",
                     sender: msg.sender.username,
-                    sentTime: msg.timestamp,
                   }}
                 >
                   <Avatar
@@ -145,6 +163,15 @@ function GroupProjectChat({ photos, users, messages }) {
                     status={msg.sender.online ? "available" : "dnd"}
                   />
                 </Message>
+                <span
+                  style={{
+                    marginLeft:
+                      userIdFromToken === msg.sender.id ? "12rem" : "3.25rem",
+                  }}
+                  className="-mt-2 text-gray-400 text-xs"
+                >
+                  {formattedTime}
+                </span>{" "}
               </>
             );
           })}
