@@ -53,7 +53,7 @@ function GroupProjectChat({ photos, users, messages }) {
   return (
     <div
       style={{
-        position: "absolute",
+        position: "fixed",
         height: "500px",
         width: "400px",
         bottom: "60px",
@@ -61,6 +61,7 @@ function GroupProjectChat({ photos, users, messages }) {
         border: "5px solid black",
         display: "flex",
         flexDirection: "row",
+        zIndex: 1000,
       }}
     >
       <div
