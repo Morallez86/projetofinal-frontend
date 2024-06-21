@@ -5,7 +5,6 @@ import { TbEyeSearch } from "react-icons/tb";
 import { useState } from "react";
 import { jwtDecode } from "jwt-decode";
 
-
 import {
   ChatContainer,
   MessageList,
@@ -15,6 +14,7 @@ import {
   Avatar,
   TypingIndicator,
   AvatarGroup,
+  MessageSeparator,
 } from "@chatscope/chat-ui-kit-react";
 import { Tooltip } from "react-tooltip";
 import useUserStore from "../Stores/UserStore";
@@ -22,6 +22,13 @@ import useUserStore from "../Stores/UserStore";
 function GroupProjectChat({ photos, users, messages }) {
   const [isSeparated, setIsSeparated] = useState(false);
   const token = useUserStore((state) => state.token);
+
+  console.log(messages);
+
+  const convertTimestampToDate = (timestamp) => {
+    return new Date(timestamp[0], timestamp[1] - 1, timestamp[2], timestamp[3], timestamp[4]);
+  }
+  
 
   let userIdFromToken;
 
@@ -102,31 +109,45 @@ function GroupProjectChat({ photos, users, messages }) {
         </ConversationHeader>
         {/*typingIndicator={<TypingIndicator content="Emily is typing" />}*/}
         <MessageList>
-          {messages.map((msg, index) => (
-            <Message
-              key={index}
-              model={{
-                message: msg.content,
-                direction:
-                userIdFromToken === msg.sender.id ? "outgoing" : "incoming",
-                position: "single",
-                sender: msg.sender.username,
-                sentTime: msg.timestamp,
-              }}
-            >  
-              <Avatar
-                name={msg.sender.username}
-                src={
-                  photos[msg.sender.id]
-                    ? `data:${photos[msg.sender.id].type};base64,${
-                        photos[msg.sender.id].image
-                      }`
-                    : basePhoto
-                }
-                status={msg.sender.online ? "available" : "dnd"}
-              />
-            </Message>
-          ))}
+          {messages.map((msg, index) => {
+             const currentMsgDate = convertTimestampToDate(msg.timestamp);
+             const prevMsgDate = index > 0 ? convertTimestampToDate(messages[index - 1].timestamp) : null;
+             const isNewDay = index === 0 || (prevMsgDate && currentMsgDate.toDateString() !== prevMsgDate.toDateString());
+            return (
+              <>
+                {isNewDay && (
+                  <MessageSeparator
+                    content={`Day changed to ${currentMsgDate.toDateString()}`}
+                  />
+                )}
+                <Message
+                  key={index}
+                  model={{
+                    message: msg.content,
+                    direction:
+                      userIdFromToken === msg.sender.id
+                        ? "outgoing"
+                        : "incoming",
+                    position: "single",
+                    sender: msg.sender.username,
+                    sentTime: msg.timestamp,
+                  }}
+                >
+                  <Avatar
+                    name={msg.sender.username}
+                    src={
+                      photos[msg.sender.id]
+                        ? `data:${photos[msg.sender.id].type};base64,${
+                            photos[msg.sender.id].image
+                          }`
+                        : basePhoto
+                    }
+                    status={msg.sender.online ? "available" : "dnd"}
+                  />
+                </Message>
+              </>
+            );
+          })}
         </MessageList>
         <MessageInput placeholder="Type message here" />
       </ChatContainer>
