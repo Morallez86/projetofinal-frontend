@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Layout from "../Components/Layout";
 import ProjectMyProfileTable from "../Components/ProjectMyProfileTable";
 import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
@@ -16,8 +15,6 @@ const useProjects = (userId, page, rowsPerPage) => {
   const [totalPages, setTotalPages] = useState(0);
   const { skills } = useSkills();
   const { interests } = useInterests();
-  console.log(skills);
-  console.log(interests);
 
   useEffect(() => {
     if (!userId) return;
@@ -75,7 +72,6 @@ function MyProfileMyProjects() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Layout activeTab={0} activeSubTabProfile={0} />
       <div className="p-14">
         <ProjectMyProfileTable
           data={projects}

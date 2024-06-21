@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Layout from "./Components/Layout";
 import AllProjectsTable from "./Components/AllProjectsTable";
 import useApiStore from './Stores/ApiStore';
 import useUserStore from "./Stores/UserStore";
@@ -55,7 +54,6 @@ function App() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Layout activeTab={1} activeSubProjects={1} />
       <div className="p-14">
         <AllProjectsTable
           data={projects}

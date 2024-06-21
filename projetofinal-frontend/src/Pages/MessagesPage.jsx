@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import Layout from "../Components/Layout";
+import React, { useEffect, useState, useCallback } from "react";
 import MessagesTable from "../Components/MessagesTable";
 import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
@@ -11,6 +10,7 @@ import {
 } from "react-icons/bs";
 import { Tooltip } from "react-tooltip";
 import NewMessageModal from "../Components/NewMessageModal";
+import { useWebSocket } from "../WebSocketContext";
 
 function MessagesPage() {
   const [messages, setMessages] = useState([]);
@@ -22,60 +22,75 @@ function MessagesPage() {
   const [contentFilter, setContentFilter] = useState(""); // State for content search filter
   const [searchActive, setSearchActive] = useState(false); // State to track if search filter is active
   const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+  const { registerMessageHandler, unregisterMessageHandler } = useWebSocket();
 
   const apiUrl = useApiStore.getState().apiUrl;
   const token = useUserStore((state) => state.token);
 
-  useEffect(() => {
-    const fetchMessages = async () => {
-      try {
-        const headers = {
-          Accept: "*/*",
-          "Content-Type": "application/json",
-        };
+  const fetchMessages = useCallback(async () => {
+    try {
+      const headers = {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+      };
 
-        if (token) {
-          headers.Authorization = `Bearer ${token}`;
-        }
-
-        let url = `${apiUrl}/messages?type=${view}&page=${page}&limit=${rowsPerPage}`;
-
-        if (searchActive && usernameFilter) {
-          url += `&username=${encodeURIComponent(usernameFilter)}`;
-        }
-
-        if (searchActive && contentFilter) {
-          url += `&content=${encodeURIComponent(contentFilter)}`;
-        }
-
-        const response = await fetch(url, { headers });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        setMessages(data.messages);
-        setTotalPages(data.totalPages);
-      } catch (error) {
-        console.error("Error fetching messages:", error);
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
       }
-    };
 
-    fetchMessages();
+      let url = `${apiUrl}/messages?type=${view}&page=${page}&limit=${rowsPerPage}`;
+
+      if (searchActive && usernameFilter) {
+        url += `&username=${encodeURIComponent(usernameFilter)}`;
+      }
+
+      if (searchActive && contentFilter) {
+        url += `&content=${encodeURIComponent(contentFilter)}`;
+      }
+
+      const response = await fetch(url, { headers });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setMessages(data.messages);
+      setTotalPages(data.totalPages);
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+    }
   }, [
-    page,
-    rowsPerPage,
     apiUrl,
     token,
     view,
+    page,
+    rowsPerPage,
     usernameFilter,
     contentFilter,
     searchActive,
   ]);
 
+  useEffect(() => {
+    fetchMessages();
+  }, [fetchMessages]);
+
+  useEffect(() => {
+    const handleMessage = (message) => {
+      if (message.type === "message") {
+        console.log("working");
+        fetchMessages(); // Fetch all messages when a new message of type "message" arrives
+      }
+    };
+
+    registerMessageHandler(handleMessage);
+
+    return () => {
+      unregisterMessageHandler(handleMessage);
+    };
+  }, [fetchMessages, registerMessageHandler, unregisterMessageHandler]);
+
   const updateSeenStatus = async (messageId, newStatus) => {
-    console.log(messageId);
     try {
       const headers = {
         Accept: "*/*",
@@ -99,7 +114,6 @@ function MessagesPage() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // Update the local state with the new seen status
       setMessages((prevMessages) =>
         prevMessages.map((message) =>
           message.id === messageId ? { ...message, seen: newStatus } : message
@@ -164,7 +178,6 @@ function MessagesPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Layout activeTab={2} activeSubProjects={2} />
       <div className="flex p-14">
         <div className="w-1/6">
           <div className="flex flex-col h-full bg-white p-4 rounded-lg shadow-lg border-2 border-red-900">
@@ -172,9 +185,8 @@ function MessagesPage() {
               <div className="flex items-center justify-between mb-2">
                 <h2 className="text-center">Messages</h2>
               </div>
-              {/* View toggles */}
               <button
-                onClick={handleOpenModal} // Open the modal on button click
+                onClick={handleOpenModal}
                 className={`btn flex items-center rounded justify-center border border-transparent`}
                 data-tip
                 data-for="newMessageTooltip"
@@ -282,7 +294,7 @@ function MessagesPage() {
             </div>
           </div>
         </div>
-        <div className="w-3/4 h-full">
+        <div className="w-5/6 h-full">
           <MessagesTable
             data={messages}
             pagination
@@ -302,7 +314,6 @@ function MessagesPage() {
           />
         </div>
       </div>
-      {/* Add the MessageModal component */}
       <NewMessageModal
         isOpen={isModalOpen}
         closeModal={handleCloseModal}

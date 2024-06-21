@@ -21,18 +21,21 @@ import { IoIosNotificationsOutline } from "react-icons/io";
 import { MdOutlineMessage } from "react-icons/md";
 import { jwtDecode } from "jwt-decode";
 
-
-
 function Layout({
   activeTab,
   activeSubTabProfile,
   activeSubProjects,
   activeSubComponents,
+  unreadMessages,
+  unreadNotifications,
+  children,
 }) {
   const navigate = useNavigate();
   const apiUrl = useApiStore((state) => state.apiUrl);
-  const { token, setToken, profileImage, setProfileImage, clearProfileImage } =
-    useUserStore();
+  const { token, setToken, profileImage, setProfileImage, clearProfileImage } = useUserStore();
+
+  console.log(unreadMessages);
+  console.log(unreadNotifications)
 
   let userId, username;
   if (token) {
@@ -102,208 +105,220 @@ function Layout({
   };
 
   return (
-    <div className="grid grid-cols-[1fr_2fr_1fr] gap-4 p-4">
-      <div className="flex flex-col items-start">
-        <img
-          src={criticalLogo}
-          alt="Critical Logo"
-          className="w-32 rounded h-auto"
-        />
-        {username && (
-          <div className="flex items-center space-x-2 mt-4">
-            <MdWavingHand size={20} />
-            <h1 className="text-black font-bold">Hey {username}</h1>
-          </div>
-        )}
-      </div>
-      <div className="flex flex-col items-center">
-        <Tabs
-          aria-label="Full width tabs"
-          variant="fullWidth"
-          defaultValue={activeTab}
-          onActiveTabChange={(value) => {
-            switch (value) {
-              case 0:
-                navigate("/myProjects");
-                break;
-              case 1:
-                navigate("/createNewProject");
-                break;
-              case 2:
-                navigate("/components");
-                break;
-              default:
-                break;
-            }
-          }}
-        >
-          <Tabs.Item value={0} title="MyProfile" icon={ImProfile}></Tabs.Item>
-          <Tabs.Item
-            active={activeTab === 1}
-            value={1}
-            title="All Projects"
-            icon={AiOutlineFundProjectionScreen}
-          ></Tabs.Item>
-          <Tabs.Item
-            active={activeTab === 2}
-            value={2}
-            title="Components/Resources"
-            icon={GrResources}
-          ></Tabs.Item>
-        </Tabs>
-
-        <div className="w-full max-w-3xl">
-          {activeTab === 0 && (
-            <div>
-              <Tabs
-                aria-label="Pills"
-                variant="pills"
-                className="w-full"
-                defaultValue={activeSubTabProfile}
-                onActiveTabChange={(value) => {
-                  switch (value) {
-                    case 0:
-                      navigate("/myProjects");
-                      break;
-                    case 1:
-                      navigate("/changePassword");
-                      break;
-                    case 2:
-                      navigate("/aboutMe");
-                      break;
-                    default:
-                      break;
-                  }
-                }}
-              >
-                <Tabs.Item
-                  active={activeSubTabProfile === 0}
-                  value={0}
-                  title={<span className="text-black">My Projects</span>}
-                  icon={PiProjectorScreenChartLight}
-                ></Tabs.Item>
-                <Tabs.Item
-                  active={activeSubTabProfile === 1}
-                  value={1}
-                  title={<span className="text-black">Change Password</span>}
-                  icon={CiSettings}
-                ></Tabs.Item>
-                <Tabs.Item
-                  active={activeSubTabProfile === 2}
-                  value={4}
-                  title={<span className="text-black">About me</span>}
-                  icon={CgProfile}
-                ></Tabs.Item>
-              </Tabs>
-            </div>
-          )}
-          {activeTab === 1 && (
-            <div>
-              <Tabs
-                aria-label="Pills"
-                variant="pills"
-                className="w-full"
-                onActiveTabChange={(value) => {
-                  switch (value) {
-                    case 0:
-                      navigate("/createNewProject");
-                      break;
-                    case 1:
-                      navigate("/");
-                      break;
-                    case 2:
-                      navigate("/users");
-                      break;
-                    default:
-                      break;
-                  }
-                }}
-              >
-                <Tabs.Item
-                  active={activeSubProjects === 0}
-                  value={0}
-                  title={<span className="text-black">Create New</span>}
-                  icon={IoCreateOutline}
-                ></Tabs.Item>
-                <Tabs.Item
-                  active={activeSubProjects === 1}
-                  value={1}
-                  title={<span className="text-black">Projects List</span>}
-                  icon={CiBoxList}
-                ></Tabs.Item>
-                <Tabs.Item
-                  active={activeSubProjects === 2}
-                  value={2}
-                  title={<span className="text-black">Users</span>}
-                  icon={PiUsersThreeBold}
-                ></Tabs.Item>
-              </Tabs>
-            </div>
-          )}
-          {activeTab === 2 && (
-            <div>
-              <Tabs
-                aria-label="Pills"
-                variant="pills"
-                className="w-full "
-                onActiveTabChange={(value) => {
-                  switch (value) {
-                    case 0:
-                      navigate("/components");
-                      break;
-                    case 1:
-                      navigate("/resources");
-                      break;
-                    default:
-                      break;
-                  }
-                }}
-              >
-                <Tabs.Item
-                  active={activeSubComponents === 0}
-                  value={0}
-                  title={<span className="text-black">Components</span>}
-                  icon={VscTools}
-                ></Tabs.Item>
-                <Tabs.Item
-                  active={activeSubComponents === 1}
-                  value={1}
-                  title={<span className="text-black">Resources</span>}
-                  icon={GrResources}
-                ></Tabs.Item>
-              </Tabs>
+    <div className="flex flex-col min-h-screen">
+      <div className="grid grid-cols-[1fr_2fr_1fr] gap-4 p-4">
+        <div className="flex flex-col items-start">
+          <img
+            src={criticalLogo}
+            alt="Critical Logo"
+            className="w-32 rounded h-auto"
+          />
+          {username && (
+            <div className="flex items-center space-x-2 mt-4">
+              <MdWavingHand size={20} />
+              <h1 className="text-black font-bold">Hey {username}</h1>
             </div>
           )}
         </div>
-      </div>
-      <div className="flex justify-end items-start space-x-2">
-        <MdOutlineMessage
-          size={35}
-          className="mt-3 cursor-pointer"
-          onClick={() => navigate("/messages")}
-        />
-        <IoIosNotificationsOutline
-          size={35}
-          className="mt-3 cursor-pointer"
-          onClick={() => navigate("/notifications")}
-        />
-        <Avatar img={profileImage} alt="avatar" rounded />
-        {token ? (
-          <Button
-            className="p-0 flex items-center justify-center bg-transparent hover:bg-orange-200 transition-colors duration-200 text-black font-bold"
-            onClick={handleLogout}
+        <div className="flex flex-col items-center">
+          <Tabs
+            aria-label="Full width tabs"
+            variant="fullWidth"
+            defaultValue={activeTab}
+            onActiveTabChange={(value) => {
+              switch (value) {
+                case 0:
+                  navigate("/myProjects");
+                  break;
+                case 1:
+                  navigate("/createNewProject");
+                  break;
+                case 2:
+                  navigate("/components");
+                  break;
+                default:
+                  break;
+              }
+            }}
           >
-            <TbLogout2 size={35} />
-          </Button>
-        ) : (
-          <Button
-            className="p-0 flex items-center justify-center bg-transparent hover:bg-orange-200 transition-colors duration-200 text-black font-bold"
-            onClick={() => navigate("/Login")}
-          >
-            <TbLogin2 size={35} />
-          </Button>
-        )}
+            <Tabs.Item value={0} title="MyProfile" icon={ImProfile}></Tabs.Item>
+            <Tabs.Item
+              active={activeTab === 1}
+              value={1}
+              title="All Projects"
+              icon={AiOutlineFundProjectionScreen}
+            ></Tabs.Item>
+            <Tabs.Item
+              active={activeTab === 2}
+              value={2}
+              title="Components/Resources"
+              icon={GrResources}
+            ></Tabs.Item>
+          </Tabs>
+
+          <div className="w-full max-w-3xl">
+            {activeTab === 0 && (
+              <div>
+                <Tabs
+                  aria-label="Pills"
+                  variant="pills"
+                  className="w-full"
+                  defaultValue={activeSubTabProfile}
+                  onActiveTabChange={(value) => {
+                    switch (value) {
+                      case 0:
+                        navigate("/myProjects");
+                        break;
+                      case 1:
+                        navigate("/changePassword");
+                        break;
+                      case 2:
+                        navigate("/aboutMe");
+                        break;
+                      default:
+                        break;
+                    }
+                  }}
+                >
+                  <Tabs.Item
+                    active={activeSubTabProfile === 0}
+                    value={0}
+                    title={<span className="text-black">My Projects</span>}
+                    icon={PiProjectorScreenChartLight}
+                  ></Tabs.Item>
+                  <Tabs.Item
+                    active={activeSubTabProfile === 1}
+                    value={1}
+                    title={<span className="text-black">Change Password</span>}
+                    icon={CiSettings}
+                  ></Tabs.Item>
+                  <Tabs.Item
+                    active={activeSubTabProfile === 2}
+                    value={2}
+                    title={<span className="text-black">About me</span>}
+                    icon={CgProfile}
+                  ></Tabs.Item>
+                </Tabs>
+              </div>
+            )}
+            {activeTab === 1 && (
+              <div>
+                <Tabs
+                  aria-label="Pills"
+                  variant="pills"
+                  className="w-full"
+                  onActiveTabChange={(value) => {
+                    switch (value) {
+                      case 0:
+                        navigate("/createNewProject");
+                        break;
+                      case 1:
+                        navigate("/");
+                        break;
+                      case 2:
+                        navigate("/users");
+                        break;
+                      default:
+                        break;
+                    }
+                  }}
+                >
+                  <Tabs.Item
+                    active={activeSubProjects === 0}
+                    value={0}
+                    title={<span className="text-black">Create New</span>}
+                    icon={IoCreateOutline}
+                  ></Tabs.Item>
+                  <Tabs.Item
+                    active={activeSubProjects === 1}
+                    value={1}
+                    title={<span className="text-black">Projects List</span>}
+                    icon={CiBoxList}
+                  ></Tabs.Item>
+                  <Tabs.Item
+                    active={activeSubProjects === 2}
+                    value={2}
+                    title={<span className="text-black">Users</span>}
+                    icon={PiUsersThreeBold}
+                  ></Tabs.Item>
+                </Tabs>
+              </div>
+            )}
+            {activeTab === 2 && (
+              <div>
+                <Tabs
+                  aria-label="Pills"
+                  variant="pills"
+                  className="w-full "
+                  onActiveTabChange={(value) => {
+                    switch (value) {
+                      case 0:
+                        navigate("/components");
+                        break;
+                      case 1:
+                        navigate("/resources");
+                        break;
+                      default:
+                        break;
+                    }
+                  }}
+                >
+                  <Tabs.Item
+                    active={activeSubComponents === 0}
+                    value={0}
+                    title={<span className="text-black">Components</span>}
+                    icon={VscTools}
+                  ></Tabs.Item>
+                  <Tabs.Item
+                    active={activeSubComponents === 1}
+                    value={1}
+                    title={<span className="text-black">Resources</span>}
+                    icon={GrResources}
+                  ></Tabs.Item>
+                </Tabs>
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="flex justify-end items-start space-x-2">
+          <div className="relative mt-3 cursor-pointer">
+            <MdOutlineMessage size={35} onClick={() => navigate("/messages")} />
+            {unreadMessages > 0 && (
+              <div className="absolute top-0 right-0 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+                {unreadMessages}
+              </div>
+            )}
+          </div>
+          <div className="relative mt-3 cursor-pointer">
+            <IoIosNotificationsOutline
+              size={35}
+              onClick={() => navigate("/notifications")}
+            />
+            {unreadNotifications > 0 && (
+              <div className="absolute top-0 right-0 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+                {unreadNotifications}
+              </div>
+            )}
+          </div>
+          <Avatar img={profileImage} alt="avatar" rounded />
+          {token ? (
+            <Button
+              className="p-0 flex items-center justify-center bg-transparent hover:bg-orange-200 transition-colors duration-200 text-black font-bold"
+              onClick={handleLogout}
+            >
+              <TbLogout2 size={35} />
+            </Button>
+          ) : (
+            <Button
+              className="p-0 flex items-center justify-center bg-transparent hover:bg-orange-200 transition-colors duration-200 text-black font-bold"
+              onClick={() => navigate("/Login")}
+            >
+              <TbLogin2 size={35} />
+            </Button>
+          )}
+        </div>
       </div>
+      <div className="relative">{children}</div>
     </div>
   );
 }

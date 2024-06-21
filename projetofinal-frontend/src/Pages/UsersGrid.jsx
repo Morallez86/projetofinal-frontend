@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Card, Button, Avatar, TextInput } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
-import Layout from "../Components/Layout";
 import useUserStore from "../Stores/UserStore";
 import useApiStore from "../Stores/ApiStore";
 import useWorkplaceStore from "../Stores/WorkplaceStore";
 import useSkillStore from "../Stores/SkillStore";
 import useInterestStore from "../Stores/InterestStore";
 import basePhoto from "../Assets/092.png";
-import MessageModal from "../Components/MessageModal"; // Make sure to import the modal component
+import MessageModal from "../Components/MessageModal";
 
 function UsersGrid() {
   const apiUrl = useApiStore((state) => state.apiUrl);
@@ -143,7 +142,6 @@ function UsersGrid() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Layout activeTab={1} activeSubProjects={2} />
       <div className="p-8">
         <div className="flex items-center mb-4">
           <TextInput
