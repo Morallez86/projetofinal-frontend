@@ -18,12 +18,60 @@ import {
 } from "@chatscope/chat-ui-kit-react";
 import { Tooltip } from "react-tooltip";
 import useUserStore from "../Stores/UserStore";
+import { useParams } from "react-router-dom";
+import useApiStore from "../Stores/ApiStore";
 
 function GroupProjectChat({ photos, users, messages }) {
   const [isSeparated, setIsSeparated] = useState(false);
   const token = useUserStore((state) => state.token);
+  const apiUrl = useApiStore((state) => state.apiUrl);
+  const { projectId } = useParams();
 
   console.log(messages);
+
+  let userIdFromToken;
+  let usernameFromToken;
+
+  if (token) {
+    try {
+      const decodedToken = jwtDecode(token);
+      userIdFromToken = decodedToken.id;
+      usernameFromToken = decodedToken.username;
+    } catch (error) {
+      console.error("Invalid token", error);
+    }
+  }
+
+  const handleSubmit = (message) => {
+    fetch(`${apiUrl}/projects/createChatMsg`, {
+      method: "POST",
+      headers: {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        projectId: projectId,
+        content: message,
+        senderUsername: usernameFromToken,
+        senderId: userIdFromToken,
+        senderOnline: true,
+      }),
+    })
+      .then(async (response) => {
+        if (response.status === 201) {
+          /*const messagesData = await response.json();
+      console.log(messagesData);
+      setMessages(messagesData);*/
+          console.log("msg created");
+        } else {
+          console.log("msg not created", response.status);
+        }
+      })
+      .catch((error) => {
+        console.error("Error creating message:", error);
+      });
+  };
 
   const convertTimestampToDate = (timestamp) => {
     return new Date(
@@ -34,17 +82,6 @@ function GroupProjectChat({ photos, users, messages }) {
       timestamp[4]
     );
   };
-
-  let userIdFromToken;
-
-  if (token) {
-    try {
-      const decodedToken = jwtDecode(token);
-      userIdFromToken = decodedToken.id;
-    } catch (error) {
-      console.error("Invalid token", error);
-    }
-  }
 
   const avatarStyle = isSeparated
     ? { margin: "10px", transition: "margin 0.5s" }
@@ -181,7 +218,10 @@ function GroupProjectChat({ photos, users, messages }) {
             );
           })}
         </MessageList>
-        <MessageInput placeholder="Type message here" />
+        <MessageInput
+          placeholder="Type message here"
+          onSend={(message) => handleSubmit(message)}
+        />
       </ChatContainer>
     </div>
   );
