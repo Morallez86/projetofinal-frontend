@@ -21,11 +21,12 @@ import useUserStore from "../Stores/UserStore";
 import { useParams } from "react-router-dom";
 import useApiStore from "../Stores/ApiStore";
 
-function GroupProjectChat({ photos, users, messages }) {
+function GroupProjectChat({ photos, users, messages: initialMessages }) {
   const [isSeparated, setIsSeparated] = useState(false);
   const token = useUserStore((state) => state.token);
   const apiUrl = useApiStore((state) => state.apiUrl);
   const { projectId } = useParams();
+  const [messages, setMessages] = useState(initialMessages);
 
   console.log(messages);
 
@@ -60,9 +61,13 @@ function GroupProjectChat({ photos, users, messages }) {
     })
       .then(async (response) => {
         if (response.status === 201) {
-          /*const messagesData = await response.json();
-      console.log(messagesData);
-      setMessages(messagesData);*/
+          const messageData = await response.json();
+          console.log(messageData);
+          if (messageData.timestamp.length > 5) {
+            messageData.timestamp = messageData.timestamp.slice(0, 5);
+          }
+          console.log(messageData);
+          setMessages((prevMessages) => [...prevMessages, messageData]);
           console.log("msg created");
         } else {
           console.log("msg not created", response.status);
