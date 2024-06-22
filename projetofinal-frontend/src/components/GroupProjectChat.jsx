@@ -50,6 +50,10 @@ function GroupProjectChat({ photos, users, messages }) {
     ? { margin: "10px", transition: "margin 0.5s" }
     : { transition: "margin 0.5s" };
 
+  const joinUsername = (content, username) => {
+    return `<strong>${username}</strong>: ${content}`;
+  };
+
   return (
     <div
       style={{
@@ -143,7 +147,7 @@ function GroupProjectChat({ photos, users, messages }) {
                 <Message
                   key={index}
                   model={{
-                    message: msg.content,
+                    message: joinUsername(msg.content, msg.sender.username),
                     direction:
                       userIdFromToken === msg.sender.id
                         ? "outgoing"
