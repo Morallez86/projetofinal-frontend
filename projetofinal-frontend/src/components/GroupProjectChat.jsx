@@ -147,31 +147,31 @@ function GroupProjectChat({ photos, users, messages }) {
                 <Message
                   key={index}
                   model={{
-                    message: joinUsername(msg.content, msg.sender.username),
+                    message: joinUsername(msg.content, msg.senderUsername),
                     direction:
-                      userIdFromToken === msg.sender.id
+                      userIdFromToken === msg.senderId
                         ? "outgoing"
                         : "incoming",
                     position: "single",
-                    sender: msg.sender.username,
+                    sender: msg.senderUsername,
                   }}
                 >
                   <Avatar
-                    name={msg.sender.username}
+                    name={msg.senderUsername}
                     src={
-                      photos[msg.sender.id]
-                        ? `data:${photos[msg.sender.id].type};base64,${
-                            photos[msg.sender.id].image
+                      photos[msg.senderId]
+                        ? `data:${photos[msg.senderId].type};base64,${
+                            photos[msg.senderId].image
                           }`
                         : basePhoto
                     }
-                    status={msg.sender.online ? "available" : "dnd"}
+                    status={msg.senderOnline ? "available" : "dnd"}
                   />
                 </Message>
                 <span
                   style={{
                     marginLeft:
-                      userIdFromToken === msg.sender.id ? "12rem" : "3.25rem",
+                      userIdFromToken === msg.senderId ? "12rem" : "3.25rem",
                   }}
                   className="-mt-2 text-gray-400 text-xs"
                 >
