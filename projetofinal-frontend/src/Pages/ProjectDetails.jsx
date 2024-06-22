@@ -7,6 +7,7 @@ import TaskCard from "../Components/TaskCard";
 import ActivityLogs from "../Components/ActivityLogs";
 import { SiGooglemessages } from "react-icons/si";
 import GroupProjectChat from "../Components/GroupProjectChat";
+import { motion } from "framer-motion";
 
 function ProjectDetails() {
   const { projectId } = useParams();
@@ -135,7 +136,19 @@ function ProjectDetails() {
           <SiGooglemessages size={60} />
         </button>
       </div>
-      {isChatOpen && <GroupProjectChat photos={userImages} users={team} messages={project.chatMessage} />}
+      {isChatOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <GroupProjectChat
+            photos={userImages}
+            users={team}
+            messages={project.chatMessage}
+          />
+        </motion.div>
+      )}
     </div>
   );
 }
