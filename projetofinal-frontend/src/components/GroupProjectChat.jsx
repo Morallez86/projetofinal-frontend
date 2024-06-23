@@ -20,6 +20,8 @@ import { Tooltip } from "react-tooltip";
 import useUserStore from "../Stores/UserStore";
 import { useParams } from "react-router-dom";
 import useApiStore from "../Stores/ApiStore";
+import WebSocketProjChat from "../WebSocketProjChat";
+import { useEffect } from "react";
 
 function GroupProjectChat({ photos, users, messages: initialMessages }) {
   const [isSeparated, setIsSeparated] = useState(false);
@@ -42,6 +44,8 @@ function GroupProjectChat({ photos, users, messages: initialMessages }) {
       console.error("Invalid token", error);
     }
   }
+
+  WebSocketProjChat(token);
 
   const handleSubmit = (message) => {
     fetch(`${apiUrl}/projects/createChatMsg`, {

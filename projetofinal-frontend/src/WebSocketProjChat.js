@@ -1,39 +1,39 @@
-import React from 'react';
-import userStore from "./Stores/UserStore";
-import {useEffect} from "react";
+import React from "react";
+import { useEffect } from "react";
+import useUserStore from "./Stores/UserStore";
 
-function WebSocketProjChat () {
-    const token = userStore((state) => state.token); 
 
-    useEffect(() => {
-        if (token) {
-            const socket = new WebSocket(
-                `ws://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/websocket/application/${token}`
-            );
+function WebSocketProjChat() {
+  const token = useUserStore((state) => state.token);
 
-            socket.onopen = () => {
-                console.log("WebSocket connected");
-            };
+  useEffect(() => {
+    if (token) {
+      const socket = new WebSocket(
+        `ws://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/websocket/projectChat/${token}`
+      );
 
-            socket.onmessage = (event) => {
-                const message = JSON.parse(event.data);
-                console.log("Received message:", message);
-            };
+      socket.onopen = () => {
+        console.log("WebSocket connected");
+      };
 
-            socket.onclose = () => {
-                console.log("WebSocket disconnected");
-            };
+      socket.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+        console.log("Received message:", message);
+      };
 
-            socket.onerror = (error) => {
-                console.error("WebSocket error", error);
-            };
+      socket.onclose = () => {
+        console.log("WebSocket disconnected");
+      };
 
-            return () => {
-                socket.close();
-            };
-        }
+      socket.onerror = (error) => {
+        console.error("WebSocket error", error);
+      };
+
+      return () => {
+        socket.close();
+      };
     }
-    , [token]);
+  }, [token]);
 }
 
 export default WebSocketProjChat;
