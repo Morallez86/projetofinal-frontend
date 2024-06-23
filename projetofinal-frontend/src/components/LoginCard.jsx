@@ -7,7 +7,6 @@ import {
   Alert,
   Modal,
 } from "flowbite-react";
-import { RiLoginCircleFill } from "react-icons/ri";
 import { HiInformationCircle, HiOutlineMail } from "react-icons/hi";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -184,7 +183,6 @@ function LoginCard() {
           {loading ? <Spinner size="sm" /> : "Submit"}
         </Button>
         <Button type="button" onClick={openEmailInput}>
-          <RiLoginCircleFill className="mr-2" />
           Forgot password?
         </Button>
         <Button type="button" onClick={() => navigate("/")}>
