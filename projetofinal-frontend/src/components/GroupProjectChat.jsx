@@ -45,7 +45,23 @@ function GroupProjectChat({ photos, users, messages: initialMessages }) {
     }
   }
 
-  WebSocketProjChat(token);
+  const onMessageChat = (message) => {
+    setMessages((prevMessages) => [...prevMessages,
+      (message = {
+        content: message.content,
+        senderUsername: message.senderUsername,
+        senderId: message.senderId,
+        senderOnline: message.senderOnline,
+        projectId: message.projectId, 
+        timestamp: message.timestamp,
+  }),
+    ]);
+  };
+
+
+
+
+  WebSocketProjChat(token, onMessageChat);
 
   const handleSubmit = (message) => {
     fetch(`${apiUrl}/projects/createChatMsg`, {
@@ -167,6 +183,7 @@ function GroupProjectChat({ photos, users, messages: initialMessages }) {
         <MessageList>
           {messages.map((msg, index) => {
             const currentMsgDate = convertTimestampToDate(msg.timestamp);
+        
             const prevMsgDate =
               index > 0
                 ? convertTimestampToDate(messages[index - 1].timestamp)

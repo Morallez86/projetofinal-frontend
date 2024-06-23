@@ -1,11 +1,10 @@
 import React from "react";
 import { useEffect } from "react";
-import useUserStore from "./Stores/UserStore";
 
+function WebSocketProjChat(token, onMessageChat) {
 
-function WebSocketProjChat() {
-  const token = useUserStore((state) => state.token);
-
+  
+  
   useEffect(() => {
     if (token) {
       const socket = new WebSocket(
@@ -19,6 +18,21 @@ function WebSocketProjChat() {
       socket.onmessage = (event) => {
         const message = JSON.parse(event.data);
         console.log("Received message:", message);
+      
+       
+        const date = new Date(message.timestamp);
+      
+        
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1; 
+        const day = date.getDate();
+        const hour = date.getHours();
+        const minute = date.getMinutes();
+      
+        
+        message.timestamp = [year, month, day, hour, minute];
+      
+        onMessageChat(message);
       };
 
       socket.onclose = () => {
