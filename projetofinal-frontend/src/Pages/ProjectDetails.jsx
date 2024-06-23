@@ -19,6 +19,8 @@ function ProjectDetails() {
   const token = useUserStore((state) => state.token);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [team, setTeam] = useState([]);
+  const [unreadMessages, setUnreadMessages] = useState(0);
+  
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -134,6 +136,7 @@ function ProjectDetails() {
           }}
         >
           <SiGooglemessages size={60} />
+
         </button>
       </div>
       {isChatOpen && (

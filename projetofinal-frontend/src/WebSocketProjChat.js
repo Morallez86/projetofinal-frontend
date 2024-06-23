@@ -1,14 +1,11 @@
-import React from "react";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 
-function WebSocketProjChat(token, onMessageChat) {
+function WebSocketProjChat(projectId, token, onMessageChat) {
 
-  
-  
   useEffect(() => {
-    if (token) {
+    if (token && projectId) {
       const socket = new WebSocket(
-        `ws://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/websocket/projectChat/${token}`
+        `ws://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/websocket/projectChat/${projectId}/${token}`
       );
 
       socket.onopen = () => {
@@ -18,20 +15,16 @@ function WebSocketProjChat(token, onMessageChat) {
       socket.onmessage = (event) => {
         const message = JSON.parse(event.data);
         console.log("Received message:", message);
-      
-       
+
         const date = new Date(message.timestamp);
-      
         
         const year = date.getFullYear();
         const month = date.getMonth() + 1; 
         const day = date.getDate();
         const hour = date.getHours();
         const minute = date.getMinutes();
-      
-        
+
         message.timestamp = [year, month, day, hour, minute];
-      
         onMessageChat(message);
       };
 
@@ -47,7 +40,9 @@ function WebSocketProjChat(token, onMessageChat) {
         socket.close();
       };
     }
-  }, [token]);
+  }, [projectId, token, onMessageChat]);
+
+  return null; 
 }
 
 export default WebSocketProjChat;

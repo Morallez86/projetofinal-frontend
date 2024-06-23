@@ -61,7 +61,7 @@ function GroupProjectChat({ photos, users, messages: initialMessages }) {
 
 
 
-  WebSocketProjChat(token, onMessageChat);
+  WebSocketProjChat(projectId, token, onMessageChat);
 
   const handleSubmit = (message) => {
     fetch(`${apiUrl}/projects/createChatMsg`, {
