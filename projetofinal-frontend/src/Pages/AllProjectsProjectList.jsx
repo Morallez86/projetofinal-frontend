@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import AllProjectsTable from "../Components/AllProjectsTable";
 import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
-import useWorkplaces from "../Hooks/useWorkplaces";
 
 function AllprojectsProjectList() {
   const [projects, setProjects] = useState([]);
@@ -12,8 +11,6 @@ function AllprojectsProjectList() {
   const [totalPages, setTotalPages] = useState(0);
   const apiUrl = useApiStore.getState().apiUrl;
   const token = useUserStore((state) => state.token);
-  const { workplaces } = useWorkplaces();
-  console.log(workplaces);
 
   useEffect(() => {
     const fetchProjects = async () => {

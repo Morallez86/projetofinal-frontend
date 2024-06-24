@@ -324,7 +324,7 @@ function Layout({
           )}
           {!token && (
             <button
-              className="p-2 flex border border-gray-600 hover:bg-cyan-700 items-center justify-center rounded-full bg-white transition-colors duration-200 text-black font-bold"
+              className="p-2 flex border border-gray-600 hover:bg-cyan-700 hover:text-white items-center justify-center rounded-full bg-white transition-colors duration-200 text-black font-bold"
               onClick={() => navigate("/Login")}
             >
               <TbLogin2 size={35} />

@@ -25,8 +25,10 @@ function MyProfileChangePassword() {
   return (
     <div className="flex flex-col min-h-screen items-center">
       <div className="p-14">
-        <Card className="max-w-sm w-full mx-4">
-          <h1 className="text-3xl font-bold text-center mb-6">Change Password</h1>
+        <Card className="max-w-sm w-full mx-4 border-gray-600 bg-gradient-to-r from-gray-400 via-gray-50 to-white rounded-lg">
+          <h1 className="text-3xl font-bold text-center mb-6">
+            Change Password
+          </h1>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <Label htmlFor="oldPassword" value="Old Password" />
@@ -53,7 +55,10 @@ function MyProfileChangePassword() {
               />
             </div>
             <div className="mb-4">
-              <Label htmlFor="confirmNewPassword" value="Confirm New Password" />
+              <Label
+                htmlFor="confirmNewPassword"
+                value="Confirm New Password"
+              />
               <TextInput
                 id="confirmNewPassword"
                 name="confirmNewPassword"
@@ -65,14 +70,24 @@ function MyProfileChangePassword() {
               />
             </div>
             {passwordStrengthWarning && (
-              <Alert color="failure" icon={HiInformationCircle} className="mb-4">
+              <Alert
+                color="failure"
+                icon={HiInformationCircle}
+                className="mb-4"
+              >
                 <span>
-                  Password must be at least 8 characters long, contain an uppercase letter, a lowercase letter, a number, and a special character.
+                  Password must be at least 8 characters long, contain an
+                  uppercase letter, a lowercase letter, a number, and a special
+                  character.
                 </span>
               </Alert>
             )}
             {showWarning && (
-              <Alert color="failure" icon={HiInformationCircle} className="mb-4">
+              <Alert
+                color="failure"
+                icon={HiInformationCircle}
+                className="mb-4"
+              >
                 <span>Password and confirmed password do not match</span>
               </Alert>
             )}

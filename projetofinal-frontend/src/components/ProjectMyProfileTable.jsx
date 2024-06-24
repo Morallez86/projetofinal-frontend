@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import DataTable from "react-data-table-component";
+import DataTable, { createTheme } from "react-data-table-component";
 import { TextInput } from "flowbite-react";
 import { GoProjectRoadmap } from "react-icons/go";
 import { Tooltip } from "react-tooltip";
@@ -114,10 +114,14 @@ function ProjectMyProfileTable({
     setFilterText(e.target.value);
   };
 
+
+
+
+
   return (
-    <div className="p-6 bg-white rounded-lg shadow-lg">
+    <div className="p-6 border border-gray-600 bg-white rounded-lg">
       <div className="mb-6 flex justify-between items-center">
-        <h2 className="text-2xl font-semibold">My Projects</h2>
+        <h2 className="text-2xl ml-3 font-bold">My Projects</h2>
         <TextInput
           placeholder="Search by name..."
           onChange={handleFilter}
@@ -137,6 +141,8 @@ function ProjectMyProfileTable({
         paginationRowsPerPageOptions={[10, 20, 30, 40, 50]}
         paginationDefaultRowsPerPage={10}
         paginationPerPage={rowsPerPage}
+        fixedHeader
+        striped
         responsive
       />
     </div>

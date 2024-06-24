@@ -12,7 +12,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import useUserStore from "../Stores/UserStore";
-import useApiStore from '../Stores/ApiStore';
+import useApiStore from "../Stores/ApiStore";
 
 function LoginCard() {
   const apiUrl = useApiStore((state) => state.apiUrl);
@@ -30,10 +30,13 @@ function LoginCard() {
   const [warning, setWarning] = useState(0);
   const [openPopUp, setOpenPopUp] = useState(false);
   const [warningEmailFormat, setWarningEmailFormat] = useState(0);
+  const [emailRecoverySuccess, setEmailRecoverySuccess] = useState(false); // New state
+  const [emailRecoveryError, setEmailRecoveryError] = useState(false); // New state
+
   const setToken = useUserStore((state) => state.setToken);
   const setRole = useUserStore((state) => state.setRole);
   const setUsername = useUserStore((state) => state.setUsername);
-  const setUserId = useUserStore((state) => state.setUserId);  
+  const setUserId = useUserStore((state) => state.setUserId);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -45,16 +48,16 @@ function LoginCard() {
     setEmailRecovery((prevData) => ({ ...prevData, [name]: value }));
   };
 
-    // Function to store token and role in Zustand state
+  // Function to store token and role in Zustand state
   const storeTokenAndRole = (token) => {
     setToken(token); // Store the token
     const decodedToken = jwtDecode(token); // Decode the token
     const role = decodedToken.role; // Extract the role from decoded token
     setRole(role); // Store the role in Zustand
     const username = decodedToken.username;
-    setUsername(username)
+    setUsername(username);
     const userId = decodedToken.id;
-    setUserId(userId)
+    setUserId(userId);
   };
 
   const handleSubmitRecover = async () => {
@@ -68,27 +71,34 @@ function LoginCard() {
     }
     setLoading(true);
     setWarningEmailFormat(0);
+    setEmailRecoverySuccess(false);
+    setEmailRecoveryError(false);
 
     try {
-      await fetch(`${apiUrl}/users/emailRecoveryPassword`, {
+      const response = await fetch(`${apiUrl}/users/emailRecoveryPassword`, {
         method: "POST",
         headers: {
           Accept: "*/*",
           "Content-Type": "application/json",
         },
         body: JSON.stringify(emailRecovery.email),
-      }).then((response) => {
-        if (response.status === 200) {
-          console.log("Email sent");
-        } else if (response.status === 400) {
-          console.log("User not found");
-        } else {
-          console.log("Unexpected response status:", response.status);
-        }
       });
+
+      if (response.status === 200) {
+        console.log("Email sent");
+        setEmailRecoverySuccess(true);
+        setEmailRecovery("");
+        setTimeout(() => {
+          setOpenPopUp(false);
+          setEmailRecoverySuccess(false);
+        }, 3000); 
+      } else {
+        console.log("Email could not be sent");
+        setEmailRecoveryError(true);
+      }
     } catch (error) {
       console.error("Error fetching user:", error);
-      setWarning(3);
+      setEmailRecoveryError(true);
     } finally {
       setLoading(false);
     }
@@ -102,17 +112,14 @@ function LoginCard() {
     setLoading(true);
     setWarning(0);
     try {
-      const response = await fetch(
-        `${apiUrl}/users/login`,
-        {
-          method: "POST",
-          headers: {
-            Accept: "*/*",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      const response = await fetch(`${apiUrl}/users/login`, {
+        method: "POST",
+        headers: {
+          Accept: "*/*",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
       if (response.status === 401) {
         setWarning(1);
@@ -150,7 +157,7 @@ function LoginCard() {
   };
 
   return (
-    <Card className="max-w-sm">
+    <Card className="max-w-sm p-4 border-gray-600 bg-gradient-to-r from-gray-400 via-gray-50 to-white rounded-lg">
       <div className="flex flex-col gap-4">
         <div>
           <div className="mb-2 block">
@@ -198,11 +205,11 @@ function LoginCard() {
       >
         <Modal.Header />
         <Modal.Body>
-          <div className="text-center">
-            <h3 className="mb-5 text-lg font-bold text-gray-500 dark:text-gray-400">
+          <div className="">
+            <h3 className="mb-5 text-lg text-center font-bold text-gray-500 dark:text-gray-400">
               Recover Password
             </h3>
-            <div className="mb-5">
+            <div>
               <TextInput
                 id="emailRecovery"
                 type="email"
@@ -213,16 +220,39 @@ function LoginCard() {
                 value={emailRecovery.email}
               />
             </div>
+            <div className="mb-4 -ml-2">
+              {warningEmailFormat === 1 && (
+                <Alert color="failure" icon={HiInformationCircle}>
+                  <span className="font-medium">Email format is incorrect</span>
+                </Alert>
+              )}
+              {emailRecoveryError && (
+                <Alert color="failure" icon={HiInformationCircle}>
+                  <span className="font-medium">Email could not be sent.</span>
+                </Alert>
+              )}
+              {emailRecoverySuccess && (
+                <Alert color="success" icon={HiInformationCircle}>
+                  <span className="font-medium">
+                    Email was sent successfully.
+                  </span>
+                </Alert>
+              )}
+            </div>
             <div className="flex justify-center gap-4">
-              {!loading  && (
-              <Button color="failure" onClick={() => handleSubmitRecover()}>
-                {"Submit"}
-                </Button>  )} 
+              {!loading && (
+                <Button onClick={handleSubmitRecover}>
+                  Submit
+                </Button>
+              )}
               {loading && (
-                <Spinner aria-label="Alternate spinner button example" size="sm" />
+                <Spinner
+                  aria-label="Alternate spinner button example"
+                  size="sm"
+                />
               )}
               <Button
-                color="gray"
+                className= "bg-gray-700"
                 onClick={() => {
                   setOpenPopUp(false);
                   cleanWarnings();
@@ -230,20 +260,6 @@ function LoginCard() {
               >
                 Cancel
               </Button>
-            </div>
-            <div className="mt-5">
-              {warningEmailFormat === 1 && (
-                <Alert color="failure" icon={HiInformationCircle}>
-                  <span className="font-medium">Email format is incorrect</span>
-                </Alert>
-              )}
-              {warning === 3 && (
-                <Alert color="failure" icon={HiInformationCircle}>
-                  <span className="font-medium">
-                    Network error! Please try again later.
-                  </span>
-                </Alert>
-              )}
             </div>
           </div>
         </Modal.Body>

@@ -7,7 +7,7 @@ import {
   Avatar,
   FileInput,
   Select,
-  Dropdown
+  Dropdown,
 } from "flowbite-react";
 import useUserStore from "../Stores/UserStore";
 import useWorkplaceStore from "../Stores/WorkplaceStore";
@@ -16,7 +16,7 @@ import { jwtDecode } from "jwt-decode";
 import { LuPlusCircle } from "react-icons/lu";
 import { Tooltip } from "react-tooltip";
 import { MdOutlineRemoveCircleOutline, MdOutlineEdit } from "react-icons/md";
-import useApiStore from '../Stores/ApiStore';
+import useApiStore from "../Stores/ApiStore";
 
 function ProfileCard({
   openPopUpSkills,
@@ -28,7 +28,7 @@ function ProfileCard({
   const token = useUserStore((state) => state.token);
   let userId = null;
   let email = null;
-  if(token!==null){
+  if (token !== null) {
     const decodedToken = jwtDecode(token);
     userId = decodedToken.id;
     email = decodedToken.sub;
@@ -89,17 +89,14 @@ function ProfileCard({
 
   const fetchUserInfo = async () => {
     try {
-      const response = await fetch(
-        `${apiUrl}/users/profile/${userId}`,
-        {
-          method: "GET",
-          headers: {
-            Accept: "*/*",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${apiUrl}/users/profile/${userId}`, {
+        method: "GET",
+        headers: {
+          Accept: "*/*",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.status === 404) {
         console.log("User with this token is not found");
@@ -128,56 +125,57 @@ function ProfileCard({
   };
 
   const handleSaveClick = async () => {
-  try {
-    if (selectedImage) {
-      console.log(email);
-      const fileInput = document.getElementById("small-file-upload");
-      const file = fileInput.files[0];
+    try {
+      console.log(selectedImage)
+      if (selectedImage) {
+        console.log(email);
+        const fileInput = document.getElementById("small-file-upload");
+        const file = fileInput.files[0];
 
-      const imageResponse = await fetch(`${apiUrl}/users/image`, {
-        method: "POST",
+        const imageResponse = await fetch(`${apiUrl}/users/image`, {
+          method: "POST",
+          headers: {
+            Accept: "*/*",
+            filename: file.name,
+            email: email,
+          },
+          body: file,
+        });
+
+        if (imageResponse.status === 200) {
+          console.log("Image uploaded successfully");
+        } else {
+          console.log("Image upload failed");
+        }
+      }
+
+      // Update the user info
+      const response = await fetch(`${apiUrl}/users/profile/${userId}`, {
+        method: "PUT",
         headers: {
           Accept: "*/*",
-          filename: file.name,
-          email: email,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: file,
+        body: JSON.stringify({
+          firstName: userInfo.name.split(" ")[0],
+          lastName: userInfo.name.split(" ")[1],
+          username: userInfo.nickname,
+          biography: userInfo.biography,
+          workplace: userInfo.jobLocation,
+          visibility: userInfo.visibility,
+        }),
       });
 
-      if (imageResponse.status === 200) {
-        console.log("Image uploaded successfully");
+      if (response.status === 200) {
+        console.log("User info updated successfully");
+        setEditMode(false);
       } else {
-        console.log("Image upload failed");
+        console.error("Error updating user info");
       }
+    } catch (error) {
+      console.error("Error updating user info:", error);
     }
-
-    // Update the user info
-  const response = await fetch(`${apiUrl}/users/profile/${userId}`, {
-      method: "PUT",
-      headers: {
-        Accept: "*/*",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        firstName: userInfo.name.split(" ")[0],
-        lastName: userInfo.name.split(" ")[1],
-        username: userInfo.nickname,
-        biography: userInfo.biography,
-        workplace: userInfo.jobLocation,
-        visibility: userInfo.visibility,
-      }),
-    });
-
-    if (response.status === 200) {
-      console.log("User info updated successfully");
-      setEditMode(false);
-    } else {
-      console.error("Error updating user info");
-    }
-  } catch (error) {
-    console.error("Error updating user info:", error);
-  }
   };
 
   const handleCancelClick = () => {
@@ -193,15 +191,10 @@ function ProfileCard({
   };
 
   return (
-    <Card className="bg-gray-200 transition-colors duration-200 w-1/2 h-auto">
-      <div className="flex flex-col pb-10">
+    <Card className="bg-gray-200 transition-colors duration-200 w-1/2 h-100vh border-gray-600 bg-gradient-to-r from-gray-400 via-gray-50 to-white rounded-lg">
+      <div className="flex flex-col pb-10 ">
         <div className="relative flex items-center space-x-10 justify-center">
-          <Avatar
-            img={profileImage}
-            alt="avatar"
-            size="xl"
-            rounded
-          />
+          <Avatar img={profileImage} alt="avatar" size="xl" rounded />
           <MdOutlineEdit
             className="h-6 w-6 text-black cursor-pointer absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2"
             onClick={handleEditClick}
@@ -218,7 +211,11 @@ function ProfileCard({
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="mt-4">
-            <Label htmlFor="name" value="Name" />
+            <Label
+              htmlFor="name"
+              value="Name"
+              className="font-semibold text-base"
+            />
             {editMode ? (
               <TextInput
                 id="name"
@@ -229,47 +226,55 @@ function ProfileCard({
                 className="text-sm text-gray-500 dark:text-gray-400"
               />
             ) : (
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
                 {userInfo.name}
               </p>
             )}
           </div>
           <div className="mt-4">
-            <Label htmlFor="jobLocation" value="Job Location" />
+            <Label
+              htmlFor="jobLocation"
+              value="Job Location"
+              className="font-semibold text-base"
+            />
             {editMode ? (
-            <Dropdown
-  label={userInfo.jobLocation || "Choose a location"}
-  dismissOnClick={true}
-  onSelect={(workplace) =>
-    setUserInfo((prevInfo) => ({
-      ...prevInfo,
-      jobLocation: workplace,
-    }))
-  }
->
-  {workplaces.map((workplace) => (
-    <Dropdown.Item
-      key={workplace.id}
-      value={workplace.name}
-      onClick={() =>
-        setUserInfo((prevInfo) => ({
-          ...prevInfo,
-          jobLocation: workplace.name,
-        }))
-      }
-    >
-      {workplace.name}
-    </Dropdown.Item>
-  ))}
-</Dropdown>
+              <Dropdown
+                label={userInfo.jobLocation || "Choose a location"}
+                dismissOnClick={true}
+                onSelect={(workplace) =>
+                  setUserInfo((prevInfo) => ({
+                    ...prevInfo,
+                    jobLocation: workplace,
+                  }))
+                }
+              >
+                {workplaces.map((workplace) => (
+                  <Dropdown.Item
+                    key={workplace.id}
+                    value={workplace.name}
+                    onClick={() =>
+                      setUserInfo((prevInfo) => ({
+                        ...prevInfo,
+                        jobLocation: workplace.name,
+                      }))
+                    }
+                  >
+                    {workplace.name}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown>
             ) : (
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
                 {userInfo.jobLocation}
               </p>
             )}
           </div>
           <div className="mt-4">
-            <Label htmlFor="nickname" value="Nickname" />
+            <Label
+              htmlFor="nickname"
+              value="Nickname"
+              className="font-semibold text-base"
+            />
             {editMode ? (
               <TextInput
                 id="nickname"
@@ -280,35 +285,22 @@ function ProfileCard({
                 className="text-sm text-gray-500 dark:text-gray-400"
               />
             ) : (
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
                 {userInfo.nickname}
               </p>
             )}
           </div>
           <div className="mt-4">
-            <Label htmlFor="biography" value="Biography" />
-            {editMode ? (
-              <Textarea
-                id="biography"
-                name="biography"
-                value={userInfo.biography}
-                onChange={handleChange}
-                className="text-sm text-gray-500 dark:text-gray-400"
-                rows={2}
-              />
-            ) : (
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {userInfo.biography}
-              </p>
-            )}
-          </div>
-          <div className="mt-4">
-            <Label htmlFor="visibility" value="Visibility" />
+            <Label
+              htmlFor="visibility"
+              value="Visibility"
+              className="font-semibold text-base"
+            />
             {editMode ? (
               <Select
                 id="visibility"
                 name="visibility"
-                value={userInfo.visibility.toString()} 
+                value={userInfo.visibility.toString()}
                 onChange={handleChange}
                 className="text-sm text-gray-500 dark:text-gray-400"
               >
@@ -316,15 +308,40 @@ function ProfileCard({
                 <option value="false">Private</option>
               </Select>
             ) : (
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {userInfo.visibility ? "Public" : "Private"} 
+              <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                {userInfo.visibility ? "Public" : "Private"}
               </p>
             )}
           </div>
         </div>
         <div className="mt-4">
+          <Label
+            htmlFor="biography"
+            value="Biography"
+            className="font-semibold text-base"
+          />
+          {editMode ? (
+            <Textarea
+              id="biography"
+              name="biography"
+              value={userInfo.biography}
+              onChange={handleChange}
+              className="text-sm text-gray-500 dark:text-gray-400 truncate"
+              rows={2}
+            />
+          ) : (
+            <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+              {userInfo.biography}
+            </p>
+          )}
+        </div>
+        <div className="mt-4">
           <div className="flex items-center">
-            <Label htmlFor="skills" value="Skills" />
+            <Label
+              htmlFor="skills"
+              value="Skills"
+              className="font-semibold text-base"
+            />
             <div
               id="icon-element"
               className="inline-flex items-center cursor-pointer"
@@ -351,15 +368,15 @@ function ProfileCard({
             />
           </div>
           <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-            <p>
+            <p className="truncate">
               {Array.isArray(userInfo.skills)
-                ? userInfo.skills.slice(-5).join(", ")
+                ? userInfo.skills.slice(-7).join(", ")
                 : ""}
             </p>
-            {Array.isArray(userInfo.skills) && userInfo.skills.length > 5 && (
+            {Array.isArray(userInfo.skills) && userInfo.skills.length > 7 && (
               <div id="tip-all-skills">
                 <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
-                  {`+${userInfo.skills.length - 5}`}
+                  {`+${userInfo.skills.length - 7}`}
                 </button>
                 <Tooltip
                   anchorSelect="#tip-all-skills"
@@ -372,7 +389,11 @@ function ProfileCard({
         </div>
         <div className="mt-4">
           <div className="flex items-center">
-            <Label htmlFor="interests" value="Interests" />
+            <Label
+              htmlFor="interests"
+              value="Interests"
+              className="font-semibold text-base"
+            />
             <div
               id="icon-element-interests"
               className="inline-flex items-center cursor-pointer"
@@ -399,31 +420,34 @@ function ProfileCard({
             />
           </div>
           <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-            <p>
+            <p className="truncate">
               {Array.isArray(userInfo.interests)
-                ? userInfo.interests.slice(-5).join(", ")
+                ? userInfo.interests.slice(-7).join(", ")
                 : ""}
             </p>
-            {Array.isArray(userInfo.interests) && userInfo.interests.length > 5 && (
-              <div id="tip-all-interests">
-                <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
-                  {`+${userInfo.interests.length - 5}`}
-                </button>
-                <Tooltip
-                  anchorSelect="#tip-all-interests"
-                  content="Check all interests"
-                  place="top"
-                />
-              </div>
-            )}
+            {Array.isArray(userInfo.interests) &&
+              userInfo.interests.length > 7 && (
+                <div id="tip-all-interests">
+                  <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+                    {`+${userInfo.interests.length - 7}`}
+                  </button>
+                  <Tooltip
+                    anchorSelect="#tip-all-interests"
+                    content="Check all interests"
+                    place="top"
+                  />
+                </div>
+              )}
           </div>
         </div>
         {editMode && (
           <div className="flex justify-end mt-4">
-            <Button onClick={handleCancelClick} className="mr-2">
+            <Button onClick={handleSaveClick} className="px-2 mr-2">
+              Save
+            </Button>
+            <Button onClick={handleCancelClick} className="bg-gray-700">
               Cancel
             </Button>
-            <Button onClick={handleSaveClick}>Save</Button>
           </div>
         )}
       </div>

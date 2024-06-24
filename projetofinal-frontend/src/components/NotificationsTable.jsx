@@ -97,7 +97,7 @@ const NotificationsTable = ({
   ];
 
   return (
-    <div className="p-6 bg-white rounded-lg h-[35rem] shadow-lg border-2 border-red-900">
+    <div className="p-6 bg-white rounded-lg h-[44rem] shadow-lg border-2 border-red-900">
       <style>
         {`
           .clickable-rows {
