@@ -22,6 +22,7 @@ import MessagesPage from "./Pages/MessagesPage";
 import NotificationPage from "./Pages/NotificationPage";
 import { WebSocketProvider } from "./WebSocketContext";
 import LayoutWrapper from "./Components/LayoutWrapper";
+import AllprojectsProjectList from "./Pages/AllProjectsProjectList";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
@@ -32,6 +33,7 @@ root.render(
         <Routes>
           <Route element={<LayoutWrapper />}>
             <Route path="/" element={<App />} />
+            <Route path="/projectsList" element={<AllprojectsProjectList />} />
             <Route path="/myProjects" element={<MyProfileMyProjects />} />
             <Route
               path="/changePassword"
