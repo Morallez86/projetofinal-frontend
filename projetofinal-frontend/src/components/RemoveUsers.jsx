@@ -80,7 +80,10 @@ function RemoveUsers({ openPopUpUsersRemove, closePopUpUsersRemove }) {
                     </div>
                   ))}
                 </div>
-                <Button onClick={handleRemoveUsers}>
+                <Button
+                  onClick={handleRemoveUsers}
+                  disabled={selectedUserIds.length === 0}
+                >
                   Remove selected users
                 </Button>
               </div>

@@ -8,6 +8,7 @@ import useSkillStore from "../Stores/SkillStore";
 import useInterestStore from "../Stores/InterestStore";
 import basePhoto from "../Assets/092.png";
 import MessageModal from "../Components/MessageModal";
+import "../index.css";
 
 function UsersGrid() {
   const apiUrl = useApiStore((state) => state.apiUrl);
@@ -221,9 +222,14 @@ function UsersGrid() {
                     Profile
                   </Button>
                 )}
-                <Button size="sm" onClick={() => openMessageModal(user)}>
-                  Message
-                </Button>
+                <button
+                  className="group relative flex items-stretch justify-center p-0.5 text-center font-medium border border-transparent bg-cyan-700 text-white focus:ring-4 focus:ring-cyan-300 enabled:hover:bg-cyan-800 dark:bg-cyan-600 dark:focus:ring-cyan-800 dark:enabled:hover:bg-cyan-700 rounded-lg"
+                  onClick={() => openMessageModal(user)}
+                >
+                  <span className="flex items-stretch transition-all duration-200 rounded-md px-3 py-1.5 text-sm">
+                    Message
+                  </span>
+                </button>
               </div>
             </Card>
           ))}

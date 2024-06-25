@@ -13,6 +13,8 @@ import { LuPlusCircle } from "react-icons/lu";
 import { MdOutlineRemoveCircleOutline } from "react-icons/md";
 import useWorkplaceStore from "../Stores/WorkplaceStore";
 import useUserStore from "../Stores/UserStore";
+import { FaStarOfLife } from "react-icons/fa";
+import useProjectStore from "../Stores/ProjectStore.js";
 
 function ProjectCard({
   openPopUpSkills,
@@ -29,11 +31,11 @@ function ProjectCard({
   handleChange,
   handleWorkplaceChange,
 }) {
-
   const { workplaces } = useWorkplaceStore();
   const [selectedWorkLocation, setSelectedWorkLocation] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const clearAllProjectDetails = useProjectStore((state) => state.clearAllProjectDetails);
 
-  console.log(workplaces);
 
   const formatDateForBackend = (dateString) => {
     if (!dateString) {
@@ -49,6 +51,33 @@ function ProjectCard({
   const token = useUserStore((state) => state.token);
 
   const handleSubmit = async () => {
+    const requiredFields = [
+      "title",
+      "startingDate",
+      "plannedEndDate",
+      "workplace",
+      "description",
+      "interests",
+    ];
+
+    const isFormValid = requiredFields.every((field) => {
+      if (field === "workplace") {
+        return selectedWorkLocation !== "";
+      }
+      if (field === "interests") {
+        return (
+          Array.isArray(projectInfo.interests) &&
+          projectInfo.interests.length > 0
+        );
+      }
+      return projectInfo[field];
+    });
+
+    if (!isFormValid) {
+      alert("Please fill in all mandatory fields.");
+      return;
+    }
+
     const formattedProjectInfo = {
       ...projectInfo,
       startingDate: formatDateForBackend(projectInfo.startingDate),
@@ -62,6 +91,26 @@ function ProjectCard({
       const newProject = await createProject(formattedProjectInfo, token);
       if (newProject) {
         console.log("Project created successfully");
+        setSuccessMessage(true);
+
+        // Reset projectInfo state
+        handleChange({ target: { name: "title", value: "" } });
+        handleChange({ target: { name: "startingDate", value: "" } });
+        handleChange({ target: { name: "plannedEndDate", value: "" } });
+        handleChange({ target: { name: "description", value: "" } });
+        handleChange({ target: { name: "motivation", value: "" } });
+        handleChange({ target: { name: "interests", value: [] } });
+        handleChange({ target: { name: "skills", value: [] } });
+        handleChange({ target: { name: "components", value: [] } });
+        handleChange({ target: { name: "resources", value: [] } });
+        setSelectedWorkLocation("");
+        clearAllProjectDetails();
+        handleChange({
+          target: { name: "userProjectDtos", value: [] },
+        });
+        setTimeout(() => {
+          setSuccessMessage(false);
+        }, 3000);
       } else {
         console.error("Error creating project");
       }
@@ -71,10 +120,18 @@ function ProjectCard({
   };
 
   return (
-    <Card className="bg-gray-200 transition-colors duration-200 w-3/4 h-auto mx-auto mt-10">
-      <div className="grid grid-cols-3 gap-4 p-4">
+    <Card className="border-gray-600 bg-gradient-to-r from-gray-400 via-gray-75 to-white rounded-lg shadow-md w-3/4 h-auto mx-auto">
+      <h1 className="text-3xl font-bold text-center mb-6">New Project</h1>
+      <div className="grid grid-cols-3 gap-10 p-4">
         <div>
-          <Label htmlFor="title" value="Title" />
+          <div className="mb-2 flex items-center">
+            <Label
+              htmlFor="title"
+              value="Title"
+              className="font-semibold text-base"
+            />
+            <FaStarOfLife className="text-red-500 ml-2 text-xs" />
+          </div>
           <TextInput
             id="title"
             type="text"
@@ -84,45 +141,14 @@ function ProjectCard({
           />
         </div>
         <div>
-          <Label htmlFor="description" value="Description" />
-          <Textarea
-            id="description"
-            name="description"
-            value={projectInfo.description}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <Label htmlFor="motivation" value="Motivation" />
-          <Textarea
-            id="motivation"
-            name="motivation"
-            value={projectInfo.motivation}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <Label htmlFor="maxUsers" value="Max Users" />
-          <TextInput
-            id="maxUsers"
-            type="number"
-            name="maxUsers"
-            value={projectInfo.maxUsers}
-            min={0}
-            max={10}
-            onChange={(e) => {
-              const value = Math.max(0, Math.min(10, e.target.value));
-              handleChange({
-                target: {
-                  name: "maxUsers",
-                  value,
-                },
-              });
-            }}
-          />
-        </div>
-        <div>
-          <Label htmlFor="startingDate" value="Starting Date" />
+          <div className="mb-2 flex items-center">
+            <Label
+              htmlFor="startingDate"
+              value="Starting Date"
+              className="font-semibold text-base"
+            />
+            <FaStarOfLife className="text-red-500 ml-2 text-xs" />
+          </div>
           <TextInput
             id="startingDate"
             type="date"
@@ -132,7 +158,14 @@ function ProjectCard({
           />
         </div>
         <div>
-          <Label htmlFor="plannedEndDate" value="Planned End Date" />
+          <div className="mb-2 flex items-center">
+            <Label
+              htmlFor="plannedEndDate"
+              value="Planned End Date"
+              className="font-semibold text-base"
+            />
+            <FaStarOfLife className="text-red-500 ml-2 text-xs" />
+          </div>
           <TextInput
             id="plannedEndDate"
             type="date"
@@ -141,8 +174,15 @@ function ProjectCard({
             onChange={handleChange}
           />
         </div>
-        <div>
-          <Label htmlFor="workplace" value="Workplace" />
+        <div className="w-2/3">
+          <div className="mb-2 flex items-center">
+            <Label
+              htmlFor="workplace"
+              value="Workplace"
+              className="font-semibold text-base"
+            />
+            <FaStarOfLife className="text-red-500 ml-2 text-xs" />
+          </div>
           <Select
             id="workplace"
             name="workplace"
@@ -151,7 +191,6 @@ function ProjectCard({
               setSelectedWorkLocation(e.target.value);
               handleWorkplaceChange(e);
             }}
-            className="w-1/2"
           >
             <option value={JSON.stringify({ id: null, name: "" })} disabled>
               Select Workplace
@@ -163,10 +202,98 @@ function ProjectCard({
             ))}
           </Select>
         </div>
+        <div className="w-2/3">
+          <div className="mb-2 flex items-center">
+            <Label
+              htmlFor="maxUsers"
+              value="Max Users"
+              className="font-semibold text-base"
+            />
+          </div>
+          <TextInput
+            id="maxUsers"
+            type="number"
+            name="maxUsers"
+            value={projectInfo.maxUsers}
+            min={1}
+            max={4}
+            onChange={(e) => {
+              handleChange({
+                target: {
+                  name: "maxUsers",
+                  value: e.target.value,
+                },
+              });
+            }}
+          />
+        </div>
+        {/* Team */}
+        <div className="mt-4">
+          <div className="flex items-center">
+            <div className="mb-2 flex items-center -mt-4">
+              <Label
+                htmlFor="team"
+                value="Team"
+                className="font-semibold text-base"
+              />
+              <div
+                className="inline-flex items-center cursor-pointer"
+                id="icon-element7"
+                onClick={openPopUpUsers}
+              >
+                <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
+              </div>
+              <div
+                className="inline-flex items-center cursor-pointer"
+                id="icon-element-remove7"
+                onClick={openPopUpUsersRemove}
+              >
+                <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
+              </div>
+              <Tooltip
+                anchorSelect="#icon-element7"
+                content="Add new user"
+                place="top"
+              />
+              <Tooltip
+                anchorSelect="#icon-element-remove7"
+                content="Remove a user"
+                place="top"
+              />
+            </div>
+          </div>
+          <div className="flex items-center mt-2 text-sm font-medium text-gray-900 dark:text-gray-400">
+            <p>
+              {Array.isArray(projectInfo.userProjectDtos)
+                ? projectInfo.userProjectDtos
+                    .slice(0, 3)
+                    .map((user) => user.username)
+                    .join(", ")
+                : ""}
+            </p>
+            {Array.isArray(projectInfo.userProjectDtos) &&
+              projectInfo.userProjectDtos.length > 3 && (
+                <div id="tip-all-users">
+                  <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+                    {`+${projectInfo.userProjectDtos.length - 3}`}
+                  </button>
+                  <Tooltip
+                    anchorSelect="#tip-all-users"
+                    content="Check all users"
+                    place="top"
+                  />
+                </div>
+              )}
+          </div>
+        </div>
         {/* Skills */}
         <div className="mt-4">
           <div className="flex items-center">
-            <Label htmlFor="skills" value="Skills" />
+            <Label
+              htmlFor="skills"
+              value="Skills"
+              className="font-semibold text-base"
+            />
             <div
               className="inline-flex items-center cursor-pointer"
               id="icon-element2"
@@ -192,7 +319,7 @@ function ProjectCard({
               place="top"
             />
           </div>
-          <div className="flex items-center text-sm font-medium text-gray-900 dark:text-gray-400">
+          <div className="flex items-center mt-2 text-sm font-medium text-gray-900 dark:text-gray-400">
             <p>
               {Array.isArray(projectInfo.skills)
                 ? projectInfo.skills
@@ -219,33 +346,40 @@ function ProjectCard({
         {/* Interests */}
         <div className="mt-4">
           <div className="flex items-center">
-            <Label htmlFor="interests" value="Interests" />
-            <div
-              className="inline-flex items-center cursor-pointer"
-              id="icon-element4"
-              onClick={openPopUpInterests}
-            >
-              <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
+            <div className=" flex items-center">
+              <Label
+                htmlFor="interests"
+                value="Interests"
+                className="font-semibold text-base"
+              />
+              <div
+                className="inline-flex items-center cursor-pointer"
+                id="icon-element4"
+                onClick={openPopUpInterests}
+              >
+                <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
+              </div>
+              <div
+                className="inline-flex items-center cursor-pointer"
+                id="icon-element-remove4"
+                onClick={openPopUpInterestRemove}
+              >
+                <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
+              </div>
+              <Tooltip
+                anchorSelect="#icon-element4"
+                content="Add new interest"
+                place="top"
+              />
+              <Tooltip
+                anchorSelect="#icon-element-remove4"
+                content="Remove an interest"
+                place="top"
+              />
+              <FaStarOfLife className="text-red-500 ml-2 text-xs" />
             </div>
-            <div
-              className="inline-flex items-center cursor-pointer"
-              id="icon-element-remove4"
-              onClick={openPopUpInterestRemove}
-            >
-              <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
-            </div>
-            <Tooltip
-              anchorSelect="#icon-element4"
-              content="Add new interest"
-              place="top"
-            />
-            <Tooltip
-              anchorSelect="#icon-element-remove4"
-              content="Remove an interest"
-              place="top"
-            />
           </div>
-          <div className="flex items-center text-sm font-medium text-gray-900 dark:text-gray-400">
+          <div className="flex items-center mt-2 text-sm font-medium text-gray-900 dark:text-gray-400">
             <p>
               {Array.isArray(projectInfo.interests)
                 ? projectInfo.interests
@@ -272,7 +406,11 @@ function ProjectCard({
         {/* Components */}
         <div className="mt-4">
           <div className="flex items-center">
-            <Label htmlFor="components" value="Components" />
+            <Label
+              htmlFor="components"
+              value="Components"
+              className="font-semibold text-base"
+            />
             <div
               className="inline-flex items-center cursor-pointer"
               id="icon-element5"
@@ -298,7 +436,7 @@ function ProjectCard({
               place="top"
             />
           </div>
-          <div className="flex items-center text-sm font-medium text-gray-900 dark:text-gray-400">
+          <div className="flex items-center text-sm mt-2 font-medium text-gray-900 dark:text-gray-400">
             <p>
               {Array.isArray(projectInfo.components)
                 ? projectInfo.components
@@ -325,7 +463,11 @@ function ProjectCard({
         {/* Resources */}
         <div className="mt-4">
           <div className="flex items-center">
-            <Label htmlFor="resources" value="Resources" />
+            <Label
+              htmlFor="resources"
+              value="Resources"
+              className="font-semibold text-base"
+            />
             <div
               className="inline-flex items-center cursor-pointer"
               id="icon-element6"
@@ -351,7 +493,7 @@ function ProjectCard({
               place="top"
             />
           </div>
-          <div className="flex items-center text-sm font-medium text-gray-900 dark:text-gray-400">
+          <div className="flex items-center mt-2 text-sm font-medium text-gray-900 dark:text-gray-400">
             <p>
               {Array.isArray(projectInfo.resources)
                 ? projectInfo.resources
@@ -375,60 +517,54 @@ function ProjectCard({
               )}
           </div>
         </div>
-        {/* Team */}
         <div className="mt-4">
-          <div className="flex items-center">
-            <Label htmlFor="team" value="Team" />
-            <div
-              className="inline-flex items-center cursor-pointer"
-              id="icon-element7"
-              onClick={openPopUpUsers}
-            >
-              <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
-            </div>
-            <div
-              className="inline-flex items-center cursor-pointer"
-              id="icon-element-remove7"
-              onClick={openPopUpUsersRemove}
-            >
-              <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
-            </div>
-            <Tooltip
-              anchorSelect="#icon-element7"
-              content="Add new user"
-              place="top"
+          <div className="mb-2 flex items-center">
+            <Label
+              htmlFor="description"
+              value="Description"
+              className="font-semibold text-base"
             />
-            <Tooltip
-              anchorSelect="#icon-element-remove7"
-              content="Remove a user"
-              place="top"
+            <FaStarOfLife className="text-red-500 ml-2 text-xs" />
+          </div>
+          <Textarea
+            id="description"
+            name="description"
+            value={projectInfo.description}
+            onChange={handleChange}
+          />
+        </div>
+        <div className="mt-4">
+          <div className="mb-2 flex items-center">
+            <Label
+              htmlFor="motivation"
+              value="Motivation"
+              className="font-semibold text-base"
             />
           </div>
-          <div className="flex items-center text-sm font-medium text-gray-900 dark:text-gray-400">
-            <p>
-              {Array.isArray(projectInfo.userProjectDtos)
-                ? projectInfo.userProjectDtos
-                    .slice(0, 3)
-                    .map((user) => user.username)
-                    .join(", ")
-                : ""}
-            </p>
-            {Array.isArray(projectInfo.userProjectDtos) &&
-              projectInfo.userProjectDtos.length > 3 && (
-                <div id="tip-all-users">
-                  <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
-                    {`+${projectInfo.userProjectDtos.length - 3}`}
-                  </button>
-                  <Tooltip
-                    anchorSelect="#tip-all-users"
-                    content="Check all users"
-                    place="top"
-                  />
-                </div>
-              )}
-          </div>
+          <Textarea
+            id="motivation"
+            name="motivation"
+            value={projectInfo.motivation}
+            onChange={handleChange}
+          />
         </div>
       </div>
+      <div className="mb-2 ml-4 flex items-center col-span-full">
+        <FaStarOfLife className="text-red-500 mr-2 text-xs" />
+        <Label
+          htmlFor="warning"
+          value="Inputs with this symbol are mandatory"
+        />
+      </div>
+      {successMessage === true && (
+        <div className="mb-2 ml-4 flex items-center col-span-full">
+          <Label
+            htmlFor="success"
+            value="Project created succefully"
+            className="mb-2 text-green-700"
+          />
+        </div>
+      )}
       <Button onClick={handleSubmit} className="mt-4 mx-auto">
         Create Project
       </Button>

@@ -1,13 +1,12 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Gantt, ViewMode } from "gantt-task-react";
 import "gantt-task-react/dist/index.css";
-import { useState } from "react";
-import { useEffect } from "react";
 import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
 import { Button } from "flowbite-react";
 import AddTaskCard from "../Components/AddTaskCard";
+
 
 const GanttChartPage = () => {
   const { projectId } = useParams();
@@ -54,7 +53,6 @@ const GanttChartPage = () => {
 
   if (allTasks && allTasks.length > 0) {
     tasks = allTasks.map((task) => {
-      // Converte as datas para o formato Date
       const start = new Date(
         task.plannedStartingDate[0],
         task.plannedStartingDate[1] - 1,
@@ -85,7 +83,7 @@ const GanttChartPage = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="gantt-outer-container w-full overflow-auto ml-10 mr-10">
+      <div className="gantt-outer-container w-auto overflow-auto ml-10 mr-10">
         <div className="gantt-container">
           <div className="flex items-center">
             <select
@@ -110,7 +108,7 @@ const GanttChartPage = () => {
               tasks={tasks}
               viewMode={viewMode}
               preStepsCount={0}
-              rowHeight={25}
+              rowHeight={30}
               todayColor="orange"
             />
           )}

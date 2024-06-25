@@ -40,6 +40,7 @@ const MessageModal = ({
 
       const savedMessage = await response.json();
       console.log("Reply sent successfully:", savedMessage);
+      setReplyContent("");
 
       // Close the modal after replying
       closeModal();

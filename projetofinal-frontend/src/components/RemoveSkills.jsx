@@ -8,14 +8,18 @@ import Lottie from "react-lottie";
 import { Tooltip } from "react-tooltip";
 import useProjectStore from "../Stores/ProjectStore";
 
-function RemoveSkills({ openPopUpSkillsRemove, closePopUpSkillsRemove, context }) {
+function RemoveSkills({
+  openPopUpSkillsRemove,
+  closePopUpSkillsRemove,
+  context,
+}) {
   const apiUrl = useApiStore((state) => state.apiUrl);
   const userSkills = useUserStore((state) => state.skills);
   const projectSkills = useProjectStore((state) => state.projectSkills);
   const token = useUserStore((state) => state.token);
   const setUserSkills = useUserStore((state) => state.setSkills);
   const setProjectSkills = useProjectStore((state) => state.setProjectSkills);
-  
+
   const [animationPlayed, setAnimationPlayed] = useState(false);
   const [filter, setFilter] = useState("");
   const [selectedSkillIds, setSelectedSkillIds] = useState([]);
@@ -126,13 +130,14 @@ function RemoveSkills({ openPopUpSkillsRemove, closePopUpSkillsRemove, context }
                             checked={selectedSkillIds.includes(index)}
                             onChange={() => handleCheckboxChange(index)}
                           />
-                          <Label htmlFor={index.toString()}>
-                            {skill.name}
-                          </Label>
+                          <Label htmlFor={index.toString()}>{skill.name}</Label>
                         </div>
                       ))}
                 </div>
-                <Button onClick={handleRemoveSkills}>
+                <Button
+                  onClick={handleRemoveSkills}
+                  disabled={selectedSkillIds.length === 0}
+                >
                   Remove selected skills
                 </Button>
               </div>

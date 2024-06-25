@@ -210,11 +210,15 @@ function RegisterCard() {
   };
 
   return (
-    <Card className="max-w-lg overflow-auto p-4">
+    <Card className="max-w-lg overflow-auto p-4 border-gray-600 bg-gradient-to-r from-gray-400 via-gray-50 to-white rounded-lg ">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <div className="mb-2 flex items-center">
-            <Label htmlFor="email" value="Email" />
+            <Label
+              htmlFor="email"
+              value="Email"
+              className="font-semibold text-base"
+            />
             <FaStarOfLife className="text-red-500 ml-2 text-xs" />
           </div>
           <TextInput
@@ -228,7 +232,11 @@ function RegisterCard() {
         </div>
         <div>
           <div className="mb-2 flex items-center">
-            <Label htmlFor="password" value="Password" />
+            <Label
+              htmlFor="password"
+              value="Password"
+              className="font-semibold text-base"
+            />
             <FaStarOfLife className="text-red-500 ml-2 text-xs" />
           </div>
           <TextInput
@@ -241,7 +249,11 @@ function RegisterCard() {
         </div>
         <div>
           <div className="mb-2 flex items-center">
-            <Label htmlFor="password-confirmation" value="Password Confirmation" />
+            <Label
+              htmlFor="password-confirmation"
+              value="Password Confirmation"
+              className="font-semibold text-base"
+            />
             <FaStarOfLife className="text-red-500 ml-2 text-xs" />
           </div>
           <TextInput
@@ -254,12 +266,22 @@ function RegisterCard() {
         </div>
         <div>
           <div className="mb-2 flex items-center">
-            <Label htmlFor="workplace" value="Workplace" />
+            <Label
+              htmlFor="workplace"
+              value="Workplace"
+              className="font-semibold text-base"
+            />
             <FaStarOfLife className="text-red-500 ml-2 text-xs" />
           </div>
-          <Dropdown label={selectedWorkLocation || "Choose a location"} dismissOnClick={true}>
+          <Dropdown
+            label={selectedWorkLocation || "Choose a location"}
+            dismissOnClick={true}
+          >
             {workplaces.map((location) => (
-              <Dropdown.Item key={location.id} onClick={() => handleWorkLocationChange(location.name)}>
+              <Dropdown.Item
+                key={location.id}
+                onClick={() => handleWorkLocationChange(location.name)}
+              >
                 {location.name}
               </Dropdown.Item>
             ))}
@@ -267,7 +289,11 @@ function RegisterCard() {
         </div>
         <div>
           <div className="mb-2 flex items-center">
-            <Label htmlFor="name" value="Full name" />
+            <Label
+              htmlFor="name"
+              value="Full name"
+              className="font-semibold text-base"
+            />
             <FaStarOfLife className="text-red-500 ml-2 text-xs" />
           </div>
           <TextInput
@@ -280,7 +306,11 @@ function RegisterCard() {
         </div>
         <div>
           <div className="mb-2 block">
-            <Label htmlFor="username" value="Username" />
+            <Label
+              htmlFor="username"
+              value="Username"
+              className="font-semibold text-base"
+            />
           </div>
           <TextInput
             id="username"
@@ -293,12 +323,20 @@ function RegisterCard() {
         </div>
         <div>
           <div className="mb-2 block">
-            <Label htmlFor="photo" value="Photo" />
+            <Label
+              htmlFor="photo"
+              value="Photo"
+              className="font-semibold text-base"
+            />
           </div>
           <FileInput id="small-file-upload" sizing="sm" accept="image/*" />
         </div>
         <div className="mb-2 block col-span-full">
-          <Label htmlFor="biography" value="Biography" />
+          <Label
+            htmlFor="biography"
+            value="Biography"
+            className="font-semibold text-base"
+          />
           <textarea
             id="biography"
             placeholder="Talk about yourself..."
@@ -311,7 +349,10 @@ function RegisterCard() {
         </div>
         <div className="mb-2 flex items-center col-span-full">
           <FaStarOfLife className="text-red-500 mr-2 text-xs" />
-          <Label htmlFor="warning" value="Inputs with this symbol are mandatory" />
+          <Label
+            htmlFor="warning"
+            value="Inputs with this symbol are mandatory" 
+          />
         </div>
         <div className="flex justify-between col-span-full">
           <div>
@@ -340,10 +381,15 @@ function RegisterCard() {
             <span className="font-medium">Password isn't strong enough</span>
           </Alert>
           <Alert color="warning" icon={HiInformationCircle} rounded>
-            <span className="font-medium" style={{ textDecoration: 'underline' }}>
+            <span
+              className="font-medium"
+              style={{ textDecoration: "underline" }}
+            >
               TIP TO A STRONG PASSWORD!
             </span>
-            {' Must have at least 8 characters, use upper and lower case letters, use numbers and special characters'}
+            {
+              " Must have at least 8 characters, use upper and lower case letters, use numbers and special characters"
+            }
           </Alert>
         </>
       )}
@@ -354,17 +400,23 @@ function RegisterCard() {
       )}
       {warningNameMax === 1 && (
         <Alert color="failure" icon={HiInformationCircle}>
-          <span className="font-medium">You can only enter 2 names (first and last)</span>
+          <span className="font-medium">
+            You can only enter 2 names (first and last)
+          </span>
         </Alert>
       )}
       {warningNameMin === 1 && (
         <Alert color="failure" icon={HiInformationCircle}>
-          <span className="font-medium">You need to enter 2 names (first and last)</span>
+          <span className="font-medium">
+            You need to enter 2 names (first and last)
+          </span>
         </Alert>
       )}
       {warningRequiresInputs === 1 && (
         <Alert color="failure" icon={HiInformationCircle}>
-          <span className="font-medium">The required fields are not all filled in</span>
+          <span className="font-medium">
+            The required fields are not all filled in
+          </span>
         </Alert>
       )}
     </Card>

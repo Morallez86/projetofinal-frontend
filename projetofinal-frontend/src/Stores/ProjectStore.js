@@ -21,7 +21,7 @@ const useProjectStore = create((set) => ({
   setProjectResources: (resources) => set({ projectResources: resources }),
   setProjectUsers: (users) => set({ projectUsers: users }),
 
-  // Functions to clear the project details
+  // Functions to clear individual project details
   clearProjectId: () => set({ projectId: null }),
   clearProjectName: () => set({ projectName: null }),
   clearProjectDescription: () => set({ projectDescription: null }),
@@ -30,6 +30,19 @@ const useProjectStore = create((set) => ({
   clearProjectComponents: () => set({ projectComponents: [] }),
   clearProjectResources: () => set({ projectResources: [] }),
   clearProjectUsers: () => set({ projectUsers: [] }),
+
+  // Function to clear all project details
+  clearAllProjectDetails: () =>
+    set({
+      projectId: null,
+      projectName: null,
+      projectDescription: null,
+      projectSkills: [],
+      projectInterests: [],
+      projectComponents: [],
+      projectResources: [],
+      projectUsers: [],
+    }),
 }));
 
 export default useProjectStore;

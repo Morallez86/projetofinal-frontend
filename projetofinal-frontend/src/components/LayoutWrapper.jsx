@@ -102,7 +102,7 @@ const LayoutWrapper = () => {
       activeTab = 1;
       activeSubProjects = 0;
       break;
-    case "/":
+    case "/projectsList":
       activeTab = 1;
       activeSubProjects = 1;
       break;

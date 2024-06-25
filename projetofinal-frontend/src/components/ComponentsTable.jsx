@@ -51,7 +51,7 @@ function ComponentsTable({
   };
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-lg">
+    <div className="p-6 bg-white rounded-lg h-[44rem] shadow-lg">
       <div className="mb-6 flex justify-between items-center">
         <h2 className="text-2xl font-semibold">
           {" "}
@@ -94,11 +94,11 @@ function ComponentsTable({
         }}
       />
       {isModalOpen && (
-            <ComponentResourceCardDetails
-              data={selectedRow}
-              context={context}
-              onClose={() => setIsModalOpen(false)}
-            />
+        <ComponentResourceCardDetails
+          data={selectedRow}
+          context={context}
+          onClose={() => setIsModalOpen(false)}
+        />
       )}
     </div>
   );

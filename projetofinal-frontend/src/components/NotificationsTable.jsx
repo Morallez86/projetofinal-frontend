@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import DataTable from "react-data-table-component";
+import NotificationModal from "./NotificationModal";
 
 const NotificationsTable = ({
   data,
@@ -12,6 +13,19 @@ const NotificationsTable = ({
   onUpdateSeenStatus,
   onBulkUpdateSeenStatus,
 }) => {
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [selectedNotification, setSelectedNotification] = useState(null);
+
+  const openModal = (notification) => {
+    setSelectedNotification(notification);
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+    setSelectedNotification(null);
+  };
+
   const formatDateForInput = (dateArray) => {
     if (!Array.isArray(dateArray) || dateArray.length < 3) {
       return "";
@@ -42,7 +56,7 @@ const NotificationsTable = ({
     const newStatus = event.target.checked;
     await onBulkUpdateSeenStatus(newStatus);
   };
-  
+
   const columns = [
     { name: "Description", selector: (row) => row.description, sortable: true },
     {
@@ -63,7 +77,11 @@ const NotificationsTable = ({
     {
       name: (
         <div>
-          <input type="checkbox" onChange={handleBulkSeenChange} className="mr-2"/>
+          <input
+            type="checkbox"
+            onChange={handleBulkSeenChange}
+            className="mr-2"
+          />
           Seen
         </div>
       ),
@@ -79,7 +97,7 @@ const NotificationsTable = ({
   ];
 
   return (
-    <div className="p-6 bg-white rounded-lg h-[35rem] shadow-lg border-2 border-red-900">
+    <div className="p-6 bg-white rounded-lg h-[44rem] shadow-lg border-2 border-red-900">
       <style>
         {`
           .clickable-rows {
@@ -100,8 +118,9 @@ const NotificationsTable = ({
         paginationServer={paginationServer}
         paginationTotalRows={paginationTotalRows}
         onChangePage={onChangePage}
-        onChangeRowsPerPage={onChangeRowsPerPage} 
+        onChangeRowsPerPage={onChangeRowsPerPage}
         paginationPerPage={rowsPerPage}
+        onRowClicked={(row) => openModal(row)}
         noHeader={true}
         className="clickable-rows"
         customStyles={{
@@ -112,6 +131,11 @@ const NotificationsTable = ({
           },
         }}
         striped={true}
+      />
+      <NotificationModal
+        isOpen={modalIsOpen}
+        closeModal={closeModal}
+        notification={selectedNotification}
       />
     </div>
   );

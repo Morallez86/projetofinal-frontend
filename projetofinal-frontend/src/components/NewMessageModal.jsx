@@ -60,7 +60,7 @@ const NewMessageModal = ({ isOpen, closeModal, authToken }) => {
 
       const savedMessage = await response.json();
       console.log("Message sent successfully:", savedMessage);
-
+      setMessageContent("");
       // Close the modal after sending
       closeModal();
     } catch (error) {

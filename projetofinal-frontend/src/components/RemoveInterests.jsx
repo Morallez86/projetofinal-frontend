@@ -108,19 +108,41 @@ function RemoveInterests({
                 />
                 <div className="flex flex-col items-start overflow-y-auto h-36 space-y-2">
                   {filteredInterests.map((interest, index) => (
-                    <div key={context === "user" ? interest.id : index} className="flex items-center gap-2">
+                    <div
+                      key={context === "user" ? interest.id : index}
+                      className="flex items-center gap-2"
+                    >
                       <Checkbox
-                        id={context === "user" ? interest.id.toString() : index.toString()}
-                        checked={selectedInterestIds.includes(context === "user" ? interest.id : index)}
-                        onChange={() => handleCheckboxChange(context === "user" ? interest.id : index)}
+                        id={
+                          context === "user"
+                            ? interest.id.toString()
+                            : index.toString()
+                        }
+                        checked={selectedInterestIds.includes(
+                          context === "user" ? interest.id : index
+                        )}
+                        onChange={() =>
+                          handleCheckboxChange(
+                            context === "user" ? interest.id : index
+                          )
+                        }
                       />
-                      <Label htmlFor={context === "user" ? interest.id.toString() : index.toString()}>
+                      <Label
+                        htmlFor={
+                          context === "user"
+                            ? interest.id.toString()
+                            : index.toString()
+                        }
+                      >
                         {interest.name}
                       </Label>
                     </div>
                   ))}
                 </div>
-                <Button onClick={handleRemoveInterests}>
+                <Button
+                onClick={handleRemoveInterests} 
+                disabled={selectedInterestIds.length === 0}
+                >
                   Remove selected interests
                 </Button>
               </div>
