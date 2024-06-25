@@ -171,8 +171,12 @@ function ProjectDetails() {
             setIsChatOpen(!isChatOpen);
             if (!isChatOpen) {
               const projectId = project.id;
-              const timestamp = new Date().toISOString();
-              setProjectTimestamp(projectId, timestamp);
+             
+              const now = new Date();
+              
+              const localTimestamp = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString();
+              console.log(localTimestamp);
+              setProjectTimestamp(projectId, localTimestamp);
             }
           }}
         >
