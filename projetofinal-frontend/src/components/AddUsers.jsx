@@ -4,12 +4,18 @@ import useUserStore from "../Stores/UserStore";
 import useProjectStore from "../Stores/ProjectStore";
 import useApiStore from "../Stores/ApiStore";
 import basePhoto from "../Assets/092.png";
+import { jwtDecode } from "jwt-decode";
 
 function AddUsers({ openPopUpUsers, closePopUpUsers, projectInfo }) {
   const token = useUserStore((state) => state.token);
   const apiUrl = useApiStore((state) => state.apiUrl);
   const projectUsers = useProjectStore((state) => state.projectUsers);
   const setProjectUsers = useProjectStore((state) => state.setProjectUsers);
+  let currentUserId;
+  if(token){
+      const decodedToken = jwtDecode(token);
+      currentUserId = decodedToken.id;
+  }
 
   const [users, setUsers] = useState([]);
   const [userImages, setUserImages] = useState({});
@@ -34,6 +40,7 @@ function AddUsers({ openPopUpUsers, closePopUpUsers, projectInfo }) {
         if (response.status === 200) {
           const data = await response.json();
           setUsers(data);
+          console.log(data);
           fetchUserImages(data);
         } else if (response.status === 404) {
           console.log("Users not found");
@@ -82,8 +89,20 @@ function AddUsers({ openPopUpUsers, closePopUpUsers, projectInfo }) {
   };
 
   const handleAddUser = (user) => {
-    if (projectUsers.length >= projectInfo.maxUsers) {
-      setError(`Cannot add more than ${projectInfo.maxUsers} users`);
+    if (projectUsers.length >= projectInfo.maxUsers - 1) {
+      setError(`Cannot add more than ${projectInfo.maxUsers - 1} users`);
+      return;
+    }
+    console.log(user.id);
+    console.log(currentUserId);
+
+    if (user.id === currentUserId) {
+      setError("You cannot add yourself to the project team");
+      return;
+    }
+
+    if (projectUsers.some((projectUser) => projectUser.userId === user.id)) {
+      setError("This user is already in the project team");
       return;
     }
 
@@ -158,9 +177,6 @@ function AddUsers({ openPopUpUsers, closePopUpUsers, projectInfo }) {
                         )}
                         <span>{user.username}</span>
                       </div>
-                      <Button size="xs" onClick={handleAddUser}>
-                        Add
-                      </Button>
                     </li>
                   ))}
                 </ul>

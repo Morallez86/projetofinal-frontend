@@ -88,7 +88,10 @@ function RemoveComponents({
                     </div>
                   ))}
                 </div>
-                <Button onClick={handleRemoveComponents}>
+                <Button
+                  onClick={handleRemoveComponents}
+                  disabled={selectedComponentIds.length === 0}
+                >
                   Remove selected components
                 </Button>
               </div>

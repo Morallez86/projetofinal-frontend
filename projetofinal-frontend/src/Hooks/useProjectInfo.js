@@ -12,7 +12,7 @@ const useProjectInfo = () => {
     title: "",
     description: "",
     motivation: "",
-    maxUsers: 0,
+    maxUsers: 4,
     startingDate: "",
     plannedEndDate: "",
     workplace: { id: null, name: "" },

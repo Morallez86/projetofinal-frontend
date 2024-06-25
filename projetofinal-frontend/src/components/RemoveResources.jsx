@@ -88,7 +88,10 @@ function RemoveResources({
                     </div>
                   ))}
                 </div>
-                <Button onClick={handleRemoveResources}>
+                <Button
+                  onClick={handleRemoveResources}
+                  disabled={selectedResourceIds.length === 0}
+                >
                   Remove selected resources
                 </Button>
               </div>

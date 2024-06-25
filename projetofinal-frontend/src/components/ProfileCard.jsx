@@ -192,7 +192,7 @@ function ProfileCard({
 
   return (
     <Card className="bg-gray-200 transition-colors px-4 duration-200 w-1/2 h-100vh border-gray-600 bg-gradient-to-r from-gray-400 via-gray-50 to-white rounded-lg">
-      <h1 className="text-3xl font-bold text-center mb-2">My Projects</h1>
+      <h1 className="text-3xl font-bold text-center mb-2">My Profile</h1>
       <div className="flex flex-col pb-10 ">
         <div className="relative flex items-center  justify-center">
           <MdOutlineEdit

@@ -30,8 +30,8 @@ function LoginCard() {
   const [warning, setWarning] = useState(0);
   const [openPopUp, setOpenPopUp] = useState(false);
   const [warningEmailFormat, setWarningEmailFormat] = useState(0);
-  const [emailRecoverySuccess, setEmailRecoverySuccess] = useState(false); // New state
-  const [emailRecoveryError, setEmailRecoveryError] = useState(false); // New state
+  const [emailRecoverySuccess, setEmailRecoverySuccess] = useState(false);
+  const [emailRecoveryError, setEmailRecoveryError] = useState(false);
 
   const setToken = useUserStore((state) => state.setToken);
   const setRole = useUserStore((state) => state.setRole);

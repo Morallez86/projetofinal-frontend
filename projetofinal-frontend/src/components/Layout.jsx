@@ -75,6 +75,7 @@ function Layout({
   }, [apiUrl, token, userId, setProfileImage]);
 
   const handleLogout = async () => {
+    console.log(token);
     if (token) {
       try {
         const response = await fetch(`${apiUrl}/users/logout`, {
@@ -86,14 +87,17 @@ function Layout({
         });
 
         if (response.ok) {
+          console.log(token);
           setToken(null);
           clearProfileImage();
           navigate("/");
         } else {
+          console.log(token);
           setToken(null); // Clear the token even if logout fails
           navigate("/");
         }
       } catch (error) {
+        console.log(token);
         setToken(null); // Clear the token on error
         navigate("/");
       }
