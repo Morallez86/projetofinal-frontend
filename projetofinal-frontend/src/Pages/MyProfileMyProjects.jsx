@@ -15,7 +15,9 @@ const useProjects = (userId, page, rowsPerPage) => {
   const [totalPages, setTotalPages] = useState(0);
   const { skills } = useSkills();
   const { interests } = useInterests();
-  const setProjectTimestamp = useUserStore((state) => state.setProjectTimestamp);
+  const setProjectTimestamp = useUserStore(
+    (state) => state.setProjectTimestamp
+  );
 
   useEffect(() => {
     if (token) {
@@ -23,7 +25,11 @@ const useProjects = (userId, page, rowsPerPage) => {
         const decodedToken = jwtDecode(token);
         console.log(decodedToken);
         if (decodedToken.projectTimestamps) {
-          setProjectTimestamp(decodedToken.projectTimestamps);
+          Object.entries(decodedToken.projectTimestamps).forEach(
+            ([projectId, timestamp]) => {
+              setProjectTimestamp(projectId, timestamp);
+            }
+          );
         }
       } catch (error) {
         console.error("Erro ao decodificar o token:", error);

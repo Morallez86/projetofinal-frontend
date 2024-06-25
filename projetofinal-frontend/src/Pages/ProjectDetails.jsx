@@ -21,8 +21,11 @@ function ProjectDetails() {
   const [team, setTeam] = useState([]);
   const [unreadMessages, setUnreadMessages] = useState(0);
   const projectTimestamps = useUserStore((state) => state.projectTimestamps);
-  const setProjectTimestamp = useUserStore((state) => state.setProjectTimestamp);
-  
+  const setProjectTimestamp = useUserStore(
+    (state) => state.setProjectTimestamp
+  );
+
+  console.log(projectId);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -136,13 +139,13 @@ function ProjectDetails() {
           onClick={() => {
             setIsChatOpen(!isChatOpen);
             if (!isChatOpen) {
-              const newTimestamps = { ...projectTimestamps, [projectId]: new Date().toISOString() };
-              setProjectTimestamp(newTimestamps);
+              const projectId = project.id;
+              const timestamp = new Date().toISOString();
+              setProjectTimestamp(projectId, timestamp);
             }
           }}
         >
           <SiGooglemessages size={60} />
-
         </button>
       </div>
       {isChatOpen && (
