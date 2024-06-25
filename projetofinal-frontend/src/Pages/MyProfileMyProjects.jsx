@@ -15,6 +15,21 @@ const useProjects = (userId, page, rowsPerPage) => {
   const [totalPages, setTotalPages] = useState(0);
   const { skills } = useSkills();
   const { interests } = useInterests();
+  const setProjectTimestamp = useUserStore((state) => state.setProjectTimestamp);
+
+  useEffect(() => {
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        console.log(decodedToken);
+        if (decodedToken.projectTimestamps) {
+          setProjectTimestamp(decodedToken.projectTimestamps);
+        }
+      } catch (error) {
+        console.error("Erro ao decodificar o token:", error);
+      }
+    }
+  }, [token, setProjectTimestamp]);
 
   useEffect(() => {
     if (!userId) return;
