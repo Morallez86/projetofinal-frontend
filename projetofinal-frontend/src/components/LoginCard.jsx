@@ -161,7 +161,11 @@ function LoginCard() {
       <div className="flex flex-col gap-4">
         <div>
           <div className="mb-2 block">
-            <Label htmlFor="email" value="Email" />
+            <Label
+              htmlFor="email"
+              value="Email"
+              className="font-semibold text-base"
+            />
           </div>
           <TextInput
             id="email"
@@ -175,7 +179,11 @@ function LoginCard() {
         </div>
         <div>
           <div className="mb-2 block">
-            <Label htmlFor="password" value="Password" />
+            <Label
+              htmlFor="password"
+              value="Password"
+              className="font-semibold text-base"
+            />
           </div>
           <TextInput
             id="password"
@@ -241,9 +249,7 @@ function LoginCard() {
             </div>
             <div className="flex justify-center gap-4">
               {!loading && (
-                <Button onClick={handleSubmitRecover}>
-                  Submit
-                </Button>
+                <Button onClick={handleSubmitRecover}>Submit</Button>
               )}
               {loading && (
                 <Spinner
@@ -252,7 +258,7 @@ function LoginCard() {
                 />
               )}
               <Button
-                className= "bg-gray-700"
+                className="bg-gray-700"
                 onClick={() => {
                   setOpenPopUp(false);
                   cleanWarnings();

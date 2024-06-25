@@ -45,14 +45,14 @@ function MyProfile_AboutMe() {
   }
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-auto">
       <div className="flex p-4 justify-center h-auto ">
-          <ProfileCard
-            openPopUpSkills={openAddSkillsModal}
-            openPopUpInterests={openAddInterestsModal}
-            openPopUpSkillsRemove={openAddSkillsRemoveModal}
-            openPopUpInterestRemove={openAddInterestRemoveModal}
-          />
+        <ProfileCard
+          openPopUpSkills={openAddSkillsModal}
+          openPopUpInterests={openAddInterestsModal}
+          openPopUpSkillsRemove={openAddSkillsRemoveModal}
+          openPopUpInterestRemove={openAddInterestRemoveModal}
+        />
       </div>
       <AddSkills
         openPopUpSkills={statePopUpSkills}

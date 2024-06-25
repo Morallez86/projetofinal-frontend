@@ -126,7 +126,7 @@ function ProfileCard({
 
   const handleSaveClick = async () => {
     try {
-      console.log(selectedImage)
+      console.log(selectedImage);
       if (selectedImage) {
         console.log(email);
         const fileInput = document.getElementById("small-file-upload");
@@ -191,13 +191,19 @@ function ProfileCard({
   };
 
   return (
-    <Card className="bg-gray-200 transition-colors duration-200 w-1/2 h-100vh border-gray-600 bg-gradient-to-r from-gray-400 via-gray-50 to-white rounded-lg">
+    <Card className="bg-gray-200 transition-colors px-4 duration-200 w-1/2 h-100vh border-gray-600 bg-gradient-to-r from-gray-400 via-gray-50 to-white rounded-lg">
+      <h1 className="text-3xl font-bold text-center mb-2">My Projects</h1>
       <div className="flex flex-col pb-10 ">
-        <div className="relative flex items-center space-x-10 justify-center">
-          <Avatar img={profileImage} alt="avatar" size="xl" rounded />
+        <div className="relative flex items-center  justify-center">
           <MdOutlineEdit
-            className="h-6 w-6 text-black cursor-pointer absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2"
+            className="h-6 w-6 text-black cursor-pointer absolute top-3 right-6 transform translate-x-1/2 -translate-y-1/2"
             onClick={handleEditClick}
+          />
+          <Avatar
+            img={profileImage}
+            alt="avatar"
+            size="xl"
+            className="border border-black rounded-full  mb-2"
           />
           {editMode && (
             <FileInput
@@ -327,12 +333,18 @@ function ProfileCard({
               value={userInfo.biography}
               onChange={handleChange}
               className="text-sm text-gray-500 dark:text-gray-400 truncate"
-              rows={2}
+              rows={4}
             />
           ) : (
-            <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
-              {userInfo.biography}
-            </p>
+            <Textarea
+              id="biography"
+              name="biography"
+              value={userInfo.biography}
+              onChange={handleChange}
+              className="text-sm text-gray-500 dark:text-gray-400 truncate"
+              disabled
+              rows={4}
+            />
           )}
         </div>
         <div className="mt-4">

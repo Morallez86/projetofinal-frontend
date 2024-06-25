@@ -31,7 +31,11 @@ function MyProfileChangePassword() {
           </h1>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <Label htmlFor="oldPassword" value="Old Password" />
+              <Label
+                htmlFor="oldPassword"
+                value="Old Password"
+                className="font-semibold text-base"
+              />
               <TextInput
                 id="oldPassword"
                 name="oldPassword"
@@ -43,7 +47,11 @@ function MyProfileChangePassword() {
               />
             </div>
             <div className="mb-4">
-              <Label htmlFor="newPassword" value="New Password" />
+              <Label
+                htmlFor="newPassword"
+                value="New Password"
+                className="font-semibold text-base"
+              />
               <TextInput
                 id="newPassword"
                 name="newPassword"
@@ -58,6 +66,7 @@ function MyProfileChangePassword() {
               <Label
                 htmlFor="confirmNewPassword"
                 value="Confirm New Password"
+                className="font-semibold text-base"
               />
               <TextInput
                 id="confirmNewPassword"

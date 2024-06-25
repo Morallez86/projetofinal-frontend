@@ -121,7 +121,7 @@ function ProjectMyProfileTable({
   return (
     <div className="p-6 border border-gray-600 bg-white rounded-lg">
       <div className="mb-6 flex justify-between items-center">
-        <h2 className="text-2xl ml-3 font-bold">My Projects</h2>
+        <h1 className="text-3xl font-bold text-center ml-3">My Projects</h1>
         <TextInput
           placeholder="Search by name..."
           onChange={handleFilter}

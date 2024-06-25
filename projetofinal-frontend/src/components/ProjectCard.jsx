@@ -71,7 +71,8 @@ function ProjectCard({
   };
 
   return (
-    <Card className="bg-gray-200 transition-colors duration-200 w-3/4 h-auto mx-auto mt-10">
+    <Card className="border-gray-600 bg-gradient-to-r from-gray-400 via-gray-75 to-white rounded-lg shadow-md w-3/4 h-auto mx-auto mt-10">
+      <h1 className="text-3xl font-bold text-center mb-6">New Project</h1>
       <div className="grid grid-cols-3 gap-4 p-4">
         <div>
           <Label htmlFor="title" value="Title" />
@@ -80,6 +81,26 @@ function ProjectCard({
             type="text"
             name="title"
             value={projectInfo.title}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <Label htmlFor="startingDate" value="Starting Date" />
+          <TextInput
+            id="startingDate"
+            type="date"
+            name="startingDate"
+            value={projectInfo.startingDate}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <Label htmlFor="plannedEndDate" value="Planned End Date" />
+          <TextInput
+            id="plannedEndDate"
+            type="date"
+            name="plannedEndDate"
+            value={projectInfo.plannedEndDate}
             onChange={handleChange}
           />
         </div>
@@ -121,26 +142,7 @@ function ProjectCard({
             }}
           />
         </div>
-        <div>
-          <Label htmlFor="startingDate" value="Starting Date" />
-          <TextInput
-            id="startingDate"
-            type="date"
-            name="startingDate"
-            value={projectInfo.startingDate}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <Label htmlFor="plannedEndDate" value="Planned End Date" />
-          <TextInput
-            id="plannedEndDate"
-            type="date"
-            name="plannedEndDate"
-            value={projectInfo.plannedEndDate}
-            onChange={handleChange}
-          />
-        </div>
+
         <div>
           <Label htmlFor="workplace" value="Workplace" />
           <Select

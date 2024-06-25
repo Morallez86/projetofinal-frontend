@@ -214,7 +214,11 @@ function RegisterCard() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <div className="mb-2 flex items-center">
-            <Label htmlFor="email" value="Email" />
+            <Label
+              htmlFor="email"
+              value="Email"
+              className="font-semibold text-base"
+            />
             <FaStarOfLife className="text-red-500 ml-2 text-xs" />
           </div>
           <TextInput
@@ -228,7 +232,11 @@ function RegisterCard() {
         </div>
         <div>
           <div className="mb-2 flex items-center">
-            <Label htmlFor="password" value="Password" />
+            <Label
+              htmlFor="password"
+              value="Password"
+              className="font-semibold text-base"
+            />
             <FaStarOfLife className="text-red-500 ml-2 text-xs" />
           </div>
           <TextInput
@@ -244,6 +252,7 @@ function RegisterCard() {
             <Label
               htmlFor="password-confirmation"
               value="Password Confirmation"
+              className="font-semibold text-base"
             />
             <FaStarOfLife className="text-red-500 ml-2 text-xs" />
           </div>
@@ -257,7 +266,11 @@ function RegisterCard() {
         </div>
         <div>
           <div className="mb-2 flex items-center">
-            <Label htmlFor="workplace" value="Workplace" />
+            <Label
+              htmlFor="workplace"
+              value="Workplace"
+              className="font-semibold text-base"
+            />
             <FaStarOfLife className="text-red-500 ml-2 text-xs" />
           </div>
           <Dropdown
@@ -276,7 +289,11 @@ function RegisterCard() {
         </div>
         <div>
           <div className="mb-2 flex items-center">
-            <Label htmlFor="name" value="Full name" />
+            <Label
+              htmlFor="name"
+              value="Full name"
+              className="font-semibold text-base"
+            />
             <FaStarOfLife className="text-red-500 ml-2 text-xs" />
           </div>
           <TextInput
@@ -289,7 +306,11 @@ function RegisterCard() {
         </div>
         <div>
           <div className="mb-2 block">
-            <Label htmlFor="username" value="Username" />
+            <Label
+              htmlFor="username"
+              value="Username"
+              className="font-semibold text-base"
+            />
           </div>
           <TextInput
             id="username"
@@ -302,12 +323,20 @@ function RegisterCard() {
         </div>
         <div>
           <div className="mb-2 block">
-            <Label htmlFor="photo" value="Photo" />
+            <Label
+              htmlFor="photo"
+              value="Photo"
+              className="font-semibold text-base"
+            />
           </div>
           <FileInput id="small-file-upload" sizing="sm" accept="image/*" />
         </div>
         <div className="mb-2 block col-span-full">
-          <Label htmlFor="biography" value="Biography" />
+          <Label
+            htmlFor="biography"
+            value="Biography"
+            className="font-semibold text-base"
+          />
           <textarea
             id="biography"
             placeholder="Talk about yourself..."
@@ -322,7 +351,7 @@ function RegisterCard() {
           <FaStarOfLife className="text-red-500 mr-2 text-xs" />
           <Label
             htmlFor="warning"
-            value="Inputs with this symbol are mandatory"
+            value="Inputs with this symbol are mandatory" 
           />
         </div>
         <div className="flex justify-between col-span-full">
