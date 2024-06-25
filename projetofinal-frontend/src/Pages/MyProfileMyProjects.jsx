@@ -18,6 +18,7 @@ const useProjects = (userId, page, rowsPerPage) => {
   const setProjectTimestamp = useUserStore(
     (state) => state.setProjectTimestamp
   );
+  const projectTimestamps = useUserStore((state) => state.projectTimestamps);
 
   useEffect(() => {
     if (token) {
@@ -36,6 +37,8 @@ const useProjects = (userId, page, rowsPerPage) => {
       }
     }
   }, [token, setProjectTimestamp]);
+
+  console.log(projectTimestamps);
 
   useEffect(() => {
     if (!userId) return;

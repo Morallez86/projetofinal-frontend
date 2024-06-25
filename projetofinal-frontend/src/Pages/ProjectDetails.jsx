@@ -48,6 +48,12 @@ function ProjectDetails() {
         setTasks(data.tasks || []); // Ensure tasks is an array
         setTeam(data.userProjectDtos || []);
         console.log(data);
+        console.log(data.chatMessage);
+        if (data.chatMessage) {
+          console.log("in");
+          console.log(projectTimestamps);
+        }
+        console.log(unreadMessages);
 
         const userIds = data.userProjectDtos
           .map((up) => up.userId)
@@ -84,6 +90,31 @@ function ProjectDetails() {
 
     fetchProject();
   }, [projectId, apiUrl, token]);
+
+  const getUnreadMessages = () => {
+    const projectTimestamp = new Date(projectTimestamps[projectId]);
+    let count = 0;
+
+    project.chatMessage.forEach((message) => {
+      // Convertendo o array de timestamp para um objeto Date
+      const messageDate = new Date(Date.UTC(message.timestamp[0], message.timestamp[1] - 1, message.timestamp[2], message.timestamp[3], message.timestamp[4], message.timestamp[5], message.timestamp[6] / 1000000));
+    
+      // Comparando as datas
+      if (messageDate > projectTimestamp) {
+        count++;
+      }
+    });
+
+    setUnreadMessages(count);
+  }
+
+  useEffect(() => {
+    if (project && project.chatMessage) {
+      getUnreadMessages();
+    }
+  }, [project, projectTimestamps]);
+
+  console.log(unreadMessages);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -146,6 +177,11 @@ function ProjectDetails() {
           }}
         >
           <SiGooglemessages size={60} />
+          {unreadMessages > 0 && (
+            <div className="absolute top-0 right-0 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+              {unreadMessages}
+            </div>
+          )}
         </button>
       </div>
       {isChatOpen && (
