@@ -113,8 +113,8 @@ function AllProjectsCreateNew() {
   }
 
   return (
-    <div className="flex flex-col h-screen">
-      <div className="flex p-4 justify-center h-auto">
+    <div className="flex flex-col">
+      <div className="flex justify-center py-4 mb-10 h-auto">
         <ProjectCard
           openPopUpSkills={openAddSkillsModal}
           openPopUpInterests={openAddInterestsModal}

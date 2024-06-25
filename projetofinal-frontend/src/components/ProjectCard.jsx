@@ -71,9 +71,9 @@ function ProjectCard({
   };
 
   return (
-    <Card className="border-gray-600 bg-gradient-to-r from-gray-400 via-gray-75 to-white rounded-lg shadow-md w-3/4 h-auto mx-auto mt-10">
+    <Card className="border-gray-600 bg-gradient-to-r from-gray-400 via-gray-75 to-white rounded-lg shadow-md w-3/4 h-auto mx-auto">
       <h1 className="text-3xl font-bold text-center mb-6">New Project</h1>
-      <div className="grid grid-cols-3 gap-4 p-4">
+      <div className="grid grid-cols-3 gap-10 p-4">
         <div>
           <Label htmlFor="title" value="Title" />
           <TextInput
@@ -104,32 +104,35 @@ function ProjectCard({
             onChange={handleChange}
           />
         </div>
-        <div>
-          <Label htmlFor="description" value="Description" />
-          <Textarea
-            id="description"
-            name="description"
-            value={projectInfo.description}
-            onChange={handleChange}
-          />
+        <div className="w-2/3">
+          <Label htmlFor="workplace" value="Workplace" />
+          <Select
+            id="workplace"
+            name="workplace"
+            value={JSON.stringify(projectInfo.workplace)}
+            onChange={(e) => {
+              setSelectedWorkLocation(e.target.value);
+              handleWorkplaceChange(e);
+            }}
+          >
+            <option value={JSON.stringify({ id: null, name: "" })} disabled>
+              Select Workplace
+            </option>
+            {workplaces.map((location) => (
+              <option key={location.id} value={JSON.stringify(location)}>
+                {location.name}
+              </option>
+            ))}
+          </Select>
         </div>
-        <div>
-          <Label htmlFor="motivation" value="Motivation" />
-          <Textarea
-            id="motivation"
-            name="motivation"
-            value={projectInfo.motivation}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
+        <div className="w-2/3">
           <Label htmlFor="maxUsers" value="Max Users" />
           <TextInput
             id="maxUsers"
             type="number"
             name="maxUsers"
             value={projectInfo.maxUsers}
-            min={0}
+            min={1}
             max={10}
             onChange={(e) => {
               const value = Math.max(0, Math.min(10, e.target.value));
@@ -142,28 +145,58 @@ function ProjectCard({
             }}
           />
         </div>
-
-        <div>
-          <Label htmlFor="workplace" value="Workplace" />
-          <Select
-            id="workplace"
-            name="workplace"
-            value={JSON.stringify(projectInfo.workplace)}
-            onChange={(e) => {
-              setSelectedWorkLocation(e.target.value);
-              handleWorkplaceChange(e);
-            }}
-            className="w-1/2"
-          >
-            <option value={JSON.stringify({ id: null, name: "" })} disabled>
-              Select Workplace
-            </option>
-            {workplaces.map((location) => (
-              <option key={location.id} value={JSON.stringify(location)}>
-                {location.name}
-              </option>
-            ))}
-          </Select>
+        {/* Team */}
+        <div className="mt-4">
+          <div className="flex items-center">
+            <Label htmlFor="team" value="Team" />
+            <div
+              className="inline-flex items-center cursor-pointer"
+              id="icon-element7"
+              onClick={openPopUpUsers}
+            >
+              <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
+            </div>
+            <div
+              className="inline-flex items-center cursor-pointer"
+              id="icon-element-remove7"
+              onClick={openPopUpUsersRemove}
+            >
+              <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
+            </div>
+            <Tooltip
+              anchorSelect="#icon-element7"
+              content="Add new user"
+              place="top"
+            />
+            <Tooltip
+              anchorSelect="#icon-element-remove7"
+              content="Remove a user"
+              place="top"
+            />
+          </div>
+          <div className="flex items-center text-sm font-medium text-gray-900 dark:text-gray-400">
+            <p>
+              {Array.isArray(projectInfo.userProjectDtos)
+                ? projectInfo.userProjectDtos
+                    .slice(0, 3)
+                    .map((user) => user.username)
+                    .join(", ")
+                : ""}
+            </p>
+            {Array.isArray(projectInfo.userProjectDtos) &&
+              projectInfo.userProjectDtos.length > 3 && (
+                <div id="tip-all-users">
+                  <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+                    {`+${projectInfo.userProjectDtos.length - 3}`}
+                  </button>
+                  <Tooltip
+                    anchorSelect="#tip-all-users"
+                    content="Check all users"
+                    place="top"
+                  />
+                </div>
+              )}
+          </div>
         </div>
         {/* Skills */}
         <div className="mt-4">
@@ -377,58 +410,23 @@ function ProjectCard({
               )}
           </div>
         </div>
-        {/* Team */}
-        <div className="mt-4">
-          <div className="flex items-center">
-            <Label htmlFor="team" value="Team" />
-            <div
-              className="inline-flex items-center cursor-pointer"
-              id="icon-element7"
-              onClick={openPopUpUsers}
-            >
-              <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
-            </div>
-            <div
-              className="inline-flex items-center cursor-pointer"
-              id="icon-element-remove7"
-              onClick={openPopUpUsersRemove}
-            >
-              <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
-            </div>
-            <Tooltip
-              anchorSelect="#icon-element7"
-              content="Add new user"
-              place="top"
-            />
-            <Tooltip
-              anchorSelect="#icon-element-remove7"
-              content="Remove a user"
-              place="top"
-            />
-          </div>
-          <div className="flex items-center text-sm font-medium text-gray-900 dark:text-gray-400">
-            <p>
-              {Array.isArray(projectInfo.userProjectDtos)
-                ? projectInfo.userProjectDtos
-                    .slice(0, 3)
-                    .map((user) => user.username)
-                    .join(", ")
-                : ""}
-            </p>
-            {Array.isArray(projectInfo.userProjectDtos) &&
-              projectInfo.userProjectDtos.length > 3 && (
-                <div id="tip-all-users">
-                  <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
-                    {`+${projectInfo.userProjectDtos.length - 3}`}
-                  </button>
-                  <Tooltip
-                    anchorSelect="#tip-all-users"
-                    content="Check all users"
-                    place="top"
-                  />
-                </div>
-              )}
-          </div>
+        <div>
+          <Label htmlFor="description" value="Description" />
+          <Textarea
+            id="description"
+            name="description"
+            value={projectInfo.description}
+            onChange={handleChange}
+          />
+        </div>
+        <div>
+          <Label htmlFor="motivation" value="Motivation" />
+          <Textarea
+            id="motivation"
+            name="motivation"
+            value={projectInfo.motivation}
+            onChange={handleChange}
+          />
         </div>
       </div>
       <Button onClick={handleSubmit} className="mt-4 mx-auto">
