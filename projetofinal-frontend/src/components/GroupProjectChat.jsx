@@ -18,12 +18,85 @@ import {
 } from "@chatscope/chat-ui-kit-react";
 import { Tooltip } from "react-tooltip";
 import useUserStore from "../Stores/UserStore";
+import { useParams } from "react-router-dom";
+import useApiStore from "../Stores/ApiStore";
+import WebSocketProjChat from "../WebSocketProjChat";
+import { useEffect } from "react";
 
-function GroupProjectChat({ photos, users, messages }) {
+function GroupProjectChat({ photos, users, messages: initialMessages }) {
   const [isSeparated, setIsSeparated] = useState(false);
   const token = useUserStore((state) => state.token);
+  const apiUrl = useApiStore((state) => state.apiUrl);
+  const { projectId } = useParams();
+  const [messages, setMessages] = useState(initialMessages);
 
   console.log(messages);
+
+  let userIdFromToken;
+  let usernameFromToken;
+
+  if (token) {
+    try {
+      const decodedToken = jwtDecode(token);
+      userIdFromToken = decodedToken.id;
+      usernameFromToken = decodedToken.username;
+    } catch (error) {
+      console.error("Invalid token", error);
+    }
+  }
+
+  const onMessageChat = (message) => {
+    setMessages((prevMessages) => [...prevMessages,
+      (message = {
+        content: message.content,
+        senderUsername: message.senderUsername,
+        senderId: message.senderId,
+        senderOnline: message.senderOnline,
+        projectId: message.projectId, 
+        timestamp: message.timestamp,
+  }),
+    ]);
+  };
+
+
+
+
+  WebSocketProjChat(projectId, token, onMessageChat);
+
+  const handleSubmit = (message) => {
+    fetch(`${apiUrl}/projects/createChatMsg`, {
+      method: "POST",
+      headers: {
+        Accept: "*/*",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        projectId: projectId,
+        content: message,
+        senderUsername: usernameFromToken,
+        senderId: userIdFromToken,
+        senderOnline: true,
+      }),
+    })
+      .then(async (response) => {
+        if (response.status === 201) {
+          const messageData = await response.json();
+          console.log(messageData);
+          if (messageData.timestamp.length > 5) {
+            messageData.timestamp = messageData.timestamp.slice(0, 5);
+          }
+          console.log(messageData);
+          setMessages((prevMessages) => [...prevMessages, messageData]);
+          console.log("msg created");
+        } else {
+          console.log("msg not created", response.status);
+        }
+      })
+      .catch((error) => {
+        console.error("Error creating message:", error);
+      });
+  };
 
   const convertTimestampToDate = (timestamp) => {
     return new Date(
@@ -35,25 +108,18 @@ function GroupProjectChat({ photos, users, messages }) {
     );
   };
 
-  let userIdFromToken;
-
-  if (token) {
-    try {
-      const decodedToken = jwtDecode(token);
-      userIdFromToken = decodedToken.id;
-    } catch (error) {
-      console.error("Invalid token", error);
-    }
-  }
-
   const avatarStyle = isSeparated
     ? { margin: "10px", transition: "margin 0.5s" }
     : { transition: "margin 0.5s" };
 
+  const joinUsername = (content, username) => {
+    return `<strong>${username}</strong>: ${content}`;
+  };
+
   return (
     <div
       style={{
-        position: "absolute",
+        position: "fixed",
         height: "500px",
         width: "400px",
         bottom: "60px",
@@ -61,6 +127,7 @@ function GroupProjectChat({ photos, users, messages }) {
         border: "5px solid black",
         display: "flex",
         flexDirection: "row",
+        zIndex: 1000,
       }}
     >
       <div
@@ -116,6 +183,7 @@ function GroupProjectChat({ photos, users, messages }) {
         <MessageList>
           {messages.map((msg, index) => {
             const currentMsgDate = convertTimestampToDate(msg.timestamp);
+        
             const prevMsgDate =
               index > 0
                 ? convertTimestampToDate(messages[index - 1].timestamp)
@@ -142,31 +210,31 @@ function GroupProjectChat({ photos, users, messages }) {
                 <Message
                   key={index}
                   model={{
-                    message: msg.content,
+                    message: joinUsername(msg.content, msg.senderUsername),
                     direction:
-                      userIdFromToken === msg.sender.id
+                      userIdFromToken === msg.senderId
                         ? "outgoing"
                         : "incoming",
                     position: "single",
-                    sender: msg.sender.username,
+                    sender: msg.senderUsername,
                   }}
                 >
                   <Avatar
-                    name={msg.sender.username}
+                    name={msg.senderUsername}
                     src={
-                      photos[msg.sender.id]
-                        ? `data:${photos[msg.sender.id].type};base64,${
-                            photos[msg.sender.id].image
+                      photos[msg.senderId]
+                        ? `data:${photos[msg.senderId].type};base64,${
+                            photos[msg.senderId].image
                           }`
                         : basePhoto
                     }
-                    status={msg.sender.online ? "available" : "dnd"}
+                    status={msg.senderOnline ? "available" : "dnd"}
                   />
                 </Message>
                 <span
                   style={{
                     marginLeft:
-                      userIdFromToken === msg.sender.id ? "12rem" : "3.25rem",
+                      userIdFromToken === msg.senderId ? "12rem" : "3.25rem",
                   }}
                   className="-mt-2 text-gray-400 text-xs"
                 >
@@ -176,7 +244,10 @@ function GroupProjectChat({ photos, users, messages }) {
             );
           })}
         </MessageList>
-        <MessageInput placeholder="Type message here" />
+        <MessageInput
+          placeholder="Type message here"
+          onSend={(message) => handleSubmit(message)}
+        />
       </ChatContainer>
     </div>
   );

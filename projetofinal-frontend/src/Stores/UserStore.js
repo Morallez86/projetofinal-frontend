@@ -12,6 +12,7 @@ const useUserStore = create(
       profileImage: null,
       skills: [],
       interests: [],
+      projectTimestamps: {},
       // Function to update the token and role
       setToken: (token) => set({ token }),
       setRole: (role) => set({ role }),
@@ -20,6 +21,9 @@ const useUserStore = create(
       setProfileImage: (imageUrl) => set({ profileImage: imageUrl }),
       setSkills: (skills) => set({ skills }),
       setInterests: (interests) => set({ interests }),
+      setProjectTimestamp: (projectId, timestamp) => set((state) => ({
+        projectTimestamps: { ...state.projectTimestamps, [projectId]: timestamp },
+      })),
 
       // Function to clear the token and role
       clearToken: () => set({ token: null }),
@@ -33,7 +37,11 @@ const useUserStore = create(
     {
       name: "userTokenStore",
       storage: createJSONStorage(() => sessionStorage),
-      partialize: (state) => ({ token: state.token }), // Persist only the token
+      partialize: (state) => ({
+        // Include both token and projectTimestamps in the persisted state
+        token: state.token,
+        projectTimestamps: state.projectTimestamps,
+      }),
     }
   )
 );

@@ -32,7 +32,13 @@ function Layout({
 }) {
   const navigate = useNavigate();
   const apiUrl = useApiStore((state) => state.apiUrl);
-  const { token, setToken, profileImage, setProfileImage, clearProfileImage } = useUserStore();
+  const { token, setToken, profileImage, setProfileImage, clearProfileImage} = useUserStore();
+  const projectTimestamps = useUserStore((state) => state.projectTimestamps);
+
+  useEffect(() => {
+    console.log(projectTimestamps);
+  }, [projectTimestamps]);
+
 
   console.log(unreadMessages);
   console.log(unreadNotifications)
@@ -85,6 +91,7 @@ function Layout({
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
+          body: JSON.stringify({ projectTimestamps })
         });
 
         if (response.ok) {

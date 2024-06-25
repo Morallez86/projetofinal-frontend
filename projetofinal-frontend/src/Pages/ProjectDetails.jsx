@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
@@ -7,6 +7,7 @@ import TaskCard from "../Components/TaskCard";
 import ActivityLogs from "../Components/ActivityLogs";
 import { SiGooglemessages } from "react-icons/si";
 import GroupProjectChat from "../Components/GroupProjectChat";
+import { motion } from "framer-motion";
 
 function ProjectDetails() {
   const { projectId } = useParams();
@@ -18,6 +19,37 @@ function ProjectDetails() {
   const token = useUserStore((state) => state.token);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [team, setTeam] = useState([]);
+  const [unreadMessages, setUnreadMessages] = useState(0);
+  const projectTimestamps = useUserStore((state) => state.projectTimestamps);
+  const setProjectTimestamp = useUserStore(
+    (state) => state.setProjectTimestamp
+  );
+  const isChatOpenRef = useRef(isChatOpen);
+
+  useEffect(() => {
+    isChatOpenRef.current = isChatOpen;
+  }, [isChatOpen]);
+
+  console.log(projectId);
+
+  useEffect(() => {
+    console.log("in3");
+    console.log(isChatOpenRef.current);
+    return () => {
+      console.log(isChatOpenRef.current);
+      if (isChatOpenRef.current && project && project.id != null) {
+        console.log("in");
+        const projectId = project.id;
+        const now = new Date();
+        const localTimestamp = new Date(
+          now.getTime() - now.getTimezoneOffset() * 60000
+        ).toISOString();
+        setProjectTimestamp(projectId, localTimestamp);
+        console.log(localTimestamp);
+      }
+      console.log("in2");
+    };
+  }, [project]);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -40,6 +72,12 @@ function ProjectDetails() {
         setTasks(data.tasks || []); // Ensure tasks is an array
         setTeam(data.userProjectDtos || []);
         console.log(data);
+        console.log(data.chatMessage);
+        if (data.chatMessage) {
+          console.log("in");
+          console.log(projectTimestamps);
+        }
+        console.log(unreadMessages);
 
         const userIds = data.userProjectDtos
           .map((up) => up.userId)
@@ -76,6 +114,42 @@ function ProjectDetails() {
 
     fetchProject();
   }, [projectId, apiUrl, token]);
+
+  const getUnreadMessages = () => {
+    const projectTimestamp = new Date(projectTimestamps[projectId]);
+    let count = 0;
+    console.log(projectTimestamp);
+
+    project.chatMessage.forEach((message) => {
+      // Convertendo o array de timestamp para um objeto Date
+      const messageDate = new Date(
+        Date.UTC(
+          message.timestamp[0],
+          message.timestamp[1] - 1,
+          message.timestamp[2],
+          message.timestamp[3],
+          message.timestamp[4],
+          message.timestamp[5],
+          message.timestamp[6] / 1000000
+        )
+      );
+
+      // Comparando as datas
+      if (messageDate > projectTimestamp) {
+        count++;
+      }
+    });
+
+    setUnreadMessages(count);
+  };
+
+  useEffect(() => {
+    if (project && project.chatMessage) {
+      getUnreadMessages();
+    }
+  }, [project, projectTimestamps]);
+
+  console.log(unreadMessages);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -129,13 +203,40 @@ function ProjectDetails() {
       >
         <button
           onClick={() => {
+            const currentlyOpen = isChatOpen;
             setIsChatOpen(!isChatOpen);
+            if (currentlyOpen) {
+              const projectId = project.id;
+              const now = new Date();
+              const localTimestamp = new Date(
+                now.getTime() - now.getTimezoneOffset() * 60000
+              ).toISOString();
+              console.log(localTimestamp);
+              setProjectTimestamp(projectId, localTimestamp);
+            }
           }}
         >
           <SiGooglemessages size={60} />
+          {unreadMessages > 0 && (
+            <div className="absolute top-0 right-0 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+              {unreadMessages}
+            </div>
+          )}
         </button>
       </div>
-      {isChatOpen && <GroupProjectChat photos={userImages} users={team} messages={project.chatMessage} />}
+      {isChatOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <GroupProjectChat
+            photos={userImages}
+            users={team}
+            messages={project.chatMessage}
+          />
+        </motion.div>
+      )}
     </div>
   );
 }
