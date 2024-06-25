@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
@@ -24,8 +24,32 @@ function ProjectDetails() {
   const setProjectTimestamp = useUserStore(
     (state) => state.setProjectTimestamp
   );
+  const isChatOpenRef = useRef(isChatOpen);
+
+  useEffect(() => {
+    isChatOpenRef.current = isChatOpen;
+  }, [isChatOpen]);
 
   console.log(projectId);
+
+  useEffect(() => {
+    console.log("in3");
+    console.log(isChatOpenRef.current);
+    return () => {
+      console.log(isChatOpenRef.current);
+      if (isChatOpenRef.current && project && project.id != null) {
+        console.log("in");
+        const projectId = project.id;
+        const now = new Date();
+        const localTimestamp = new Date(
+          now.getTime() - now.getTimezoneOffset() * 60000
+        ).toISOString();
+        setProjectTimestamp(projectId, localTimestamp);
+        console.log(localTimestamp);
+      }
+      console.log("in2");
+    };
+  }, [project]);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -94,11 +118,22 @@ function ProjectDetails() {
   const getUnreadMessages = () => {
     const projectTimestamp = new Date(projectTimestamps[projectId]);
     let count = 0;
+    console.log(projectTimestamp);
 
     project.chatMessage.forEach((message) => {
       // Convertendo o array de timestamp para um objeto Date
-      const messageDate = new Date(Date.UTC(message.timestamp[0], message.timestamp[1] - 1, message.timestamp[2], message.timestamp[3], message.timestamp[4], message.timestamp[5], message.timestamp[6] / 1000000));
-    
+      const messageDate = new Date(
+        Date.UTC(
+          message.timestamp[0],
+          message.timestamp[1] - 1,
+          message.timestamp[2],
+          message.timestamp[3],
+          message.timestamp[4],
+          message.timestamp[5],
+          message.timestamp[6] / 1000000
+        )
+      );
+
       // Comparando as datas
       if (messageDate > projectTimestamp) {
         count++;
@@ -106,7 +141,7 @@ function ProjectDetails() {
     });
 
     setUnreadMessages(count);
-  }
+  };
 
   useEffect(() => {
     if (project && project.chatMessage) {
@@ -168,13 +203,14 @@ function ProjectDetails() {
       >
         <button
           onClick={() => {
+            const currentlyOpen = isChatOpen;
             setIsChatOpen(!isChatOpen);
-            if (!isChatOpen) {
+            if (currentlyOpen) {
               const projectId = project.id;
-             
               const now = new Date();
-              
-              const localTimestamp = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString();
+              const localTimestamp = new Date(
+                now.getTime() - now.getTimezoneOffset() * 60000
+              ).toISOString();
               console.log(localTimestamp);
               setProjectTimestamp(projectId, localTimestamp);
             }
