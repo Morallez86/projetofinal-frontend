@@ -23,7 +23,7 @@ import useApiStore from "../Stores/ApiStore";
 import WebSocketProjChat from "../WebSocketProjChat";
 import { useEffect } from "react";
 
-function GroupProjectChat({ photos, users, messages: initialMessages }) {
+function GroupProjectChat({ photos, users, messages: initialMessages, changeMesssages }) {
   const [isSeparated, setIsSeparated] = useState(false);
   const token = useUserStore((state) => state.token);
   const apiUrl = useApiStore((state) => state.apiUrl);
@@ -47,6 +47,17 @@ function GroupProjectChat({ photos, users, messages: initialMessages }) {
 
   const onMessageChat = (message) => {
     setMessages((prevMessages) => [...prevMessages,
+      (message = {
+        content: message.content,
+        senderUsername: message.senderUsername,
+        senderId: message.senderId,
+        senderOnline: message.senderOnline,
+        projectId: message.projectId, 
+        timestamp: message.timestamp,
+  }),
+    ]);
+
+    changeMesssages((prevMessages) => [...prevMessages,
       (message = {
         content: message.content,
         senderUsername: message.senderUsername,

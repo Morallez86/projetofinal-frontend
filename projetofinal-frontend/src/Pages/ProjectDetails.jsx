@@ -25,6 +25,7 @@ function ProjectDetails() {
     (state) => state.setProjectTimestamp
   );
   const isChatOpenRef = useRef(isChatOpen);
+  const[messagesAlone, setMessagesAlone] = useState([]);
 
   useEffect(() => {
     isChatOpenRef.current = isChatOpen;
@@ -71,6 +72,7 @@ function ProjectDetails() {
         setProject(data);
         setTasks(data.tasks || []); // Ensure tasks is an array
         setTeam(data.userProjectDtos || []);
+        setMessagesAlone(data.chatMessage || []);
         console.log(data);
         console.log(data.chatMessage);
         if (data.chatMessage) {
@@ -120,7 +122,7 @@ function ProjectDetails() {
     let count = 0;
     console.log(projectTimestamp);
 
-    project.chatMessage.forEach((message) => {
+    messagesAlone.forEach((message) => {
       // Convertendo o array de timestamp para um objeto Date
       const messageDate = new Date(
         Date.UTC(
@@ -144,10 +146,10 @@ function ProjectDetails() {
   };
 
   useEffect(() => {
-    if (project && project.chatMessage) {
+    if (project && messagesAlone) {
       getUnreadMessages();
     }
-  }, [project, projectTimestamps]);
+  }, [project, projectTimestamps, messagesAlone]);
 
   console.log(unreadMessages);
 
@@ -233,7 +235,8 @@ function ProjectDetails() {
           <GroupProjectChat
             photos={userImages}
             users={team}
-            messages={project.chatMessage}
+            messages={messagesAlone}
+            changeMesssages={setMessagesAlone}
           />
         </motion.div>
       )}
