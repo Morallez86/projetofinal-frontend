@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import DataTable from "react-data-table-component";
 import { TextInput } from "flowbite-react";
+import { FcInvite } from "react-icons/fc";
 
 // Helper function to convert the date array to a JS Date object
 const formatDate = (dateArray) => {
@@ -30,6 +31,22 @@ const getStatusString = (statusValue) => {
   }
 };
 
+// Helper function to get skills as a comma-separated string
+const getSkillsString = (skills) => {
+  if (!Array.isArray(skills)) {
+    return "No skills";
+  }
+  return skills.map(skill => skill.name).join(", ");
+};
+
+// Helper function to get interests as a comma-separated string
+const getInterestsString = (interests) => {
+  if (!Array.isArray(interests)){
+    return "No interests";
+  }
+  return interests.map(interests => interests.name).join(", ");
+} 
+
 function AllProjectsTable({
   data,
   loading,
@@ -52,18 +69,42 @@ function AllProjectsTable({
       sortable: true,
     },
     {
-      name: "Approved",
-      selector: (row) => (row.approved ? "Yes" : "No"),
+      name: "Skills",
+      selector: (row) => getSkillsString(row.skills),
       sortable: true,
+    },
+    {
+      name: "Interests",
+      selector: (row) => getInterestsString(row.interests),
+      sortable: true,
+    },
+    {
+      name: "Slots Open",
+      selector: (row) => row.maxUsers - row.userProjectDtos.length,
+      cell: (row) => {
+        const slotsOpen = row.maxUsers - row.userProjectDtos.length;
+        return (
+          <div className="flex justify-between items-center w-1/2">
+            <span>{slotsOpen}</span>
+            <FcInvite
+              className={`ml-2 cursor-pointer ${
+                slotsOpen <= 0 ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              onClick={
+                slotsOpen > 0
+                  ? () => {
+                      /* Your clickable logic here */
+                    }
+                  : null
+              }
+            />
+          </div>
+        );
+      },
     },
     {
       name: "Creation Date",
       selector: (row) => formatDate(row.creationDate),
-      sortable: true,
-    },
-    {
-      name: "Planned End Date",
-      selector: (row) => formatDate(row.plannedEndDate),
       sortable: true,
     },
   ];
@@ -82,7 +123,7 @@ function AllProjectsTable({
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg">
       <div className="mb-6 flex justify-between items-center">
-        <h2 className="text-2xl font-semibold">All Projects</h2>
+        <h2 className="text-3xl font-bold ml-3">All Projects</h2>
         <TextInput
           placeholder="Search by name..."
           onChange={handleFilter}

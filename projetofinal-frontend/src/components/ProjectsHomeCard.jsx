@@ -74,7 +74,9 @@ const ProjectsHomeCard = ({ project }) => {
     <>
       <Card className="p-4 flex flex-col border-gray-600 bg-gradient-to-r from-gray-400 via-gray-50 to-white rounded-lg shadow-md w-72 h-64">
         <div className="flex flex-col items-center flex-grow">
-          <h3 className="text-lg font-bold text-center">{project.title}</h3>
+          <h3 className="text-lg font-bold text-center overflow-hidden w-full">
+            {project.title}
+          </h3>
           <p className="text-sm text-black text-center mt-2 flex-grow overflow-hidden w-full">
             {project.description}
           </p>
@@ -87,21 +89,19 @@ const ProjectsHomeCard = ({ project }) => {
       </Card>
 
       <Modal show={showModal} size="lg" onClose={handleCloseModal}>
-        <Modal.Header>
-          <div className="flex items-center">
-            <h1 className="font-bold text-2xl ">{project.title}</h1>
+        <Modal.Body>
+          <div className="flex items-center overflow-hidden w-full mb-4">
+            <h1 className="font-bold text-2xl">{project.title}</h1>
             {getBadge(project.approved)}
           </div>
-        </Modal.Header>
-        <Modal.Body>
-          <div className="grid grid-cols-2 gap-4 ">
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <Label
                 htmlFor="title"
                 value="Title"
                 className="font-semibold text-base"
               />
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-gray-500 dark:text-gray-400 overflow-hidden w-full">
                 {project.title}
               </p>
             </div>

@@ -1,4 +1,5 @@
 import React from "react";
+import { TiTick, TiTimes } from "react-icons/ti";
 
 const NotificationModal = ({ isOpen, closeModal, notification }) => {
   if (!notification) {
@@ -38,7 +39,7 @@ const NotificationModal = ({ isOpen, closeModal, notification }) => {
     >
       <div className="modal-overlay fixed inset-0 bg-black opacity-50"></div>
       <div
-        className="modal-content bg-white opacity-90 w-full max-w-md p-4 rounded-lg shadow-lg"
+        className="modal-content bg-white opacity-95 border border-gray-600 bg-gradient-to-r from-gray-400 via-gray-50 to-gray-400  w-full max-w-md p-4 rounded-lg shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-xl font-bold mb-4">Notification Details</h2>
