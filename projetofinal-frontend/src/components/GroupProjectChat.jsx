@@ -87,7 +87,7 @@ function GroupProjectChat({ photos, users, messages: initialMessages }) {
             messageData.timestamp = messageData.timestamp.slice(0, 5);
           }
           console.log(messageData);
-          setMessages((prevMessages) => [...prevMessages, messageData]);
+          {/*setMessages((prevMessages) => [...prevMessages, messageData]);*/}
           console.log("msg created");
         } else {
           console.log("msg not created", response.status);
