@@ -72,6 +72,8 @@ const LayoutWrapper = () => {
         fetchUnreadCounts();
       } else if (message.type === "notification") {
         fetchUnreadCounts();
+      } else if (message.type === "refresh"){
+        fetchUnreadCounts();
       }
     };
 

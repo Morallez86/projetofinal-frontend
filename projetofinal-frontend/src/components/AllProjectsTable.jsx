@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import DataTable from "react-data-table-component";
 import { TextInput } from "flowbite-react";
 import { FcInvite } from "react-icons/fc";
+import useApiStore from "../Stores/ApiStore";
+import useUserStore from "../Stores/UserStore";
 
 // Helper function to convert the date array to a JS Date object
 const formatDate = (dateArray) => {
@@ -36,16 +38,16 @@ const getSkillsString = (skills) => {
   if (!Array.isArray(skills)) {
     return "No skills";
   }
-  return skills.map(skill => skill.name).join(", ");
+  return skills.map((skill) => skill.name).join(", ");
 };
 
 // Helper function to get interests as a comma-separated string
 const getInterestsString = (interests) => {
-  if (!Array.isArray(interests)){
+  if (!Array.isArray(interests)) {
     return "No interests";
   }
-  return interests.map(interests => interests.name).join(", ");
-} 
+  return interests.map((interest) => interest.name).join(", ");
+};
 
 function AllProjectsTable({
   data,
@@ -57,6 +59,51 @@ function AllProjectsTable({
   onChangeRowsPerPage,
   rowsPerPage,
 }) {
+  const [filterText, setFilterText] = useState("");
+  const apiUrl = useApiStore((state) => state.apiUrl);
+  const token = useUserStore((state) => state.token);
+
+  const handleFilter = (e) => {
+    setFilterText(e.target.value);
+  };
+
+  const filteredItems = data.filter(
+    (item) =>
+      item.title && item.title.toLowerCase().includes(filterText.toLowerCase())
+  );
+
+  const handleInviteClick = async (projectId) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to send an invitation?"
+    );
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`${apiUrl}/notifications`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          type: "300",
+          projectId: projectId,
+        }),
+      });
+
+      if (response.ok) {
+        alert("Invitation sent successfully");
+      } else {
+        alert("Failed to send invitation");
+      }
+    } catch (error) {
+      console.error("Error sending invitation:", error);
+      alert("An error occurred while sending the invitation");
+    }
+  };
+
   const columns = [
     {
       name: "Project Name",
@@ -90,13 +137,7 @@ function AllProjectsTable({
               className={`ml-2 cursor-pointer ${
                 slotsOpen <= 0 ? "opacity-50 cursor-not-allowed" : ""
               }`}
-              onClick={
-                slotsOpen > 0
-                  ? () => {
-                      /* Your clickable logic here */
-                    }
-                  : null
-              }
+              onClick={slotsOpen > 0 ? () => handleInviteClick(row.id) : null}
             />
           </div>
         );
@@ -108,17 +149,6 @@ function AllProjectsTable({
       sortable: true,
     },
   ];
-
-  const [filterText, setFilterText] = useState("");
-
-  const filteredItems = data.filter(
-    (item) =>
-      item.title && item.title.toLowerCase().includes(filterText.toLowerCase())
-  );
-
-  const handleFilter = (e) => {
-    setFilterText(e.target.value);
-  };
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg">

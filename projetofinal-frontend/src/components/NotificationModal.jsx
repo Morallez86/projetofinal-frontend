@@ -1,7 +1,16 @@
 import React from "react";
+import { useState } from "react";
 import { TiTick, TiTimes } from "react-icons/ti";
+import { Button, Label } from "flowbite-react";
+import useApiStore from "../Stores/ApiStore";
+import useUserStore from "../Stores/UserStore";
 
 const NotificationModal = ({ isOpen, closeModal, notification }) => {
+  const apiUrl = useApiStore.getState().apiUrl;
+  const token = useUserStore((state) => state.token);
+  const [successMessage, setSuccessMessage] = useState("");
+  console.log(notification)
+
   if (!notification) {
     return null;
   }
@@ -30,6 +39,64 @@ const NotificationModal = ({ isOpen, closeModal, notification }) => {
   const formattedDate = formatDateForInput(notification.timestamp);
   const formattedTime = formatTimeForInput(notification.timestamp);
 
+  const handleApprove = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/notifications/approval`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          id: notification.id,
+          projectId: notification.projectId,
+          receiverId: notification.receiverId,
+          approval: true,
+        }),
+      });
+
+      if (response.ok) {
+        setTimeout(() => {
+          closeModal();
+          setSuccessMessage(true);
+        }, 3000);
+      } else {
+        console.error("Failed to approve notification");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const handleReject = async () => {
+    try {
+      const response = await fetch(`${apiUrl}/notifications/approval`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          id: notification.id,
+          projectId: notification.projectId,
+          receiverId: notification.receiverId,
+          approval: false,
+        }),
+      });
+
+      if (response.ok) {
+        setTimeout(() => {
+          closeModal();
+          setSuccessMessage(true);
+        }, 3000);
+      } else {
+        console.error("Failed to reject notification");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   return (
     <div
       className={`fixed inset-0 ${
@@ -39,7 +106,7 @@ const NotificationModal = ({ isOpen, closeModal, notification }) => {
     >
       <div className="modal-overlay fixed inset-0 bg-black opacity-50"></div>
       <div
-        className="modal-content bg-white opacity-95 border border-gray-600 bg-gradient-to-r from-gray-400 via-gray-50 to-gray-400  w-full max-w-md p-4 rounded-lg shadow-lg"
+        className="modal-content bg-white opacity-95 border border-gray-600 bg-gradient-to-r from-gray-400 via-gray-50 to-gray-400  w-full max-w-md p-6 rounded-lg shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-xl font-bold mb-4">Notification Details</h2>
@@ -55,12 +122,33 @@ const NotificationModal = ({ isOpen, closeModal, notification }) => {
         <div className="mb-2">
           <strong>Seen:</strong> {notification.seen ? "Yes" : "No"}
         </div>
-        <button
-          onClick={closeModal}
-          className="bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400"
-        >
-          Close
-        </button>
+        {successMessage === true && (
+          <div className="mb-2 ml-4 flex items-center col-span-full">
+            <Label
+              htmlFor="success"
+              value="A notification was sent"
+              className="mb-2 text-green-700"
+            />
+          </div>
+        )}
+        <div className="flex mt-4">
+          <div className="flex-grow flex space-x-2">
+            <Button color="success" onClick={handleApprove}>
+              <TiTick size={20} />
+            </Button>
+            <Button color="failure" onClick={handleReject}>
+              <TiTimes size={20} />
+            </Button>
+          </div>
+          <div className="ml-auto">
+            <button
+              onClick={closeModal}
+              className="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-400"
+            >
+              Close
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

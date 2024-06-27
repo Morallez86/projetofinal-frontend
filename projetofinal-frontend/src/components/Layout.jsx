@@ -37,9 +37,6 @@ function Layout({
   }, [projectTimestamps]);
 
 
-  console.log(unreadMessages);
-  console.log(unreadNotifications);
-
   let userId, username;
   if (token) {
     try {
