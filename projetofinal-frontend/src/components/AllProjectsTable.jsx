@@ -140,7 +140,10 @@ function AllProjectsTable({
   ];
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-lg">
+    <div className="p-6 border border-gray-600 bg-white rounded-lg">
+      <div className="mb-6 flex justify-between items-center">
+        <h1 className="text-3xl font-bold text-center ml-3">All Projects</h1>
+      </div>
       <DataTable
         columns={columns}
         data={data}

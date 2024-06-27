@@ -2,7 +2,8 @@ import React, { useEffect, useState, useCallback } from "react";
 import AllProjectsTable from "../Components/AllProjectsTable";
 import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
-import { TextInput, Button } from "flowbite-react";
+import { TextInput, Button, Select } from "flowbite-react";
+import { jwtDecode } from "jwt-decode";
 
 function AllprojectsProjectList() {
   const [projects, setProjects] = useState([]);
@@ -13,11 +14,18 @@ function AllprojectsProjectList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [skills, setSkills] = useState("");
   const [interests, setInterests] = useState("");
+  const [status, setStatus] = useState(""); // Added state for status filter
   const apiUrl = useApiStore.getState().apiUrl;
   const token = useUserStore((state) => state.token);
 
+  let currentUserRole;
+  if (token) {
+    const decodedToken = jwtDecode(token);
+    currentUserRole = decodedToken.role;
+  }
+
   const fetchProjects = useCallback(
-    async (searchTerm = "", skills = "", interests = "") => {
+    async (searchTerm = "", skills = "", interests = "", status = "") => {
       setLoading(true);
       let url = `${apiUrl}/projects?page=${page}&limit=${rowsPerPage}`;
       const params = new URLSearchParams();
@@ -30,6 +38,9 @@ function AllprojectsProjectList() {
       }
       if (interests) {
         params.append("interests", interests);
+      }
+      if (status) {
+        params.append("status", status);
       }
 
       if (params.toString()) {
@@ -66,12 +77,12 @@ function AllprojectsProjectList() {
   );
 
   useEffect(() => {
-    fetchProjects(searchTerm, skills, interests);
+    fetchProjects(searchTerm, skills, interests, status);
   }, [fetchProjects, page, rowsPerPage]);
 
   const handleSearch = () => {
     setPage(1); // Reset to the first page for new searches
-    fetchProjects(searchTerm, skills, interests);
+    fetchProjects(searchTerm, skills, interests, status);
   };
 
   const downloadPdf = async () => {
@@ -129,6 +140,18 @@ function AllprojectsProjectList() {
             onChange={(e) => setInterests(e.target.value)}
             className="w-1/4"
           />
+          <Select
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            className="w-1/4"
+          >
+            <option value="">All Statuses</option>
+            <option value="100">PLANNING</option>
+            <option value="200">READY</option>
+            <option value="300">IN PROGRESS</option>
+            <option value="400">FINISHED</option>
+            <option value="500">CANCELLED</option>
+          </Select>
           <Button onClick={handleSearch} className="ml-2">
             Search
           </Button>
@@ -145,12 +168,13 @@ function AllprojectsProjectList() {
           }
           rowsPerPage={rowsPerPage}
         />
-        <button
-          onClick={downloadPdf}
-          className="mt-4 p-2 bg-blue-500 text-white rounded"
-        >
+        {currentUserRole === 200 ?(
+                  <Button onClick={downloadPdf} className="mt-4 p-2  text-white ">
           Download PDF
-        </button>
+        </Button>
+        ): (
+          <div></div>
+        )}
       </div>
     </div>
   );
