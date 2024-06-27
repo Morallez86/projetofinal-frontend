@@ -2,8 +2,11 @@ import React, { useEffect } from "react";
 
 function WebSocketProjChat(projectId, token, onMessageChat, reopenSocket) {
 
+  
+
   useEffect(() => {
     const connectWebSocket = () => {
+      
       if (token && projectId) {
         const socket = new WebSocket(
           `ws://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/websocket/projectChat/${projectId}/${token}`
@@ -31,11 +34,6 @@ function WebSocketProjChat(projectId, token, onMessageChat, reopenSocket) {
 
         socket.onclose = () => {
           console.log("WebSocket disconnected");
-          {
-            /* if (reopenSocket) {
-            setTimeout(connectWebSocket, 1000); 
-          }*/
-          }
         };
 
         socket.onerror = (error) => {
@@ -48,7 +46,7 @@ function WebSocketProjChat(projectId, token, onMessageChat, reopenSocket) {
 
     connectWebSocket();
 
-  }, [projectId, token, reopenSocket, onMessageChat]);
+  }, []);
 
   return null; 
 }

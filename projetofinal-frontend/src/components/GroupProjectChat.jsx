@@ -35,6 +35,7 @@ function GroupProjectChat({
   const { projectId } = useParams();
   const [messages, setMessages] = useState(initialMessages);
   const [reopenSocket, setReopenSocket] = useState(true);
+  const [firstMessage, setFirstMessage] = useState(true);
 
   const onMessageChat = (message) => {
     console.log("called");
@@ -61,6 +62,8 @@ function GroupProjectChat({
         timestamp: message.timestamp,
       }),
     ]);
+
+    setFirstMessage(false);
   };
 
   WebSocketProjChat(projectId, token, onMessageChat, reopenSocket);
@@ -102,6 +105,10 @@ function GroupProjectChat({
             messageData.timestamp = messageData.timestamp.slice(0, 5);
           }
           console.log(messageData);
+          {/*!firstMessage
+            ? setMessages((prevMessages) => [...prevMessages, messageData])
+            : console.log("first msg");
+          !firstMessage ? changeParent((prevMessages) => [...prevMessages, messageData]) : console.log("first msg");*/}
 
           console.log("msg created");
         } else {
