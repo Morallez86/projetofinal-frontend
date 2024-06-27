@@ -31,8 +31,10 @@ function WebSocketProjChat(projectId, token, onMessageChat, reopenSocket) {
 
         socket.onclose = () => {
           console.log("WebSocket disconnected");
-          if (reopenSocket) {
+          {
+            /* if (reopenSocket) {
             setTimeout(connectWebSocket, 1000); 
+          }*/
           }
         };
 
