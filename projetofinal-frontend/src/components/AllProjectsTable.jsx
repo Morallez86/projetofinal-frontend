@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
 import DataTable from "react-data-table-component";
-import { TextInput } from "flowbite-react";
 import { FcInvite } from "react-icons/fc";
 import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
@@ -59,18 +58,8 @@ function AllProjectsTable({
   onChangeRowsPerPage,
   rowsPerPage,
 }) {
-  const [filterText, setFilterText] = useState("");
   const apiUrl = useApiStore((state) => state.apiUrl);
   const token = useUserStore((state) => state.token);
-
-  const handleFilter = (e) => {
-    setFilterText(e.target.value);
-  };
-
-  const filteredItems = data.filter(
-    (item) =>
-      item.title && item.title.toLowerCase().includes(filterText.toLowerCase())
-  );
 
   const handleInviteClick = async (projectId) => {
     const confirmed = window.confirm(
@@ -152,18 +141,9 @@ function AllProjectsTable({
 
   return (
     <div className="p-6 bg-white rounded-lg shadow-lg">
-      <div className="mb-6 flex justify-between items-center">
-        <h2 className="text-3xl font-bold ml-3">All Projects</h2>
-        <TextInput
-          placeholder="Search by name..."
-          onChange={handleFilter}
-          value={filterText}
-          className="w-1/4"
-        />
-      </div>
       <DataTable
         columns={columns}
-        data={filteredItems}
+        data={data}
         progressPending={loading}
         pagination={pagination}
         paginationServer={paginationServer}

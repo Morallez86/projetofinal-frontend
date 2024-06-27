@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import AllProjectsTable from "../Components/AllProjectsTable";
 import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
+import { TextInput, Button } from "flowbite-react";
 
 function AllprojectsProjectList() {
   const [projects, setProjects] = useState([]);
@@ -9,12 +10,32 @@ function AllprojectsProjectList() {
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [skills, setSkills] = useState("");
+  const [interests, setInterests] = useState("");
   const apiUrl = useApiStore.getState().apiUrl;
   const token = useUserStore((state) => state.token);
 
-  useEffect(() => {
-    const fetchProjects = async () => {
+  const fetchProjects = useCallback(
+    async (searchTerm = "", skills = "", interests = "") => {
       setLoading(true);
+      let url = `${apiUrl}/projects?page=${page}&limit=${rowsPerPage}`;
+      const params = new URLSearchParams();
+
+      if (searchTerm) {
+        params.append("searchTerm", searchTerm);
+      }
+      if (skills) {
+        params.append("skills", skills);
+      }
+      if (interests) {
+        params.append("interests", interests);
+      }
+
+      if (params.toString()) {
+        url += `&${params.toString()}`;
+      }
+
       try {
         const headers = {
           Accept: "*/*",
@@ -25,10 +46,7 @@ function AllprojectsProjectList() {
           headers.Authorization = `Bearer ${token}`;
         }
 
-        const response = await fetch(
-          `${apiUrl}/projects?page=${page}&limit=${rowsPerPage}`,
-          { headers }
-        );
+        const response = await fetch(url, { headers });
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -43,10 +61,18 @@ function AllprojectsProjectList() {
       } finally {
         setLoading(false);
       }
-    };
+    },
+    [apiUrl, page, rowsPerPage, token]
+  );
 
-    fetchProjects();
-  }, [page, rowsPerPage, apiUrl, token]);
+  useEffect(() => {
+    fetchProjects(searchTerm, skills, interests);
+  }, [fetchProjects, page, rowsPerPage]);
+
+  const handleSearch = () => {
+    setPage(1); // Reset to the first page for new searches
+    fetchProjects(searchTerm, skills, interests);
+  };
 
   const downloadPdf = async () => {
     try {
@@ -84,6 +110,29 @@ function AllprojectsProjectList() {
   return (
     <div className="flex flex-col min-h-screen">
       <div className="p-14">
+        <div className="flex items-center mb-4 space-x-2">
+          <TextInput
+            placeholder="Search by project name"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-1/4"
+          />
+          <TextInput
+            placeholder="Search by skills"
+            value={skills}
+            onChange={(e) => setSkills(e.target.value)}
+            className="w-1/4"
+          />
+          <TextInput
+            placeholder="Search by interests"
+            value={interests}
+            onChange={(e) => setInterests(e.target.value)}
+            className="w-1/4"
+          />
+          <Button onClick={handleSearch} className="ml-2">
+            Search
+          </Button>
+        </div>
         <AllProjectsTable
           data={projects}
           loading={loading}
