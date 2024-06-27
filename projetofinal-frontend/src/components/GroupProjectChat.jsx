@@ -20,17 +20,36 @@ import { Tooltip } from "react-tooltip";
 import useUserStore from "../Stores/UserStore";
 import { useParams } from "react-router-dom";
 import useApiStore from "../Stores/ApiStore";
-import WebSocketProjChat from "../WebSocketProjChat";
 import { useEffect } from "react";
+import WebSocketProjChat from "../WebSocketProjChat";
 
-function GroupProjectChat({ photos, users, messages: initialMessages, changeMesssages }) {
+
+function GroupProjectChat({ photos, users, messages: initialMessages}) {
   const [isSeparated, setIsSeparated] = useState(false);
   const token = useUserStore((state) => state.token);
   const apiUrl = useApiStore((state) => state.apiUrl);
   const { projectId } = useParams();
   const [messages, setMessages] = useState(initialMessages);
+  const [reopenSocket, setReopenSocket] = useState(true);
+ 
 
-  console.log(messages);
+  const onMessageChat = (message) => {
+    console.log("called");
+    setMessages((prevMessages) => [
+      ...prevMessages,
+      (message = {
+        content: message.content,
+        senderUsername: message.senderUsername,
+        senderId: message.senderId,
+        senderOnline: message.senderOnline,
+        projectId: message.projectId,
+        timestamp: message.timestamp,
+      }),
+    ]);
+  };
+
+  WebSocketProjChat(projectId, token, onMessageChat,reopenSocket);
+
 
   let userIdFromToken;
   let usernameFromToken;
@@ -45,34 +64,11 @@ function GroupProjectChat({ photos, users, messages: initialMessages, changeMess
     }
   }
 
-  const onMessageChat = (message) => {
-    setMessages((prevMessages) => [...prevMessages,
-      (message = {
-        content: message.content,
-        senderUsername: message.senderUsername,
-        senderId: message.senderId,
-        senderOnline: message.senderOnline,
-        projectId: message.projectId, 
-        timestamp: message.timestamp,
-  }),
-    ]);
-
-    changeMesssages((prevMessages) => [...prevMessages,
-      (message = {
-        content: message.content,
-        senderUsername: message.senderUsername,
-        senderId: message.senderId,
-        senderOnline: message.senderOnline,
-        projectId: message.projectId, 
-        timestamp: message.timestamp,
-  }),
-    ]);
-  };
+  
 
 
 
-
-  WebSocketProjChat(projectId, token, onMessageChat);
+  
 
   const handleSubmit = (message) => {
     fetch(`${apiUrl}/projects/createChatMsg`, {
@@ -98,7 +94,7 @@ function GroupProjectChat({ photos, users, messages: initialMessages, changeMess
             messageData.timestamp = messageData.timestamp.slice(0, 5);
           }
           console.log(messageData);
-          {/*setMessages((prevMessages) => [...prevMessages, messageData]);*/}
+       
           console.log("msg created");
         } else {
           console.log("msg not created", response.status);

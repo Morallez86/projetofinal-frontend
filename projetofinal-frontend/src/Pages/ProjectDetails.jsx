@@ -8,6 +8,7 @@ import ActivityLogs from "../Components/ActivityLogs";
 import { SiGooglemessages } from "react-icons/si";
 import GroupProjectChat from "../Components/GroupProjectChat";
 import { motion } from "framer-motion";
+import WebSocketProjChat from "../WebSocketProjChat";
 
 function ProjectDetails() {
   const { projectId } = useParams();
@@ -25,7 +26,26 @@ function ProjectDetails() {
     (state) => state.setProjectTimestamp
   );
   const isChatOpenRef = useRef(isChatOpen);
-  const[messagesAlone, setMessagesAlone] = useState([]);
+  const [messagesAlone, setMessagesAlone] = useState([]);
+  const [reopenSocket, setReopenSocket] = useState(true);
+  
+
+  const onMessageChat = (message) => {
+    console.log("called");
+    setMessagesAlone((prevMessages) => [
+      ...prevMessages,
+      (message = {
+        content: message.content,
+        senderUsername: message.senderUsername,
+        senderId: message.senderId,
+        senderOnline: message.senderOnline,
+        projectId: message.projectId,
+        timestamp: message.timestamp,
+      }),
+    ]);
+  };
+
+  WebSocketProjChat(projectId, token, onMessageChat,reopenSocket);
 
   useEffect(() => {
     isChatOpenRef.current = isChatOpen;
@@ -236,7 +256,7 @@ function ProjectDetails() {
             photos={userImages}
             users={team}
             messages={messagesAlone}
-            changeMesssages={setMessagesAlone}
+            
           />
         </motion.div>
       )}
