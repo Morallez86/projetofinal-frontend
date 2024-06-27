@@ -23,15 +23,18 @@ import useApiStore from "../Stores/ApiStore";
 import { useEffect } from "react";
 import WebSocketProjChat from "../WebSocketProjChat";
 
-
-function GroupProjectChat({ photos, users, messages: initialMessages}) {
+function GroupProjectChat({
+  photos,
+  users,
+  messages: initialMessages,
+  changeParent,
+}) {
   const [isSeparated, setIsSeparated] = useState(false);
   const token = useUserStore((state) => state.token);
   const apiUrl = useApiStore((state) => state.apiUrl);
   const { projectId } = useParams();
   const [messages, setMessages] = useState(initialMessages);
   const [reopenSocket, setReopenSocket] = useState(true);
- 
 
   const onMessageChat = (message) => {
     console.log("called");
@@ -46,10 +49,21 @@ function GroupProjectChat({ photos, users, messages: initialMessages}) {
         timestamp: message.timestamp,
       }),
     ]);
+
+    changeParent((prevMessages) => [
+      ...prevMessages,
+      (message = {
+        content: message.content,
+        senderUsername: message.senderUsername,
+        senderId: message.senderId,
+        senderOnline: message.senderOnline,
+        projectId: message.projectId,
+        timestamp: message.timestamp,
+      }),
+    ]);
   };
 
-  WebSocketProjChat(projectId, token, onMessageChat,reopenSocket);
-
+  WebSocketProjChat(projectId, token, onMessageChat, reopenSocket);
 
   let userIdFromToken;
   let usernameFromToken;
@@ -63,12 +77,6 @@ function GroupProjectChat({ photos, users, messages: initialMessages}) {
       console.error("Invalid token", error);
     }
   }
-
-  
-
-
-
-  
 
   const handleSubmit = (message) => {
     fetch(`${apiUrl}/projects/createChatMsg`, {
@@ -94,7 +102,7 @@ function GroupProjectChat({ photos, users, messages: initialMessages}) {
             messageData.timestamp = messageData.timestamp.slice(0, 5);
           }
           console.log(messageData);
-       
+
           console.log("msg created");
         } else {
           console.log("msg not created", response.status);
@@ -190,7 +198,7 @@ function GroupProjectChat({ photos, users, messages: initialMessages}) {
         <MessageList>
           {messages.map((msg, index) => {
             const currentMsgDate = convertTimestampToDate(msg.timestamp);
-        
+
             const prevMsgDate =
               index > 0
                 ? convertTimestampToDate(messages[index - 1].timestamp)

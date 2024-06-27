@@ -256,7 +256,7 @@ function ProjectDetails() {
             photos={userImages}
             users={team}
             messages={messagesAlone}
-            
+            changeParent = {setMessagesAlone}
           />
         </motion.div>
       )}
