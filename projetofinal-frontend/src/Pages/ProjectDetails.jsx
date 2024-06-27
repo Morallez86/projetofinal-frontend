@@ -28,7 +28,7 @@ function ProjectDetails() {
   const isChatOpenRef = useRef(isChatOpen);
   const [messagesAlone, setMessagesAlone] = useState([]);
   const [reopenSocket, setReopenSocket] = useState(true);
-  
+
 
   const onMessageChat = (message) => {
     console.log("called");
@@ -43,9 +43,13 @@ function ProjectDetails() {
         timestamp: message.timestamp,
       }),
     ]);
+
+    if (!isChatOpen) {
+      setUnreadMessages((prevCount) => prevCount + 1);
+    }
   };
 
-  WebSocketProjChat(projectId, token, onMessageChat,reopenSocket);
+  WebSocketProjChat(projectId, token, onMessageChat, reopenSocket);
 
   useEffect(() => {
     isChatOpenRef.current = isChatOpen;
@@ -165,11 +169,11 @@ function ProjectDetails() {
     setUnreadMessages(count);
   };
 
-  useEffect(() => {
+  {/*useEffect(() => {
     if (project && messagesAlone) {
       getUnreadMessages();
     }
-  }, [project, projectTimestamps, messagesAlone]);
+  }, [messagesAlone]);*/}
 
   console.log(unreadMessages);
 
@@ -256,7 +260,7 @@ function ProjectDetails() {
             photos={userImages}
             users={team}
             messages={messagesAlone}
-            changeParent = {setMessagesAlone}
+            changeParent={setMessagesAlone}
           />
         </motion.div>
       )}
