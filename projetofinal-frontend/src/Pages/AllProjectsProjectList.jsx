@@ -14,7 +14,7 @@ function AllprojectsProjectList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [skills, setSkills] = useState("");
   const [interests, setInterests] = useState("");
-  const [status, setStatus] = useState(""); // Added state for status filter
+  const [status, setStatus] = useState("");
   const apiUrl = useApiStore.getState().apiUrl;
   const token = useUserStore((state) => state.token);
 

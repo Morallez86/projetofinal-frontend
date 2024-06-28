@@ -21,9 +21,8 @@ function UsersGrid() {
   const [selectedWorkplace, setSelectedWorkplace] = useState("");
   const [selectedSkills, setSelectedSkills] = useState("");
   const [selectedInterests, setSelectedInterests] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
-  const [selectedUser, setSelectedUser] = useState(null); // State to store the selected user
-
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [selectedUser, setSelectedUser] = useState(null); 
   const workplaces = useWorkplaceStore((state) => state.workplaces);
   const skills = useSkillStore((state) => state.skills);
   const interests = useInterestStore((state) => state.interests);
