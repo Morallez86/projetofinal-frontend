@@ -8,6 +8,7 @@ import ActivityLogs from "../Components/ActivityLogs";
 import { SiGooglemessages } from "react-icons/si";
 import GroupProjectChat from "../Components/GroupProjectChat";
 import { motion } from "framer-motion";
+import WebSocketProjChat from "../WebSocketProjChat";
 
 function ProjectDetails() {
   const { projectId } = useParams();
@@ -25,6 +26,30 @@ function ProjectDetails() {
     (state) => state.setProjectTimestamp
   );
   const isChatOpenRef = useRef(isChatOpen);
+  const [messagesAlone, setMessagesAlone] = useState([]);
+  const [reopenSocket, setReopenSocket] = useState(true);
+
+
+  const onMessageChat = (message) => {
+    console.log("called");
+    setMessagesAlone((prevMessages) => [
+      ...prevMessages,
+      (message = {
+        content: message.content,
+        senderUsername: message.senderUsername,
+        senderId: message.senderId,
+        senderOnline: message.senderOnline,
+        projectId: message.projectId,
+        timestamp: message.timestamp,
+      }),
+    ]);
+
+    if (!isChatOpen) {
+      setUnreadMessages((prevCount) => prevCount + 1);
+    }
+  };
+
+  WebSocketProjChat(projectId, token, onMessageChat, reopenSocket);
 
   useEffect(() => {
     isChatOpenRef.current = isChatOpen;
@@ -71,6 +96,7 @@ function ProjectDetails() {
         setProject(data);
         setTasks(data.tasks || []); // Ensure tasks is an array
         setTeam(data.userProjectDtos || []);
+        setMessagesAlone(data.chatMessage || []);
         console.log(data);
         console.log(data.chatMessage);
         if (data.chatMessage) {
@@ -120,7 +146,7 @@ function ProjectDetails() {
     let count = 0;
     console.log(projectTimestamp);
 
-    project.chatMessage.forEach((message) => {
+    messagesAlone.forEach((message) => {
       // Convertendo o array de timestamp para um objeto Date
       const messageDate = new Date(
         Date.UTC(
@@ -143,11 +169,11 @@ function ProjectDetails() {
     setUnreadMessages(count);
   };
 
-  useEffect(() => {
-    if (project && project.chatMessage) {
+  {/*useEffect(() => {
+    if (project && messagesAlone) {
       getUnreadMessages();
     }
-  }, [project, projectTimestamps]);
+  }, [messagesAlone]);*/}
 
   console.log(unreadMessages);
 
@@ -233,7 +259,8 @@ function ProjectDetails() {
           <GroupProjectChat
             photos={userImages}
             users={team}
-            messages={project.chatMessage}
+            messages={messagesAlone}
+            changeParent={setMessagesAlone}
           />
         </motion.div>
       )}
