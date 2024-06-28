@@ -65,6 +65,7 @@ function ComponentesComponents() {
           filterText={filterText}
           setFilterText={setFilterText}
           context={"components"}
+          getComponents={getComponents}
         />
       </div>
     </div>
