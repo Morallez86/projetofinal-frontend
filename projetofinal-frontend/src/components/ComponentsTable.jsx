@@ -51,16 +51,16 @@ function ComponentsTable({
   };
 
   return (
-    <div className="p-6 bg-white rounded-lg h-[44rem] shadow-lg">
+    <div className="p-6 border border-gray-600 bg-white rounded-lg">
       <div className="mb-6 flex justify-between items-center">
-        <h2 className="text-2xl font-semibold">
+        <h1 className="text-3xl font-bold text-center ml-3">
           {" "}
           {context === "components"
             ? "Components"
             : context === "resources"
             ? "Resources"
             : ""}
-        </h2>
+        </h1>
         <TextInput
           placeholder="Search by name, brand, supplier or identifier..."
           onKeyDown={handleKeyDown}
