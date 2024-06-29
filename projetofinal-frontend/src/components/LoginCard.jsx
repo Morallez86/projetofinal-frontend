@@ -38,6 +38,31 @@ function LoginCard() {
   const setUsername = useUserStore((state) => state.setUsername);
   const setUserId = useUserStore((state) => state.setUserId);
 
+  const fetchGreeting = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/greetings",
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Erro na requisição: " + response.statusText);
+      }
+
+      const data = await response.json();
+      console.log(data);
+     
+    } catch (error) {
+      console.error("Erro ao buscar a saudação:", error.message);
+      throw error;
+    }
+  };
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -92,7 +117,7 @@ function LoginCard() {
         setTimeout(() => {
           setOpenPopUp(false);
           setEmailRecoverySuccess(false);
-        }, 3000); 
+        }, 3000);
       } else {
         console.log("Email could not be sent");
         setEmailRecoveryError(true);
@@ -132,6 +157,15 @@ function LoginCard() {
         console.log(token);
         storeTokenAndRole(token);
         console.log("Successful login");
+        fetchGreeting()
+          .then((greeting) => {
+            console.log("Saudação mostrada:", greeting);
+            // Atualize o estado do componente ou exiba a saudação na interface
+          })
+          .catch((error) => {
+            console.error("Erro ao buscar a saudação:", error.message);
+            // Trate o erro, exiba uma mensagem na interface, etc.
+          });
         navigate("/myProjects");
       } else {
         console.log("Unexpected response status:", response.status);
