@@ -8,7 +8,17 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
   const token = useUserStore((state) => state.token);
   const apiUrl = useApiStore((state) => state.apiUrl);
 
-  const [formData, setFormData] = useState(data);
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    brand: "",
+    supplier: "",
+    identifier: "",
+    contact: "",
+    observation: "",
+
+    ...data,
+  });
 
   let isAdmin = false;
   if (token) {
@@ -26,9 +36,14 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
 
   const handleSave = async () => {
     const endpoint = context === "resources" ? "/resources" : "/components";
+    const method = formData.id ? "PUT" : "POST";
+    const url = formData.id
+      ? `${apiUrl}${endpoint}/${formData.id}`
+      : `${apiUrl}${endpoint}`;
+
     try {
-      const response = await fetch(`${apiUrl}${endpoint}`, {
-        method: "PUT",
+      const response = await fetch(url, {
+        method,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -38,9 +53,9 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
 
       if (response.ok) {
         alert(
-          `${
-            context === "resources" ? "Resource" : "Component"
-          } updated successfully`
+          `${context === "resources" ? "Resource" : "Component"} ${
+            formData.id ? "updated" : "created"
+          } successfully`
         );
         onClose();
       } else {
@@ -49,11 +64,13 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
       }
     } catch (error) {
       console.error(
-        `Error updating ${context === "resources" ? "resource" : "component"}:`,
+        `Error ${formData.id ? "updating" : "creating"} ${
+          context === "resources" ? "resource" : "component"
+        }:`,
         error
       );
       alert(
-        `An error occurred while updating the ${
+        `An error occurred while ${formData.id ? "updating" : "creating"} the ${
           context === "resources" ? "resource" : "component"
         }`
       );
@@ -69,6 +86,20 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
       </Modal.Header>
       <Modal.Body>
         <div className="grid grid-cols-2 gap-4 items-center justify-center">
+          <div className="mt-4">
+            <Label htmlFor="name" value="name" />
+            {isAdmin ? (
+              <TextInput
+                id="name"
+                value={formData.name}
+                onChange={handleChange}
+              />
+            ) : (
+              <p className="font-normal text-gray-700 dark:text-gray-400">
+                {formData.name}
+              </p>
+            )}
+          </div>
           <div className="mt-4">
             <Label htmlFor="description" value="Description" />
             {isAdmin ? (

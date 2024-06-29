@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import ComponentsTable from "../Components/ComponentsTable";
 import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
+import { useEffect, useState } from "react";
+import { Button } from "flowbite-react";
+import ComponentResourceCardDetails from "../Components/ComponentResourceCardDetails";
 
 function ComponentsResources() {
   const apiUrl = useApiStore((state) => state.apiUrl);
@@ -12,6 +15,7 @@ function ComponentsResources() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [loading, setLoading] = useState(true);
   const [filterText, setFilterText] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     getResources();
@@ -48,9 +52,17 @@ function ComponentsResources() {
     }
   };
 
+  const handleModalClose = () => {
+    setShowModal(false);
+    getResources(); // Refresh the data after creation
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       <div className="p-14">
+        <Button className="mb-4" onClick={() => setShowModal(true)}>
+          Create New Resource
+        </Button>
         <ComponentsTable
           data={resources}
           loading={loading}
@@ -68,6 +80,13 @@ function ComponentsResources() {
           getResources={getResources}
         />
       </div>
+      {showModal && (
+        <ComponentResourceCardDetails
+          data={{}} // Pass empty data for creation
+          context="resources"
+          onClose={handleModalClose}
+        />
+      )}
     </div>
   );
 }
