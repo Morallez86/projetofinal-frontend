@@ -9,14 +9,15 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
   const apiUrl = useApiStore((state) => state.apiUrl);
 
   const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    brand: "",
-    supplier: "",
-    identifier: "",
-    contact: "",
-    observation: "",
-
+    id: data.id || "",
+    name: data.name || "",
+    description: data.description || "",
+    brand: data.brand || "",
+    supplier: data.supplier || "",
+    identifier: data.identifier || "",
+    contact: data.contact || "",
+    observation: data.observation || "",
+    projectNames: data.projectNames || [],
     ...data,
   });
 
@@ -37,10 +38,7 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
   const handleSave = async () => {
     const endpoint = context === "resources" ? "/resources" : "/components";
     const method = formData.id ? "PUT" : "POST";
-    const url = formData.id
-      ? `${apiUrl}${endpoint}/${formData.id}`
-      : `${apiUrl}${endpoint}`;
-
+    const url = `${apiUrl}${endpoint}`;
     try {
       const response = await fetch(url, {
         method,
@@ -86,123 +84,77 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
       </Modal.Header>
       <Modal.Body>
         <div className="grid grid-cols-2 gap-4 items-center justify-center">
-          <div className="mt-4">
-            <Label htmlFor="name" value="name" />
-            {isAdmin ? (
+          <div className="-mt-8">
+            <Label htmlFor="name" value="Name" />
               <TextInput
                 id="name"
-                value={formData.name}
+                value={formData.name || ""}
                 onChange={handleChange}
               />
-            ) : (
-              <p className="font-normal text-gray-700 dark:text-gray-400">
-                {formData.name}
-              </p>
-            )}
           </div>
-          <div className="mt-4">
+          <div>
             <Label htmlFor="description" value="Description" />
-            {isAdmin ? (
               <Textarea
                 id="description"
-                value={formData.description}
+                value={formData.description || ""}
                 rows={3}
                 onChange={handleChange}
               />
-            ) : (
-              <p className="font-normal text-gray-700 dark:text-gray-400">
-                {formData.description}
-              </p>
-            )}
           </div>
           <div className="mt-4">
             <Label htmlFor="brand" value="Brand" />
-            {isAdmin ? (
               <TextInput
                 id="brand"
-                value={formData.brand}
+                value={formData.brand || ""}
                 onChange={handleChange}
               />
-            ) : (
-              <p className="font-normal text-gray-700 dark:text-gray-400">
-                {formData.brand}
-              </p>
-            )}
           </div>
           <div className="mt-4">
             <Label htmlFor="supplier" value="Supplier" />
-            {isAdmin ? (
               <TextInput
                 id="supplier"
-                value={formData.supplier}
+                value={formData.supplier || ""}
                 onChange={handleChange}
               />
-            ) : (
-              <p className="font-normal text-gray-700 dark:text-gray-400">
-                {formData.supplier}
-              </p>
-            )}
           </div>
           <div className="mt-4">
             <Label htmlFor="identifier" value="Identifier" />
-            {isAdmin ? (
               <TextInput
                 id="identifier"
-                value={formData.identifier}
+                value={formData.identifier || ""}
                 onChange={handleChange}
               />
-            ) : (
-              <p className="font-normal text-gray-700 dark:text-gray-400">
-                {formData.identifier}
-              </p>
-            )}
           </div>
           <div className="mt-4">
             <Label htmlFor="contact" value="Contact" />
-            {isAdmin ? (
-              <TextInput
-                id="contact"
-                value={formData.contact}
-                onChange={handleChange}
-              />
-            ) : (
-              <p className="font-normal text-gray-700 dark:text-gray-400">
-                {formData.contact}
-              </p>
-            )}
+            <TextInput
+              id="contact"
+              value={formData.contact || ""}
+              onChange={handleChange}
+            />
           </div>
           <div className="mt-4 mb-4">
             <Label htmlFor="observation" value="Observation" />
-            {isAdmin ? (
-              <Textarea
-                id="observation"
-                value={formData.observation}
-                rows={3}
-                onChange={handleChange}
-              />
-            ) : (
-              <p className="font-normal text-gray-700 dark:text-gray-400">
-                {formData.observation}
-              </p>
-            )}
+            <Textarea
+              id="observation"
+              value={formData.observation || ""}
+              rows={3}
+              onChange={handleChange}
+            />
           </div>
           {context === "resources" && (
-            <div className="mt-4 mb-4">
-              <Label htmlFor="associationNumber" value="Association Number" />
+            <div className="-mt-10 mb-4">
+              <Label htmlFor="projectNames" value="Project Names" />
               <p className="font-normal text-gray-700 dark:text-gray-400">
-                {formData.projectIds != null
-                  ? formData.projectIds.length
-                  : "No association"}
+                {formData.projectNames.join(", ")}
               </p>
             </div>
           )}
         </div>
       </Modal.Body>
-      {isAdmin && (
-        <Modal.Footer>
-          <Button onClick={handleSave}>Save</Button>
-        </Modal.Footer>
-      )}
+      <Modal.Footer>
+        <Button onClick={handleSave}>Save</Button>
+      </Modal.Footer>
     </Modal>
   );
 }
