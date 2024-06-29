@@ -1,0 +1,19 @@
+{
+    "email": "Email",
+    "emailPlaceholder": "Seu email",
+    "password": "Palavra-passe",
+    "passwordPlaceholder": "Sua palavra-passe",
+    "login": "Entrar",
+    "recoverPassword": "Esqueceu-se da palavra-passe?",
+    "back": "Voltar",
+    "emailFormatIncorrect": "Formato do email não é válido",
+    "emailNotSent": "Email não enviado",
+    "emailSent": "Email enviado",
+    "submit": "Entrar",
+    "cancel": "Cancelar",
+    "incorretInformation": "Informação incorreta! Tente novamente.",
+    "fillFields": "Por favor, preencha todos os campos.",
+    "networkError": "Erro de rede! Tente novamente.",
+    "remember": "RECORDAR",
+    "validateEmail": "Valide sua conta no seu email se ainda não o fez."
+    }

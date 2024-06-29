@@ -1,0 +1,19 @@
+{
+    "email": "Email",
+    "emailPlaceholder": "Your email",
+    "password": "Password",
+    "passwordPlaceholder": "Your Password",
+    "login": "Login",
+    "recoverPassword": "Forgot Password?",
+    "back": "Back",
+    "emailFormatIncorrect": "Email format is incorrect",
+    "emailNotSent": "Email not sent",
+    "emailSent": "Email sent",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "incorretInformation": "Incorrect information! Try again.",
+    "fillFields": "Please, fill out all fields.",
+    "networkError": "Network error! Try again.",
+    "remember": "REMEMBER",
+    "validateEmail": "Validate your account in your email if you haven't already done so"
+    }
