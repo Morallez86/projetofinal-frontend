@@ -34,8 +34,10 @@ function ProjectCard({
   const { workplaces } = useWorkplaceStore();
   const [selectedWorkLocation, setSelectedWorkLocation] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const clearAllProjectDetails = useProjectStore((state) => state.clearAllProjectDetails);
 
+  const clearAllProjectDetails = useProjectStore(
+    (state) => state.clearAllProjectDetails
+  );
 
   const formatDateForBackend = (dateString) => {
     if (!dateString) {

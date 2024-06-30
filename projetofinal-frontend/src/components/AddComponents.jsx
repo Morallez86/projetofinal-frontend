@@ -28,7 +28,7 @@ function AddComponents({
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const getAllComponents = async () => {
+    const getAvailableComponents = async () => {
       if (!projectInfo.workplace.name) {
         setError("Please select a workplace first.");
         return;
@@ -36,7 +36,7 @@ function AddComponents({
 
       try {
         const response = await fetch(
-          `${apiUrl}/components?workplace=${projectInfo.workplace.id}`,
+          `${apiUrl}/components/availableGroupedByName?workplaceId=${projectInfo.workplace.id}`,
           {
             method: "GET",
             headers: {
@@ -50,7 +50,6 @@ function AddComponents({
         if (response.status === 200) {
           const data = await response.json();
           setComponents(data);
-          console.log(data);
         } else if (response.status === 404) {
           console.log("Components not found");
           setComponents([]);
@@ -60,21 +59,23 @@ function AddComponents({
       }
     };
 
-    getAllComponents();
+    getAvailableComponents();
   }, [apiUrl, token, projectInfo.workplace]);
 
   const handleInputChange = (value) => {
     setInputValue(value);
   };
 
-  console.log(components);
+  const generateUniqueId = () => {
+    return `component-${Math.random().toString(36).substr(2, 9)}`;
+  };
 
   const options = components.map((component) => ({
-    value: component.name,
-    label: component.name,
-    id: component.id,
+    value: component,
+    label: component,
+    id: generateUniqueId(),
     isDisabled: projectComponents.some(
-      (projectComponent) => projectComponent.name === component.name
+      (projectComponent) => projectComponent.name === component
     ),
   }));
 
@@ -96,11 +97,9 @@ function AddComponents({
 
     const data = [
       {
-        id: selectedComponent.id,
         name: selectedComponent.value,
       },
     ];
-    console.log(data);
 
     setProjectComponents([...projectComponents, ...data]);
     setAnimationPlayed(true);

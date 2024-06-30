@@ -17,7 +17,7 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
     identifier: data.identifier || "",
     contact: data.contact || "",
     observation: data.observation || "",
-    projectNames: data.projectNames || [],
+    ...(context === "resources" && { projectNames: data.projectNames || [] }),
     ...data,
   });
 
@@ -39,6 +39,15 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
     const endpoint = context === "resources" ? "/resources" : "/components";
     const method = formData.id ? "PUT" : "POST";
     const url = `${apiUrl}${endpoint}`;
+    console.log(formData);
+    console.log(url);
+    console.log(method);
+
+    const payload = { ...formData };
+    if (context !== "resources") {
+      delete payload.projectNames;
+    }
+
     try {
       const response = await fetch(url, {
         method,
@@ -46,7 +55,7 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
@@ -85,48 +94,72 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
       <Modal.Body>
         <div className="grid grid-cols-2 gap-4 items-center justify-center">
           <div className="-mt-8">
-            <Label htmlFor="name" value="Name" />
-              <TextInput
-                id="name"
-                value={formData.name || ""}
-                onChange={handleChange}
-              />
+            <Label
+              htmlFor="name"
+              value="Name"
+              className="font-semibold text-base"
+            />
+            <TextInput
+              id="name"
+              value={formData.name || ""}
+              onChange={handleChange}
+            />
           </div>
           <div>
-            <Label htmlFor="description" value="Description" />
-              <Textarea
-                id="description"
-                value={formData.description || ""}
-                rows={3}
-                onChange={handleChange}
-              />
+            <Label
+              htmlFor="description"
+              value="Description"
+              className="font-semibold text-base"
+            />
+            <Textarea
+              id="description"
+              value={formData.description || ""}
+              rows={3}
+              onChange={handleChange}
+            />
           </div>
           <div className="mt-4">
-            <Label htmlFor="brand" value="Brand" />
-              <TextInput
-                id="brand"
-                value={formData.brand || ""}
-                onChange={handleChange}
-              />
+            <Label
+              htmlFor="brand"
+              value="Brand"
+              className="font-semibold text-base"
+            />
+            <TextInput
+              id="brand"
+              value={formData.brand || ""}
+              onChange={handleChange}
+            />
           </div>
           <div className="mt-4">
-            <Label htmlFor="supplier" value="Supplier" />
-              <TextInput
-                id="supplier"
-                value={formData.supplier || ""}
-                onChange={handleChange}
-              />
+            <Label
+              htmlFor="supplier"
+              value="Supplier"
+              className="font-semibold text-base"
+            />
+            <TextInput
+              id="supplier"
+              value={formData.supplier || ""}
+              onChange={handleChange}
+            />
           </div>
           <div className="mt-4">
-            <Label htmlFor="identifier" value="Identifier" />
-              <TextInput
-                id="identifier"
-                value={formData.identifier || ""}
-                onChange={handleChange}
-              />
+            <Label
+              htmlFor="identifier"
+              value="Identifier"
+              className="font-semibold text-base"
+            />
+            <TextInput
+              id="identifier"
+              value={formData.identifier || ""}
+              onChange={handleChange}
+            />
           </div>
           <div className="mt-4">
-            <Label htmlFor="contact" value="Contact" />
+            <Label
+              htmlFor="contact"
+              value="Contact"
+              className="font-semibold text-base"
+            />
             <TextInput
               id="contact"
               value={formData.contact || ""}
@@ -134,7 +167,11 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
             />
           </div>
           <div className="mt-4 mb-4">
-            <Label htmlFor="observation" value="Observation" />
+            <Label
+              htmlFor="observation"
+              value="Observation"
+              className="font-semibold text-base"
+            />
             <Textarea
               id="observation"
               value={formData.observation || ""}
@@ -144,7 +181,11 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
           </div>
           {context === "resources" && (
             <div className="-mt-10 mb-4">
-              <Label htmlFor="projectNames" value="Project Names" />
+              <Label
+                htmlFor="projectNames"
+                value="On Projects:"
+                className="font-semibold text-base"
+              />
               <p className="font-normal text-gray-700 dark:text-gray-400">
                 {formData.projectNames.join(", ")}
               </p>
