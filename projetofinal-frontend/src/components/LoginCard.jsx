@@ -13,6 +13,11 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import useUserStore from "../Stores/UserStore";
 import useApiStore from "../Stores/ApiStore";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import i18n from "../Language/i18n";
+
+
 
 function LoginCard() {
   const apiUrl = useApiStore((state) => state.apiUrl);
@@ -26,6 +31,10 @@ function LoginCard() {
     email: "",
   });
 
+  const {t} = useTranslation();
+  const setLanguage = useUserStore((state) => state.setLanguage);
+
+
   const [loading, setLoading] = useState(false);
   const [warning, setWarning] = useState(0);
   const [openPopUp, setOpenPopUp] = useState(false);
@@ -38,6 +47,43 @@ function LoginCard() {
   const setUsername = useUserStore((state) => state.setUsername);
   const setUserId = useUserStore((state) => state.setUserId);
 
+  const fetchGreeting = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/greetings",
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Erro na requisição: " + response.statusText);
+      }
+
+      const data = await response.json();
+      console.log(data);
+
+      // Supondo que 'data.locale' seja uma string como 'en-AU'
+      // e você quer apenas 'en'
+      const languageCode = data.locale.substring(0, 2);
+      console.log(languageCode);
+      setLanguage(languageCode);
+
+      // Agora você pode usar 'languageCode' para mudar a linguagem da aplicação
+      i18n.changeLanguage(languageCode);
+    } catch (error) {
+      console.error("Erro ao buscar a saudação:", error.message);
+      throw error;
+    }
+  };
+
+  useEffect(() => {
+    fetchGreeting();
+  }, []);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -92,7 +138,7 @@ function LoginCard() {
         setTimeout(() => {
           setOpenPopUp(false);
           setEmailRecoverySuccess(false);
-        }, 3000); 
+        }, 3000);
       } else {
         console.log("Email could not be sent");
         setEmailRecoveryError(true);
@@ -164,7 +210,7 @@ function LoginCard() {
           <div className="mb-2 block">
             <Label
               htmlFor="email"
-              value="Email"
+              value={t('email')}
               className="font-semibold text-base"
             />
           </div>
@@ -172,7 +218,7 @@ function LoginCard() {
             id="email"
             name="email"
             type="email"
-            placeholder="Your email"
+            placeholder={t( 'emailPlaceholder')}
             value={formData.email}
             onChange={handleChange}
             onInvalid={handleInvalid}
@@ -182,7 +228,7 @@ function LoginCard() {
           <div className="mb-2 block">
             <Label
               htmlFor="password"
-              value="Password"
+              value={t('password')}
               className="font-semibold text-base"
             />
           </div>
@@ -190,19 +236,19 @@ function LoginCard() {
             id="password"
             type="password"
             name="password"
-            placeholder="Your password"
+            placeholder={t('passwordPlaceholder')}
             value={formData.password}
             onChange={handleChange}
           />
         </div>
         <Button onClick={handleSubmit} disabled={loading}>
-          {loading ? <Spinner size="sm" /> : "Submit"}
+          {loading ? <Spinner size="sm" /> : t('login')}
         </Button>
         <Button type="button" onClick={openEmailInput}>
-          Forgot password?
+          {t('recoverPassword')}
         </Button>
         <Button type="button" onClick={() => navigate("/")}>
-          Home
+          {t('back')}
         </Button>
       </div>
       <div className="flex flex-col gap-4"></div>
@@ -216,13 +262,13 @@ function LoginCard() {
         <Modal.Body>
           <div className="">
             <h3 className="mb-5 text-lg text-center font-bold text-gray-500 dark:text-gray-400">
-              Recover Password
+            {t('recoverPassword')}
             </h3>
             <div>
               <TextInput
                 id="emailRecovery"
                 type="email"
-                placeholder="Enter your email to recover your password"
+                placeholder={t('emailPlaceholder')}
                 icon={HiOutlineMail}
                 name="email"
                 onChange={handleChangeEmailRecovery}
@@ -232,25 +278,25 @@ function LoginCard() {
             <div className="mb-4 -ml-2">
               {warningEmailFormat === 1 && (
                 <Alert color="failure" icon={HiInformationCircle}>
-                  <span className="font-medium">Email format is incorrect</span>
+                  <span className="font-medium">{t('emailFormatIncorret')}</span>
                 </Alert>
               )}
               {emailRecoveryError && (
                 <Alert color="failure" icon={HiInformationCircle}>
-                  <span className="font-medium">Email could not be sent.</span>
+                  <span className="font-medium">{t('emailNotSent')}</span>
                 </Alert>
               )}
               {emailRecoverySuccess && (
                 <Alert color="success" icon={HiInformationCircle}>
                   <span className="font-medium">
-                    Email was sent successfully.
+                  {t('emailSent')}
                   </span>
                 </Alert>
               )}
             </div>
             <div className="flex justify-center gap-4">
               {!loading && (
-                <Button onClick={handleSubmitRecover}>Submit</Button>
+                <Button onClick={handleSubmitRecover}>{t('submit')}</Button>
               )}
               {loading && (
                 <Spinner
@@ -265,7 +311,7 @@ function LoginCard() {
                   cleanWarnings();
                 }}
               >
-                Cancel
+                {t('cancel')}
               </Button>
             </div>
           </div>
@@ -273,27 +319,27 @@ function LoginCard() {
       </Modal>
       {warning === 1 && (
         <Alert color="failure" icon={HiInformationCircle}>
-          <span className="font-medium">Incorrect information! Try again.</span>
+          <span className="font-medium">{t('incorrectInformation')}</span>
         </Alert>
       )}
       {warning === 2 && (
         <Alert color="failure" icon={HiInformationCircle}>
-          <span className="font-medium">Please fill out all fields.</span>
+          <span className="font-medium">{t('fillFields')}</span>
         </Alert>
       )}
       {warning === 3 && (
         <Alert color="failure" icon={HiInformationCircle}>
           <span className="font-medium">
-            Network error! Please try again later.
+          {t('networkError')}
           </span>
         </Alert>
       )}
       {warning === 1 && (
         <Alert color="warning" icon={HiInformationCircle} rounded>
           <span className="font-medium" style={{ textDecoration: "underline" }}>
-            REMEMBER!
+          {t('remember')}
           </span>{" "}
-          Validate your account in your email if you haven't already done so.
+          {t('validateEmail')}
         </Alert>
       )}
     </Card>

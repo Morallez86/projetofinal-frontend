@@ -15,6 +15,7 @@ import useWorkplaceStore from "../Stores/WorkplaceStore";
 import useUserStore from "../Stores/UserStore";
 import { FaStarOfLife } from "react-icons/fa";
 import useProjectStore from "../Stores/ProjectStore.js";
+import {useTranslation} from "react-i18next";
 
 function ProjectCard({
   openPopUpSkills,
@@ -36,6 +37,7 @@ function ProjectCard({
   const [successMessage, setSuccessMessage] = useState("");
   const clearAllProjectDetails = useProjectStore((state) => state.clearAllProjectDetails);
 
+  const {t} = useTranslation();
 
   const formatDateForBackend = (dateString) => {
     if (!dateString) {
@@ -127,7 +129,7 @@ function ProjectCard({
           <div className="mb-2 flex items-center">
             <Label
               htmlFor="title"
-              value="Title"
+              value={t("Title")}
               className="font-semibold text-base"
             />
             <FaStarOfLife className="text-red-500 ml-2 text-xs" />
@@ -144,7 +146,7 @@ function ProjectCard({
           <div className="mb-2 flex items-center">
             <Label
               htmlFor="startingDate"
-              value="Starting Date"
+              value={t("StartingDate")}
               className="font-semibold text-base"
             />
             <FaStarOfLife className="text-red-500 ml-2 text-xs" />
@@ -161,7 +163,7 @@ function ProjectCard({
           <div className="mb-2 flex items-center">
             <Label
               htmlFor="plannedEndDate"
-              value="Planned End Date"
+              value={t("PlannedEndDate")}
               className="font-semibold text-base"
             />
             <FaStarOfLife className="text-red-500 ml-2 text-xs" />
@@ -178,7 +180,7 @@ function ProjectCard({
           <div className="mb-2 flex items-center">
             <Label
               htmlFor="workplace"
-              value="Workplace"
+              value={t("Workplace")}
               className="font-semibold text-base"
             />
             <FaStarOfLife className="text-red-500 ml-2 text-xs" />
@@ -193,7 +195,7 @@ function ProjectCard({
             }}
           >
             <option value={JSON.stringify({ id: null, name: "" })} disabled>
-              Select Workplace
+              {t("SelectWorkplace")}
             </option>
             {workplaces.map((location) => (
               <option key={location.id} value={JSON.stringify(location)}>
@@ -206,7 +208,7 @@ function ProjectCard({
           <div className="mb-2 flex items-center">
             <Label
               htmlFor="maxUsers"
-              value="Max Users"
+              value={t("MaxUsers")}
               className="font-semibold text-base"
             />
           </div>
@@ -233,7 +235,7 @@ function ProjectCard({
             <div className="mb-2 flex items-center -mt-4">
               <Label
                 htmlFor="team"
-                value="Team"
+                value={t("Team")}
                 className="font-semibold text-base"
               />
               <div
@@ -252,12 +254,12 @@ function ProjectCard({
               </div>
               <Tooltip
                 anchorSelect="#icon-element7"
-                content="Add new user"
+                content={t("AddNewUser")}
                 place="top"
               />
               <Tooltip
                 anchorSelect="#icon-element-remove7"
-                content="Remove a user"
+                content={t("RemoveUser")}
                 place="top"
               />
             </div>
@@ -279,7 +281,7 @@ function ProjectCard({
                   </button>
                   <Tooltip
                     anchorSelect="#tip-all-users"
-                    content="Check all users"
+                    content={t("CheckAllUsers")}
                     place="top"
                   />
                 </div>
@@ -291,7 +293,7 @@ function ProjectCard({
           <div className="flex items-center">
             <Label
               htmlFor="skills"
-              value="Skills"
+              value={t("Skills")}
               className="font-semibold text-base"
             />
             <div
@@ -310,12 +312,12 @@ function ProjectCard({
             </div>
             <Tooltip
               anchorSelect="#icon-element2"
-              content="Add new skill"
+              content={t("AddNewSkill")}
               place="top"
             />
             <Tooltip
               anchorSelect="#icon-element-remove2"
-              content="Remove a skill"
+              content={t("RemoveSkill")}
               place="top"
             />
           </div>
@@ -336,7 +338,7 @@ function ProjectCard({
                   </button>
                   <Tooltip
                     anchorSelect="#tip-all-skills"
-                    content="Check all skills"
+                    content={t("CheckAllSkills")}
                     place="top"
                   />
                 </div>
@@ -349,7 +351,7 @@ function ProjectCard({
             <div className=" flex items-center">
               <Label
                 htmlFor="interests"
-                value="Interests"
+                value={t("Interests")}
                 className="font-semibold text-base"
               />
               <div
@@ -368,12 +370,12 @@ function ProjectCard({
               </div>
               <Tooltip
                 anchorSelect="#icon-element4"
-                content="Add new interest"
+                content={t("AddNewInterest")}
                 place="top"
               />
               <Tooltip
                 anchorSelect="#icon-element-remove4"
-                content="Remove an interest"
+                content={t("RemoveInterest")}
                 place="top"
               />
               <FaStarOfLife className="text-red-500 ml-2 text-xs" />
@@ -396,7 +398,7 @@ function ProjectCard({
                   </button>
                   <Tooltip
                     anchorSelect="#tip-all-interests"
-                    content="Check all interests"
+                    content={t("CheckAllInterests")}
                     place="top"
                   />
                 </div>
@@ -408,7 +410,7 @@ function ProjectCard({
           <div className="flex items-center">
             <Label
               htmlFor="components"
-              value="Components"
+              value={t("Components")}
               className="font-semibold text-base"
             />
             <div
@@ -427,12 +429,12 @@ function ProjectCard({
             </div>
             <Tooltip
               anchorSelect="#icon-element5"
-              content="Add new component"
+              content={t("AddNewComponent")}
               place="top"
             />
             <Tooltip
               anchorSelect="#icon-element-remove5"
-              content="Remove a component"
+              content={t("RemoveComponent")}
               place="top"
             />
           </div>
@@ -453,7 +455,7 @@ function ProjectCard({
                   </button>
                   <Tooltip
                     anchorSelect="#tip-all-components"
-                    content="Check all components"
+                    content={t("CheckAllComponents")}
                     place="top"
                   />
                 </div>
@@ -465,7 +467,7 @@ function ProjectCard({
           <div className="flex items-center">
             <Label
               htmlFor="resources"
-              value="Resources"
+              value={t("Resources")}
               className="font-semibold text-base"
             />
             <div
@@ -484,12 +486,12 @@ function ProjectCard({
             </div>
             <Tooltip
               anchorSelect="#icon-element6"
-              content="Add new resource"
+              content={t("AddNewResource")}
               place="top"
             />
             <Tooltip
               anchorSelect="#icon-element-remove6"
-              content="Remove a resource"
+              content={t("RemoveResource")}
               place="top"
             />
           </div>
@@ -510,7 +512,7 @@ function ProjectCard({
                   </button>
                   <Tooltip
                     anchorSelect="#tip-all-resources"
-                    content="Check all resources"
+                    content={t("CheckAllResources")}
                     place="top"
                   />
                 </div>
@@ -521,7 +523,7 @@ function ProjectCard({
           <div className="mb-2 flex items-center">
             <Label
               htmlFor="description"
-              value="Description"
+              value={t("Description")}
               className="font-semibold text-base"
             />
             <FaStarOfLife className="text-red-500 ml-2 text-xs" />
@@ -537,7 +539,7 @@ function ProjectCard({
           <div className="mb-2 flex items-center">
             <Label
               htmlFor="motivation"
-              value="Motivation"
+              value={t("Motivation")}
               className="font-semibold text-base"
             />
           </div>
@@ -553,20 +555,20 @@ function ProjectCard({
         <FaStarOfLife className="text-red-500 mr-2 text-xs" />
         <Label
           htmlFor="warning"
-          value="Inputs with this symbol are mandatory"
+          value={t("MandatoryFields")}
         />
       </div>
       {successMessage === true && (
         <div className="mb-2 ml-4 flex items-center col-span-full">
           <Label
             htmlFor="success"
-            value="Project created succefully"
+            value={t("ProjectCreatedSuccessfully")}
             className="mb-2 text-green-700"
           />
         </div>
       )}
       <Button onClick={handleSubmit} className="mt-4 mx-auto">
-        Create Project
+        {t("CreateProject")}
       </Button>
     </Card>
   );
