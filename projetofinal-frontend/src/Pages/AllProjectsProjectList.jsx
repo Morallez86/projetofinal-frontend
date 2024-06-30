@@ -4,6 +4,7 @@ import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
 import { TextInput, Button, Select } from "flowbite-react";
 import { jwtDecode } from "jwt-decode";
+import {useTranslation} from "react-i18next";
 
 function AllprojectsProjectList() {
   const [projects, setProjects] = useState([]);
@@ -17,6 +18,8 @@ function AllprojectsProjectList() {
   const [status, setStatus] = useState("");
   const apiUrl = useApiStore.getState().apiUrl;
   const token = useUserStore((state) => state.token);
+
+  const { t } = useTranslation();
 
   let currentUserRole;
   if (token) {
@@ -123,19 +126,19 @@ function AllprojectsProjectList() {
       <div className="p-14">
         <div className="flex items-center mb-4 space-x-2">
           <TextInput
-            placeholder="Search by project name"
+            placeholder={t("SearchByProjectName")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-1/4"
           />
           <TextInput
-            placeholder="Search by skills"
+            placeholder={t("SearchBySkills")}
             value={skills}
             onChange={(e) => setSkills(e.target.value)}
             className="w-1/4"
           />
           <TextInput
-            placeholder="Search by interests"
+            placeholder={t("SearchByInterests")}
             value={interests}
             onChange={(e) => setInterests(e.target.value)}
             className="w-1/4"
@@ -145,15 +148,15 @@ function AllprojectsProjectList() {
             onChange={(e) => setStatus(e.target.value)}
             className="w-1/4"
           >
-            <option value="">All Statuses</option>
-            <option value="100">PLANNING</option>
-            <option value="200">READY</option>
-            <option value="300">IN PROGRESS</option>
-            <option value="400">FINISHED</option>
-            <option value="500">CANCELLED</option>
+            <option value="">{t('AllStatuses')}</option>
+            <option value="100">{t('Planning')}</option>
+            <option value="200">{t('Ready')}</option>
+            <option value="300">{t('InProgress')}</option>
+            <option value="400">{t('Finished')}</option>
+            <option value="500">{t('Cancelled')}</option>
           </Select>
           <Button onClick={handleSearch} className="ml-2">
-            Search
+            {t("Search")}
           </Button>
         </div>
         <AllProjectsTable
@@ -170,7 +173,7 @@ function AllprojectsProjectList() {
         />
         {currentUserRole === 200 ? (
           <Button onClick={downloadPdf} className="mt-4 p-2  text-white ">
-            Download PDF
+            {t("DownloadPDF")}
           </Button>
         ) : (
           <div></div>

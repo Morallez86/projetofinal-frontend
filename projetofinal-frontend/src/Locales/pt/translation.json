@@ -75,5 +75,18 @@
   "RemoveResource": "Remover Recurso",
   "Description": "Descrição",
   "Motivation": "Motivação",
-  "MandatoryFields": "Campos com este simbolo são obrigatórios"
+  "MandatoryFields": "Campos com este simbolo são obrigatórios",
+  "SearchByProjectName": "Procurar por Nome do Projeto",
+  "SearchBySkills": "Procurar por Competências",
+  "SearchByInterests": "Procurar por Interesses",
+  "AllStatuses": "Todos os Estados",
+  "Planning": "A PLANEAR",
+  "Ready": "PRONTO",
+  "InProgress": "EM PROGRESSO",
+  "Finished": "FINALIZADO",
+  "Cancelled": "CANCELADO",
+  "Search": "Procurar",
+  "DownloadPDF": "Descarregar PDF",
+  "SlotsOpen": "Vagas Abertas",
+  "AreYouSureYouWantToSendAnInvitationToThisProject": "Tem certeza de que deseja enviar um convite para este projeto?"
 }

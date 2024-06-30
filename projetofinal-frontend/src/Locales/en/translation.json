@@ -75,5 +75,19 @@
   "RemoveResource": "Remove Resource",
   "Description": "Description",
   "Motivation": "Motivation",
-  "MandatoryFields": "Inputs with this symbol are mandatory"
+  "MandatoryFields": "Inputs with this symbol are mandatory",
+  "SearchByProjectName": "Search by Project Name",
+  "SearchBySkills": "Search by Skills",
+  "SearchByInterests": "Search by Interests",
+  "AllStatuses": "All Statuses",
+  "Planning": "PLANNING",
+  "Ready": "READY",
+  "InProgress": "IN PROGRESS",
+  "Finished": "FINISHED",
+  "Cancelled": "CANCELED",
+  "Search": "Search",
+  "DownloadPDF": "Download PDF",
+  "SlotsOpen": "Slots Open",
+  "AreYouSureYouWantToSendAnInvitationToThisProject": "Are you sure you want to send an invitation to this project?"
+  
 }
