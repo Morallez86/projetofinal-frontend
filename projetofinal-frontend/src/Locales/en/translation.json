@@ -88,6 +88,20 @@
   "Search": "Search",
   "DownloadPDF": "Download PDF",
   "SlotsOpen": "Slots Open",
-  "AreYouSureYouWantToSendAnInvitationToThisProject": "Are you sure you want to send an invitation to this project?"
+  "AreYouSureYouWantToSendAnInvitationToThisProject": "Are you sure you want to send an invitation to this project?",
+  "SearchByUsername": "Search by Username",
+  "SelectSkills": "Select Skills",
+  "SelectInterests": "Select Interests",
+  "Profile": "Profile",
+  "Message": "Message",
+  "From": "From",
+  "To": "To",
+  "Content": "Content",
+  "Seen": "Seen",
+  "Typeyourmessagehere": "Type your message here",
+  "Send": "Send",
+  "Close": "Close",
+  "MessageDetails": "Message Details",
+  "SendMessage": "Send Message"
   
 }

@@ -9,6 +9,7 @@ import useInterestStore from "../Stores/InterestStore";
 import basePhoto from "../Assets/092.png";
 import MessageModal from "../Components/MessageModal";
 import "../index.css";
+import {useTranslation} from "react-i18next";
 
 function UsersGrid() {
   const apiUrl = useApiStore((state) => state.apiUrl);
@@ -26,6 +27,8 @@ function UsersGrid() {
   const workplaces = useWorkplaceStore((state) => state.workplaces);
   const skills = useSkillStore((state) => state.skills);
   const interests = useInterestStore((state) => state.interests);
+
+  const { t } = useTranslation();
 
   const fetchUserImages = useCallback(
     async (users) => {
@@ -146,7 +149,7 @@ function UsersGrid() {
         <div className="flex items-center mb-4">
           <TextInput
             type="text"
-            placeholder="Search by username"
+            placeholder={t("SearchByUsername")}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-1/3"
@@ -157,7 +160,7 @@ function UsersGrid() {
             onChange={(e) => handleWorkplaceChange(e.target.value)}
             className="mx-2"
           >
-            <option value="">Select workplace</option>
+            <option value="">{t('SelectWorkplace')}</option>
             {workplaces.map((workplace) => (
               <option key={workplace.id} value={workplace.name}>
                 {workplace.name}
@@ -170,7 +173,7 @@ function UsersGrid() {
             onChange={(e) => handleSkillsChange(e.target.value)}
             className="mx-2"
           >
-            <option value="">Select skills</option>
+            <option value="">{t('SelectSkills')}</option>
             {skills.map((skill) => (
               <option key={skill.id} value={skill.name}>
                 {skill.name}
@@ -183,14 +186,14 @@ function UsersGrid() {
             onChange={(e) => handleInterestsChange(e.target.value)}
             className="mx-2"
           >
-            <option value="">Select interests</option>
+            <option value="">{t('SelectInterests')}</option>
             {interests.map((interest) => (
               <option key={interest.id} value={interest.name}>
                 {interest.name}
               </option>
             ))}
           </select>
-          <Button onClick={handleSearch}>Search</Button>
+          <Button onClick={handleSearch}>{t('Search')}</Button>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {users.map((user) => (
@@ -214,11 +217,11 @@ function UsersGrid() {
                     size="sm"
                     onClick={() => navigate(`/users/${user.id}`)}
                   >
-                    Profile
+                    {t('Profile')}
                   </Button>
                 ) : (
                   <Button size="sm" disabled>
-                    Profile
+                    {t('Profile')}
                   </Button>
                 )}
                 <button
@@ -226,7 +229,7 @@ function UsersGrid() {
                   onClick={() => openMessageModal(user)}
                 >
                   <span className="flex items-stretch transition-all duration-200 rounded-md px-3 py-1.5 text-sm">
-                    Message
+                    {t('Message')}
                   </span>
                 </button>
               </div>

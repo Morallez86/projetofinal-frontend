@@ -88,5 +88,19 @@
   "Search": "Procurar",
   "DownloadPDF": "Descarregar PDF",
   "SlotsOpen": "Vagas Abertas",
-  "AreYouSureYouWantToSendAnInvitationToThisProject": "Tem certeza de que deseja enviar um convite para este projeto?"
+  "AreYouSureYouWantToSendAnInvitationToThisProject": "Tem certeza de que deseja enviar um convite para este projeto?",
+  "SearchByUsername": "Procurar por Nome de Utilizador",
+  "SelectSkills": "Selecionar Competências",
+  "SelectInterests": "Selecionar Interesses",
+  "Profile": "Perfil",
+  "Message": "Mensagem",
+  "From": "De",
+  "To": "Para",
+  "Content": "Conteúdo",
+  "Seen": "Vista",
+  "Typeyourmessagehere": "Digite sua mensagem aqui",
+  "Send": "Enviar",
+  "Close": "Fechar",
+  "MessageDetails": "Detalhes da Mensagem",
+  "SendMessage": "Enviar Mensagem"
 }
