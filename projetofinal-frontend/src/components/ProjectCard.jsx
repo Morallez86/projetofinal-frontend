@@ -195,7 +195,7 @@ function ProjectCard({
             }}
           >
             <option value={JSON.stringify({ id: null, name: "" })} disabled>
-              Select Workplace
+              {t("SelectWorkplace")}
             </option>
             {workplaces.map((location) => (
               <option key={location.id} value={JSON.stringify(location)}>
