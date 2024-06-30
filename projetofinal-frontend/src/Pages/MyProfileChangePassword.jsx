@@ -103,7 +103,7 @@ function MyProfileChangePassword() {
               </Alert>
             )}
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? <Spinner size="sm" /> : "Change Password"}
+              {loading ? <Spinner size="sm" /> : t('ChangePassword')}
             </Button>
           </form>
         </Card>
