@@ -32,6 +32,7 @@ function LoginCard() {
   });
 
   const {t} = useTranslation();
+  const setLanguage = useUserStore((state) => state.setLanguage);
 
 
   const [loading, setLoading] = useState(false);
@@ -70,6 +71,7 @@ function LoginCard() {
       // e você quer apenas 'en'
       const languageCode = data.locale.substring(0, 2);
       console.log(languageCode);
+      setLanguage(languageCode);
 
       // Agora você pode usar 'languageCode' para mudar a linguagem da aplicação
       i18n.changeLanguage(languageCode);

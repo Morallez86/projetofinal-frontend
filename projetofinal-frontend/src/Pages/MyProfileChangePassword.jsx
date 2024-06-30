@@ -6,6 +6,8 @@ import useUserStore from "../Stores/UserStore";
 import useApiStore from "../Stores/ApiStore";
 import useForm from "../Hooks/useForm";
 import useChangePassword from "../Hooks/useChangePassword";
+import { useTranslation } from "react-i18next";
+
 
 function MyProfileChangePassword() {
   const { token } = useUserStore();
@@ -22,25 +24,27 @@ function MyProfileChangePassword() {
     }
   };
 
+  const {t} = useTranslation();
+
   return (
     <div className="flex flex-col min-h-screen items-center">
       <div className="p-14">
         <Card className="max-w-sm w-full mx-4 border-gray-600 bg-gradient-to-r from-gray-400 via-gray-50 to-white rounded-lg">
           <h1 className="text-3xl font-bold text-center mb-6">
-            Change Password
+            {t("ChangePassword")}
           </h1>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <Label
                 htmlFor="oldPassword"
-                value="Old Password"
+                value= {t("ActualPassword")}
                 className="font-semibold text-base"
               />
               <TextInput
                 id="oldPassword"
                 name="oldPassword"
                 type="password"
-                placeholder="Your old password"
+                placeholder={t('YourActualPassword')}
                 value={formValues.oldPassword}
                 onChange={handleChange}
                 className="peer"
@@ -49,14 +53,14 @@ function MyProfileChangePassword() {
             <div className="mb-4">
               <Label
                 htmlFor="newPassword"
-                value="New Password"
+                value={t("NewPassword")}
                 className="font-semibold text-base"
               />
               <TextInput
                 id="newPassword"
                 name="newPassword"
                 type="password"
-                placeholder="Your new password"
+                placeholder={t('YourNewPassword')}
                 value={formValues.newPassword}
                 onChange={handleChange}
                 className="peer"
@@ -65,14 +69,14 @@ function MyProfileChangePassword() {
             <div className="mb-4">
               <Label
                 htmlFor="confirmNewPassword"
-                value="Confirm New Password"
+                value={t("ConfirmNewPassword")}
                 className="font-semibold text-base"
               />
               <TextInput
                 id="confirmNewPassword"
                 name="confirmNewPassword"
                 type="password"
-                placeholder="Confirm your new password"
+                placeholder={t('ConfirmYourNewPassword')}
                 value={formValues.confirmNewPassword}
                 onChange={handleChange}
                 className="peer"
@@ -85,9 +89,7 @@ function MyProfileChangePassword() {
                 className="mb-4"
               >
                 <span>
-                  Password must be at least 8 characters long, contain an
-                  uppercase letter, a lowercase letter, a number, and a special
-                  character.
+                 {t("PasswordStrengthWarning")}
                 </span>
               </Alert>
             )}
@@ -97,7 +99,7 @@ function MyProfileChangePassword() {
                 icon={HiInformationCircle}
                 className="mb-4"
               >
-                <span>Password and confirmed password do not match</span>
+                <span> {t('PasswordMatchWarning')} </span>
               </Alert>
             )}
             <Button type="submit" className="w-full" disabled={loading}>
