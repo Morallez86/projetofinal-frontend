@@ -7,6 +7,9 @@ const useProjectInfo = () => {
   const projectComponents = useProjectStore((state) => state.projectComponents);
   const projectResources = useProjectStore((state) => state.projectResources);
   const projectUsers = useProjectStore((state) => state.projectUsers);
+  const clearProjectComponents = useProjectStore(
+    (state) => state.clearProjectComponents
+  );
 
   const [projectInfo, setProjectInfo] = useState({
     title: "",
@@ -49,6 +52,7 @@ const useProjectInfo = () => {
   };
 
   const handleWorkplaceChange = (e) => {
+    clearProjectComponents();
     const selectedWorkplace = JSON.parse(e.target.value);
     setProjectInfo((prevInfo) => ({
       ...prevInfo,

@@ -8,8 +8,8 @@ import useUserStore from "../Stores/UserStore";
 const NotificationModal = ({ isOpen, closeModal, notification }) => {
   const apiUrl = useApiStore.getState().apiUrl;
   const token = useUserStore((state) => state.token);
-  const [successMessage, setSuccessMessage] = useState("");
-  console.log(notification)
+  const [successMessage, setSuccessMessage] = useState(false);
+  console.log(notification);
 
   if (!notification) {
     return null;
@@ -85,9 +85,10 @@ const NotificationModal = ({ isOpen, closeModal, notification }) => {
       });
 
       if (response.ok) {
+        setSuccessMessage(true);
         setTimeout(() => {
           closeModal();
-          setSuccessMessage(true);
+          setSuccessMessage(false);
         }, 3000);
       } else {
         console.error("Failed to reject notification");
@@ -131,23 +132,25 @@ const NotificationModal = ({ isOpen, closeModal, notification }) => {
             />
           </div>
         )}
-        <div className="flex mt-4">
-          <div className="flex-grow flex space-x-2">
-            <Button color="success" onClick={handleApprove}>
-              <TiTick size={20} />
-            </Button>
-            <Button color="failure" onClick={handleReject}>
-              <TiTimes size={20} />
-            </Button>
+        {notification.type === "MANAGING" && !notification.seen && (
+          <div className="flex mt-4">
+            <div className="flex-grow flex space-x-2">
+              <Button color="success" onClick={handleApprove}>
+                <TiTick size={20} />
+              </Button>
+              <Button color="failure" onClick={handleReject}>
+                <TiTimes size={20} />
+              </Button>
+            </div>
           </div>
-          <div className="ml-auto">
-            <button
-              onClick={closeModal}
-              className="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-400"
-            >
-              Close
-            </button>
-          </div>
+        )}
+        <div className="mt-4 ml-auto">
+          <button
+            onClick={closeModal}
+            className="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-400"
+          >
+            Close
+          </button>
         </div>
       </div>
     </div>

@@ -168,11 +168,11 @@ function AllprojectsProjectList() {
           }
           rowsPerPage={rowsPerPage}
         />
-        {currentUserRole === 200 ?(
-                  <Button onClick={downloadPdf} className="mt-4 p-2  text-white ">
-          Download PDF
-        </Button>
-        ): (
+        {currentUserRole === 200 ? (
+          <Button onClick={downloadPdf} className="mt-4 p-2  text-white ">
+            Download PDF
+          </Button>
+        ) : (
           <div></div>
         )}
       </div>

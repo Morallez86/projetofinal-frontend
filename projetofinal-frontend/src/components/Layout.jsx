@@ -9,7 +9,7 @@ import { IoCreateOutline } from "react-icons/io5";
 import { CiSettings, CiBoxList } from "react-icons/ci";
 import { VscTools } from "react-icons/vsc";
 import { CgProfile } from "react-icons/cg";
-import { Avatar, Button } from "flowbite-react";
+import { Avatar } from "flowbite-react";
 import { MdWavingHand, MdOutlineMessage } from "react-icons/md";
 import { TbLogout2, TbLogin2 } from "react-icons/tb";
 import { IoIosNotificationsOutline } from "react-icons/io";

@@ -15,6 +15,8 @@ function ComponentsTable({
   rowsPerPage,
   setFilterText,
   context,
+  getComponents,
+  getResources,
 }) {
   console.log(data);
   const columns = [
@@ -47,6 +49,15 @@ function ComponentsTable({
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       setFilterText(searchKeyword);
+    }
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    if(context === "components"){
+      getComponents();
+    }else if(context ==="resources"){
+      getResources();
     }
   };
 
@@ -97,7 +108,7 @@ function ComponentsTable({
         <ComponentResourceCardDetails
           data={selectedRow}
           context={context}
-          onClose={() => setIsModalOpen(false)}
+          onClose={handleModalClose}
         />
       )}
     </div>

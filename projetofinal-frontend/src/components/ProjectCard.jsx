@@ -6,7 +6,7 @@ import {
   Textarea,
   Select,
 } from "flowbite-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tooltip } from "react-tooltip";
 import { createProject } from "../Services/projectService";
 import { LuPlusCircle } from "react-icons/lu";
@@ -35,9 +35,15 @@ function ProjectCard({
   const { workplaces } = useWorkplaceStore();
   const [selectedWorkLocation, setSelectedWorkLocation] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const clearAllProjectDetails = useProjectStore((state) => state.clearAllProjectDetails);
 
+  const clearAllProjectDetails = useProjectStore(
+    (state) => state.clearAllProjectDetails
+  );
   const {t} = useTranslation();
+
+  useEffect(() => {
+    clearAllProjectDetails();
+  }, []);
 
   const formatDateForBackend = (dateString) => {
     if (!dateString) {
@@ -94,17 +100,6 @@ function ProjectCard({
       if (newProject) {
         console.log("Project created successfully");
         setSuccessMessage(true);
-
-        // Reset projectInfo state
-        handleChange({ target: { name: "title", value: "" } });
-        handleChange({ target: { name: "startingDate", value: "" } });
-        handleChange({ target: { name: "plannedEndDate", value: "" } });
-        handleChange({ target: { name: "description", value: "" } });
-        handleChange({ target: { name: "motivation", value: "" } });
-        handleChange({ target: { name: "interests", value: [] } });
-        handleChange({ target: { name: "skills", value: [] } });
-        handleChange({ target: { name: "components", value: [] } });
-        handleChange({ target: { name: "resources", value: [] } });
         setSelectedWorkLocation("");
         clearAllProjectDetails();
         handleChange({

@@ -61,9 +61,8 @@ const MessageModal = ({
       onClick={closeModal}
     >
       <div className="modal-overlay fixed inset-0 bg-black opacity-50"></div>
-
       <div
-        className="modal-content bg-white opacity-90 w-full max-w-md p-4 rounded-lg shadow-lg"
+        className="modal-content bg-white opacity-95 border border-gray-600 bg-gradient-to-r from-gray-400 via-gray-50 to-gray-400  w-full max-w-md p-6 rounded-lg shadow-lg"
         onClick={handleModalClick}
       >
         <h2 className="text-xl font-bold mb-4">
