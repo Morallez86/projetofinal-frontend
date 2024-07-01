@@ -7,6 +7,7 @@ import useApiStore from "../Stores/ApiStore.js";
 import AddedAnimation from "../Assets/Added.json";
 import Lottie from "react-lottie";
 import { TbLockFilled } from "react-icons/tb";
+import {useTranslation} from "react-i18next";
 
 function AddComponents({
   openPopUpComponent,
@@ -27,10 +28,12 @@ function AddComponents({
   const [showSuccessText, setShowSuccessText] = useState(false);
   const [error, setError] = useState("");
 
+  const {t} = useTranslation();
+
   useEffect(() => {
     const getAvailableComponents = async () => {
       if (!projectInfo.workplace.name) {
-        setError("Please select a workplace first.");
+        setError( t('PleaseSelectAWorkplaceFirst') );
         return;
       }
 
@@ -122,11 +125,11 @@ function AddComponents({
       <Modal.Body>
         <div className="flex flex-col items-center justify-center space-y-5 overflow-x-hidden overflow-y-hidden">
           <h3 className="text-lg font-bold text-gray-500 dark:text-gray-400">
-            Register Component
+            {t("AddComponents")}
           </h3>
           {error && <p className="text-red-500">{error}</p>}
           <div className="space-y-3">
-            <h4>Create new component or Choose one of the existing ones</h4>
+            <h4> {t('CreateNewComponentOrChooseOneOfTheExistingOnes')} </h4>
             <div className="flex items-start space-x-4 min-h-[25rem] relative">
               <div className="text center z-10">
                 <CreatableSelect
@@ -142,7 +145,7 @@ function AddComponents({
                       {option.isDisabled ? <TbLockFilled /> : null}
                     </div>
                   )}
-                  placeholder="Select/write component name"
+                  placeholder= {t('SearchComponents')}
                   value={selectedComponent}
                   isDisabled={!projectInfo.workplace}
                 />
@@ -178,7 +181,7 @@ function AddComponents({
                 </div>
                 {showSuccessText && (
                   <div className="animate-pulse text-green-500 font-bold absolute bottom-0">
-                    Added with success
+                    {t('ComponentAdded')}
                   </div>
                 )}
               </div>
@@ -188,7 +191,7 @@ function AddComponents({
                 onClick={handleSubmit}
                 disabled={!selectedComponent || !projectInfo.workplace}
               >
-                Add Component
+                {t('AddComponent')}
               </Button>
             </div>
           </div>

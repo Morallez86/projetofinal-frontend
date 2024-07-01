@@ -136,5 +136,15 @@
   "YouCanRemoveOneOrMoreInterestsAtTheSimeTime": "Pode remover um ou mais interesses ao mesmo tempo",
   "RemoveInterests": "Remover Interesses",
   "InterestRemoved": "Interesse removido com sucesso",
-  "SearchInterests": "Procurar Interesses"
+  "SearchInterests": "Procurar Interesses",
+  "AddComponents": "Adicionar Componentes",
+  "CreateNewComponentOrChooseOneOfTheExistingOnes": " Criar novo componente ou escolher um dos existentes",
+  "SearchComponents": "Procurar Componentes",
+  "AddComponent": "Adicionar Componente",
+  "PleaseSelectAWorkplaceFirst": "Por favor, selecione um local de trabalho primeiro",
+  "ComponentAdded": "Componente adicionado com sucesso",
+  "Removecomponents": "Remover componentes",
+  "You can remove one or more components at the same time": "Pode remover um ou mais componentes ao mesmo tempo",
+  "ComponentRemoved": "Componente removido com sucesso",
+  "Remove selected components": "Remover componentes selecionados"
 }
