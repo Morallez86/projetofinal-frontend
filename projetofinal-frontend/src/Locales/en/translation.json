@@ -114,6 +114,19 @@
   "Contact": "Contact",
   "Observation": "Observation",
   "OnProjects": "On Projects",
-  "CreateNewResource": "Create New Resource"
+  "CreateNewResource": "Create New Resource",
+  "NewProject": "New Project",
+  "addUsers": "Add Users",
+  "NoUsersFound": "No Users Found",
+  "SearchForAuserByTypingAtLeast3Letters": "Search For A user By Typing At Least 3 Letters",
+  "SearchForAUser": "Search For A User",
+  "RegisterSkill": "Register Skill",
+  "CreateOrChooseSkill": "Create or choose a skill",
+  "SelectCategory": "Select Category",
+  "SearchForASkill": "Search for a skill",
+  "SkillAdded": "Skill added successfully",
+  "RemoveSelectedSkills": "Remove Selected Skills",
+  "RemoveSucessfully": "Remove successfully",
+  "YouCanRemoveOneOrMoreSkillsAtTheSameTime": "You can remove one or more skills at the same time"
   
 }

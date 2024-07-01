@@ -118,7 +118,7 @@ function ProjectCard({
 
   return (
     <Card className="border-gray-600 bg-gradient-to-r from-gray-400 via-gray-75 to-white rounded-lg shadow-md w-3/4 h-auto mx-auto">
-      <h1 className="text-3xl font-bold text-center mb-6">New Project</h1>
+      <h1 className="text-3xl font-bold text-center mb-6">{t('NewProject')}</h1>
       <div className="grid grid-cols-3 gap-10 p-4">
         <div>
           <div className="mb-2 flex items-center">

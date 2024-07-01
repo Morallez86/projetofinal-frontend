@@ -5,6 +5,7 @@ import useProjectStore from "../Stores/ProjectStore";
 import useApiStore from "../Stores/ApiStore";
 import basePhoto from "../Assets/092.png";
 import { jwtDecode } from "jwt-decode";
+import {useTranslation} from "react-i18next";
 
 function AddUsers({ openPopUpUsers, closePopUpUsers, projectInfo }) {
   const token = useUserStore((state) => state.token);
@@ -21,6 +22,7 @@ function AddUsers({ openPopUpUsers, closePopUpUsers, projectInfo }) {
   const [userImages, setUserImages] = useState({});
   const [inputValue, setInputValue] = useState("");
   const [error, setError] = useState("");
+  const { t } = useTranslation();
 
   const handleSearch = async () => {
     if (inputValue.length >= 3) {
@@ -136,19 +138,19 @@ function AddUsers({ openPopUpUsers, closePopUpUsers, projectInfo }) {
       <Modal.Body>
         <div className="flex flex-col items-center justify-center space-y-5 overflow-x-hidden overflow-y-hidden">
           <h3 className="mb-5 text-lg font-bold text-gray-500 dark:text-gray-400">
-            Add User
+            {t("addUsers")}
           </h3>
           <div className="space-y-3">
-            <h4>Search for a user by typing at least 3 letters</h4>
+            <h4>{t('SearchForAuserByTypingAtLeast3Letters')}</h4>
             <div className="flex items-center space-x-4">
               <TextInput
                 id="search"
                 type="text"
-                placeholder="Search for users"
+                placeholder={t('SearchForAUser')}
                 value={inputValue}
                 onChange={handleInputChange}
               />
-              <Button onClick={handleSearch}>Search</Button>
+              <Button onClick={handleSearch}>{t('Search')}</Button>
             </div>
             <div className="mt-4 w-full">
               {users.length > 0 ? (
@@ -181,7 +183,7 @@ function AddUsers({ openPopUpUsers, closePopUpUsers, projectInfo }) {
                   ))}
                 </ul>
               ) : (
-                <p className="text-gray-500">No users found</p>
+                <p className="text-gray-500">{t('NoUsersFound')}</p>
               )}
             </div>
             {error && <p className="text-red-500">{error}</p>}

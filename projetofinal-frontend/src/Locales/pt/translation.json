@@ -114,5 +114,18 @@
   "Contact": "Contato",
   "Observation": "Observação",
   "OnProjects": "Em Projetos",
-  "CreateNewResource": "Criar Novo Recurso"
+  "CreateNewResource": "Criar Novo Recurso",
+  "NewProject": "Novo Projeto",
+  "addUsers": "Adicionar utilizadores",
+  "NoUsersFound": "Nenhum utilizador encontrado",
+  "SearchForAuserByTypingAtLeast3Letters": "Procurar por um utilizador escrevendo pelo menos 3 letras",
+  "SearchForAUser": "Procurar por um utilizador",
+  "RegisterSkill": "Registar Competência",
+  "CreateOrChooseSkill": "Criar ou escolher uma competência",
+  "SelectCategory": "Selecionar Categoria",
+  "SearchForASkill": "Procurar por uma competência",
+  "SkillAdded": "Competência adicionada com sucesso",
+  "RemoveSelectedSkills": "Remover competências selecionadas",
+  "RemoveSucessfully": "Removido com sucesso",
+  "YouCanRemoveOneOrMoreSkillsAtTheSameTime": "Pode remover uma ou mais competências ao mesmo tempo"
 }
