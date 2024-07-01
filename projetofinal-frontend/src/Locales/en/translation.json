@@ -108,7 +108,12 @@
   "Brand": "Brand",
   "Supplier": "Supplier",
   "Identifier": "Identifier",
-  "SearchbyNameBrandSupplierIdentifier": "Search by Name, Brand, Supplier, Identifier..."
-
+  "SearchbyNameBrandSupplierIdentifier": "Search by Name, Brand, Supplier, Identifier...",
+  "ResourceInformation": "Resource Information",
+  "ComponentInformation": "Component Information",
+  "Contact": "Contact",
+  "Observation": "Observation",
+  "OnProjects": "On Projects",
+  "CreateNewResource": "Create New Resource"
   
 }

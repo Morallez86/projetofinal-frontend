@@ -3,10 +3,12 @@ import { Label, Modal, Button, TextInput, Textarea } from "flowbite-react";
 import { jwtDecode } from "jwt-decode";
 import useUserStore from "../Stores/UserStore";
 import useApiStore from "../Stores/ApiStore";
+import { useTranslation } from "react-i18next";
 
 function ComponentResourceCardDetails({ data, context, onClose }) {
   const token = useUserStore((state) => state.token);
   const apiUrl = useApiStore((state) => state.apiUrl);
+  const { t } = useTranslation();
 
   const [formData, setFormData] = useState({
     id: data.id || "",
@@ -88,15 +90,15 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
     <Modal show={true} onClose={onClose}>
       <Modal.Header>
         {context === "resources"
-          ? "Resource Information"
-          : "Component Information"}
+          ? t("ResourceInformation")
+          : t("ComponentInformation")}
       </Modal.Header>
       <Modal.Body>
         <div className="grid grid-cols-2 gap-4 items-center justify-center">
           <div className="-mt-8">
             <Label
               htmlFor="name"
-              value="Name"
+              value={t("Name")}
               className="font-semibold text-base"
             />
             <TextInput
@@ -108,7 +110,7 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
           <div>
             <Label
               htmlFor="description"
-              value="Description"
+              value={t("Description")}
               className="font-semibold text-base"
             />
             <Textarea
@@ -121,7 +123,7 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
           <div className="mt-4">
             <Label
               htmlFor="brand"
-              value="Brand"
+              value={t("Brand")}
               className="font-semibold text-base"
             />
             <TextInput
@@ -133,7 +135,7 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
           <div className="mt-4">
             <Label
               htmlFor="supplier"
-              value="Supplier"
+              value={t("Supplier")}
               className="font-semibold text-base"
             />
             <TextInput
@@ -145,7 +147,7 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
           <div className="mt-4">
             <Label
               htmlFor="identifier"
-              value="Identifier"
+              value={t("Identifier")}
               className="font-semibold text-base"
             />
             <TextInput
@@ -157,7 +159,7 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
           <div className="mt-4">
             <Label
               htmlFor="contact"
-              value="Contact"
+              value={t("Contact")}
               className="font-semibold text-base"
             />
             <TextInput
@@ -169,7 +171,7 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
           <div className="mt-4 mb-4">
             <Label
               htmlFor="observation"
-              value="Observation"
+              value={t("Observation")}
               className="font-semibold text-base"
             />
             <Textarea
@@ -183,7 +185,7 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
             <div className="-mt-10 mb-4">
               <Label
                 htmlFor="projectNames"
-                value="On Projects:"
+                value={t("OnProjects")}
                 className="font-semibold text-base"
               />
               <p className="font-normal text-gray-700 dark:text-gray-400">
@@ -194,7 +196,7 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={handleSave}>Save</Button>
+        <Button onClick={handleSave}>{t('Save')}</Button>
       </Modal.Footer>
     </Modal>
   );

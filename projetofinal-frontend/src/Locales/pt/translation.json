@@ -108,5 +108,11 @@
   "Brand": "Marca",
   "Supplier": "Fornecedor",
   "Identifier": "Identificador",
-  "SearchbyNameBrandSupplierIdentifier": "Procurar por Nome, Marca, Fornecedor, Identificador..."
+  "SearchbyNameBrandSupplierIdentifier": "Procurar por Nome, Marca, Fornecedor, Identificador...",
+  "ResourceInformation": "Informação do Recurso",
+  "ComponentInformation": "Informação do Componente",
+  "Contact": "Contato",
+  "Observation": "Observação",
+  "OnProjects": "Em Projetos",
+  "CreateNewResource": "Criar Novo Recurso"
 }
