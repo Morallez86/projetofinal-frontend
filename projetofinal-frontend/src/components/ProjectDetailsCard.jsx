@@ -18,9 +18,16 @@ import basePhoto from "../Assets/092.png";
 import { LuPlusCircle } from "react-icons/lu";
 import { MdOutlineRemoveCircleOutline } from "react-icons/md";
 import { useTranslation } from "react-i18next";
+import { IoCloseCircleOutline } from "react-icons/io5";
+import { FaLevelUpAlt, FaLevelDownAlt } from "react-icons/fa";
+import {jwtDecode} from "jwt-decode";
 
-function ProjectDetailsCard({ project, userImages, openPopUpUsers,
-  openPopUpUsersRemove, }) {
+function ProjectDetailsCard({
+  project,
+  userImages,
+  openPopUpUsers,
+  openPopUpUsersRemove,
+}) {
   const { projectId } = useParams();
   const [editMode, setEditMode] = useState(false);
   const [projectDetails, setProjectDetails] = useState({ ...project });
@@ -28,6 +35,16 @@ function ProjectDetailsCard({ project, userImages, openPopUpUsers,
   const token = useUserStore((state) => state.token);
   const workplaces = useWorkplaceStore((state) => state.workplaces);
   const { t } = useTranslation();
+  let currentUserId;
+
+  if (token) {
+    const decodedToken = jwtDecode(token);
+    currentUserId = decodedToken.id;
+  }
+
+  const currentUserIsAdmin = projectDetails.userProjectDtos?.some(
+    (user) => user.userId === currentUserId && user.admin
+  );
 
   const statusOptions = [
     ...(projectDetails.status === 100
@@ -55,9 +72,7 @@ function ProjectDetailsCard({ project, userImages, openPopUpUsers,
       ? [{ value: 400, label: "FINISHED" }]
       : []),
     ...(projectDetails.status === 500
-      ? [
-          { value: 500, label: "CANCELLED" },
-        ]
+      ? [{ value: 500, label: "CANCELLED" }]
       : []),
   ];
 
@@ -88,7 +103,7 @@ function ProjectDetailsCard({ project, userImages, openPopUpUsers,
   };
 
   const handleSaveClick = async () => {
-    console.log(projectDetails)
+    console.log(projectDetails);
     try {
       const response = await fetch(`${apiUrl}/projects/${projectId}`, {
         method: "PUT",
@@ -108,6 +123,36 @@ function ProjectDetailsCard({ project, userImages, openPopUpUsers,
       }
     } catch (error) {
       console.error("Error updating project details:", error);
+    }
+  };
+
+  const handleAdminChange = async (userId, isAdmin) => {
+    try {
+      const response = await fetch(
+        `${apiUrl}/projects/${projectId}/users/${userId}/status`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ isAdmin }),
+        }
+      );
+
+      if (response.status === 200) {
+        setProjectDetails((prevDetails) => ({
+          ...prevDetails,
+          userProjectDtos: prevDetails.userProjectDtos.map((user) =>
+            user.userId === userId ? { ...user, admin: isAdmin } : user
+          ),
+        }));
+        console.log("User status updated successfully");
+      } else {
+        console.error("Error updating user status");
+      }
+    } catch (error) {
+      console.error("Error updating user status:", error);
     }
   };
 
@@ -185,10 +230,12 @@ function ProjectDetailsCard({ project, userImages, openPopUpUsers,
             {getBadge(projectDetails.approved)}
           </div>
           <div className="flex items-center space-x-2">
-            <MdOutlineEdit
-              className="h-6 w-6 text-black cursor-pointer"
-              onClick={() => setEditMode(true)}
-            />
+            {currentUserIsAdmin && (
+              <MdOutlineEdit
+                className="h-6 w-6 text-black cursor-pointer"
+                onClick={() => setEditMode(true)}
+              />
+            )}
           </div>
         </div>
         <div className="flex flex-col gap-4">
@@ -367,7 +414,7 @@ function ProjectDetailsCard({ project, userImages, openPopUpUsers,
               content={t("RemoveUser")}
               place="top"
             />
-            {project.userProjectDtos?.map((up) => (
+            {projectDetails.userProjectDtos?.map((up) => (
               <div key={up.userId} className="flex items-center mb-2">
                 {userImages[up.userId] ? (
                   <img
@@ -384,7 +431,41 @@ function ProjectDetailsCard({ project, userImages, openPopUpUsers,
                     className="w-8 h-8 rounded-full mr-2"
                   />
                 )}
-                <span>{up.username}</span>
+                <span className="flex-grow">{up.username}</span>
+                {up.userId !== project.owner && (
+                  <>
+                    {up.admin ? (
+                      <FaLevelDownAlt
+                        className={`h-4 w-4 ml-2 ${
+                          currentUserIsAdmin
+                            ? "text-red-500 cursor-pointer"
+                            : "text-gray-500"
+                        }`}
+                        onClick={() =>
+                          currentUserIsAdmin &&
+                          handleAdminChange(up.userId, false)
+                        }
+                        data-tooltip-id={`tooltip-${up.userId}`}
+                        data-tooltip-content="Remove Admin"
+                      />
+                    ) : (
+                      <FaLevelUpAlt
+                        className={`h-4 w-4 ml-2 ${
+                          currentUserIsAdmin
+                            ? "text-green-500 cursor-pointer"
+                            : "text-gray-500"
+                        }`}
+                        onClick={() =>
+                          currentUserIsAdmin &&
+                          handleAdminChange(up.userId, true)
+                        }
+                        data-tooltip-id={`tooltip-${up.userId}`}
+                        data-tooltip-content="Make Admin"
+                      />
+                    )}
+                    <Tooltip id={`tooltip-${up.userId}`} place="top" />
+                  </>
+                )}
               </div>
             ))}
           </div>

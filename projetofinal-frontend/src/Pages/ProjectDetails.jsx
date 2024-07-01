@@ -91,6 +91,7 @@ function ProjectDetails() {
         }
 
         const data = await response.json();
+        console.log(data);
         setProject(data);
         setTasks(data.tasks || []);
         setTeam(data.userProjectDtos || []);
