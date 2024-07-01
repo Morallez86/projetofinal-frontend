@@ -102,5 +102,11 @@
   "Send": "Enviar",
   "Close": "Fechar",
   "MessageDetails": "Detalhes da Mensagem",
-  "SendMessage": "Enviar Mensagem"
+  "SendMessage": "Enviar Mensagem",
+  "CreateNewComponent": "Criar Novo Componente",
+  "Name": "Nome",
+  "Brand": "Marca",
+  "Supplier": "Fornecedor",
+  "Identifier": "Identificador",
+  "SearchbyNameBrandSupplierIdentifier": "Procurar por Nome, Marca, Fornecedor, Identificador..."
 }

@@ -102,6 +102,13 @@
   "Send": "Send",
   "Close": "Close",
   "MessageDetails": "Message Details",
-  "SendMessage": "Send Message"
+  "SendMessage": "Send Message",
+  "CreateNewComponent": "Create New Component",
+  "Name": "Name",
+  "Brand": "Brand",
+  "Supplier": "Supplier",
+  "Identifier": "Identifier",
+  "SearchbyNameBrandSupplierIdentifier": "Search by Name, Brand, Supplier, Identifier..."
+
   
 }
