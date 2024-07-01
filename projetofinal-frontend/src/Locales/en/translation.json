@@ -146,8 +146,17 @@
   "Removecomponents" : "Remove components",
   "You can remove one or more components at the same time": "You can remove one or more components at the same time",
   "ComponentRemoved": "Component removed successfully",
-  "Remove selected components": "Remove selected components"
-
+  "Remove selected components": "Remove selected components",
+  "AddResources": "Add Resources",
+  "CreateANewResourceOrChooseOne": "Create a new resource or choose one",
+  "SelectResource": "Select Resource",
+  "AddResource": "Add Resource",
+  "ResourceAddedSuccessfully": "Resource added successfully",
+  "You can remove one or more resources at the same time": "You can remove one or more resources at the same time",
+  "SearchResources": "Search Resources",
+  "RemoveResources": "Remove Resources",
+  "removeResources": "Remove Resources",
+  "ResourceRemovedSuccessfully": "Resource removed successfully"
 
   
 }
