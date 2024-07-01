@@ -156,5 +156,11 @@
   "SearchResources": "Procurar Recursos",
   "RemoveResources": "Remover Recursos",
   "removeResources": "Remover Recursos",
-  "ResourceRemovedSuccessfully": "Recurso removido com sucesso"
+  "ResourceRemovedSuccessfully": "Recurso removido com sucesso",
+   "jobLocaltion": "Local de Trabalho",
+  "Username": "Alcunha",
+  "userProfile": "Perfil de Utilizador",
+  "Role": "Função",
+  "Admin": "Administrador",
+  "User": "Utilizador"
 }

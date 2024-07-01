@@ -156,7 +156,12 @@
   "SearchResources": "Search Resources",
   "RemoveResources": "Remove Resources",
   "removeResources": "Remove Resources",
-  "ResourceRemovedSuccessfully": "Resource removed successfully"
-
+  "ResourceRemovedSuccessfully": "Resource removed successfully",
+  "jobLocaltion": "Job Location",
+  "Username": "Username",
+  "userProfile": "User Profile",
+  "Role": "Role",
+  "Admin": "Admin",
+  "User": "User"
   
 }
