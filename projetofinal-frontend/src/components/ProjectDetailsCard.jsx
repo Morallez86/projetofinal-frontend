@@ -406,6 +406,8 @@ function ProjectDetailsCard({
                 id="maxUsers"
                 type="number"
                 name="maxUsers"
+                min={1}
+                max={4}
                 value={projectDetails.maxUsers}
                 onChange={handleChange}
                 className="w-1/2"
@@ -428,11 +430,6 @@ function ProjectDetailsCard({
             <Tooltip
               anchorSelect="#icon-element7"
               content={t("AddNewUser")}
-              place="top"
-            />
-            <Tooltip
-              anchorSelect="#icon-element-remove7"
-              content={t("RemoveUser")}
               place="top"
             />
             {projectDetails.userProjectDtos
