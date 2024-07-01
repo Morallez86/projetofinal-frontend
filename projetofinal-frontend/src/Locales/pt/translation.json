@@ -127,5 +127,14 @@
   "SkillAdded": "Competência adicionada com sucesso",
   "RemoveSelectedSkills": "Remover competências selecionadas",
   "RemoveSucessfully": "Removido com sucesso",
-  "YouCanRemoveOneOrMoreSkillsAtTheSameTime": "Pode remover uma ou mais competências ao mesmo tempo"
+  "YouCanRemoveOneOrMoreSkillsAtTheSameTime": "Pode remover uma ou mais competências ao mesmo tempo",
+  "AddInterest": "Adicionar Interesse",
+  "CreateOrChooseInterest": "Criar ou escolher um interesse",
+  "InterestAdded": "Interesse adicionado com sucesso",
+  "Interest": "Interesse",
+  "SearchForAInterest": "Procurar por um interesse",
+  "YouCanRemoveOneOrMoreInterestsAtTheSimeTime": "Pode remover um ou mais interesses ao mesmo tempo",
+  "RemoveInterests": "Remover Interesses",
+  "InterestRemoved": "Interesse removido com sucesso",
+  "SearchInterests": "Procurar Interesses"
 }

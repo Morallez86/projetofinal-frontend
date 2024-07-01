@@ -127,6 +127,15 @@
   "SkillAdded": "Skill added successfully",
   "RemoveSelectedSkills": "Remove Selected Skills",
   "RemoveSucessfully": "Remove successfully",
-  "YouCanRemoveOneOrMoreSkillsAtTheSameTime": "You can remove one or more skills at the same time"
+  "YouCanRemoveOneOrMoreSkillsAtTheSameTime": "You can remove one or more skills at the same time",
+  "AddInterest": "Add Interest",
+  "CreateOrChooseInterest": "Create or choose an interest",
+  "InterestAdded": "Interest added successfully",
+  "Interest": "Interest",
+  "SearchForAInterest": "Search for an interest",
+  "YouCanRemoveOneOrMoreInterestsAtTheSimeTime": "You can remove one or more interests at the same time",
+  "RemoveInterests": "Remove Interests",
+  "InterestRemoved": "Interest removed successfully",
+  "SearchInterests": "Search Interests"
   
 }

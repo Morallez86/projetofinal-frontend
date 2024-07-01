@@ -8,6 +8,7 @@ import useApiStore from "../Stores/ApiStore";
 import AddedAnimation from "../Assets/Added.json";
 import Lottie from "react-lottie";
 import useInterestStore from "../Stores/InterestStore";
+import {useTranslation} from "react-i18next";
 
 function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
   const token = useUserStore((state) => state.token);
@@ -27,6 +28,8 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
   const [inputValue, setInputValue] = useState("");
   const [animationPlayed, setAnimationPlayed] = useState(false);
   const [showSuccessText, setShowSuccessText] = useState(false);
+
+  const { t } = useTranslation();
 
   const defaultOptions = {
     loop: false,
@@ -120,10 +123,10 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
       <Modal.Body>
         <div className="flex flex-col items-center justify-center space-y-5 overflow-x-hidden overflow-y-hidden">
           <h3 className="mb-5 text-lg font-bold text-gray-500 dark:text-gray-400">
-            Register Interest
+            {t('AddInterest')}
           </h3>
           <div className="space-y-3">
-            <h4>Create new interest or Choose one of the existing ones</h4>
+            <h4> {t('CreateOrChooseInterest')} </h4>
             <div className="flex items-start space-x-4 min-h-[25rem] relative">
               <div className="text-center z-10">
                 <CreatableSelect
@@ -140,7 +143,7 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
                       {option.isDisabled ? <TbLockFilled /> : null}
                     </div>
                   )}
-                  placeholder="Select/Write interest name"
+                  placeholder= {t('SearchForAInterest')}
                   value={selectedInterest}
                 />
               </div>
@@ -179,14 +182,14 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
                 </div>
                 {showSuccessText && (
                   <div className="animate-pulse text-green-500 font-bold absolute bottom-0">
-                    Added with success
+                   {t('InterestAdded')}
                   </div>
                 )}
               </div>
             </div>
             <div className="flex justify-center mt-4">
               <Button onClick={handleSubmit} disabled={!selectedInterest}>
-                Add Interest
+                {t('AddInterest')}
               </Button>
             </div>
           </div>
