@@ -162,6 +162,17 @@
   "userProfile": "User Profile",
   "Role": "Role",
   "Admin": "Admin",
-  "User": "User"
+  "User": "User",
+  "Yes": "Yes",
+  "No": "No",
+  "Timestamp": "Timestamp",
+  "MessageDeatils": "Message Details",
+  "NewMessage": "New Message",
+  "SearchUser": "Search By User",
+  "MessageContent": "Type your message here",
+  "ReceivedMessages": "Received Messages",
+  "SentMessages": "Sent Messages",
+  "UnreadMessages": "Unread Messages"
+  
   
 }

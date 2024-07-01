@@ -11,6 +11,7 @@ import {
 import { Tooltip } from "react-tooltip";
 import NewMessageModal from "../Components/NewMessageModal";
 import { useWebSocket } from "../WebSocketContext";
+import { useTranslation } from "react-i18next";
 
 function MessagesPage() {
   const [messages, setMessages] = useState([]);
@@ -26,6 +27,7 @@ function MessagesPage() {
 
   const apiUrl = useApiStore.getState().apiUrl;
   const token = useUserStore((state) => state.token);
+  const { t } = useTranslation();
 
   const fetchMessages = useCallback(async () => {
     try {
@@ -196,7 +198,7 @@ function MessagesPage() {
               </button>
               <Tooltip
                 anchorSelect="#newMessageBtn"
-                content="New Message"
+                content= {t('NewMessage')}
                 place="top"
                 effect="solid"
               />
@@ -215,7 +217,7 @@ function MessagesPage() {
               </button>
               <Tooltip
                 anchorSelect="#receivedBtn"
-                content="Received Messages"
+                content= {t('ReceivedMessages')}
                 place="top"
                 effect="solid"
               />
@@ -235,7 +237,7 @@ function MessagesPage() {
               </button>
               <Tooltip
                 anchorSelect="#sentBtn"
-                content="Sent Messages"
+                content= {t('SentMessages')}
                 place="top"
                 effect="solid"
               />
@@ -255,7 +257,7 @@ function MessagesPage() {
               </button>
               <Tooltip
                 anchorSelect="#unreadBtn"
-                content="Unread Messages"
+                content= {t('UnreadMessages')}
                 place="top"
                 effect="solid"
               />
@@ -278,14 +280,14 @@ function MessagesPage() {
                 </button>
                 <input
                   type="text"
-                  placeholder="Search by username"
+                  placeholder= {t('SearchByUsername')}
                   className="px-2 py-1 border border-cyan-500 rounded"
                   value={usernameFilter}
                   onChange={(e) => setUsernameFilter(e.target.value)}
                 />
                 <input
                   type="text"
-                  placeholder="Search by content"
+                  placeholder= {t('SearchByContent')}
                   className="px-2 py-1 border border-cyan-500 rounded"
                   value={contentFilter}
                   onChange={(e) => setContentFilter(e.target.value)}

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import DataTable from "react-data-table-component";
 import MessageModal from "./MessageModal";
+import { useTranslation } from "react-i18next";
 
 const MessagesTable = ({
   data,
@@ -18,6 +19,7 @@ const MessagesTable = ({
 }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedMessage, setSelectedMessage] = useState(null);
+  const { t } = useTranslation();
 
   const openModal = (message) => {
     setSelectedMessage(message);
@@ -62,9 +64,9 @@ const MessagesTable = ({
 
   // Define columns dynamically based on the view (received or sent)
   let columns = [
-    { name: "Content", selector: (row) => row.content, sortable: true },
+    { name: t('Content'), selector: (row) => row.content, sortable: true },
     {
-      name: "Timestamp",
+      name: t('Timestamp'),
       selector: (row) => {
         const dateArray = row.timestamp;
         const formattedDate = formatDateForInput(dateArray);
@@ -74,7 +76,7 @@ const MessagesTable = ({
       sortable: true,
     },
     {
-      name: view === "received" ? "From" : "To",
+      name: view === "received" ? t('From') : t('To'),
       selector: (row) =>
         view === "received" ? row.senderUsername : row.receiverUsername,
       sortable: true,
@@ -85,7 +87,7 @@ const MessagesTable = ({
           {view === "received" && (
             <input type="checkbox" onChange={handleBulkSeenChange} className="mr-2"/>
           )}
-          Seen{" "}
+          {t('Seen')}{" "}
         </div>
       ),
       selector: (row) =>
@@ -96,9 +98,9 @@ const MessagesTable = ({
             onChange={() => handleSeenChange(row.id, row.seen)}
           />
         ) : row.seen ? (
-          "Yes"
+          t('Yes')
         ) : (
-          "No"
+          t('No')
         ),
       sortable: true,
     },
@@ -130,6 +132,10 @@ const MessagesTable = ({
         onChangeRowsPerPage={onChangeRowsPerPage}
         paginationPerPage={rowsPerPage}
         onRowClicked={(row) => openModal(row)}
+        paginationComponentOptions={{
+          rowsPerPageText: t('RowsPerPage'),
+          rangeSeparatorText: t('of'),
+        }}
         noHeader={true}
         className="clickable-rows"
         customStyles={{

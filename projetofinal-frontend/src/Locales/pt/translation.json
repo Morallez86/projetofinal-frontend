@@ -162,5 +162,15 @@
   "userProfile": "Perfil de Utilizador",
   "Role": "Função",
   "Admin": "Administrador",
-  "User": "Utilizador"
+  "User": "Utilizador",
+  "Yes": "Sim",
+  "No": "Não",
+  "Timestamp": "Data/Hora",
+  "MessageDeatils": "Detalhes da Mensagem",
+  "NewMessage": "Nova Mensagem",
+  "SearchUser": "Procurar por Utilizador",
+  "MessageContent": "Escreva a sua mensagem aqui",
+  "ReceivedMessages": "Mensagens Recebidas",
+  "SentMessages": "Mensagens Enviadas",
+  "UnreadMessages": "Mensagens Não Lidas"
 }
