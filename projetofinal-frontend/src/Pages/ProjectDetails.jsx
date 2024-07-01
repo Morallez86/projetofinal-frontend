@@ -9,6 +9,8 @@ import { SiGooglemessages } from "react-icons/si";
 import GroupProjectChat from "../Components/GroupProjectChat";
 import { motion } from "framer-motion";
 import WebSocketProjChat from "../WebSocketProjChat";
+import AddUsersEdit from "../Components/AddUsersEdit";
+import RemoveUsers from "../Components/RemoveUsers";
 
 function ProjectDetails() {
   const { projectId } = useParams();
@@ -28,20 +30,25 @@ function ProjectDetails() {
   const isChatOpenRef = useRef(isChatOpen);
   const [messagesAlone, setMessagesAlone] = useState([]);
   const [reopenSocket, setReopenSocket] = useState(true);
+  const [statePopUpUsers, setStatePopUpUsers] = useState(false);
+  const [statePopUpUsersRemove, setStatePopUpUsersRemove] = useState(false);
 
+  const openAddUsersModal = () => setStatePopUpUsers(true);
+  const closeAddUsersModal = () => setStatePopUpUsers(false);
+  const openRemoveUsersModal = () => setStatePopUpUsersRemove(true);
+  const closeRemoveUsersModal = () => setStatePopUpUsersRemove(false);
 
   const onMessageChat = (message) => {
-    console.log("called");
     setMessagesAlone((prevMessages) => [
       ...prevMessages,
-      (message = {
+      {
         content: message.content,
         senderUsername: message.senderUsername,
         senderId: message.senderId,
         senderOnline: message.senderOnline,
         projectId: message.projectId,
         timestamp: message.timestamp,
-      }),
+      },
     ]);
 
     if (!isChatOpen) {
@@ -55,24 +62,15 @@ function ProjectDetails() {
     isChatOpenRef.current = isChatOpen;
   }, [isChatOpen]);
 
-  console.log(projectId);
-
   useEffect(() => {
-    console.log("in3");
-    console.log(isChatOpenRef.current);
     return () => {
-      console.log(isChatOpenRef.current);
       if (isChatOpenRef.current && project && project.id != null) {
-        console.log("in");
-        const projectId = project.id;
         const now = new Date();
         const localTimestamp = new Date(
           now.getTime() - now.getTimezoneOffset() * 60000
         ).toISOString();
-        setProjectTimestamp(projectId, localTimestamp);
-        console.log(localTimestamp);
+        setProjectTimestamp(project.id, localTimestamp);
       }
-      console.log("in2");
     };
   }, [project]);
 
@@ -94,22 +92,13 @@ function ProjectDetails() {
 
         const data = await response.json();
         setProject(data);
-        setTasks(data.tasks || []); // Ensure tasks is an array
+        setTasks(data.tasks || []);
         setTeam(data.userProjectDtos || []);
         setMessagesAlone(data.chatMessage || []);
-        console.log(data);
-        console.log(data.chatMessage);
-        if (data.chatMessage) {
-          console.log("in");
-          console.log(projectTimestamps);
-        }
-        console.log(unreadMessages);
 
         const userIds = data.userProjectDtos
           .map((up) => up.userId)
-          .filter((value, index, self) => self.indexOf(value) === index); // Unique IDs
-
-        console.log(userIds);
+          .filter((value, index, self) => self.indexOf(value) === index);
 
         const imagesResponse = await fetch(`${apiUrl}/users/images`, {
           method: "POST",
@@ -144,10 +133,8 @@ function ProjectDetails() {
   const getUnreadMessages = () => {
     const projectTimestamp = new Date(projectTimestamps[projectId]);
     let count = 0;
-    console.log(projectTimestamp);
 
     messagesAlone.forEach((message) => {
-      // Convertendo o array de timestamp para um objeto Date
       const messageDate = new Date(
         Date.UTC(
           message.timestamp[0],
@@ -160,7 +147,6 @@ function ProjectDetails() {
         )
       );
 
-      // Comparando as datas
       if (messageDate > projectTimestamp) {
         count++;
       }
@@ -168,14 +154,6 @@ function ProjectDetails() {
 
     setUnreadMessages(count);
   };
-
-  {/*useEffect(() => {
-    if (project && messagesAlone) {
-      getUnreadMessages();
-    }
-  }, [messagesAlone]);*/}
-
-  console.log(unreadMessages);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -185,13 +163,16 @@ function ProjectDetails() {
     return <div>No project found</div>;
   }
 
-  console.log(project.userProjects);
-
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flex flex-wrap justify-center">
         <div className="w-full md:w-1/3 p-4">
-          <ProjectDetailsCard project={project} userImages={userImages} />
+          <ProjectDetailsCard
+            project={project}
+            userImages={userImages}
+            openPopUpUsers={openAddUsersModal}
+            openPopUpUsersRemove={openRemoveUsersModal}
+          />
         </div>
         <div className="w-full md:w-1/3 p-4">
           <div className="flex flex-col overflow-y-auto bg-transparent h-[45rem]">
@@ -232,13 +213,11 @@ function ProjectDetails() {
             const currentlyOpen = isChatOpen;
             setIsChatOpen(!isChatOpen);
             if (currentlyOpen) {
-              const projectId = project.id;
               const now = new Date();
               const localTimestamp = new Date(
                 now.getTime() - now.getTimezoneOffset() * 60000
               ).toISOString();
-              console.log(localTimestamp);
-              setProjectTimestamp(projectId, localTimestamp);
+              setProjectTimestamp(project.id, localTimestamp);
             }
           }}
         >
@@ -264,6 +243,15 @@ function ProjectDetails() {
           />
         </motion.div>
       )}
+      <AddUsersEdit
+        openPopUpUsers={statePopUpUsers}
+        closePopUpUsers={closeAddUsersModal}
+        projectInfo={project}
+      />
+      <RemoveUsers
+        openPopUpUsersRemove={statePopUpUsersRemove}
+        closePopUpUsersRemove={closeRemoveUsersModal}
+      />
     </div>
   );
 }

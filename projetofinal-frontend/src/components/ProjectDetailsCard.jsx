@@ -15,14 +15,19 @@ import useUserStore from "../Stores/UserStore";
 import useWorkplaceStore from "../Stores/WorkplaceStore";
 import { useParams } from "react-router-dom";
 import basePhoto from "../Assets/092.png";
+import { LuPlusCircle } from "react-icons/lu";
+import { MdOutlineRemoveCircleOutline } from "react-icons/md";
+import { useTranslation } from "react-i18next";
 
-function ProjectDetailsCard({ project, userImages }) {
+function ProjectDetailsCard({ project, userImages, openPopUpUsers,
+  openPopUpUsersRemove, }) {
   const { projectId } = useParams();
   const [editMode, setEditMode] = useState(false);
   const [projectDetails, setProjectDetails] = useState({ ...project });
   const apiUrl = useApiStore((state) => state.apiUrl);
   const token = useUserStore((state) => state.token);
   const workplaces = useWorkplaceStore((state) => state.workplaces);
+  const { t } = useTranslation();
 
   const statusOptions = [
     ...(projectDetails.status === 100
@@ -338,6 +343,30 @@ function ProjectDetailsCard({ project, userImages }) {
           </div>
           <div>
             <Label htmlFor="Team" value="Team" />
+            <div
+              className="inline-flex items-center cursor-pointer"
+              id="icon-element7"
+              onClick={openPopUpUsers}
+            >
+              <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
+            </div>
+            <div
+              className="inline-flex items-center cursor-pointer"
+              id="icon-element-remove7"
+              onClick={openPopUpUsersRemove}
+            >
+              <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
+            </div>
+            <Tooltip
+              anchorSelect="#icon-element7"
+              content={t("AddNewUser")}
+              place="top"
+            />
+            <Tooltip
+              anchorSelect="#icon-element-remove7"
+              content={t("RemoveUser")}
+              place="top"
+            />
             {project.userProjectDtos?.map((up) => (
               <div key={up.userId} className="flex items-center mb-2">
                 {userImages[up.userId] ? (
