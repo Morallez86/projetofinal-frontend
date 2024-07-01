@@ -10,7 +10,6 @@ import GroupProjectChat from "../Components/GroupProjectChat";
 import { motion } from "framer-motion";
 import WebSocketProjChat from "../WebSocketProjChat";
 import AddUsersEdit from "../Components/AddUsersEdit";
-import RemoveUsers from "../Components/RemoveUsers";
 
 function ProjectDetails() {
   const { projectId } = useParams();
@@ -31,12 +30,9 @@ function ProjectDetails() {
   const [messagesAlone, setMessagesAlone] = useState([]);
   const [reopenSocket, setReopenSocket] = useState(true);
   const [statePopUpUsers, setStatePopUpUsers] = useState(false);
-  const [statePopUpUsersRemove, setStatePopUpUsersRemove] = useState(false);
 
   const openAddUsersModal = () => setStatePopUpUsers(true);
   const closeAddUsersModal = () => setStatePopUpUsers(false);
-  const openRemoveUsersModal = () => setStatePopUpUsersRemove(true);
-  const closeRemoveUsersModal = () => setStatePopUpUsersRemove(false);
 
   const onMessageChat = (message) => {
     setMessagesAlone((prevMessages) => [
@@ -172,7 +168,6 @@ function ProjectDetails() {
             project={project}
             userImages={userImages}
             openPopUpUsers={openAddUsersModal}
-            openPopUpUsersRemove={openRemoveUsersModal}
           />
         </div>
         <div className="w-full md:w-1/3 p-4">
@@ -248,10 +243,6 @@ function ProjectDetails() {
         openPopUpUsers={statePopUpUsers}
         closePopUpUsers={closeAddUsersModal}
         projectInfo={project}
-      />
-      <RemoveUsers
-        openPopUpUsersRemove={statePopUpUsersRemove}
-        closePopUpUsersRemove={closeRemoveUsersModal}
       />
     </div>
   );
