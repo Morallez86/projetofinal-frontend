@@ -1,17 +1,26 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TiTick, TiTimes } from "react-icons/ti";
 import { Button, Label } from "flowbite-react";
 import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
 import {useTranslation} from "react-i18next";
+import { jwtDecode } from "jwt-decode"; 
 
 const NotificationModal = ({ isOpen, closeModal, notification }) => {
   const apiUrl = useApiStore.getState().apiUrl;
   const token = useUserStore((state) => state.token);
   const [successMessage, setSuccessMessage] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState(null);
   const { t } = useTranslation();
   console.log(notification);
+
+  useEffect(() => {
+    if (token) {
+      const decodedToken = jwtDecode(token);
+      setCurrentUserId(decodedToken.id);
+      console.log(decodedToken.id);
+    }
+  }, [token]);
 
   if (!notification) {
     return null;
@@ -43,24 +52,35 @@ const NotificationModal = ({ isOpen, closeModal, notification }) => {
 
   const handleApprove = async () => {
     try {
+      const body = {
+        id: notification.id,
+        projectId: notification.projectId,
+        senderId: currentUserId,
+        receiverId: notification.receiverId,
+        approval: true,
+      };
+
+      if (notification.type === "INVITATION") {
+        body.type = "400";
+        console.log(body);
+      } else if (notification.type === "MANAGING") {
+        body.type = "300";
+      }
+
       const response = await fetch(`${apiUrl}/notifications/approval`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          id: notification.id,
-          projectId: notification.projectId,
-          receiverId: notification.receiverId,
-          approval: true,
-        }),
+        body: JSON.stringify(body),
       });
 
       if (response.ok) {
+        setSuccessMessage(true);
         setTimeout(() => {
+          setSuccessMessage(false);
           closeModal();
-          setSuccessMessage(true);
         }, 3000);
       } else {
         console.error("Failed to approve notification");
@@ -72,25 +92,35 @@ const NotificationModal = ({ isOpen, closeModal, notification }) => {
 
   const handleReject = async () => {
     try {
+      const body = {
+        id: notification.id,
+        projectId: notification.projectId,
+        senderId: currentUserId,
+        receiverId: notification.receiverId,
+        approval: false,
+      };
+
+      if (notification.type === "INVITATION") {
+        body.type = "400";
+        console.log(body);
+      } else if (notification.type === "MANAGING") {
+        body.type = "300";
+      }
+
       const response = await fetch(`${apiUrl}/notifications/approval`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          id: notification.id,
-          projectId: notification.projectId,
-          receiverId: notification.receiverId,
-          approval: false,
-        }),
+        body: JSON.stringify(body),
       });
 
       if (response.ok) {
         setSuccessMessage(true);
         setTimeout(() => {
-          closeModal();
           setSuccessMessage(false);
+          closeModal();
         }, 3000);
       } else {
         console.error("Failed to reject notification");
@@ -125,7 +155,7 @@ const NotificationModal = ({ isOpen, closeModal, notification }) => {
         <div className="mb-2">
           <strong>{t('Seen')}:</strong> {notification.seen ? t('Yes') : t('No')}
         </div>
-        {successMessage === true && (
+        {successMessage && (
           <div className="mb-2 ml-4 flex items-center col-span-full">
             <Label
               htmlFor="success"
@@ -134,18 +164,20 @@ const NotificationModal = ({ isOpen, closeModal, notification }) => {
             />
           </div>
         )}
-        {notification.type === "MANAGING" && !notification.seen && (
-          <div className="flex mt-4">
-            <div className="flex-grow flex space-x-2">
-              <Button color="success" onClick={handleApprove}>
-                <TiTick size={20} />
-              </Button>
-              <Button color="failure" onClick={handleReject}>
-                <TiTimes size={20} />
-              </Button>
+        {(notification.type === "MANAGING" ||
+          notification.type === "INVITATION") &&
+          !notification.seen && (
+            <div className="flex mt-4">
+              <div className="flex-grow flex space-x-2">
+                <Button color="success" onClick={handleApprove}>
+                  <TiTick size={20} />
+                </Button>
+                <Button color="failure" onClick={handleReject}>
+                  <TiTimes size={20} />
+                </Button>
+              </div>
             </div>
-          </div>
-        )}
+          )}
         <div className="mt-4 ml-auto">
           <button
             onClick={closeModal}

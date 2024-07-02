@@ -50,7 +50,6 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
       const updatedTaskResponse = await response.json();
       const updatedTask = updatedTaskResponse.taskDto;
       const updatedTaskIndex = updatedTaskResponse.index;
-      console.log(updatedTaskIndex);
 
       let newTotalTasks = [...totalTasks];
       const originalTaskIndex = newTotalTasks.findIndex(
@@ -86,9 +85,6 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
       .toISOString()
       .split("T")[0];
   };
-
-  console.log(task);
-  console.log(projectUsers);
 
   const getStatusString = (statusValue) => {
     switch (statusValue) {

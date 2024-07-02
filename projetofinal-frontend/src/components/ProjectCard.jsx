@@ -39,6 +39,7 @@ function ProjectCard({
   const clearAllProjectDetails = useProjectStore(
     (state) => state.clearAllProjectDetails
   );
+  
   const {t} = useTranslation();
 
   useEffect(() => {
