@@ -4,6 +4,7 @@ import useApiStore from "./Stores/ApiStore";
 import useUserStore from "./Stores/UserStore";
 import ProjectsHomeCard from "./Components/ProjectsHomeCard";
 import useWorkplaces from "./Hooks/useWorkplaces";
+import {useTranslation} from "react-i18next";
 
 import "./general.css";
 
@@ -17,6 +18,7 @@ function App() {
   const [interests, setInterests] = useState("");
   const { workplaces } = useWorkplaces();
   console.log(workplaces);
+  const { t } = useTranslation();
 
   const fetchProjects = useCallback(
     async (searchTerm = "", skills = "", interests = "") => {
@@ -77,27 +79,27 @@ function App() {
         <div className="flex items-center mb-4 space-x-2">
           <input
             type="text"
-            placeholder="Search by project name"
+            placeholder= {t(('Search by project name'))}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-1/4 rounded border-gray-600"
           />
           <input
             type="text"
-            placeholder="Search by skills"
+            placeholder= {t(('Search by skills'))}
             value={skills}
             onChange={(e) => setSkills(e.target.value)}
             className="w-1/4 rounded border-gray-600"
           />
           <input
             type="text"
-            placeholder="Search by interests"
+            placeholder= {t(('Search by interests'))}
             value={interests}
             onChange={(e) => setInterests(e.target.value)}
             className="w-1/4 rounded border-gray-600"
           />
           <Button onClick={handleSearch} className="ml-2">
-            Search
+            {t('Search')}
           </Button>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

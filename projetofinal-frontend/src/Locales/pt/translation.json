@@ -183,5 +183,15 @@
    "Type" : "Tipo",
    "A notification was sent": "Uma notificação foi enviada",
    "NotificationDetails": "Detalhes da Notificação",
-   "PleaseFillAllMandatoryFields": "Por favor, preencha todos os campos obrigatórios"
+   "PleaseFillAllMandatoryFields": "Por favor, preencha todos os campos obrigatórios",
+   "Search by project name": "Procurar por nome do projeto",
+   "Search by skills": "Procurar por competências",
+   "Search by interests": "Procurar por interesses",
+   "Not Approved": " Não Aprovado",
+   "Under Planning": "Em Planeamento",
+   "View Details": "Ver Detalhes",
+   "Creation Date": "Data de Criação",
+   "Planned End Date": "Data de Fim Planeada",
+   "Max Users": "Máximo de Utilizadores"
+   
 }

@@ -183,7 +183,16 @@
   "Type" : "Type",
   "A notification was sent": "A notification was sent",
   "NotificationDetails": "Notification Details",
-  "PleaseFillAllMandatoryFields": "Please fill all mandatory fields"
+  "PleaseFillAllMandatoryFields": "Please fill all mandatory fields",
+  "Search by project name": "Search by project name",
+  "Search by skills": "Search by skills",
+  "Search by interests": "Search by interests",
+  "Not Approved": "Not Approved",
+  "Under Planning": "Under Planning",
+  "View Details": "View Details",
+  "Creation Date": "Creation Date",
+  "Planned End Date": "Planned End Date",
+  "Max Users": "Max Users"
   
   
 }
