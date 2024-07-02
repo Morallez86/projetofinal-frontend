@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import DataTable from "react-data-table-component";
 import NotificationModal from "./NotificationModal";
+import { useTranslation } from "react-i18next";
 
 const NotificationsTable = ({
   data,
@@ -15,6 +16,7 @@ const NotificationsTable = ({
 }) => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState(null);
+  const { t } = useTranslation();
 
   const openModal = (notification) => {
     setSelectedNotification(notification);
@@ -58,9 +60,9 @@ const NotificationsTable = ({
   };
 
   const columns = [
-    { name: "Description", selector: (row) => row.description, sortable: true },
+    { name:  t('Description'), selector: (row) => row.description, sortable: true },
     {
-      name: "Timestamp",
+      name:  t('Timestamp'),
       selector: (row) => {
         const dateArray = row.timestamp;
         const formattedDate = formatDateForInput(dateArray);
@@ -70,7 +72,7 @@ const NotificationsTable = ({
       sortable: true,
     },
     {
-      name: "Type",
+      name:  t('Type'),
       selector: (row) => row.type,
       sortable: true,
     },
@@ -82,7 +84,7 @@ const NotificationsTable = ({
             onChange={handleBulkSeenChange}
             className="mr-2"
           />
-          Seen
+          { t('Seen')}
         </div>
       ),
       selector: (row) => (
@@ -121,6 +123,10 @@ const NotificationsTable = ({
         onChangeRowsPerPage={onChangeRowsPerPage}
         paginationPerPage={rowsPerPage}
         onRowClicked={(row) => openModal(row)}
+        paginationComponentOptions={{
+          rowsPerPageText: t("RowsPerPage"),
+          rangeSeparatorText: t("of"),
+        }}
         noHeader={true}
         className="clickable-rows"
         customStyles={{

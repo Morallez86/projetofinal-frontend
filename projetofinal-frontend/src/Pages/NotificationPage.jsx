@@ -9,6 +9,8 @@ import { MdOutlineManageAccounts } from "react-icons/md";
 import { Tooltip } from "react-tooltip";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { useWebSocket } from "../WebSocketContext";
+import {useTranslation} from "react-i18next";
+
 
 function NotificationsPage() {
   const [notifications, setNotifications] = useState([]);
@@ -21,6 +23,7 @@ function NotificationsPage() {
 
   const apiUrl = useApiStore.getState().apiUrl;
   const token = useUserStore((state) => state.token);
+  const { t } = useTranslation();
 
   // Fetch notifications function
   const fetchNotifications = useCallback(async () => {
@@ -147,7 +150,7 @@ function NotificationsPage() {
             <div className="flex flex-col space-y-2 flex-grow">
               {/* Type toggles */}
               <div className="flex items-center justify-between mb-2">
-                <h2 className="text-center">Notifications</h2>
+                <h2 className="text-center"> {t('Notifications')}  </h2>
                 <div className="text-right">
                   <button
                     onClick={() => setSeen(!seen)}
@@ -168,7 +171,7 @@ function NotificationsPage() {
                   </button>
                   <Tooltip
                     anchorSelect="#seenBtn"
-                    content={seen ? "Seen" : "Not Seen"}
+                    content={seen ? t('Seen') :  t('Unseen')}
                     place="top"
                     effect="solid"
                   />
@@ -189,7 +192,7 @@ function NotificationsPage() {
               </button>
               <Tooltip
                 anchorSelect="#allBtn"
-                content="All"
+                content= {t('All')}
                 place="top"
                 effect="solid"
               />
@@ -209,7 +212,7 @@ function NotificationsPage() {
               </button>
               <Tooltip
                 anchorSelect="#projectBtn"
-                content="Projects"
+                content= {t('Project')}
                 place="top"
                 effect="solid"
               />
@@ -229,7 +232,7 @@ function NotificationsPage() {
               </button>
               <Tooltip
                 anchorSelect="#managingBtn"
-                content="Managing"
+                content= {t('Managing')}
                 place="top"
                 effect="solid"
               />
@@ -249,7 +252,7 @@ function NotificationsPage() {
               </button>
               <Tooltip
                 anchorSelect="#invitationBtn"
-                content="Invitations"
+                content= {t('Invitation')}
                 place="top"
                 effect="solid"
               />

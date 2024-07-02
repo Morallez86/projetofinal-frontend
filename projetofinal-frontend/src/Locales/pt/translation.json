@@ -172,5 +172,16 @@
   "MessageContent": "Escreva a sua mensagem aqui",
   "ReceivedMessages": "Mensagens Recebidas",
   "SentMessages": "Mensagens Enviadas",
-  "UnreadMessages": "Mensagens Não Lidas"
+  "UnreadMessages": "Mensagens Não Lidas",
+   "Messages": "Mensagens",
+   "Notifications": "Notificações",
+  "Unseen": "Não Visto",
+  "All": "Todos",
+  "Project": "Projeto",
+  "Managing": "Gestão",
+  "Invitation": "Convites",
+   "Type" : "Tipo",
+   "A notification was sent": "Uma notificação foi enviada",
+   "NotificationDetails": "Detalhes da Notificação",
+   "PleaseFillAllMandatoryFields": "Por favor, preencha todos os campos obrigatórios"
 }

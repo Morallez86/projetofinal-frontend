@@ -79,7 +79,7 @@ function ProjectMyProfileTable({
     },
     {
       name: t('Approved'),
-      selector: (row) => (row.approved ? "Yes" : "No"),
+      selector: (row) => (row.approved ? t('Yes') :  t('No')),
       sortable: true,
     },
     {

@@ -172,7 +172,18 @@
   "MessageContent": "Type your message here",
   "ReceivedMessages": "Received Messages",
   "SentMessages": "Sent Messages",
-  "UnreadMessages": "Unread Messages"
+  "UnreadMessages": "Unread Messages",
+  "Messages": "Messages",
+  "Notifications": "Notifications",
+  "Unseen": "Unseen",
+  "All": "All",
+  "Project": "Project",
+  "Managing": "Managing",
+  "Invitation": "Invitation",
+  "Type" : "Type",
+  "A notification was sent": "A notification was sent",
+  "NotificationDetails": "Notification Details",
+  "PleaseFillAllMandatoryFields": "Please fill all mandatory fields"
   
   
 }

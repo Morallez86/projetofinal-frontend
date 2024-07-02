@@ -82,7 +82,7 @@ function ProjectCard({
     });
 
     if (!isFormValid) {
-      alert("Please fill in all mandatory fields.");
+      alert(t('PleaseFillAllMandatoryFields'));
       return;
     }
 

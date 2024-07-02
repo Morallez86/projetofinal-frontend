@@ -185,7 +185,7 @@ function MessagesPage() {
           <div className="flex flex-col h-full bg-white p-4 rounded-lg shadow-lg border-2 border-red-900">
             <div className="flex flex-col space-y-4 flex-grow">
               <div className="flex items-center justify-between mb-2">
-                <h2 className="text-center">Messages</h2>
+                <h2 className="text-center"> {t('Messages')}</h2>
               </div>
               <button
                 onClick={handleOpenModal}
