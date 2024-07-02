@@ -3,6 +3,7 @@ import DataTable from "react-data-table-component";
 import { TextInput } from "flowbite-react";
 import { useState } from "react";
 import ComponentResourceCardDetails from "./ComponentResourceCardDetails";
+import { useTranslation } from "react-i18next";
 
 function ComponentsTable({
   data,
@@ -19,24 +20,26 @@ function ComponentsTable({
   getResources,
 }) {
   console.log(data);
+  const { t } = useTranslation();
+
   const columns = [
     {
-      name: "Name",
+      name: t('Name'),
       selector: (row) => row.name,
       sortable: true,
     },
     {
-      name: "Brand",
+      name: t('Brand'),
       selector: (row) => row.brand,
       sortable: true,
     },
     {
-      name: "Supplier",
+      name: t('Supplier'),
       selector: (row) => row.supplier,
       sortable: true,
     },
     {
-      name: "Identifier",
+      name: t('Identifier'),
       selector: (row) => row.identifier,
       sortable: true,
     },
@@ -67,13 +70,13 @@ function ComponentsTable({
         <h1 className="text-3xl font-bold text-center ml-3">
           {" "}
           {context === "components"
-            ? "Components"
+            ? t('Components')
             : context === "resources"
-            ? "Resources"
+            ? t('Resources')
             : ""}
         </h1>
         <TextInput
-          placeholder="Search by name, brand, supplier or identifier..."
+          placeholder={t("SearchbyNameBrandSupplierIdentifier")}
           onKeyDown={handleKeyDown}
           onChange={(e) => setSearchKeyword(e.target.value)}
           value={searchKeyword}
@@ -92,6 +95,10 @@ function ComponentsTable({
         paginationRowsPerPageOptions={[10, 20, 30, 40, 50]}
         paginationPerPage={rowsPerPage}
         responsive
+        paginationComponentOptions={{
+          rowsPerPageText: t('RowsPerPage'),
+          rangeSeparatorText: t('of'),
+        }}
         onRowClicked={(row) => {
           setSelectedRow(row);
           setIsModalOpen(true);

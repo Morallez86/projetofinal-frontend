@@ -5,6 +5,7 @@ import useUserStore from "../Stores/UserStore";
 import { useEffect, useState } from "react";
 import { Button } from "flowbite-react";
 import ComponentResourceCardDetails from "../Components/ComponentResourceCardDetails";
+import {useTranslation} from "react-i18next";
 
 function ComponentesComponents() {
   const apiUrl = useApiStore((state) => state.apiUrl);
@@ -16,6 +17,8 @@ function ComponentesComponents() {
   const [loading, setLoading] = useState(true);
   const [filterText, setFilterText] = useState("");
   const [showModal, setShowModal] = useState(false);
+
+  const {t} = useTranslation();
 
   useEffect(() => {
     getComponents();
@@ -60,7 +63,7 @@ function ComponentesComponents() {
   return (
     <div className="flex flex-col min-h-screen">
       <div className="p-14">
-        <Button className="mb-4" onClick={() => setShowModal(true)}>Create New Component</Button>
+        <Button className="mb-4" onClick={() => setShowModal(true)}>{t('CreateNewComponent')}</Button>
         <ComponentsTable
           data={components}
           loading={loading}

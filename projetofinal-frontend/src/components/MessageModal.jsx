@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import useApiStore from "../Stores/ApiStore";
+import {useTranslation} from "react-i18next";
 
 const MessageModal = ({
   isOpen,
@@ -10,6 +11,7 @@ const MessageModal = ({
 }) => {
   const [replyContent, setReplyContent] = useState("");
   const apiUrl = useApiStore.getState().apiUrl;
+  const { t } = useTranslation();
 
   const handleReply = async () => {
     let sendMessageTo;
@@ -66,22 +68,22 @@ const MessageModal = ({
         onClick={handleModalClick}
       >
         <h2 className="text-xl font-bold mb-4">
-          {message ? "Message Details" : "Send Message"}
+          {message ? t('MessageDeatils') : t('SendMessage')}
         </h2>
 
         {message && (
           <>
             <div className="mb-2">
-              <strong>From:</strong> {message.senderUsername}
+              <strong>{t('From')}</strong> {message.senderUsername}
             </div>
             <div className="mb-2">
-              <strong>To:</strong> {message.receiverUsername}
+              <strong>{t('To')}</strong> {message.receiverUsername}
             </div>
             <div className="mb-2">
-              <strong>Content:</strong> {message.content}
+              <strong>{t('Content')}</strong> {message.content}
             </div>
             <div className="mb-2">
-              <strong>Seen:</strong> {message.seen ? "Yes" : "No"}
+              <strong>{t('Seen')}</strong> {message.seen ? "Yes" : "No"}
             </div>
           </>
         )}
@@ -89,7 +91,7 @@ const MessageModal = ({
         {selectedUser && (
           <>
             <div className="mb-2">
-              <strong>To:</strong> {selectedUser.username}
+              <strong>{t('To')}</strong> {selectedUser.username}
             </div>
           </>
         )}
@@ -97,7 +99,7 @@ const MessageModal = ({
         <textarea
           value={replyContent}
           onChange={(e) => setReplyContent(e.target.value)}
-          placeholder="Type your reply here..."
+          placeholder={t('Typeyourmessagehere')}
           rows={4}
           className="w-full border rounded-md p-2 mb-2"
         />
@@ -105,14 +107,14 @@ const MessageModal = ({
           onClick={handleReply}
           className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
         >
-          Reply
+          {t('Send')}
         </button>
 
         <button
           onClick={closeModal}
           className="bg-gray-300 text-gray-800 px-4 py-2 rounded-md ml-2 hover:bg-gray-400"
         >
-          Close
+          {t('Close')}
         </button>
       </div>
     </div>

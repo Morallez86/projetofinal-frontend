@@ -7,6 +7,7 @@ import RemovedAnimation from "../Assets/Removed.json";
 import Lottie from "react-lottie";
 import { Tooltip } from "react-tooltip";
 import useProjectStore from "../Stores/ProjectStore";
+import { useTranslation } from "react-i18next";
 
 function RemoveSkills({
   openPopUpSkillsRemove,
@@ -27,6 +28,8 @@ function RemoveSkills({
   const filteredSkills = userSkills.filter((skill) =>
     skill.name.toLowerCase().includes(filter.toLowerCase())
   );
+
+  const { t } = useTranslation();
 
   const defaultOptions = {
     loop: false,
@@ -98,14 +101,14 @@ function RemoveSkills({
         <Modal.Body>
           <div className="flex flex-col items-center justify-center space-y-5">
             <h3 className="text-lg font-bold text-gray-500 dark:text-gray-400">
-              Remove Skill
+              {t("RemoveSkill")}
             </h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-3">
-                <h4>You can remove one or more skills at the same time</h4>
+                <h4> {t("YouCanRemoveOneOrMoreSkillsAtTheSameTime")}</h4>
                 <TextInput
                   type="text"
-                  placeholder="Filter skills"
+                  placeholder= {t('SearchForASkill')}
                   value={filter}
                   onChange={(e) => setFilter(e.target.value)}
                 />
@@ -138,7 +141,7 @@ function RemoveSkills({
                   onClick={handleRemoveSkills}
                   disabled={selectedSkillIds.length === 0}
                 >
-                  Remove selected skills
+                  {t("RemoveSelectedSkills")}
                 </Button>
               </div>
               <div
@@ -164,7 +167,7 @@ function RemoveSkills({
                 />
                 {showSuccessText && (
                   <div className="animate-pulse text-green-500 font-bold absolute bottom-0 mb-4">
-                    Removed with success
+                    {t("RemoveSucessfully")}
                   </div>
                 )}
                 <Tooltip

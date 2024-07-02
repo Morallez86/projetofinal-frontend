@@ -5,6 +5,7 @@ import Lottie from "react-lottie";
 import { Tooltip } from "react-tooltip";
 import useProjectStore from "../Stores/ProjectStore";
 import RemovedAnimation from "../Assets/Removed.json";
+import {useTranslation} from "react-i18next"; 
 
 function RemoveResources({
   openPopUpResourcesRemove,
@@ -22,6 +23,8 @@ function RemoveResources({
   const filteredResources = projectResources.filter((resource) =>
     resource.name.toLowerCase().includes(filter.toLowerCase())
   );
+
+  const {t} = useTranslation();
 
   const defaultOptions = {
     loop: false,
@@ -65,14 +68,14 @@ function RemoveResources({
         <Modal.Body>
           <div className="flex flex-col items-center justify-center space-y-5">
             <h3 className="text-lg font-bold text-gray-500 dark:text-gray-400">
-              Remove Resource
+              {t("removeResources")}
             </h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-3">
-                <h4>You can remove one or more resources at the same time</h4>
+                <h4>{t('You can remove one or more resources at the same time')}</h4>
                 <TextInput
                   type="text"
-                  placeholder="Filter resources"
+                  placeholder= {t('SearchResources')}
                   value={filter}
                   onChange={(e) => setFilter(e.target.value)}
                 />
@@ -92,7 +95,7 @@ function RemoveResources({
                   onClick={handleRemoveResources}
                   disabled={selectedResourceIds.length === 0}
                 >
-                  Remove selected resources
+                  {t('RemoveResources')}
                 </Button>
               </div>
               <div
@@ -118,12 +121,12 @@ function RemoveResources({
                 />
                 {showSuccessText && (
                   <div className="animate-pulse text-green-500 font-bold absolute bottom-0 mb-4">
-                    Removed with success
+                    {t('ResourceRemovedSuccessfully')}
                   </div>
                 )}
                 <Tooltip
                   anchorSelect="#icon-element"
-                  content="Click to delete this resource from your profile"
+                  content= {t('ClickToRemoveResources')}
                   place="top"
                 />
               </div>

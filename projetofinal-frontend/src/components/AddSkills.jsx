@@ -8,6 +8,7 @@ import useApiStore from "../Stores/ApiStore";
 import AddedAnimation from "../Assets/Added.json";
 import Lottie from "react-lottie";
 import useSkillStore from "../Stores/SkillStore";
+import {useTranslation} from "react-i18next";
 
 function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
   const token = useUserStore((state) => state.token);
@@ -24,6 +25,8 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
   const [inputValue, setInputValue] = useState("");
   const [animationPlayed, setAnimationPlayed] = useState(false);
   const [showSuccessText, setShowSuccessText] = useState(false);
+
+  const { t } = useTranslation();
 
   const skillCategoryMapping = {
     Software: 200,
@@ -142,14 +145,14 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
       <Modal.Body>
         <div className="flex flex-col items-center justify-center space-y-5 overflow-x-hidden overflow-y-hidden">
           <h3 className="text-lg font-bold text-gray-500 dark:text-gray-400">
-            Register Skill
+            {t("RegisterSkills")}
           </h3>
           <div className="space-y-3">
-            <h4>Create new skill or Choose one of the existing ones </h4>
+            <h4> {t('CreateOrChooseSkill')} </h4>
             <div className="flex items-start space-x-4 min-h-[25rem] relative">
               <div className="text center z-10">
                 <Dropdown
-                  label={selectedCategory || "Skill Category"}
+                  label={selectedCategory || t('SelectCategory')}
                   dismissOnClick={true}
                   disabled={isSkillInOptions}
                   value={selectedCategory}
@@ -178,7 +181,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
                       {option.isDisabled ? <TbLockFilled /> : null}
                     </div>
                   )}
-                  placeholder="Select/write skill name"
+                  placeholder= {t('SearchForASkill')}
                   value={selectedSkill}
                 />
               </div>
@@ -213,7 +216,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
                 </div>
                 {showSuccessText && (
                   <div className="animate-pulse text-green-500 font-bold absolute bottom-0">
-                    Added with success
+                    {t('SkillAdded')}
                   </div>
                 )}
               </div>
@@ -223,7 +226,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
                 onClick={handleSubmit}
                 disabled={!selectedSkill || !selectedCategory}
               >
-                Add Skill
+                {t('RegisterSkill')}
               </Button>
             </div>
           </div>

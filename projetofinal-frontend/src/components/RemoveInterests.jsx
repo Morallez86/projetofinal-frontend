@@ -7,6 +7,7 @@ import useApiStore from "../Stores/ApiStore";
 import RemovedAnimation from "../Assets/Removed.json";
 import Lottie from "react-lottie";
 import { Tooltip } from "react-tooltip";
+import {useTranslation} from "react-i18next";
 
 function RemoveInterests({
   openPopUpInterestRemove,
@@ -24,6 +25,8 @@ function RemoveInterests({
   const [selectedInterestIds, setSelectedInterestIds] = useState([]);
   const [animationPlayed, setAnimationPlayed] = useState(false);
   const [showSuccessText, setShowSuccessText] = useState(false);
+
+  const {t} = useTranslation();
 
   const filteredInterests = (context === "user" ? userInterests : projectInterests).filter((interest) =>
     interest.name.toLowerCase().includes(filter.toLowerCase())
@@ -95,14 +98,14 @@ function RemoveInterests({
         <Modal.Body>
           <div className="flex flex-col items-center justify-center space-y-5">
             <h3 className="text-lg font-bold text-gray-500 dark:text-gray-400">
-              Remove Interest
+              {t("RemoveInterests")}
             </h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-3">
-                <h4>You can remove one or more interests at the same time</h4>
+                <h4> {t('YouCanRemoveOneOrMoreInterestsAtTheSimeTime')}  </h4>
                 <TextInput
                   type="text"
-                  placeholder="Filter interests"
+                  placeholder= {t('SearchInterests')}
                   value={filter}
                   onChange={(e) => setFilter(e.target.value)}
                 />
@@ -143,7 +146,7 @@ function RemoveInterests({
                 onClick={handleRemoveInterests} 
                 disabled={selectedInterestIds.length === 0}
                 >
-                  Remove selected interests
+                  {t('RemoveInterests')}
                 </Button>
               </div>
               <div
@@ -169,7 +172,7 @@ function RemoveInterests({
                 />
                 {showSuccessText && (
                   <div className="animate-pulse text-green-500 font-bold absolute bottom-0 mb-4">
-                    Removed with success
+                    {t('InterestRemoved')}
                   </div>
                 )}
                 <Tooltip

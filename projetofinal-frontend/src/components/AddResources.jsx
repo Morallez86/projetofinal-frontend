@@ -7,6 +7,7 @@ import useApiStore from "../Stores/ApiStore.js";
 import AddedAnimation from "../Assets/Added.json";
 import Lottie from "react-lottie";
 import { TbLockFilled } from "react-icons/tb";
+import {useTranslation} from "react-i18next";
 
 function AddResources({ openPopUpResources, closePopUpResources }) {
   const token = useUserStore((state) => state.token);
@@ -21,6 +22,8 @@ function AddResources({ openPopUpResources, closePopUpResources }) {
   const [inputValue, setInputValue] = useState("");
   const [animationPlayed, setAnimationPlayed] = useState(false);
   const [showSuccessText, setShowSuccessText] = useState(false);
+
+  const {t} = useTranslation();
 
   useEffect(() => {
     const getAllResources = async () => {
@@ -104,10 +107,10 @@ function AddResources({ openPopUpResources, closePopUpResources }) {
       <Modal.Body>
         <div className="flex flex-col items-center justify-center space-y-5 overflow-x-hidden overflow-y-hidden">
           <h3 className="text-lg font-bold text-gray-500 dark:text-gray-400">
-            Add Resource
+            {t("AddResources")}
           </h3>
           <div className="space-y-3">
-            <h4>Create a new resource or choose an existing one</h4>
+            <h4> {t('CreateANewResourceOrChooseOne')} </h4>
             <div className="flex items-start space-x-4 min-h-[25rem] relative">
               <div className="text center z-10">
                 <CreatableSelect
@@ -123,7 +126,7 @@ function AddResources({ openPopUpResources, closePopUpResources }) {
                       {option.isDisabled ? <TbLockFilled /> : null}
                     </div>
                   )}
-                  placeholder="Select/write resource name"
+                  placeholder= {t('SelectResource')}
                   value={selectedResource}
                 />
               </div>
@@ -158,14 +161,14 @@ function AddResources({ openPopUpResources, closePopUpResources }) {
                 </div>
                 {showSuccessText && (
                   <div className="animate-pulse text-green-500 font-bold absolute bottom-0">
-                    Added with success
+                    {t('ResourceAddedSuccessfully')}
                   </div>
                 )}
               </div>
             </div>
             <div className="flex justify-center mt-4">
               <Button onClick={handleSubmit} disabled={!selectedResource}>
-                Add Resource
+                {t('AddResource')}
               </Button>
             </div>
           </div>

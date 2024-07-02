@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { MdOutlineEdit } from "react-icons/md";
 import basePhoto from "../Assets/092.png";
 import { jwtDecode } from "jwt-decode";
+import {useTranslation} from "react-i18next";
 
 function ProfileOtherUsersCard() {
   const { userId } = useParams();
@@ -13,6 +14,7 @@ function ProfileOtherUsersCard() {
   const apiUrl = useApiStore((state) => state.apiUrl);
   const token = useUserStore((state) => state.token);
   
+  const {t} = useTranslation();
 
   let currentUserRole;
   if (token) {
@@ -139,7 +141,7 @@ function ProfileOtherUsersCard() {
 
   return (
     <Card className="bg-gray-200 transition-colors px-4 duration-200 w-1/2 h-100vh border-gray-600 bg-gradient-to-r from-gray-400 via-gray-50 to-white rounded-lg">
-      <h1 className="text-3xl font-bold text-center mb-2">User Profile</h1>
+      <h1 className="text-3xl font-bold text-center mb-2"> {t('userProfile')} </h1>
       <div className="flex flex-col pb-10">
         <div className="relative flex items-center space-x-10 justify-center">
           {currentUserRole === 200 && (
@@ -157,53 +159,53 @@ function ProfileOtherUsersCard() {
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="mt-4">
-            <Label htmlFor="name" value="Name" />
+            <Label htmlFor="name" value= {t('Name')} />
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {userInfo.name}
             </p>
           </div>
           <div className="mt-4">
-            <Label htmlFor="jobLocation" value="Job Location" />
+            <Label htmlFor="jobLocation" value={t('jobLocaltion')}  />
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {userInfo.jobLocation}
             </p>
           </div>
           <div className="mt-4">
-            <Label htmlFor="nickname" value="Nickname" />
+            <Label htmlFor="nickname" value={t('Username')}  />
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {userInfo.nickname}
             </p>
           </div>
           <div className="mt-4">
-            <Label htmlFor="biography" value="Biography" />
+            <Label htmlFor="biography" value={t('Biography')}  />
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {userInfo.biography}
             </p>
           </div>
           <div className="mt-4">
-            <Label htmlFor="visibility" value="Visibility" />
+            <Label htmlFor="visibility" value= {t('Visibility')}  />
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              {userInfo.visibility ? "Public" : "Private"}
+              {userInfo.visibility ? t('Public') : t('Private')}
             </p>
           </div>
           {editMode && currentUserRole === 200 && (
             <div className="mt-4">
-              <Label htmlFor="role" value="Role" />
+              <Label htmlFor="role" value= {t('Role')}  />
               <Select
                 id="role"
                 name="role"
                 value={userInfo.role}
                 onChange={handleInputChange}
               >
-                <option value={100}>User</option>
-                <option value={200}>Admin</option>
+                <option value={100}>{t('User')} </option>
+                <option value={200}>{t('Admin')} </option>
               </Select>
             </div>
           )}
         </div>
         <div className="mt-4">
           <div className="flex items-center">
-            <Label htmlFor="skills" value="Skills" />
+            <Label htmlFor="skills" value= {t('Skills')}  />
           </div>
           <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
             <p>
@@ -218,7 +220,7 @@ function ProfileOtherUsersCard() {
                 </button>
                 <Tooltip
                   anchorSelect="#tip-all-skills"
-                  content="Check all skills"
+                  content= {t('CheckAllSkills')} 
                   place="top"
                 />
               </div>
@@ -227,7 +229,7 @@ function ProfileOtherUsersCard() {
         </div>
         <div className="mt-4">
           <div className="flex items-center">
-            <Label htmlFor="interests" value="Interests" />
+            <Label htmlFor="interests" value= {t('Interests')}  />
           </div>
           <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
             <p>
@@ -243,7 +245,7 @@ function ProfileOtherUsersCard() {
                   </button>
                   <Tooltip
                     anchorSelect="#tip-all-interests"
-                    content="Check all interests"
+                    content= {t('CheckAllInterests')} 
                     place="top"
                   />
                 </div>
@@ -253,9 +255,9 @@ function ProfileOtherUsersCard() {
         {editMode && (
           <div className="flex justify-end mt-4">
             <Button className="mr-2" onClick={handleCancelClick}>
-              Cancel
+            {t('Cancel')} 
             </Button>
-            <Button onClick={handleSaveClick}>Save</Button>
+            <Button onClick={handleSaveClick}> {t('Save')}  </Button>
           </div>
         )}
       </div>

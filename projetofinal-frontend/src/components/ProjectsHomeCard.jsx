@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import { Card, Button, Modal, Label } from "flowbite-react";
 import { LuBadge, LuBadgeCheck, LuBadgeX } from "react-icons/lu";
 import { Tooltip } from "react-tooltip";
+import {useTranslation} from "react-i18next";
 
 const ProjectsHomeCard = ({ project }) => {
   const [showModal, setShowModal] = useState(false);
+  const { t } = useTranslation();
 
   const handleOpenModal = () => {
     setShowModal(true);
@@ -34,7 +36,7 @@ const ProjectsHomeCard = ({ project }) => {
           />
           <Tooltip
             anchorSelect="#badge-approved"
-            content="Approved"
+            content= {t('Approved')}
             place="top"
           />
         </>
@@ -48,7 +50,7 @@ const ProjectsHomeCard = ({ project }) => {
           />
           <Tooltip
             anchorSelect="#badge-not-approved"
-            content="Not Approved"
+            content= {t('Not Approved')}
             place="top"
           />
         </>
@@ -62,7 +64,7 @@ const ProjectsHomeCard = ({ project }) => {
           />
           <Tooltip
             anchorSelect="#badge-under-planning"
-            content="Under Planning"
+            content= {t('Under Planning')}
             place="top"
           />
         </>
@@ -83,7 +85,7 @@ const ProjectsHomeCard = ({ project }) => {
         </div>
         <div className="mt-4 flex items-center justify-center space-x-2">
           <Button size="sm" onClick={handleOpenModal}>
-            Details
+            {t('View Details')}
           </Button>
         </div>
       </Card>
@@ -98,7 +100,7 @@ const ProjectsHomeCard = ({ project }) => {
             <div>
               <Label
                 htmlFor="title"
-                value="Title"
+                value= {t('Title')}
                 className="font-semibold text-base"
               />
               <p className="text-sm text-gray-500 dark:text-gray-400 overflow-hidden w-full">
@@ -108,7 +110,7 @@ const ProjectsHomeCard = ({ project }) => {
             <div>
               <Label
                 htmlFor="status"
-                value="Status"
+                value= {t('Status')}
                 className="font-semibold text-base"
               />
               <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -126,7 +128,7 @@ const ProjectsHomeCard = ({ project }) => {
             <div>
               <Label
                 htmlFor="description"
-                value="Description"
+                value= {t('Description')}
                 className="font-semibold text-base"
               />
               <textarea
@@ -138,7 +140,7 @@ const ProjectsHomeCard = ({ project }) => {
             <div>
               <Label
                 htmlFor="motivation"
-                value="Motivation"
+                value= {t('Motivation')}
                 className="font-semibold text-base"
               />
               <textarea
@@ -150,7 +152,7 @@ const ProjectsHomeCard = ({ project }) => {
             <div>
               <Label
                 htmlFor="creationDate"
-                value="Creation Date"
+                value= {t('Creation Date')}
                 className="font-semibold text-base"
               />
               <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -160,7 +162,7 @@ const ProjectsHomeCard = ({ project }) => {
             <div>
               <Label
                 htmlFor="plannedEndDate"
-                value="Planned End Date"
+                value= {t('Planned End Date')}
                 className="font-semibold text-base"
               />
               <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -170,17 +172,17 @@ const ProjectsHomeCard = ({ project }) => {
             <div>
               <Label
                 htmlFor="workplace"
-                value="Workplace"
+                value= {t('Workplace')}
                 className="font-semibold text-base"
               />
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                {project.workplace?.name || "No workplace assigned"}
+                {project.workplace?.name || t('Unknown')}
               </p>
             </div>
             <div>
               <Label
                 htmlFor="maxUsers"
-                value="Max Users"
+                value= {t('Max Users')}
                 className="font-semibold text-base"
               />
               <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -191,7 +193,7 @@ const ProjectsHomeCard = ({ project }) => {
         </Modal.Body>
         <Modal.Footer>
           <Button className="bg-gray-700" onClick={handleCloseModal}>
-            Close
+            {t('Close')}
           </Button>
         </Modal.Footer>
       </Modal>

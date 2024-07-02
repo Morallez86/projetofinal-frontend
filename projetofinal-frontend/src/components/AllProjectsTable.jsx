@@ -3,6 +3,7 @@ import DataTable from "react-data-table-component";
 import { FcInvite } from "react-icons/fc";
 import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
+import { useTranslation } from "react-i18next";
 
 // Helper function to convert the date array to a JS Date object
 const formatDate = (dateArray) => {
@@ -13,6 +14,7 @@ const formatDate = (dateArray) => {
   const [year, month, day, hour = 0, minute = 0] = dateArray;
   return new Date(year, month - 1, day, hour, minute).toLocaleDateString();
 };
+
 
 // Helper function to map status value to status string
 const getStatusString = (statusValue) => {
@@ -61,9 +63,11 @@ function AllProjectsTable({
   const apiUrl = useApiStore((state) => state.apiUrl);
   const token = useUserStore((state) => state.token);
 
+  const {t} = useTranslation();
+
   const handleInviteClick = async (projectId) => {
     const confirmed = window.confirm(
-      "Are you sure you want to send an invitation?"
+      t('AreYouSureYouWantToSendAnInvitationToThisProject')
     );
     if (!confirmed) {
       return;
@@ -95,27 +99,27 @@ function AllProjectsTable({
 
   const columns = [
     {
-      name: "Project Name",
+      name: t('ProjectName') ,
       selector: (row) => row.title,
       sortable: true,
     },
     {
-      name: "Status",
+      name: t('Status') ,
       selector: (row) => getStatusString(row.status),
       sortable: true,
     },
     {
-      name: "Skills",
+      name:  t('Skills') ,
       selector: (row) => getSkillsString(row.skills),
       sortable: true,
     },
     {
-      name: "Interests",
+      name: t('Interests'),
       selector: (row) => getInterestsString(row.interests),
       sortable: true,
     },
     {
-      name: "Slots Open",
+      name: t('SlotsOpen'),
       selector: (row) => row.maxUsers - row.userProjectDtos.length,
       cell: (row) => {
         const slotsOpen = row.maxUsers - row.userProjectDtos.length;
@@ -133,7 +137,7 @@ function AllProjectsTable({
       },
     },
     {
-      name: "Creation Date",
+      name: t('CreationDate'),
       selector: (row) => formatDate(row.creationDate),
       sortable: true,
     },
@@ -156,6 +160,10 @@ function AllProjectsTable({
         paginationRowsPerPageOptions={[10, 20, 30, 40, 50]}
         paginationPerPage={rowsPerPage}
         responsive
+        paginationComponentOptions={{
+          rowsPerPageText: t('RowsPerPage'),
+          rangeSeparatorText: t('of'),
+        }}
       />
     </div>
   );
