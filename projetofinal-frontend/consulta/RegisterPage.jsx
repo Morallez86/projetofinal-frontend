@@ -2,10 +2,13 @@ import React from "react";
 import "../general.css";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-
+import { useTranslation } from "react-i18next";
+import useUserStore from "../Stores/UserStore";
 
 function RegisterPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
+  const setLanguage = useUserStore((state) => state.setLanguage);
 
   //Dados do formulário
   const [formData, setFormData] = useState({
@@ -26,6 +29,44 @@ function RegisterPage() {
     userPhoto: "",
   });
 
+  const fetchGreeting = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/greetings",
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Erro na requisição: " + response.statusText);
+      }
+
+      const data = await response.json();
+      console.log(data);
+
+      // Supondo que 'data.locale' seja uma string como 'en-AU'
+      // e você quer apenas 'en'
+      const languageCode = data.locale.substring(0, 2);
+      console.log(languageCode);
+      setLanguage(languageCode);
+
+      // Agora você pode usar 'languageCode' para mudar a linguagem da aplicação
+      i18n.changeLanguage(languageCode);
+    } catch (error) {
+      console.error("Erro ao buscar a saudação:", error.message);
+      throw error;
+    }
+  };
+
+  useEffect(() => {
+    fetchGreeting();
+  }, []);
+
   //Mudaça de valores pelos preenchidos
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -41,27 +82,28 @@ function RegisterPage() {
     const newWarnings = {};
 
     if (/\s/.test(formData.username)) {
-      newWarnings.username = "Username cannot contain spaces";
+      newWarnings.username = t("Username cannot contain spaces");
     }
-    if ((formData.password === "")) {
-      newWarnings.password = "Password is required";
+    if (formData.password === "") {
+      newWarnings.password = t("Password is required");
     }
     if (!/^(\S+\s+\S+)$/.test(formData.name.trim())) {
-      newWarnings.name = "Name must contain exactly two names";
+      newWarnings.name = t("Name must contain exactly two names");
     }
     if (!/^\S+@\S+\.\S+$/.test(formData.email.trim())) {
-      newWarnings.email = "Invalid email format";
+      newWarnings.email = t("Invalid email format");
     }
     if (!/^\d{9}$/.test(formData.contactNumber.trim())) {
-      newWarnings.contactNumber =
-        "Invalid phone number format (should contain exactly 9 digits)";
+      newWarnings.contactNumber = t(
+        "Invalid phone number format (should contain exactly 9 digits"
+      );
     }
 
     if (
       formData.userPhoto.trim() &&
       !formData.userPhoto.trim().startsWith("https://")
     ) {
-      newWarnings.userPhoto = "Photo URL should start with 'https://'";
+      newWarnings.userPhoto = t("Photo URL should start with https://");
     }
 
     setWarnings(newWarnings);
@@ -98,60 +140,60 @@ function RegisterPage() {
         <form onSubmit={handleSubmit}>
           <div>
             <div className="labels-containers">
-              <label htmlFor="username"> Username: </label>
+              <label htmlFor="username"> {t("Username")} </label>
               <input
                 type="text"
                 name="username"
                 defaultValue=""
                 onChange={handleChange}
-                placeholder="Your username"
+                placeholder={t("Your Username")}
               />
               <div className="warning">{warnings.username}</div>
               <label>
-                <label htmlFor="password"> Password: </label>
+                <label htmlFor="password"> {t("password")} </label>
                 <input
                   type="password"
                   name="password"
                   defaultValue=""
                   onChange={handleChange}
-                  placeholder="Your Password"
+                  placeholder={t("Your Password")}
                 />
                 <div className="warning">{warnings.password}</div>
               </label>
-              <label htmlFor="name"> Name: </label>
+              <label htmlFor="name"> {t("Name")} </label>
               <input
                 type="text"
                 name="name"
                 defaultValue=""
                 onChange={handleChange}
-                placeholder="First and Last Name"
+                placeholder={t("First and Last Name")}
               />
               <div className="warning">{warnings.name}</div>
-              <label htmlFor="email"> Email: </label>
+              <label htmlFor="email"> {t("Email")}</label>
               <input
                 type="text"
                 name="email"
                 defaultValue=""
                 onChange={handleChange}
-                placeholder="Your email"
+                placeholder={t("Your Email")}
               />
               <div className="warning">{warnings.email}</div>
-              <label htmlFor="contactNumber"> Phone number: </label>
+              <label htmlFor="contactNumber"> {t("PhoneNumber")} </label>
               <input
                 type="text"
                 name="contactNumber"
                 defaultValue=""
                 onChange={handleChange}
-                placeholder="Your Phone Number"
+                placeholder={t("Your Phone Number")}
               />
               <div className="warning">{warnings.contactNumber}</div>
-              <label htmlFor="userPhoto"> Photo: </label>
+              <label htmlFor="userPhoto"> {t("Photo")}</label>
               <input
                 type="text"
                 name="userPhoto"
                 defaultValue=""
                 onChange={handleChange}
-                placeholder="Your Photo"
+                placeholder={t("Photo")}
               />
               <div className="warning">{warnings.userPhoto}</div>
             </div>
@@ -160,7 +202,7 @@ function RegisterPage() {
             <input className="button" type="submit" value="Send" />
             <button className="button" onClick={goBack}>
               {" "}
-              Back{" "}
+              {t("Back")}{" "}
             </button>
           </div>
         </form>

@@ -276,7 +276,7 @@ function MessagesPage() {
                       : "bg-cyan-500 text-white hover:bg-cyan-700"
                   } px-4 py-1 rounded`}
                 >
-                  {searchActive ? "Clear" : "Search"}
+                  {searchActive ? t('Clear') : t('Search')}
                 </button>
                 <input
                   type="text"

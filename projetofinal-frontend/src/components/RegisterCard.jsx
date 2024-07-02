@@ -6,6 +6,7 @@ import zxcvbn from "zxcvbn";
 import useApiStore from '../Stores/ApiStore';
 import useWorkplaceStore from '../Stores/WorkplaceStore';
 import { useNavigate } from "react-router-dom";
+import {useTranslation} from "react-i18next";
 
 function RegisterCard() {
   const [formDataName, setFormDataName] = useState({ name: "" });
@@ -31,6 +32,7 @@ function RegisterCard() {
   const { apiUrl } = useApiStore();
   const {workplaces} = useWorkplaceStore();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -216,7 +218,7 @@ function RegisterCard() {
           <div className="mb-2 flex items-center">
             <Label
               htmlFor="email"
-              value="Email"
+              value= {t("Email")}
               className="font-semibold text-base"
             />
             <FaStarOfLife className="text-red-500 ml-2 text-xs" />
@@ -225,7 +227,7 @@ function RegisterCard() {
             id="email"
             type="email"
             name="email"
-            placeholder="Your email"
+            placeholder= {t("Your email")}
             onChange={handleChange}
             onInvalid={handleInvalid}
           />
@@ -234,7 +236,7 @@ function RegisterCard() {
           <div className="mb-2 flex items-center">
             <Label
               htmlFor="password"
-              value="Password"
+              value= {t("Password")}
               className="font-semibold text-base"
             />
             <FaStarOfLife className="text-red-500 ml-2 text-xs" />
@@ -243,7 +245,7 @@ function RegisterCard() {
             id="password"
             type="password"
             name="password"
-            placeholder="Your password"
+            placeholder= {t("Your password")}
             onChange={handleChange}
           />
         </div>
@@ -251,7 +253,7 @@ function RegisterCard() {
           <div className="mb-2 flex items-center">
             <Label
               htmlFor="password-confirmation"
-              value="Password Confirmation"
+              value= {t("Password Confirmation")}
               className="font-semibold text-base"
             />
             <FaStarOfLife className="text-red-500 ml-2 text-xs" />
@@ -260,7 +262,7 @@ function RegisterCard() {
             id="password-confirmation"
             type="password"
             name="passwordConfirmation"
-            placeholder="Confirm your password"
+            placeholder= {t("Confirm your password")}
             onChange={handleChange}
           />
         </div>
@@ -268,13 +270,13 @@ function RegisterCard() {
           <div className="mb-2 flex items-center">
             <Label
               htmlFor="workplace"
-              value="Workplace"
+              value= {t("Workplace")}
               className="font-semibold text-base"
             />
             <FaStarOfLife className="text-red-500 ml-2 text-xs" />
           </div>
           <Dropdown
-            label={selectedWorkLocation || "Choose a location"}
+            label={selectedWorkLocation ||  t("Select your workplace")}
             dismissOnClick={true}
           >
             {workplaces.map((location) => (
@@ -291,7 +293,7 @@ function RegisterCard() {
           <div className="mb-2 flex items-center">
             <Label
               htmlFor="name"
-              value="Full name"
+              value= {t("Full Name")}
               className="font-semibold text-base"
             />
             <FaStarOfLife className="text-red-500 ml-2 text-xs" />
@@ -300,7 +302,7 @@ function RegisterCard() {
             id="name"
             type="text"
             name="name"
-            placeholder="First and Last Name"
+            placeholder= {t("First and Last Name")}
             onChange={handleChange}
           />
         </div>
@@ -308,7 +310,7 @@ function RegisterCard() {
           <div className="mb-2 block">
             <Label
               htmlFor="username"
-              value="Username"
+              value= {t("Username")}
               className="font-semibold text-base"
             />
           </div>
@@ -316,7 +318,7 @@ function RegisterCard() {
             id="username"
             type="text"
             name="username"
-            placeholder="Example: JohnDoe98"
+            placeholder= {t('Example: John Doe')}
             maxLength={15}
             onChange={handleChange}
           />
@@ -325,7 +327,7 @@ function RegisterCard() {
           <div className="mb-2 block">
             <Label
               htmlFor="photo"
-              value="Photo"
+              value= {t("Photo")}
               className="font-semibold text-base"
             />
           </div>
@@ -334,12 +336,12 @@ function RegisterCard() {
         <div className="mb-2 block col-span-full">
           <Label
             htmlFor="biography"
-            value="Biography"
+            value= {t("Biography")}
             className="font-semibold text-base"
           />
           <textarea
             id="biography"
-            placeholder="Talk about yourself..."
+            placeholder= {t("Tell us a bit about yourself")} 
             rows={2}
             className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
             maxLength={300}
@@ -351,71 +353,71 @@ function RegisterCard() {
           <FaStarOfLife className="text-red-500 mr-2 text-xs" />
           <Label
             htmlFor="warning"
-            value="Inputs with this symbol are mandatory" 
+            value= {t("Fields with this symbol are mandatory")}
           />
         </div>
         <div className="flex justify-between col-span-full">
           <div>
-            <Button onClick={handleSubmit}>Submit</Button>
+            <Button onClick={handleSubmit}>{t('Submit')}</Button>
           </div>
           <div className="ml-auto">
             <Button type="button" onClick={() => navigate("/")}>
-              Home
+              {t("Back")}
             </Button>
           </div>
         </div>
       </div>
       {warningEmail === 1 && (
         <Alert color="failure" icon={HiInformationCircle}>
-          <span className="font-medium">Email format is incorrect!</span>
+          <span className="font-medium">{t('Email format is incorrect!')}</span>
         </Alert>
       )}
       {warningUsername === 1 && (
         <Alert color="failure" icon={HiInformationCircle}>
-          <span className="font-medium">Username can't have spaces</span>
+          <span className="font-medium">{t('Username can t have spaces')}</span>
         </Alert>
       )}
       {warningPasswordPower === 1 && (
         <>
           <Alert color="failure" icon={HiInformationCircle}>
-            <span className="font-medium">Password isn't strong enough</span>
+            <span className="font-medium">{t('Password isn t strong enough')}</span>
           </Alert>
           <Alert color="warning" icon={HiInformationCircle} rounded>
             <span
               className="font-medium"
               style={{ textDecoration: "underline" }}
             >
-              TIP TO A STRONG PASSWORD!
+              {t('TIP TO A STRONG PASSWORD!')}
             </span>
             {
-              " Must have at least 8 characters, use upper and lower case letters, use numbers and special characters"
+              t(' Must have at least 8 characters, use upper and lower case letters, use numbers and special characters')
             }
           </Alert>
         </>
       )}
       {warningPasswordEquals === 1 && (
         <Alert color="failure" icon={HiInformationCircle}>
-          <span className="font-medium">Passwords don't match</span>
+          <span className="font-medium">{t('Passwords don t match')}</span>
         </Alert>
       )}
       {warningNameMax === 1 && (
         <Alert color="failure" icon={HiInformationCircle}>
           <span className="font-medium">
-            You can only enter 2 names (first and last)
+            {t('You can only enter 2 names (first and last)')}
           </span>
         </Alert>
       )}
       {warningNameMin === 1 && (
         <Alert color="failure" icon={HiInformationCircle}>
           <span className="font-medium">
-            You need to enter 2 names (first and last)
+            {t('You need to enter 2 names (first and last)')}
           </span>
         </Alert>
       )}
       {warningRequiresInputs === 1 && (
         <Alert color="failure" icon={HiInformationCircle}>
           <span className="font-medium">
-            The required fields are not all filled in
+            {t('The required fields are not all filled in')}
           </span>
         </Alert>
       )}
