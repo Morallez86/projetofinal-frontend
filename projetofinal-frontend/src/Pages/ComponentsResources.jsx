@@ -19,37 +19,40 @@ function ComponentsResources() {
   const [showModal, setShowModal] = useState(false);
   const { t } = useTranslation();
 
-  useEffect(() => {
-    const getResources = async () => {
-      try {
-        const response = await fetch(
-          `${apiUrl}/resources/toTables?page=${page}&limit=${rowsPerPage}&filter=${encodeURIComponent(
-            filterText
-          )}`,
-          {
-            method: "GET",
-            headers: {
-              Accept: "*/*",
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (response.status === 200) {
-          console.log("resources fetched successfully");
-          const data = await response.json();
-          setResources(data.resources);
-          setTotalPages(data.totalPages);
-          console.log(data);
-        } else {
-          console.error("Error fetching resources" + response.status);
+
+  const getResources = async () => {
+    setLoading(true); // Ensure loading is set to true each time getResources is called
+    try {
+      const response = await fetch(
+        `${apiUrl}/resources/toTables?page=${page}&limit=${rowsPerPage}&filter=${encodeURIComponent(
+          filterText
+        )}`,
+        {
+          method: "GET",
+          headers: {
+            Accept: "*/*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
-      } catch (error) {
-        console.error("Error fetching resources" + error);
-      } finally {
-        setLoading(false);
+      );
+      if (response.status === 200) {
+        console.log("resources fetched successfully");
+        const data = await response.json();
+        setResources(data.resources);
+        setTotalPages(data.totalPages);
+        console.log(data);
+      } else {
+        console.error("Error fetching resources" + response.status);
       }
-    };
+    } catch (error) {
+      console.error("Error fetching resources" + error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     getResources();
   }, [page, rowsPerPage, filterText]);
 
