@@ -50,7 +50,7 @@ function LoginCard() {
   const fetchGreeting = async () => {
     try {
       const response = await fetch(
-        "http://localhost:8080/projetofinal-backend-1.0-SNAPSHOT/rest/greetings",
+        "https://localhost:8443/projetofinal-backend-1.0-SNAPSHOT/rest/greetings",
         {
           method: "GET",
           headers: {
