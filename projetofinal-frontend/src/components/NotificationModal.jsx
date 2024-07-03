@@ -63,9 +63,13 @@ const NotificationModal = ({ isOpen, closeModal, notification }) => {
       if (notification.type === "INVITATION") {
         body.type = "400";
         console.log(body);
-      } else if (notification.type === "MANAGING") {
+      } else if (
+        notification.type === "MANAGING" &&
+        notification.action === "INVITATION"
+      ) {
         body.type = "300";
       }
+      console.log(body);
 
       const response = await fetch(`${apiUrl}/notifications/approval`, {
         method: "PUT",
@@ -142,29 +146,29 @@ const NotificationModal = ({ isOpen, closeModal, notification }) => {
         className="modal-content bg-white opacity-95 border border-gray-600 bg-gradient-to-r from-gray-400 via-gray-50 to-gray-400  w-full max-w-md p-6 rounded-lg shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-xl font-bold mb-4"> {t('NotificationDetails')}</h2>
+        <h2 className="text-xl font-bold mb-4"> {t("NotificationDetails")}</h2>
         <div className="mb-2">
-          <strong> {t('Description')}:</strong> {notification.description}
+          <strong> {t("Description")}:</strong> {notification.description}
         </div>
         <div className="mb-2">
-          <strong> {t('Timestamp')}:</strong> {formattedDate} {formattedTime}
+          <strong> {t("Timestamp")}:</strong> {formattedDate} {formattedTime}
         </div>
         <div className="mb-2">
-          <strong>{t('Type')}:</strong> {notification.type}
+          <strong>{t("Type")}:</strong> {notification.type}
         </div>
         <div className="mb-2">
-          <strong>{t('Seen')}:</strong> {notification.seen ? t('Yes') : t('No')}
+          <strong>{t("Seen")}:</strong> {notification.seen ? t("Yes") : t("No")}
         </div>
         {successMessage && (
           <div className="mb-2 ml-4 flex items-center col-span-full">
             <Label
               htmlFor="success"
-              value= {t('A notification was sent')}
+              value={t("A notification was sent")}
               className="mb-2 text-green-700"
             />
           </div>
         )}
-        {(notification.type === "MANAGING" ||
+        {((notification.type === "MANAGING" && notification.action === "INVITATION") || (notification.type === "MANAGING" && notification.action === "PROJECT") ||
           notification.type === "INVITATION") &&
           !notification.seen && (
             <div className="flex mt-4">
@@ -183,7 +187,7 @@ const NotificationModal = ({ isOpen, closeModal, notification }) => {
             onClick={closeModal}
             className="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-400"
           >
-            {t('Close')}
+            {t("Close")}
           </button>
         </div>
       </div>

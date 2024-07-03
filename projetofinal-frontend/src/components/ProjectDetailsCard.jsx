@@ -294,7 +294,7 @@ const formatDateForBackend = (dateArray) => {
               {getBadge(projectDetails.approved)}
             </div>
             <div className="flex items-center space-x-2">
-              {currentUserIsAdmin && projectDetails.status===100 && (
+              {currentUserIsAdmin && (projectDetails.status===100 || projectDetails.status===300) && (
                 <MdOutlineEdit
                   className="h-6 w-6 text-black cursor-pointer"
                   onClick={() => setEditMode(true)}
