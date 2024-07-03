@@ -122,7 +122,11 @@ function AllProjectsTable({
       name: t('SlotsOpen'),
       selector: (row) => row.maxUsers - row.userProjectDtos.length,
       cell: (row) => {
-        const slotsOpen = row.maxUsers - row.userProjectDtos.length;
+        // Count the number of active users in the project
+        const activeUsersCount = row.userProjectDtos.filter(
+          (projectUser) => projectUser.status === "active"
+        ).length;
+        const slotsOpen = row.maxUsers - activeUsersCount - 1;
         return (
           <div className="flex justify-between items-center w-1/2">
             <span>{slotsOpen}</span>

@@ -60,9 +60,11 @@ const NotificationModal = ({ isOpen, closeModal, notification }) => {
         approval: true,
       };
 
+      // Notification where the project admin sends to a normal user
       if (notification.type === "INVITATION") {
         body.type = "400";
         console.log(body);
+      //Notification where the user wants to join a project
       } else if (
         notification.type === "MANAGING" &&
         notification.action === "INVITATION"
