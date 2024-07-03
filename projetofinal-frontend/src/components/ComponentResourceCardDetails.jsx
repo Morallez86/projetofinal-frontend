@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Label, Modal, Button, TextInput, Textarea } from "flowbite-react";
-import { jwtDecode } from "jwt-decode";
 import useUserStore from "../Stores/UserStore";
 import useApiStore from "../Stores/ApiStore";
 import { useTranslation } from "react-i18next";
@@ -22,12 +21,6 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
     ...(context === "resources" && { projectNames: data.projectNames || [] }),
     ...data,
   });
-
-  let isAdmin = false;
-  if (token) {
-    const decodedToken = jwtDecode(token);
-    isAdmin = decodedToken.role === 200;
-  }
 
   const handleChange = (e) => {
     const { id, value } = e.target;

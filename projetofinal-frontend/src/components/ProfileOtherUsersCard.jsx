@@ -6,15 +6,15 @@ import { useParams } from "react-router-dom";
 import { MdOutlineEdit } from "react-icons/md";
 import basePhoto from "../Assets/092.png";
 import { jwtDecode } from "jwt-decode";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 function ProfileOtherUsersCard() {
   const { userId } = useParams();
   const [editMode, setEditMode] = useState(false);
   const apiUrl = useApiStore((state) => state.apiUrl);
   const token = useUserStore((state) => state.token);
-  
-  const {t} = useTranslation();
+
+  const { t } = useTranslation();
 
   let currentUserRole;
   if (token) {
@@ -35,66 +35,66 @@ function ProfileOtherUsersCard() {
   const [profileImage, setProfileImage] = useState(basePhoto);
 
   useEffect(() => {
-    fetchUserInfo();
-  }, [userId]);
-
-  const fetchUserInfo = async () => {
-    try {
-      const response = await fetch(`${apiUrl}/users/profile/${userId}`, {
-        method: "GET",
-        headers: {
-          Accept: "*/*",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.status === 404) {
-        console.log("User with this ID is not found");
-      } else if (response.status === 200) {
-        const userInfoData = await response.json();
-        console.log(userInfoData);
-        setUserInfo({
-          name: `${userInfoData.firstName} ${userInfoData.lastName}`,
-          nickname: userInfoData.username,
-          biography: userInfoData.biography,
-          jobLocation: userInfoData.workplace,
-          visibility: userInfoData.visibility,
-          skills: userInfoData.skills.map((skill) => skill.name),
-          interests: userInfoData.interests.map((interest) => interest.name),
-          role: userInfoData.role,
+    const fetchUserInfo = async () => {
+      try {
+        const response = await fetch(`${apiUrl}/users/profile/${userId}`, {
+          method: "GET",
+          headers: {
+            Accept: "*/*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         });
-        fetchProfileImage(userId);
+
+        if (response.status === 404) {
+          console.log("User with this ID is not found");
+        } else if (response.status === 200) {
+          const userInfoData = await response.json();
+          console.log(userInfoData);
+          setUserInfo({
+            name: `${userInfoData.firstName} ${userInfoData.lastName}`,
+            nickname: userInfoData.username,
+            biography: userInfoData.biography,
+            jobLocation: userInfoData.workplace,
+            visibility: userInfoData.visibility,
+            skills: userInfoData.skills.map((skill) => skill.name),
+            interests: userInfoData.interests.map((interest) => interest.name),
+            role: userInfoData.role,
+          });
+          fetchProfileImage(userId);
+        }
+      } catch (error) {
+        console.error("Error fetching user info:", error);
       }
-    } catch (error) {
-      console.error("Error fetching user info:", error);
-    }
-  };
+    };
 
-  const fetchProfileImage = async (userId) => {
-    try {
-      const response = await fetch(`${apiUrl}/users/${userId}/image`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+    const fetchProfileImage = async (userId) => {
+      try {
+        const response = await fetch(`${apiUrl}/users/${userId}/image`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-      if (response.status === 200) {
-        const imageData = await response.blob();
-        const imageObjectURL = URL.createObjectURL(imageData);
-        setProfileImage(imageObjectURL);
-      } else if (response.status === 404) {
-        console.log("User image not found, using base photo");
+        if (response.status === 200) {
+          const imageData = await response.blob();
+          const imageObjectURL = URL.createObjectURL(imageData);
+          setProfileImage(imageObjectURL);
+        } else if (response.status === 404) {
+          console.log("User image not found, using base photo");
+          setProfileImage(basePhoto);
+        } else {
+          console.error("Error fetching user image");
+        }
+      } catch (error) {
+        console.error("Error fetching user image:", error);
         setProfileImage(basePhoto);
-      } else {
-        console.error("Error fetching user image");
       }
-    } catch (error) {
-      console.error("Error fetching user image:", error);
-      setProfileImage(basePhoto);
-    }
-  };
+    };
+
+    fetchUserInfo();
+  }, [apiUrl, token, userId]);
 
   const handleEditClick = () => {
     setEditMode(true);
@@ -141,7 +141,10 @@ function ProfileOtherUsersCard() {
 
   return (
     <Card className="bg-gray-200 transition-colors px-4 duration-200 w-1/2 h-100vh border-gray-600 bg-gradient-to-r from-gray-400 via-gray-50 to-white rounded-lg">
-      <h1 className="text-3xl font-bold text-center mb-2"> {t('userProfile')} </h1>
+      <h1 className="text-3xl font-bold text-center mb-2">
+        {" "}
+        {t("userProfile")}{" "}
+      </h1>
       <div className="flex flex-col pb-10">
         <div className="relative flex items-center space-x-10 justify-center">
           {currentUserRole === 200 && (
@@ -159,53 +162,53 @@ function ProfileOtherUsersCard() {
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="mt-4">
-            <Label htmlFor="name" value= {t('Name')} />
+            <Label htmlFor="name" value={t("Name")} />
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {userInfo.name}
             </p>
           </div>
           <div className="mt-4">
-            <Label htmlFor="jobLocation" value={t('jobLocaltion')}  />
+            <Label htmlFor="jobLocation" value={t("jobLocaltion")} />
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {userInfo.jobLocation}
             </p>
           </div>
           <div className="mt-4">
-            <Label htmlFor="nickname" value={t('Username')}  />
+            <Label htmlFor="nickname" value={t("Username")} />
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {userInfo.nickname}
             </p>
           </div>
           <div className="mt-4">
-            <Label htmlFor="biography" value={t('Biography')}  />
+            <Label htmlFor="biography" value={t("Biography")} />
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {userInfo.biography}
             </p>
           </div>
           <div className="mt-4">
-            <Label htmlFor="visibility" value= {t('Visibility')}  />
+            <Label htmlFor="visibility" value={t("Visibility")} />
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              {userInfo.visibility ? t('Public') : t('Private')}
+              {userInfo.visibility ? t("Public") : t("Private")}
             </p>
           </div>
           {editMode && currentUserRole === 200 && (
             <div className="mt-4">
-              <Label htmlFor="role" value= {t('Role')}  />
+              <Label htmlFor="role" value={t("Role")} />
               <Select
                 id="role"
                 name="role"
                 value={userInfo.role}
                 onChange={handleInputChange}
               >
-                <option value={100}>{t('User')} </option>
-                <option value={200}>{t('Admin')} </option>
+                <option value={100}>{t("User")}</option>
+                <option value={200}>{t("Admin")}</option>
               </Select>
             </div>
           )}
         </div>
         <div className="mt-4">
           <div className="flex items-center">
-            <Label htmlFor="skills" value= {t('Skills')}  />
+            <Label htmlFor="skills" value={t("Skills")} />
           </div>
           <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
             <p>
@@ -220,7 +223,7 @@ function ProfileOtherUsersCard() {
                 </button>
                 <Tooltip
                   anchorSelect="#tip-all-skills"
-                  content= {t('CheckAllSkills')} 
+                  content={t("CheckAllSkills")}
                   place="top"
                 />
               </div>
@@ -229,7 +232,7 @@ function ProfileOtherUsersCard() {
         </div>
         <div className="mt-4">
           <div className="flex items-center">
-            <Label htmlFor="interests" value= {t('Interests')}  />
+            <Label htmlFor="interests" value={t("Interests")} />
           </div>
           <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
             <p>
@@ -245,7 +248,7 @@ function ProfileOtherUsersCard() {
                   </button>
                   <Tooltip
                     anchorSelect="#tip-all-interests"
-                    content= {t('CheckAllInterests')} 
+                    content={t("CheckAllInterests")}
                     place="top"
                   />
                 </div>
@@ -255,9 +258,9 @@ function ProfileOtherUsersCard() {
         {editMode && (
           <div className="flex justify-end mt-4">
             <Button className="mr-2" onClick={handleCancelClick}>
-            {t('Cancel')} 
+              {t("Cancel")}
             </Button>
-            <Button onClick={handleSaveClick}> {t('Save')}  </Button>
+            <Button onClick={handleSaveClick}>{t("Save")}</Button>
           </div>
         )}
       </div>
