@@ -5,7 +5,7 @@ import useUserStore from "../Stores/UserStore";
 import { useEffect, useState } from "react";
 import { Button } from "flowbite-react";
 import ComponentResourceCardDetails from "../Components/ComponentResourceCardDetails";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 function ComponentesComponents() {
   const apiUrl = useApiStore((state) => state.apiUrl);
@@ -18,42 +18,41 @@ function ComponentesComponents() {
   const [filterText, setFilterText] = useState("");
   const [showModal, setShowModal] = useState(false);
 
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   useEffect(() => {
+    const getComponents = async () => {
+      try {
+        const response = await fetch(
+          `${apiUrl}/components/toTables?page=${page}&limit=${rowsPerPage}&filter=${encodeURIComponent(
+            filterText
+          )}`,
+          {
+            method: "GET",
+            headers: {
+              Accept: "*/*",
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (response.status === 200) {
+          console.log("components fetched successfully");
+          const data = await response.json();
+          setComponents(data.components);
+          setTotalPages(data.totalPages);
+          console.log(data);
+        } else {
+          console.error("Error fetching components" + response.status);
+        }
+      } catch (error) {
+        console.error("Error fetching components" + error);
+      } finally {
+        setLoading(false);
+      }
+    };
     getComponents();
   }, [page, rowsPerPage, filterText]);
-
-  const getComponents = async () => {
-    try {
-      const response = await fetch(
-        `${apiUrl}/components/toTables?page=${page}&limit=${rowsPerPage}&filter=${encodeURIComponent(
-          filterText
-        )}`,
-        {
-          method: "GET",
-          headers: {
-            Accept: "*/*",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      if (response.status === 200) {
-        console.log("components fetched successfully");
-        const data = await response.json();
-        setComponents(data.components);
-        setTotalPages(data.totalPages);
-        console.log(data);
-      } else {
-        console.error("Error fetching components" + response.status);
-      }
-    } catch (error) {
-      console.error("Error fetching components" + error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleModalClose = () => {
     setShowModal(false);
@@ -63,7 +62,9 @@ function ComponentesComponents() {
   return (
     <div className="flex flex-col min-h-screen">
       <div className="p-14">
-        <Button className="mb-4" onClick={() => setShowModal(true)}>{t('CreateNewComponent')}</Button>
+        <Button className="mb-4" onClick={() => setShowModal(true)}>
+          {t("CreateNewComponent")}
+        </Button>
         <ComponentsTable
           data={components}
           loading={loading}

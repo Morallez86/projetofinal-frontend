@@ -5,7 +5,7 @@ import useUserStore from "../Stores/UserStore";
 import { useEffect, useState } from "react";
 import { Button } from "flowbite-react";
 import ComponentResourceCardDetails from "../Components/ComponentResourceCardDetails";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 function ComponentsResources() {
   const apiUrl = useApiStore((state) => state.apiUrl);
@@ -20,39 +20,38 @@ function ComponentsResources() {
   const { t } = useTranslation();
 
   useEffect(() => {
+    const getResources = async () => {
+      try {
+        const response = await fetch(
+          `${apiUrl}/resources/toTables?page=${page}&limit=${rowsPerPage}&filter=${encodeURIComponent(
+            filterText
+          )}`,
+          {
+            method: "GET",
+            headers: {
+              Accept: "*/*",
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (response.status === 200) {
+          console.log("resources fetched successfully");
+          const data = await response.json();
+          setResources(data.resources);
+          setTotalPages(data.totalPages);
+          console.log(data);
+        } else {
+          console.error("Error fetching resources" + response.status);
+        }
+      } catch (error) {
+        console.error("Error fetching resources" + error);
+      } finally {
+        setLoading(false);
+      }
+    };
     getResources();
   }, [page, rowsPerPage, filterText]);
-
-  const getResources = async () => {
-    try {
-      const response = await fetch(
-        `${apiUrl}/resources/toTables?page=${page}&limit=${rowsPerPage}&filter=${encodeURIComponent(
-          filterText
-        )}`,
-        {
-          method: "GET",
-          headers: {
-            Accept: "*/*",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      if (response.status === 200) {
-        console.log("resources fetched successfully");
-        const data = await response.json();
-        setResources(data.resources);
-        setTotalPages(data.totalPages);
-        console.log(data);
-      } else {
-        console.error("Error fetching resources" + response.status);
-      }
-    } catch (error) {
-      console.error("Error fetching resources" + error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleModalClose = () => {
     setShowModal(false);

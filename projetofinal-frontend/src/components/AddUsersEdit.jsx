@@ -94,8 +94,12 @@ function AddUsersEdit({ openPopUpUsers, closePopUpUsers, projectInfo }) {
 
   const handleAddUser = async () => {
     const user = selectedUser;
+    // Count the number of active users in the project
+    const activeUsersCount = projectInfo.userProjectDtos.filter(
+      (projectUser) => projectUser.status === "active"
+    ).length;
 
-    if (projectInfo.userProjectDtos.length >= projectInfo.maxUsers) {
+    if (activeUsersCount >= projectInfo.maxUsers) {
       setError(`Cannot add more than ${projectInfo.maxUsers} users`);
       return;
     }
@@ -105,9 +109,11 @@ function AddUsersEdit({ openPopUpUsers, closePopUpUsers, projectInfo }) {
       return;
     }
 
+    // Check if the user is already an active member of the project
     if (
       projectInfo.userProjectDtos.some(
-        (projectUser) => projectUser.userId === user.id
+        (projectUser) =>
+          projectUser.userId === user.id && projectUser.status === "active"
       )
     ) {
       setError("This user is already in the project team");

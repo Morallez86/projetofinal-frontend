@@ -68,7 +68,7 @@ function ProjectDetails() {
         setProjectTimestamp(project.id, localTimestamp);
       }
     };
-  }, [project]);
+  }, [project, setProjectTimestamp]);
 
   useEffect(() => {
     const fetchProject = async () => {
