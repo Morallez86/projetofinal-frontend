@@ -15,12 +15,41 @@ const GanttChartPage = () => {
   const apiUrl = useApiStore((state) => state.apiUrl);
   const token = useUserStore((state) => state.token);
   const [allTasks, setAllTasks] = useState([]);
+  const [dependentTaskss, setDependentTaskss] = useState(0);
+  const [dependentTasksState, setDependentTasksState] = useState([]);
+  const [dependencieTasks, setDependencieTasks] = useState([]);
 
   const [popUpShow, setPopUpShow] = useState(false);
 
   const openPopUpCreateTask = () => {
     setPopUpShow(true);
   };
+
+  useEffect(() => {
+    if (dependentTaskss !== 0) { // Considerando que 0 é um valor não válido para ID
+      const foundTask = allTasks.find(task => task.id === dependentTaskss);
+      if (foundTask) {
+        console.log("Tarefa encontrada:", foundTask);
+        // Atualiza o estado com o array dependentTasks da tarefa encontrada
+        setDependentTasksState(foundTask.dependentTasks || []);
+        setDependencieTasks(foundTask.dependencies || [])
+      } else {
+        console.log("Tarefa não encontrada");
+      }
+    }
+  }, [dependentTaskss, allTasks]);
+
+  console.log(dependentTasksState);
+
+   const isDependent = (taskId) => {
+    return dependentTasksState.includes(taskId);
+  };
+
+  const isDependency = (taskId) => {
+    return dependencieTasks.includes(taskId);
+  };
+
+
 
   useEffect(() => {
     getTasks();
@@ -57,13 +86,13 @@ const GanttChartPage = () => {
       // Verifica se plannedStartingDate é uma string e a converte para array
       const startingDateArray = typeof task.plannedStartingDate === 'string' ?
         task.plannedStartingDate.split('-').map(Number) :
-        task.plannedStartingDate;
+        [...task.plannedStartingDate]; 
       startingDateArray[1] -= 1; 
     
       // Verifica se plannedEndingDate é uma string e a converte para array
       const endingDateArray = typeof task.plannedEndingDate === 'string' ?
         task.plannedEndingDate.split('-').map(Number) :
-        task.plannedEndingDate;
+        [...task.plannedEndingDate];
       endingDateArray[1] -= 1; 
     
       const start = new Date(
@@ -88,6 +117,7 @@ const GanttChartPage = () => {
         dependencies: task.dependencies || [],
         styles: {
           backgroundSelectedColor: "red",
+          backgroundColor: isDependent(task.id) || isDependency(task.id) ? "red" : "gray",
         },
       };
     });
@@ -122,6 +152,8 @@ const GanttChartPage = () => {
               preStepsCount={0}
               rowHeight={30}
               todayColor="orange"
+              arrowIndent={20} 
+              onClick={(task) => setDependentTaskss(task.id)}
             />
           )}
         </div>
