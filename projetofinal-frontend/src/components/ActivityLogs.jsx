@@ -156,27 +156,28 @@ function ActivityLogs({ tasks, projectId, logs }) {
 
           return (
             <div
-              key={log.id}
-              className={`w-72 rounded-md border border-black ${
-                logColors[log.type]
-              } ${expandedLogs[log.id] ? "h-auto" : "h-24"}`}
-              onMouseEnter={() =>
-                !log.title &&
-                setExpandedLogs((prev) => ({ ...prev, [log.id]: true }))
-              }
-              onMouseLeave={() =>
-                !log.title &&
-                setExpandedLogs((prev) => ({ ...prev, [log.id]: false }))
-              }
-            >
-              <p className="text-center font-bold">{displayText}</p>
-              {expandedLogs[log.id] && (
+            key={log.id}
+            className={`w-72 rounded-md border border-black ${logColors[log.type]} ${expandedLogs[log.id] ? "h-auto" : "h-24"}`}
+            onMouseEnter={() =>
+              !log.title &&
+              setExpandedLogs((prev) => ({ ...prev, [log.id]: true }))
+            }
+            onMouseLeave={() =>
+              !log.title &&
+              setExpandedLogs((prev) => ({ ...prev, [log.id]: false }))
+            }
+          >
+            <p className="text-center font-bold">{displayText}</p>
+            {expandedLogs[log.id] && (
+              <>
                 <p className="text-center">{log.newDescription}</p>
-              )}
-              <p className="text-center">{formattedDate}</p>
-              <p className="text-center">{formattedTime}</p>
-              <p className="text-center font-bold">{log.userName}</p>
-            </div>
+                {log.taskName && <p className="text-center font-bold"> About: {log.taskName}</p>}
+              </>
+            )}
+            <p className="text-center">{formattedDate}</p>
+            <p className="text-center">{formattedTime}</p>
+            <p className="text-center font-bold">{log.userName}</p>
+          </div>
           );
         })}
       </div>
