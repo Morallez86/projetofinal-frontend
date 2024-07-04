@@ -8,9 +8,11 @@ import useApiStore from "../Stores/ApiStore";
 import AddedAnimation from "../Assets/Added.json";
 import Lottie from "react-lottie";
 import useSkillStore from "../Stores/SkillStore";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
+import { useParams } from "react-router-dom";
 
 function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
+  const { projectId } = useParams();
   const token = useUserStore((state) => state.token);
   const apiUrl = useApiStore((state) => state.apiUrl);
   const userSkills = useUserStore((state) => state.skills);
@@ -85,6 +87,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
   );
 
   const handleSubmit = async () => {
+    console.log(context);
     const data = [
       {
         id: isSkillInOptions ? selectedSkill.id : null,
@@ -119,10 +122,49 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
       } catch (error) {
         console.error("Error adding skill:", error);
       }
+    } else if (context === "editProject") {
+      const data = {
+          id: isSkillInOptions ? selectedSkill.id : null,
+          name: selectedSkill.value,
+          type: skillCategoryMapping[selectedCategory],
+      };
+      console.log(data);
+      console.log(projectId);
+      console.log(token);
+      try {
+        console.log("entrou");
+        const response = await fetch(`${apiUrl}/projects/${projectId}/addSkill`, {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            skill: data,
+          }),
+        });
+        if (response.status === 200) {
+          setAnimationPlayed(true);
+          setShowSuccessText(true);
+          setSelectedSkill(null);
+          setSelectedCategory(null);
+        } else if (response.status === 409) {
+          console.error("Skill already exists in the project");
+        } else if (response.status === 404) {
+          console.error("Project not found");
+        } else {
+          console.error("Failed to add skill to project");
+        }
+      } catch (error) {
+        console.error("Error adding skill to project:", error);
+      }
     } else {
       // If context is not for users, save project skills to Zustand store
       setProjectSkills([...projectSkills, ...data]);
-      addSkill(data[0]);
+      if (!skills.some((skill) => skill.name === data[0].name)) {
+        addSkill(data[0]);
+      }
       setAnimationPlayed(true);
       setShowSuccessText(true);
       setSelectedSkill(null);
@@ -148,11 +190,11 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
             {t("RegisterSkills")}
           </h3>
           <div className="space-y-3">
-            <h4> {t('CreateOrChooseSkill')} </h4>
+            <h4> {t("CreateOrChooseSkill")} </h4>
             <div className="flex items-start space-x-4 min-h-[25rem] relative">
               <div className="text center z-10">
                 <Dropdown
-                  label={selectedCategory || t('SelectCategory')}
+                  label={selectedCategory || t("SelectCategory")}
                   dismissOnClick={true}
                   disabled={isSkillInOptions}
                   value={selectedCategory}
@@ -181,7 +223,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
                       {option.isDisabled ? <TbLockFilled /> : null}
                     </div>
                   )}
-                  placeholder= {t('SearchForASkill')}
+                  placeholder={t("SearchForASkill")}
                   value={selectedSkill}
                 />
               </div>
@@ -216,7 +258,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
                 </div>
                 {showSuccessText && (
                   <div className="animate-pulse text-green-500 font-bold absolute bottom-0">
-                    {t('SkillAdded')}
+                    {t("SkillAdded")}
                   </div>
                 )}
               </div>
@@ -226,7 +268,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
                 onClick={handleSubmit}
                 disabled={!selectedSkill || !selectedCategory}
               >
-                {t('RegisterSkill')}
+                {t("RegisterSkill")}
               </Button>
             </div>
           </div>

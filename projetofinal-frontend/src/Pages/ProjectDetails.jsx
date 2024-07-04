@@ -34,13 +34,20 @@ function ProjectDetails() {
   const [statePopUpUsers, setStatePopUpUsers] = useState(false);
   const [statePopUpSkills, setStatePopUpSkills] = useState(false);
   const [statePopUpSkillsRemove, setStatePopUpSkillsRemove] = useState(false);
+  const context = "editProject";
 
   const openAddUsersModal = () => setStatePopUpUsers(true);
   const closeAddUsersModal = () => setStatePopUpUsers(false);
   const openAddSkillsModal = () => setStatePopUpSkills(true);
-  const closeAddSkillsModal = () => setStatePopUpSkills(false);
-  const closeAddSkillsRemoveModal = () => setStatePopUpSkillsRemove(false);
-  const openAddSkillsRemoveModal= () => setStatePopUpSkillsRemove(true);
+  const closeAddSkillsModal = () => {
+    setStatePopUpSkills(false);
+    fetchProjectDetails(); // Fetch project details after closing AddSkills modal
+  };
+  const openAddSkillsRemoveModal = () => setStatePopUpSkillsRemove(true);
+  const closeAddSkillsRemoveModal = () => {
+    setStatePopUpSkillsRemove(false);
+    fetchProjectDetails(); // Fetch project details after closing RemoveSkills modal
+  };
 
   const onMessageChat = (message) => {
     setMessagesAlone((prevMessages) => [
@@ -78,61 +85,61 @@ function ProjectDetails() {
     };
   }, [project, setProjectTimestamp]);
 
-  useEffect(() => {
-    const fetchProject = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(`${apiUrl}/projects/${projectId}`, {
-          headers: {
-            Accept: "*/*",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+  const fetchProjectDetails = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${apiUrl}/projects/${projectId}`, {
+        headers: {
+          Accept: "*/*",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log(data);
-        setProject(data);
-        setTasks(data.tasks || []);
-        setTeam(data.userProjectDtos || []);
-        setMessagesAlone(data.chatMessage || []);
-
-        const userIds = data.userProjectDtos
-          .map((up) => up.userId)
-          .filter((value, index, self) => self.indexOf(value) === index);
-
-        const imagesResponse = await fetch(`${apiUrl}/users/images`, {
-          method: "POST",
-          headers: {
-            Accept: "*/*",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(userIds),
-        });
-
-        if (imagesResponse.ok) {
-          const imagesData = await imagesResponse.json();
-          const imagesMap = {};
-          imagesData.forEach((img) => {
-            imagesMap[img.id] = img;
-          });
-          setUserImages(imagesMap);
-        } else {
-          console.error("Error fetching user images");
-        }
-      } catch (error) {
-        console.error("Error fetching project details:", error);
-      } finally {
-        setLoading(false);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    };
 
-    fetchProject();
+      const data = await response.json();
+      console.log(data);
+      setProject(data);
+      setTasks(data.tasks || []);
+      setTeam(data.userProjectDtos || []);
+      setMessagesAlone(data.chatMessage || []);
+
+      const userIds = data.userProjectDtos
+        .map((up) => up.userId)
+        .filter((value, index, self) => self.indexOf(value) === index);
+
+      const imagesResponse = await fetch(`${apiUrl}/users/images`, {
+        method: "POST",
+        headers: {
+          Accept: "*/*",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(userIds),
+      });
+
+      if (imagesResponse.ok) {
+        const imagesData = await imagesResponse.json();
+        const imagesMap = {};
+        imagesData.forEach((img) => {
+          imagesMap[img.id] = img;
+        });
+        setUserImages(imagesMap);
+      } else {
+        console.error("Error fetching user images");
+      }
+    } catch (error) {
+      console.error("Error fetching project details:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProjectDetails();
   }, [projectId, apiUrl, token]);
 
   const getUnreadMessages = () => {
@@ -258,10 +265,13 @@ function ProjectDetails() {
         openPopUpSkills={statePopUpSkills}
         closePopUpSkills={closeAddSkillsModal}
         projectInfo={project}
+        context={context}
       />
       <RemoveSkills
         openPopUpSkillsRemove={statePopUpSkillsRemove}
         closePopUpSkillsRemove={closeAddSkillsRemoveModal}
+        projectInfo={project}
+        context={"editProject"}
       />
     </div>
   );
