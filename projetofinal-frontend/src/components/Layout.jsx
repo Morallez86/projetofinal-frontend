@@ -315,7 +315,7 @@ function Layout({
         <div className="flex justify-end items-start space-x-2">
           {token && (
             <>
-            <div className="relative mt-3 mr-0">
+            <div className="relative mt-3 mr-0 p-0">
             <ToggleSwitch
   checked={languageApp === 'pt'}
   label={
@@ -324,7 +324,6 @@ function Layout({
       : "Change to EN" 
   }
   onChange={() => { handleLanguageToggle();  setSwitch2(prevState => !prevState);  }}
-  style={{ width: '250px' }}
 />
           </div>
               <div className="relative mt-3 cursor-pointer">
