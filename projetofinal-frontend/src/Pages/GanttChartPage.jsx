@@ -6,6 +6,8 @@ import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
 import { Button } from "flowbite-react";
 import AddTaskCard from "../Components/AddTaskCard";
+import { jwtDecode } from "jwt-decode";
+
 
 
 const GanttChartPage = () => {
@@ -18,12 +20,31 @@ const GanttChartPage = () => {
   const [dependentTaskss, setDependentTaskss] = useState(0);
   const [dependentTasksState, setDependentTasksState] = useState([]);
   const [dependencieTasks, setDependencieTasks] = useState([]);
+  const [myTasks, setMyTasks] = useState([]);
+  
+  const decodedToken = jwtDecode(token);
+    const username = decodedToken.username;
 
   const [popUpShow, setPopUpShow] = useState(false);
 
+  const [isFilterActive, setIsFilterActive] = useState(false);
+
+
+  
   const openPopUpCreateTask = () => {
     setPopUpShow(true);
   };
+
+  const filterMyTasks = () => {
+    const myTaskIds = allTasks.filter(task => task.userName === username).map(task => task.id);
+    console.log(username);
+    console.log(allTasks);
+    console.log(myTaskIds);
+    setMyTasks(myTaskIds);
+    setIsFilterActive(!isFilterActive);
+  };
+
+  
 
   useEffect(() => {
     if (dependentTaskss !== 0) { // Considerando que 0 é um valor não válido para ID
@@ -47,6 +68,10 @@ const GanttChartPage = () => {
 
   const isDependency = (taskId) => {
     return dependencieTasks.includes(taskId);
+  };
+
+  const isMyTask = (taskId) => {
+    return myTasks.includes(taskId);
   };
 
 
@@ -110,14 +135,14 @@ const GanttChartPage = () => {
       return {
         start: start,
         end: end,
-        name: task.title,
+        name: task.title + " Responsible: " + task.userName,
         id: task.id,
         type: "task",
         progress: 0,
         dependencies: task.dependencies || [],
         styles: {
           backgroundSelectedColor: "red",
-          backgroundColor: isDependent(task.id) || isDependency(task.id) ? "red" : "gray",
+          backgroundColor: isFilterActive && (isDependent(task.id) || isDependency(task.id) || isMyTask(task.id)) ? "red" : "gray",
         },
       };
     });
@@ -143,6 +168,14 @@ const GanttChartPage = () => {
               className="ml-2 mb-2 mt-1"
             >
               Create New Task
+            </Button>
+            <Button
+              onClick={() => {
+                filterMyTasks();
+              }}
+              className="ml-2 mb-2 mt-1"
+            >
+              {isFilterActive ? "Clean" : "Only My Tasks"}
             </Button>
           </div>
           {tasks && tasks.length > 0 && (
