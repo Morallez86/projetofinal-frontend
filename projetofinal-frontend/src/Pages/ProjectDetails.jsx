@@ -10,6 +10,8 @@ import GroupProjectChat from "../Components/GroupProjectChat";
 import { motion } from "framer-motion";
 import WebSocketProjChat from "../WebSocketProjChat";
 import AddUsersEdit from "../Components/AddUsersEdit";
+import AddSkills from "../Components/AddSkills";
+import RemoveSkills from "../Components/RemoveSkills";
 
 function ProjectDetails() {
   const { projectId } = useParams();
@@ -30,9 +32,15 @@ function ProjectDetails() {
   const [messagesAlone, setMessagesAlone] = useState([]);
   const [reopenSocket, setReopenSocket] = useState(true);
   const [statePopUpUsers, setStatePopUpUsers] = useState(false);
+  const [statePopUpSkills, setStatePopUpSkills] = useState(false);
+  const [statePopUpSkillsRemove, setStatePopUpSkillsRemove] = useState(false);
 
   const openAddUsersModal = () => setStatePopUpUsers(true);
   const closeAddUsersModal = () => setStatePopUpUsers(false);
+  const openAddSkillsModal = () => setStatePopUpSkills(true);
+  const closeAddSkillsModal = () => setStatePopUpSkills(false);
+  const closeAddSkillsRemoveModal = () => setStatePopUpSkillsRemove(false);
+  const openAddSkillsRemoveModal= () => setStatePopUpSkillsRemove(true);
 
   const onMessageChat = (message) => {
     setMessagesAlone((prevMessages) => [
@@ -168,6 +176,8 @@ function ProjectDetails() {
             project={project}
             userImages={userImages}
             openPopUpUsers={openAddUsersModal}
+            openPopUpSkills={openAddSkillsModal}
+            openPopUpSkillsRemove={openAddSkillsRemoveModal}
           />
         </div>
         <div className="w-full md:w-1/3 p-4">
@@ -243,6 +253,15 @@ function ProjectDetails() {
         openPopUpUsers={statePopUpUsers}
         closePopUpUsers={closeAddUsersModal}
         projectInfo={project}
+      />
+      <AddSkills
+        openPopUpSkills={statePopUpSkills}
+        closePopUpSkills={closeAddSkillsModal}
+        projectInfo={project}
+      />
+      <RemoveSkills
+        openPopUpSkillsRemove={statePopUpSkillsRemove}
+        closePopUpSkillsRemove={closeAddSkillsRemoveModal}
       />
     </div>
   );

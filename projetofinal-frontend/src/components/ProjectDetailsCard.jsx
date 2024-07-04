@@ -16,9 +16,19 @@ import useWorkplaceStore from "../Stores/WorkplaceStore";
 import { useParams } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import TeamCard from "./TeamCard";
+import { useTranslation } from "react-i18next";
+import { LuPlusCircle } from "react-icons/lu";
+import { MdOutlineRemoveCircleOutline } from "react-icons/md";
 
-function ProjectDetailsCard({ project, userImages, openPopUpUsers }) {
+function ProjectDetailsCard({
+  project,
+  userImages,
+  openPopUpUsers,
+  openPopUpSkills,
+  openPopUpSkillsRemove,
+}) {
   const { projectId } = useParams();
+  const { t } = useTranslation();
   const [editMode, setEditMode] = useState(false);
   const [projectDetails, setProjectDetails] = useState({ ...project });
   const apiUrl = useApiStore((state) => state.apiUrl);
@@ -97,21 +107,21 @@ function ProjectDetailsCard({ project, userImages, openPopUpUsers }) {
     }
   };
 
-const formatDateForBackend = (dateArray) => {
-  if (!dateArray || dateArray.length !== 5) {
-    return null;
-  }
+  const formatDateForBackend = (dateArray) => {
+    if (!dateArray || dateArray.length !== 5) {
+      return null;
+    }
 
-  const [year, month, day, hours, minutes] = dateArray;
+    const [year, month, day, hours, minutes] = dateArray;
 
-  // Ensure month and day are two digits (zero-padded if necessary)
-  const formattedMonth = `${month + 1}`.padStart(2, "0"); // Note: month in JavaScript Date object is 0-indexed
-  const formattedDay = `${day}`.padStart(2, "0");
+    // Ensure month and day are two digits (zero-padded if necessary)
+    const formattedMonth = `${month + 1}`.padStart(2, "0"); // Note: month in JavaScript Date object is 0-indexed
+    const formattedDay = `${day}`.padStart(2, "0");
 
-  const formattedDate = `${year}-${formattedMonth}-${formattedDay} ${hours}:${minutes}0:00`;
+    const formattedDate = `${year}-${formattedMonth}-${formattedDay} ${hours}:${minutes}0:00`;
 
-  return formattedDate;
-};
+    return formattedDate;
+  };
 
   const convertDateToArray = (dateString) => {
     const date = new Date(dateString);
@@ -294,12 +304,14 @@ const formatDateForBackend = (dateArray) => {
               {getBadge(projectDetails.approved)}
             </div>
             <div className="flex items-center space-x-2">
-              {currentUserIsAdmin && (projectDetails.status===100 || projectDetails.status===300) && (
-                <MdOutlineEdit
-                  className="h-6 w-6 text-black cursor-pointer"
-                  onClick={() => setEditMode(true)}
-                />
-              )}
+              {currentUserIsAdmin &&
+                (projectDetails.status === 100 ||
+                  projectDetails.status === 300) && (
+                  <MdOutlineEdit
+                    className="h-6 w-6 text-black cursor-pointer"
+                    onClick={() => setEditMode(true)}
+                  />
+                )}
             </div>
           </div>
           <div className="flex flex-col gap-4">
@@ -475,6 +487,62 @@ const formatDateForBackend = (dateArray) => {
           currentUserId={currentUserId}
           openPopUpUsers={openPopUpUsers}
         />
+        <div className="mt-4">
+          <div className="flex items-center">
+            <Label
+              htmlFor="skills"
+              value={t("Skills")}
+              className="font-semibold text-base"
+            />
+            <div
+              className="inline-flex items-center cursor-pointer"
+              id="icon-element2"
+              onClick={openPopUpSkills}
+            >
+              <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
+            </div>
+            <div
+              className="inline-flex items-center cursor-pointer"
+              id="icon-element-remove2"
+              onClick={openPopUpSkillsRemove}
+            >
+              <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
+            </div>
+            <Tooltip
+              anchorSelect="#icon-element2"
+              content={t("AddNewSkill")}
+              place="top"
+            />
+            <Tooltip
+              anchorSelect="#icon-element-remove2"
+              content={t("RemoveSkill")}
+              place="top"
+            />
+          </div>
+          <div className="flex items-center mt-2 text-sm font-medium text-gray-900 dark:text-gray-400">
+            <p>
+              {Array.isArray(projectDetails.skills)
+                ? projectDetails.skills
+                    .slice(0, 3)
+                    .map((skill) => skill.name)
+                    .join(", ")
+                : ""}
+            </p>
+            {Array.isArray(projectDetails.skills) &&
+              projectDetails.skills.length > 3 && (
+                <div id="tip-all-skills">
+                  <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+                    {`+${projectDetails.skills.length - 3}`}
+                  </button>
+                  <Tooltip
+                    anchorSelect="#tip-all-skills"
+                    content={t("CheckAllSkills")}
+                    place="top"
+                  />
+                </div>
+              )}
+          </div>
+        </div>
       </Card>
     </div>
   );
