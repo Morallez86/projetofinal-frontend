@@ -34,6 +34,17 @@ function LoginCard() {
   const {t} = useTranslation();
   const setLanguage = useUserStore((state) => state.setLanguage);
 
+  const languageApp = useUserStore((state) => state.language);
+  
+
+ 
+
+  const handleLanguageToggle = () => {
+    const newLanguage = languageApp === 'en' ? 'pt' : 'en';
+    setLanguage(newLanguage);
+    i18n.changeLanguage(newLanguage);
+  };
+
 
   const [loading, setLoading] = useState(false);
   const [warning, setWarning] = useState(0);
@@ -248,6 +259,15 @@ function LoginCard() {
         <Button type="button" onClick={() => navigate("/")}>
           {t('back')}
         </Button>
+       
+            
+            <Button
+            className="bg-gray-700"  onClick={() => { handleLanguageToggle() }}>
+              {(languageApp === 'en'
+      ? "Change to PT" 
+      : "Change to EN")}
+            </Button>
+
       </div>
       <div className="flex flex-col gap-4"></div>
       <Modal
