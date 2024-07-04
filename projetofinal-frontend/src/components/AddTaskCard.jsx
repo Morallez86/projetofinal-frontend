@@ -13,7 +13,7 @@ import { HiInformationCircle } from "react-icons/hi";
 
 
 
-function AddTaskCard({ popUpShow, setPopUpShow }) {
+function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
   const token = useUserStore((state) => state.token);
   const apiUrl = useApiStore((state) => state.apiUrl);
   const [animationPlayed, setAnimationPlayed] = useState(false);
@@ -174,9 +174,11 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
         stop = 1;
       }
 
-      if ( !stop === 0) {
+      if ( stop != 0) {
         return;
       }
+
+      console.log(stop);
 
     fetch(`${apiUrl}/tasks`, {
       method: "POST",
@@ -202,6 +204,7 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
             setShowSuccessText(false);
             console.log(formData);
           }, 2000);
+          setTasks((prevTasks) => [...prevTasks, formData]);
         } else {
           console.log("Error adding task: " + response.status);
         }

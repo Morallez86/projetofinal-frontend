@@ -52,20 +52,32 @@ const GanttChartPage = () => {
   let tasks = [];
 
   if (allTasks && allTasks.length > 0) {
+    console.log("in");
     tasks = allTasks.map((task) => {
+      // Verifica se plannedStartingDate é uma string e a converte para array
+      const startingDateArray = typeof task.plannedStartingDate === 'string' ?
+        task.plannedStartingDate.split('-').map(Number) :
+        task.plannedStartingDate;
+      startingDateArray[1] -= 1; 
+    
+      // Verifica se plannedEndingDate é uma string e a converte para array
+      const endingDateArray = typeof task.plannedEndingDate === 'string' ?
+        task.plannedEndingDate.split('-').map(Number) :
+        task.plannedEndingDate;
+      endingDateArray[1] -= 1; 
+    
       const start = new Date(
-        task.plannedStartingDate[0],
-        task.plannedStartingDate[1] - 1,
-        ...task.plannedStartingDate.slice(2)
+        startingDateArray[0],
+        startingDateArray[1],
+        ...startingDateArray.slice(2)
       );
       const end = new Date(
-        task.plannedEndingDate[0],
-        task.plannedEndingDate[1] - 1,
-        ...task.plannedEndingDate.slice(2)
+        endingDateArray[0],
+        endingDateArray[1],
+        ...endingDateArray.slice(2)
       );
-
-      console.log(task);
-
+    
+     
       return {
         start: start,
         end: end,
@@ -114,7 +126,7 @@ const GanttChartPage = () => {
           )}
         </div>
       </div>
-      <AddTaskCard popUpShow={popUpShow} setPopUpShow={setPopUpShow} />
+      <AddTaskCard popUpShow={popUpShow} setPopUpShow={setPopUpShow} setTasks={setAllTasks} />
     </div>
   );
 };

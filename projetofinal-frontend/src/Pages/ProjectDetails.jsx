@@ -59,6 +59,7 @@ function ProjectDetails() {
   }, [isChatOpen]);
 
   useEffect(() => {
+    console.log("Project details updated");
     return () => {
       if (isChatOpenRef.current && project && project.id != null) {
         const now = new Date();
