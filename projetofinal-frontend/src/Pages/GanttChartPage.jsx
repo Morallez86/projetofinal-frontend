@@ -142,8 +142,7 @@ const GanttChartPage = () => {
         dependencies: task.dependencies || [],
         styles: {
           backgroundSelectedColor: "red",
-          backgroundColor: isFilterActive && (isDependent(task.id) || isDependency(task.id) || isMyTask(task.id)) ? "red" : "gray",
-        },
+          backgroundColor: (isDependent(task.id) || isDependency(task.id) || (isFilterActive && isMyTask(task.id))) ? "red" : "gray",        },
       };
     });
   }
