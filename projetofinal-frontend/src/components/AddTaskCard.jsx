@@ -8,8 +8,12 @@ import Lottie from "react-lottie";
 import Select from "react-select";
 import { useParams } from "react-router-dom";
 import CreatableSelect from "react-select/creatable";
+import { Alert } from "flowbite-react";
+import { HiInformationCircle } from "react-icons/hi";
 
-function AddTaskCard({ popUpShow, setPopUpShow }) {
+
+
+function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
   const token = useUserStore((state) => state.token);
   const apiUrl = useApiStore((state) => state.apiUrl);
   const [animationPlayed, setAnimationPlayed] = useState(false);
@@ -17,6 +21,8 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
   const [users, setUsers] = useState([]);
   const [dependentTasks, setDependentTasks] = useState([]);
   const [restUsers, setRestUsers] = useState([]);
+  const [warning, setWarning] = useState(false);
+  const [warningData, setWarningData] = useState(false);
 
   const { projectId } = useParams();
 
@@ -153,6 +159,27 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
       .map((contributor) => contributor.label)
       .join(",");
 
+      setWarning(false);
+      setWarningData(false);
+
+      let stop = 0;
+
+      if (!formData.title || !formData.description || !formData.userName || !formData.plannedStartingDate || !formData.plannedEndingDate || !formData.priority) {
+        setWarning(true);
+        stop = 1;
+      }
+
+      if (formData.plannedStartingDate > formData.plannedEndingDate) {
+        setWarningData(true);
+        stop = 1;
+      }
+
+      if ( stop != 0) {
+        return;
+      }
+
+      console.log(stop);
+
     fetch(`${apiUrl}/tasks`, {
       method: "POST",
       headers: {
@@ -177,6 +204,7 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
             setShowSuccessText(false);
             console.log(formData);
           }, 2000);
+          setTasks((prevTasks) => [...prevTasks, formData]);
         } else {
           console.log("Error adding task: " + response.status);
         }
@@ -330,38 +358,52 @@ function AddTaskCard({ popUpShow, setPopUpShow }) {
                 />
               </div>
             </div>
-            <div className="flex justify-center items-center space-x-2 mt-0">
-              <Button onClick={handleSubmit}>Add task</Button>
-              <div
-                id="icon-element"
-                className="pointer-events-none flex items-center justify-center"
-                style={{
-                  zIndex: 1,
-                  transform: "scale(0.7)",
-                }}
-              >
-                <Lottie
-                  options={defaultOptions}
-                  height={250}
-                  width={250}
-                  isStopped={!animationPlayed}
-                  isPaused={!animationPlayed}
-                  eventListeners={[
-                    {
-                      eventName: "complete",
-                      callback: () => {
-                        setAnimationPlayed(false);
-                      },
-                    },
-                  ]}
-                />
-              </div>
-              {showSuccessText && (
-                <div className="animate-pulse text-green-500 font-bold">
-                  Added with success
-                </div>
-              )}
-            </div>
+            <div className="flex flex-col justify-center items-center mt-0">
+  <div className="flex justify-center items-center space-x-2">
+    <Button onClick={handleSubmit}>Add task</Button>
+    <div
+      id="icon-element"
+      className="pointer-events-none flex items-center justify-center"
+      style={{
+        zIndex: 1,
+        transform: "scale(0.7)",
+      }}
+    >
+      <Lottie
+        options={defaultOptions}
+        height={250}
+        width={250}
+        isStopped={!animationPlayed}
+        isPaused={!animationPlayed}
+        eventListeners={[
+          {
+            eventName: "complete",
+            callback: () => {
+              setAnimationPlayed(false);
+            },
+          },
+        ]}
+      />
+    </div>
+  </div>
+  <div className="flex flex-col items-center space-y-2">
+    {showSuccessText && (
+      <div className="animate-pulse text-green-500 font-bold">
+        Added with success
+      </div>
+    )}
+    {warning && (
+      <Alert color="failure" icon={HiInformationCircle}>
+        <span className="font-medium"> </span> The required fields are not all filled in
+      </Alert>
+    )}
+    {warningData && (
+      <Alert color="failure" icon={HiInformationCircle}>
+        <span className="font-medium"> </span> The end date cannot be earlier than the start date
+      </Alert>
+    )}
+  </div>
+</div>
           </form>
         </div>
       </Modal.Body>

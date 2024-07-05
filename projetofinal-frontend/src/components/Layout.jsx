@@ -17,6 +17,12 @@ import useUserStore from "../Stores/UserStore";
 import criticalLogo from "../Assets/CriticalLogo.jpg";
 import useApiStore from "../Stores/ApiStore";
 import { jwtDecode } from "jwt-decode";
+import {ToggleSwitch} from "flowbite-react";
+import { useState } from "react";
+import i18n from "../Language/i18n";
+
+
+
 
 function Layout({
   activeTab,
@@ -31,6 +37,17 @@ function Layout({
   const apiUrl = useApiStore((state) => state.apiUrl);
   const { token, setToken, profileImage, setProfileImage, clearProfileImage} = useUserStore();
   const projectTimestamps = useUserStore((state) => state.projectTimestamps);
+  const [switch2, setSwitch2] = useState(false);
+  const languageApp = useUserStore((state) => state.language);
+  const setLanguageApp = useUserStore((state) => state.setLanguage);
+
+ 
+
+  const handleLanguageToggle = () => {
+    const newLanguage = languageApp === 'en' ? 'pt' : 'en';
+    setLanguageApp(newLanguage);
+    i18n.changeLanguage(newLanguage);
+  };
 
   useEffect(() => {
     console.log(projectTimestamps);
@@ -298,6 +315,17 @@ function Layout({
         <div className="flex justify-end items-start space-x-2">
           {token && (
             <>
+            <div className="relative mt-3 mr-0 p-0">
+            <ToggleSwitch
+  checked={languageApp === 'pt'}
+  label={
+    languageApp === 'en'
+      ? "Change to PT" 
+      : "Change to EN" 
+  }
+  onChange={() => { handleLanguageToggle();  setSwitch2(prevState => !prevState);  }}
+/>
+          </div>
               <div className="relative mt-3 cursor-pointer">
                 <MdOutlineMessage
                   size={35}
@@ -330,13 +358,25 @@ function Layout({
             </>
           )}
           {!token && (
-            <button
-              className="p-2 flex border border-gray-600 hover:bg-cyan-700 hover:text-white items-center justify-center rounded-full bg-white transition-colors duration-200 text-black font-bold"
-              onClick={() => navigate("/Login")}
-            >
-              <TbLogin2 size={35} />
-            </button>
-          )}
+  <>
+    <div className="relative mt-3 mr-0 p-0">
+      <ToggleSwitch
+        checked={languageApp === 'pt'}
+        label={languageApp === 'en' ? "Change to PT" : "Change to EN"}
+        onChange={() => {
+          handleLanguageToggle();
+          setSwitch2(prevState => !prevState);
+        }}
+      />
+    </div>
+    <button
+      className="p-2 flex border border-gray-600 hover:bg-cyan-700 hover:text-white items-center justify-center rounded-full bg-white transition-colors duration-200 text-black font-bold"
+      onClick={() => navigate("/Login")}
+    >
+      <TbLogin2 size={35} />
+    </button>
+  </>
+)}
         </div>
       </div>
       <div className="relative">{children}</div>

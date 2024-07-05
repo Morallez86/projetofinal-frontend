@@ -5,6 +5,7 @@ import useUserStore from "./Stores/UserStore";
 import ProjectsHomeCard from "./Components/ProjectsHomeCard";
 import useWorkplaces from "./Hooks/useWorkplaces";
 import {useTranslation} from "react-i18next";
+import i18n from "../src/Language/i18n"
 
 import "./general.css";
 
@@ -19,6 +20,44 @@ function App() {
   const { workplaces } = useWorkplaces();
   console.log(workplaces);
   const { t } = useTranslation();
+  const setLanguage = useUserStore((state) => state.setLanguage);
+
+  const fetchGreeting = async () => {
+    try {
+      const response = await fetch(
+        "https://localhost:8443/projetofinal-backend-1.0-SNAPSHOT/rest/greetings",
+        {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Erro na requisição: " + response.statusText);
+      }
+
+      const data = await response.json();
+      console.log(data);
+
+      
+      const languageCode = data.locale.substring(0, 2);
+      console.log(languageCode);
+      setLanguage(languageCode);
+
+      
+      i18n.changeLanguage(languageCode);
+    } catch (error) {
+      console.error("Erro ao buscar a saudação:", error.message);
+      throw error;
+    }
+  };
+
+  useEffect(() => {
+    fetchGreeting();
+  }, []);
 
   const fetchProjects = useCallback(
     async (searchTerm = "", skills = "", interests = "") => {

@@ -34,6 +34,17 @@ function LoginCard() {
   const {t} = useTranslation();
   const setLanguage = useUserStore((state) => state.setLanguage);
 
+  const languageApp = useUserStore((state) => state.language);
+  
+
+ 
+
+  const handleLanguageToggle = () => {
+    const newLanguage = languageApp === 'en' ? 'pt' : 'en';
+    setLanguage(newLanguage);
+    i18n.changeLanguage(newLanguage);
+  };
+
 
   const [loading, setLoading] = useState(false);
   const [warning, setWarning] = useState(0);
@@ -67,13 +78,11 @@ function LoginCard() {
       const data = await response.json();
       console.log(data);
 
-      // Supondo que 'data.locale' seja uma string como 'en-AU'
-      // e você quer apenas 'en'
+      
       const languageCode = data.locale.substring(0, 2);
       console.log(languageCode);
       setLanguage(languageCode);
 
-      // Agora você pode usar 'languageCode' para mudar a linguagem da aplicação
       i18n.changeLanguage(languageCode);
     } catch (error) {
       console.error("Erro ao buscar a saudação:", error.message);
@@ -250,6 +259,15 @@ function LoginCard() {
         <Button type="button" onClick={() => navigate("/")}>
           {t('back')}
         </Button>
+       
+            
+            <Button
+            className="bg-gray-700"  onClick={() => { handleLanguageToggle() }}>
+              {(languageApp === 'en'
+      ? "Change to PT" 
+      : "Change to EN")}
+            </Button>
+
       </div>
       <div className="flex flex-col gap-4"></div>
       <Modal
