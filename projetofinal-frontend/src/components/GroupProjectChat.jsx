@@ -37,6 +37,9 @@ function GroupProjectChat({
   const [reopenSocket, setReopenSocket] = useState(true);
   const [firstMessage, setFirstMessage] = useState(true);
 
+
+  console.log(users);
+
   const onMessageChat = (message) => {
     console.log("called");
     setMessages((prevMessages) => [
@@ -187,7 +190,7 @@ function GroupProjectChat({
               alt={`${user.username}'s profile`}
               style={avatarStyle}
               title={user.username}
-              status={user.active ? "available" : "dnd"}
+              status={user.online ? "available" : "dnd"}
             />
           ))}
         </AvatarGroup>
