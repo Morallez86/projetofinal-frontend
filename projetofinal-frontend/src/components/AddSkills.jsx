@@ -111,7 +111,9 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
         if (response.status === 201) {
           const newSkills = await response.json();
           setUserSkills([...userSkills, ...newSkills]);
-          addSkill(newSkills[0]);
+          if (!skills.some((skill) => skill.name === data[0].name)) {
+            addSkill(data[0]);
+          }
           setAnimationPlayed(true);
           setShowSuccessText(true);
           setSelectedSkill(null);
@@ -124,26 +126,25 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
       }
     } else if (context === "editProject") {
       const data = {
-          id: isSkillInOptions ? selectedSkill.id : null,
-          name: selectedSkill.value,
-          type: skillCategoryMapping[selectedCategory],
+        id: isSkillInOptions ? selectedSkill.id : null,
+        name: selectedSkill.value,
+        type: skillCategoryMapping[selectedCategory],
       };
-      console.log(data);
-      console.log(projectId);
-      console.log(token);
       try {
-        console.log("entrou");
-        const response = await fetch(`${apiUrl}/projects/${projectId}/addSkill`, {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            skill: data,
-          }),
-        });
+        const response = await fetch(
+          `${apiUrl}/projects/${projectId}/addSkill`,
+          {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              skill: data,
+            }),
+          }
+        );
         if (response.status === 200) {
           setAnimationPlayed(true);
           setShowSuccessText(true);

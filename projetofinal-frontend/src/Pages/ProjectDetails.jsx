@@ -12,6 +12,8 @@ import WebSocketProjChat from "../WebSocketProjChat";
 import AddUsersEdit from "../Components/AddUsersEdit";
 import AddSkills from "../Components/AddSkills";
 import RemoveSkills from "../Components/RemoveSkills";
+import AddInterests from "../Components/AddInterests";
+import RemoveInterests from "../Components/RemoveInterests";
 
 function ProjectDetails() {
   const { projectId } = useParams();
@@ -34,7 +36,9 @@ function ProjectDetails() {
   const [statePopUpUsers, setStatePopUpUsers] = useState(false);
   const [statePopUpSkills, setStatePopUpSkills] = useState(false);
   const [statePopUpSkillsRemove, setStatePopUpSkillsRemove] = useState(false);
-  const context = "editProject";
+  const [statePopUpInterests, setStatePopUpInterests] = useState(false);
+  const [statePopUpInterestRemove, setStatePopUpInterestRemove] =
+    useState(false);
 
   const openAddUsersModal = () => setStatePopUpUsers(true);
   const closeAddUsersModal = () => setStatePopUpUsers(false);
@@ -46,7 +50,17 @@ function ProjectDetails() {
   const openAddSkillsRemoveModal = () => setStatePopUpSkillsRemove(true);
   const closeAddSkillsRemoveModal = () => {
     setStatePopUpSkillsRemove(false);
-    fetchProjectDetails(); // Fetch project details after closing RemoveSkills modal
+    fetchProjectDetails();
+  };
+  const openAddInterestsModal = () => setStatePopUpInterests(true);
+  const closeAddInterestsModal = () => {
+    setStatePopUpInterests(false);
+    fetchProjectDetails();
+  };
+  const openAddInterestRemoveModal = () => setStatePopUpInterestRemove(true);
+  const closeAddInterestRemoveModal = () => {
+    setStatePopUpInterestRemove(false);
+    fetchProjectDetails();
   };
 
   const onMessageChat = (message) => {
@@ -179,13 +193,17 @@ function ProjectDetails() {
     <div className="flex flex-col min-h-screen">
       <div className="flex flex-wrap justify-center">
         <div className="w-full md:w-1/3 p-4">
-          <ProjectDetailsCard
-            project={project}
-            userImages={userImages}
-            openPopUpUsers={openAddUsersModal}
-            openPopUpSkills={openAddSkillsModal}
-            openPopUpSkillsRemove={openAddSkillsRemoveModal}
-          />
+          <div className="flex flex-col overflow-y-auto bg-transparent h-[45rem]">
+            <ProjectDetailsCard
+              project={project}
+              userImages={userImages}
+              openPopUpUsers={openAddUsersModal}
+              openPopUpSkills={openAddSkillsModal}
+              openPopUpSkillsRemove={openAddSkillsRemoveModal}
+              openPopUpInterests={openAddInterestsModal}
+              openPopUpInterestRemove={openAddInterestRemoveModal}
+            />
+          </div>
         </div>
         <div className="w-full md:w-1/3 p-4">
           <div className="flex flex-col overflow-y-auto bg-transparent h-[45rem]">
@@ -265,11 +283,23 @@ function ProjectDetails() {
         openPopUpSkills={statePopUpSkills}
         closePopUpSkills={closeAddSkillsModal}
         projectInfo={project}
-        context={context}
+        context={"editProject"}
       />
       <RemoveSkills
         openPopUpSkillsRemove={statePopUpSkillsRemove}
         closePopUpSkillsRemove={closeAddSkillsRemoveModal}
+        projectInfo={project}
+        context={"editProject"}
+      />
+      <AddInterests
+        openPopUpInterests={statePopUpInterests}
+        closePopUpInterests={closeAddInterestsModal}
+        projectInfo={project}
+        context={"editProject"}
+      />
+      <RemoveInterests
+        openPopUpInterestRemove={statePopUpInterestRemove}
+        closePopUpInterestRemove={closeAddInterestRemoveModal}
         projectInfo={project}
         context={"editProject"}
       />

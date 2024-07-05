@@ -26,6 +26,8 @@ function ProjectDetailsCard({
   openPopUpUsers,
   openPopUpSkills,
   openPopUpSkillsRemove,
+  openPopUpInterests,
+  openPopUpInterestRemove,
 }) {
   const { projectId } = useParams();
   const { t } = useTranslation();
@@ -537,6 +539,65 @@ function ProjectDetailsCard({
                   <Tooltip
                     anchorSelect="#tip-all-skills"
                     content={t("CheckAllSkills")}
+                    place="top"
+                  />
+                </div>
+              )}
+          </div>
+        </div>
+        {/* Interests */}
+        <div className="mt-4">
+          <div className="flex items-center">
+            <div className=" flex items-center">
+              <Label
+                htmlFor="interests"
+                value={t("Interests")}
+                className="font-semibold text-base"
+              />
+              <div
+                className="inline-flex items-center cursor-pointer"
+                id="icon-element4"
+                onClick={openPopUpInterests}
+              >
+                <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
+              </div>
+              <div
+                className="inline-flex items-center cursor-pointer"
+                id="icon-element-remove4"
+                onClick={openPopUpInterestRemove}
+              >
+                <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
+              </div>
+              <Tooltip
+                anchorSelect="#icon-element4"
+                content={t("AddNewInterest")}
+                place="top"
+              />
+              <Tooltip
+                anchorSelect="#icon-element-remove4"
+                content={t("RemoveInterest")}
+                place="top"
+              />
+            </div>
+          </div>
+          <div className="flex items-center mt-2 text-sm font-medium text-gray-900 dark:text-gray-400">
+            <p>
+              {Array.isArray(projectDetails.interests)
+                ? projectDetails.interests
+                    .slice(0, 3)
+                    .map((interest) => interest.name)
+                    .join(", ")
+                : ""}
+            </p>
+            {Array.isArray(projectDetails.interests) &&
+              projectDetails.interests.length > 3 && (
+                <div id="tip-all-interests">
+                  <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+                    {`+${projectDetails.interests.length - 3}`}
+                  </button>
+                  <Tooltip
+                    anchorSelect="#tip-all-interests"
+                    content={t("CheckAllInterests")}
                     place="top"
                   />
                 </div>

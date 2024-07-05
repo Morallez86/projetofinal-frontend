@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Modal, Button } from "flowbite-react";
+import { useParams } from "react-router-dom";
 import CreatableSelect from "react-select/creatable";
 import useUserStore from "../Stores/UserStore";
 import useProjectStore from "../Stores/ProjectStore";
@@ -8,9 +9,10 @@ import useApiStore from "../Stores/ApiStore";
 import AddedAnimation from "../Assets/Added.json";
 import Lottie from "react-lottie";
 import useInterestStore from "../Stores/InterestStore";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
+  const { projectId } = useParams();
   const token = useUserStore((state) => state.token);
   const apiUrl = useApiStore((state) => state.apiUrl);
 
@@ -44,23 +46,40 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
     setInputValue(value);
   };
 
-  const options = interests.map((interest) => ({
-    value: interest.name,
-    label: interest.name,
-    id: interest.id,
-    isDisabled:
-      context === "user"
-        ? userInterests.some(
-            (userInterest) => userInterest.name === interest.name
-          )
-        : projectInterests.some(
-            (projectInterest) => projectInterest.name === interest.name
-          ),
-  }));
+  const options = interests.map((interest) => {
+    let isDisabled = false;
+
+    if (context === "user") {
+      // Disable if the interest exists in userInterests
+      isDisabled = userInterests.some(
+        (userInterest) => userInterest.name === interest.name
+      );
+    } else if (context === "editProject") {
+      // Disable if the interest exists in projectInterests
+      isDisabled = projectInterests.some(
+        (projectInterest) => projectInterest.name === interest.name
+      );
+    } else {
+      isDisabled = projectInterests.some(
+        (projectInterest) => projectInterest.name === interest.name
+      );
+    }
+
+    return {
+      value: interest.name,
+      label: interest.name,
+      id: interest.id,
+      isDisabled,
+    };
+  });
 
   const handleSelectChange = (selectedOption) => {
     setSelectedInterest(selectedOption);
   };
+
+  const isInterestInOptions = options.some(
+    (option) => option.value === selectedInterest?.value
+  );
 
   const handleSubmit = async () => {
     const data = [
@@ -89,8 +108,9 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
         if (response.status === 201) {
           const newInterests = await response.json();
           setUserInterests([...userInterests, ...newInterests]);
-          addInterest(newInterests[0]);
-          console.log(newInterests);
+          if (!interests.some((interest) => interest.name === data[0].name)) {
+            addInterest(data[0]);
+          }
           setAnimationPlayed(true);
           setShowSuccessText(true);
           setSelectedInterest(null);
@@ -100,9 +120,46 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
       } catch (error) {
         console.error("Error adding interest:", error);
       }
+    } else if (context === "editProject") {
+      const data = {
+        id: isInterestInOptions ? selectedInterest.id : null,
+        name: selectedInterest.value,
+      };
+      try {
+        console.log(data);
+        const response = await fetch(
+          `${apiUrl}/projects/${projectId}/addInterest`,
+          {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              interest: data,
+            }),
+          }
+        );
+        if (response.status === 200) {
+          setAnimationPlayed(true);
+          setShowSuccessText(true);
+          setSelectedInterest(null);
+        } else if (response.status === 409) {
+          console.error("Interest already exists in the project");
+        } else if (response.status === 404) {
+          console.error("Project not found");
+        } else {
+          console.error("Failed to add interest to project");
+        }
+      } catch (error) {
+        console.error("Error adding interest to project:", error);
+      }
     } else {
       setProjectInterests([...projectInterests, ...data]);
-      addInterest(data[0]);
+      if (!interests.some((interest) => interest.name === data[0].name)) {
+        addInterest(data[0]);
+      }
       setAnimationPlayed(true);
       setShowSuccessText(true);
       setSelectedInterest(null);
@@ -123,10 +180,10 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
       <Modal.Body>
         <div className="flex flex-col items-center justify-center space-y-5 overflow-x-hidden overflow-y-hidden">
           <h3 className="mb-5 text-lg font-bold text-gray-500 dark:text-gray-400">
-            {t('AddInterest')}
+            {t("AddInterest")}
           </h3>
           <div className="space-y-3">
-            <h4> {t('CreateOrChooseInterest')} </h4>
+            <h4>{t("CreateOrChooseInterest")}</h4>
             <div className="flex items-start space-x-4 min-h-[25rem] relative">
               <div className="text-center z-10">
                 <CreatableSelect
@@ -143,7 +200,7 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
                       {option.isDisabled ? <TbLockFilled /> : null}
                     </div>
                   )}
-                  placeholder= {t('SearchForAInterest')}
+                  placeholder={t("SearchForAInterest")}
                   value={selectedInterest}
                 />
               </div>
@@ -182,14 +239,14 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
                 </div>
                 {showSuccessText && (
                   <div className="animate-pulse text-green-500 font-bold absolute bottom-0">
-                   {t('InterestAdded')}
+                    {t("InterestAdded")}
                   </div>
                 )}
               </div>
             </div>
             <div className="flex justify-center mt-4">
               <Button onClick={handleSubmit} disabled={!selectedInterest}>
-                {t('AddInterest')}
+                {t("AddInterest")}
               </Button>
             </div>
           </div>
