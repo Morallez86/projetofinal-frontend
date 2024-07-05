@@ -1,16 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Button, TextInput } from "flowbite-react";
 import { Checkbox, Label } from "flowbite-react";
 import Lottie from "react-lottie";
 import { Tooltip } from "react-tooltip";
 import useProjectStore from "../Stores/ProjectStore";
+import useApiStore from "../Stores/ApiStore";
 import RemovedAnimation from "../Assets/Removed.json";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
+import useUserStore from "../Stores/UserStore";
 
 function RemoveComponents({
   openPopUpComponentsRemove,
   closePopUpComponentsRemove,
+  projectInfo,
 }) {
+  const apiUrl = useApiStore((state) => state.apiUrl);
+  const token = useUserStore((state) => state.token);
   const projectComponents = useProjectStore((state) => state.projectComponents);
   const setProjectComponents = useProjectStore(
     (state) => state.setProjectComponents
@@ -20,11 +25,25 @@ function RemoveComponents({
   const [filter, setFilter] = useState("");
   const [selectedComponentIds, setSelectedComponentIds] = useState([]);
   const [showSuccessText, setShowSuccessText] = useState(false);
-  const filteredComponents = projectComponents.filter((component) =>
-    component.name.toLowerCase().includes(filter.toLowerCase())
-  );
+  const [filteredComponents, setFilteredComponents] = useState([]);
 
-  const {t} = useTranslation();
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    if (projectInfo) {
+      setFilteredComponents(
+        projectInfo.components.filter((component) =>
+          component.name.toLowerCase().includes(filter.toLowerCase())
+        )
+      );
+    } else {
+      setFilteredComponents(
+        projectComponents.filter((component) =>
+          component.name.toLowerCase().includes(filter.toLowerCase())
+        )
+      );
+    }
+  }, [filter, projectInfo, projectComponents]);
 
   const defaultOptions = {
     loop: false,
@@ -35,22 +54,51 @@ function RemoveComponents({
     },
   };
 
-  const handleCheckboxChange = (idOrIndex) => {
-    if (selectedComponentIds.includes(idOrIndex)) {
+  const handleCheckboxChange = (id) => {
+    if (selectedComponentIds.includes(id)) {
       setSelectedComponentIds(
-        selectedComponentIds.filter((id) => id !== idOrIndex)
+        selectedComponentIds.filter((selectedId) => selectedId !== id)
       );
     } else {
-      setSelectedComponentIds([...selectedComponentIds, idOrIndex]);
+      setSelectedComponentIds([...selectedComponentIds, id]);
     }
   };
 
-  const handleRemoveComponents = () => {
-    const updatedProjectComponents = projectComponents.filter(
-      (_, index) => !selectedComponentIds.includes(index)
-    );
-    setProjectComponents(updatedProjectComponents);
-    setAnimationPlayed(true);
+  const handleRemoveComponents = async () => {
+    if (projectInfo) {
+      console.log(token);
+      try {
+        const response = await fetch(
+          `${apiUrl}/projects/${projectInfo.id}/removeComponents`,
+          {
+            method: "DELETE",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(selectedComponentIds),
+          }
+        );
+        if (response.status === 200) {
+          const updatedComponents = projectInfo.components.filter(
+            (component) => !selectedComponentIds.includes(component.id)
+          );
+          setProjectComponents(updatedComponents);
+          setAnimationPlayed(true);
+        } else if (response.status === 500) {
+          console.log("Internal server error");
+        }
+      } catch (error) {
+        console.error("Error deleting project components:", error);
+      }
+    } else {
+      const updatedProjectComponents = projectComponents.filter(
+        (component) => !selectedComponentIds.includes(component.id)
+      );
+      setProjectComponents(updatedProjectComponents);
+      setAnimationPlayed(true);
+    }
   };
 
   return (
@@ -68,26 +116,30 @@ function RemoveComponents({
         <Modal.Body>
           <div className="flex flex-col items-center justify-center space-y-5">
             <h3 className="text-lg font-bold text-gray-500 dark:text-gray-400">
-              {t("Removecomponents")}
+              {t("removeComponents")}
             </h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-3">
-                <h4>{t('You can remove one or more components at the same time')}</h4>
+                <h4>
+                  {t("You can remove one or more components at the same time")}
+                </h4>
                 <TextInput
                   type="text"
-                  placeholder= {t('SearchComponents')}
+                  placeholder={t("SearchComponents")}
                   value={filter}
                   onChange={(e) => setFilter(e.target.value)}
                 />
                 <div className="flex flex-col items-start overflow-y-auto h-36 space-y-2">
-                  {filteredComponents.map((component, index) => (
-                    <div key={index} className="flex items-center gap-2">
+                  {filteredComponents.map((component) => (
+                    <div key={component.id} className="flex items-center gap-2">
                       <Checkbox
-                        id={index.toString()}
-                        checked={selectedComponentIds.includes(index)}
-                        onChange={() => handleCheckboxChange(index)}
+                        id={component.id.toString()}
+                        checked={selectedComponentIds.includes(component.id)}
+                        onChange={() => handleCheckboxChange(component.id)}
                       />
-                      <Label htmlFor={index.toString()}>{component.name}</Label>
+                      <Label htmlFor={component.id.toString()}>
+                        {component.name}
+                      </Label>
                     </div>
                   ))}
                 </div>
@@ -95,7 +147,7 @@ function RemoveComponents({
                   onClick={handleRemoveComponents}
                   disabled={selectedComponentIds.length === 0}
                 >
-                  {t("Remove selected components")}
+                  {t("RemoveComponents")}
                 </Button>
               </div>
               <div
@@ -126,7 +178,7 @@ function RemoveComponents({
                 )}
                 <Tooltip
                   anchorSelect="#icon-element"
-                  content="Click to delete this component from your profile"
+                  content={t("Click to remove components")}
                   place="top"
                 />
               </div>
