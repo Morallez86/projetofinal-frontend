@@ -16,6 +16,8 @@ import AddInterests from "../Components/AddInterests";
 import RemoveInterests from "../Components/RemoveInterests";
 import AddComponents from "../Components/AddComponents";
 import RemoveComponents from "../Components/RemoveComponents";
+import AddResources from "../Components/AddResources";
+import RemoveResources from "../Components/RemoveResources";
 
 function ProjectDetails() {
   const { projectId } = useParams();
@@ -43,6 +45,9 @@ function ProjectDetails() {
     useState(false);
   const [statePopUpComponent, setStatePopUpComponent] = useState(false);
   const [statePopUpComponentsRemove, setStatePopUpComponentsRemove] =
+    useState(false);
+  const [statePopUpResources, setStatePopUpResources] = useState(false);
+  const [statePopUpResourcesRemove, setStatePopUpResourcesRemove] =
     useState(false);
 
   const openAddUsersModal = () => setStatePopUpUsers(true);
@@ -78,6 +83,21 @@ function ProjectDetails() {
   const closeRemoveComponentsModal = () => {
     setStatePopUpComponentsRemove(false);
     fetchProjectDetails();
+  };
+
+  const openAddResourcesModal = () => setStatePopUpResources(true);
+
+  const closeAddResourcesModal = () => {
+    setStatePopUpResources(false);
+    fetchProjectDetails();
+
+  }
+
+  const openRemoveResourcesModal = () => setStatePopUpResourcesRemove(true);
+
+  const closeRemoveResourcesModal = () => {
+    setStatePopUpResourcesRemove(false);
+        fetchProjectDetails();
   };
 
   const onMessageChat = (message) => {
@@ -221,6 +241,8 @@ function ProjectDetails() {
               openPopUpInterestRemove={openAddInterestRemoveModal}
               openPopUpComponent={openAddComponentModal}
               openPopUpComponentsRemove={openRemoveComponentsModal}
+              openPopUpResources={openAddResourcesModal}
+              openPopUpResourcesRemove={openRemoveResourcesModal}
             />
           </div>
         </div>
@@ -331,6 +353,18 @@ function ProjectDetails() {
       <RemoveComponents
         openPopUpComponentsRemove={statePopUpComponentsRemove}
         closePopUpComponentsRemove={closeRemoveComponentsModal}
+        projectInfo={project}
+        context={"editProject"}
+      />
+      <AddResources
+        openPopUpResources={statePopUpResources}
+        closePopUpResources={closeAddResourcesModal}
+        projectInfo={project}
+        context={"editProject"}
+      />
+      <RemoveResources
+        openPopUpResourcesRemove={statePopUpResourcesRemove}
+        closePopUpResourcesRemove={closeRemoveResourcesModal}
         projectInfo={project}
         context={"editProject"}
       />

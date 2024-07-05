@@ -107,7 +107,7 @@ function AddComponents({
 
     if (context === "editProject") {
       try {
-        console.log(data)
+        console.log(data);
         const response = await fetch(
           `${apiUrl}/projects/${projectId}/addComponent`,
           {
@@ -137,6 +137,10 @@ function AddComponents({
         console.error("Error adding component to project:", error);
       }
     } else {
+      const data = {
+        id: selectedComponent.value,
+        name: selectedComponent.value,
+      };
       setProjectComponents([...projectComponents, data]);
       setAnimationPlayed(true);
       setShowSuccessText(true);

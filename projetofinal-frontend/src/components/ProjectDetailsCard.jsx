@@ -30,6 +30,8 @@ function ProjectDetailsCard({
   openPopUpInterestRemove,
   openPopUpComponent,
   openPopUpComponentsRemove,
+  openPopUpResources,
+  openPopUpResourcesRemove,
 }) {
   const { projectId } = useParams();
   const { t } = useTranslation();
@@ -657,6 +659,63 @@ function ProjectDetailsCard({
                   <Tooltip
                     anchorSelect="#tip-all-components"
                     content={t("CheckAllComponents")}
+                    place="top"
+                  />
+                </div>
+              )}
+          </div>
+        </div>
+        {/* Resources */}
+        <div className="mt-4">
+          <div className="flex items-center">
+            <Label
+              htmlFor="resources"
+              value={t("Resources")}
+              className="font-semibold text-base"
+            />
+            <div
+              className="inline-flex items-center cursor-pointer"
+              id="icon-element6"
+              onClick={openPopUpResources}
+            >
+              <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
+            </div>
+            <div
+              className="inline-flex items-center cursor-pointer"
+              id="icon-element-remove6"
+              onClick={openPopUpResourcesRemove}
+            >
+              <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
+            </div>
+            <Tooltip
+              anchorSelect="#icon-element6"
+              content={t("AddNewResource")}
+              place="top"
+            />
+            <Tooltip
+              anchorSelect="#icon-element-remove6"
+              content={t("RemoveResource")}
+              place="top"
+            />
+          </div>
+          <div className="flex items-center mt-2 text-sm font-medium text-gray-900 dark:text-gray-400">
+            <p>
+              {Array.isArray(projectDetails.resources)
+                ? projectDetails.resources
+                    .slice(0, 3)
+                    .map((resource) => resource.name)
+                    .join(", ")
+                : ""}
+            </p>
+            {Array.isArray(projectDetails.resources) &&
+              projectDetails.resources.length > 3 && (
+                <div id="tip-all-resources">
+                  <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+                    {`+${projectDetails.resources.length - 3}`}
+                  </button>
+                  <Tooltip
+                    anchorSelect="#tip-all-resources"
+                    content={t("CheckAllResources")}
                     place="top"
                   />
                 </div>

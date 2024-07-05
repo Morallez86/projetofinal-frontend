@@ -7,9 +7,11 @@ import useApiStore from "../Stores/ApiStore.js";
 import AddedAnimation from "../Assets/Added.json";
 import Lottie from "react-lottie";
 import { TbLockFilled } from "react-icons/tb";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
+import { useParams } from "react-router-dom";
 
-function AddResources({ openPopUpResources, closePopUpResources }) {
+function AddResources({ openPopUpResources, closePopUpResources, context }) {
+  const { projectId } = useParams();
   const token = useUserStore((state) => state.token);
   const apiUrl = useApiStore((state) => state.apiUrl);
   const projectResources = useProjectStore((state) => state.projectResources);
@@ -23,7 +25,7 @@ function AddResources({ openPopUpResources, closePopUpResources }) {
   const [animationPlayed, setAnimationPlayed] = useState(false);
   const [showSuccessText, setShowSuccessText] = useState(false);
 
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const getAllResources = async () => {
@@ -79,18 +81,53 @@ function AddResources({ openPopUpResources, closePopUpResources }) {
   };
 
   const handleSubmit = async () => {
-    const data = [
-      {
+    if (!selectedResource) return;
+
+    const data = {
+      name: selectedResource.value,
+    };
+
+    if (context === "editProject") {
+      try {
+        console.log(data);
+        const response = await fetch(
+          `${apiUrl}/projects/${projectId}/addResource`,
+          {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              resource: data,
+            }),
+          }
+        );
+        if (response.status === 200) {
+          setAnimationPlayed(true);
+          setShowSuccessText(true);
+          setSelectedResource(null);
+        } else if (response.status === 409) {
+          console.error("Resource already exists in the project");
+        } else if (response.status === 404) {
+          console.error("Project not found");
+        } else {
+          console.error("Failed to add resource to project");
+        }
+      } catch (error) {
+        console.error("Error adding resource to project:", error);
+      }
+    } else {
+      const data = {
         id: selectedResource.id,
         name: selectedResource.value,
-      },
-    ];
-    console.log(data);
-
-    setProjectResources([...projectResources, ...data]);
-    setAnimationPlayed(true);
-    setShowSuccessText(true);
-    setSelectedResource(null);
+      };
+      setProjectResources([...projectResources, data]);
+      setAnimationPlayed(true);
+      setShowSuccessText(true);
+      setSelectedResource(null);
+    }
   };
 
   return (
@@ -110,7 +147,7 @@ function AddResources({ openPopUpResources, closePopUpResources }) {
             {t("AddResources")}
           </h3>
           <div className="space-y-3">
-            <h4> {t('CreateANewResourceOrChooseOne')} </h4>
+            <h4>{t("CreateANewResourceOrChooseOne")}</h4>
             <div className="flex items-start space-x-4 min-h-[25rem] relative">
               <div className="text center z-10">
                 <CreatableSelect
@@ -126,7 +163,7 @@ function AddResources({ openPopUpResources, closePopUpResources }) {
                       {option.isDisabled ? <TbLockFilled /> : null}
                     </div>
                   )}
-                  placeholder= {t('SelectResource')}
+                  placeholder={t("SelectResource")}
                   value={selectedResource}
                 />
               </div>
@@ -161,14 +198,14 @@ function AddResources({ openPopUpResources, closePopUpResources }) {
                 </div>
                 {showSuccessText && (
                   <div className="animate-pulse text-green-500 font-bold absolute bottom-0">
-                    {t('ResourceAddedSuccessfully')}
+                    {t("ResourceAddedSuccessfully")}
                   </div>
                 )}
               </div>
             </div>
             <div className="flex justify-center mt-4">
               <Button onClick={handleSubmit} disabled={!selectedResource}>
-                {t('AddResource')}
+                {t("AddResource")}
               </Button>
             </div>
           </div>
