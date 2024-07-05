@@ -112,7 +112,7 @@ function RemoveSkills({
             body: JSON.stringify(selectedSkillIds),
           }
         );
-        if (response.status === 204) {
+        if (response.status === 200) {
           const updatedSkills = projectInfo.skills.filter(
             (skill) => !selectedSkillIds.includes(skill.id)
           );

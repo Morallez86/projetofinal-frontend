@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Button, TextInput } from "flowbite-react";
 import useUserStore from "../Stores/UserStore";
 import useProjectStore from "../Stores/ProjectStore";
@@ -7,41 +7,73 @@ import useApiStore from "../Stores/ApiStore";
 import RemovedAnimation from "../Assets/Removed.json";
 import Lottie from "react-lottie";
 import { Tooltip } from "react-tooltip";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 function RemoveInterests({
   openPopUpInterestRemove,
   closePopUpInterestRemove,
   context,
+  projectInfo,
 }) {
   const apiUrl = useApiStore((state) => state.apiUrl);
   const userInterests = useUserStore((state) => state.interests);
   const projectInterests = useProjectStore((state) => state.projectInterests);
   const token = useUserStore((state) => state.token);
   const setUserInterests = useUserStore((state) => state.setInterests);
-  const setProjectInterests = useProjectStore((state) => state.setProjectInterests);
+  const setProjectInterests = useProjectStore(
+    (state) => state.setProjectInterests
+  );
 
   const [filter, setFilter] = useState("");
   const [selectedInterestIds, setSelectedInterestIds] = useState([]);
   const [animationPlayed, setAnimationPlayed] = useState(false);
   const [showSuccessText, setShowSuccessText] = useState(false);
+  const [filteredInterests, setFilteredInterests] = useState([]);
 
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
-  const filteredInterests = (context === "user" ? userInterests : projectInterests).filter((interest) =>
-    interest.name.toLowerCase().includes(filter.toLowerCase())
-  );
-
-  const handleCheckboxChange = (idOrIndex) => {
-    if (selectedInterestIds.includes(idOrIndex)) {
-      setSelectedInterestIds(selectedInterestIds.filter((id) => id !== idOrIndex));
+  useEffect(() => {
+    if (context === "user") {
+      setFilteredInterests(
+        userInterests.filter((interest) =>
+          interest.name.toLowerCase().includes(filter.toLowerCase())
+        )
+      );
+    } else if (context === "editProject" && projectInfo) {
+      setFilteredInterests(
+        projectInfo.interests.filter((interest) =>
+          interest.name.toLowerCase().includes(filter.toLowerCase())
+        )
+      );
     } else {
-      setSelectedInterestIds([...selectedInterestIds, idOrIndex]);
+      setFilteredInterests(
+        projectInterests.filter((interest) =>
+          interest.name.toLowerCase().includes(filter.toLowerCase())
+        )
+      );
+    }
+  }, [filter, context, userInterests, projectInfo, projectInterests]);
+
+  const defaultOptions = {
+    loop: false,
+    autoplay: false,
+    animationData: RemovedAnimation,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice",
+    },
+  };
+
+  const handleCheckboxChange = (id) => {
+    if (selectedInterestIds.includes(id)) {
+      setSelectedInterestIds(
+        selectedInterestIds.filter((selectedId) => selectedId !== id)
+      );
+    } else {
+      setSelectedInterestIds([...selectedInterestIds, id]);
     }
   };
 
   const handleRemoveInterests = async () => {
-    console.log(selectedInterestIds);
     if (context === "user") {
       try {
         const response = await fetch(`${apiUrl}/interests`, {
@@ -60,27 +92,44 @@ function RemoveInterests({
           setUserInterests(updatedInterests);
           setAnimationPlayed(true);
         } else if (response.status === 500) {
-          console.log("Internet server error");
+          console.log("Internal server error");
         }
       } catch (error) {
         console.error("Error deleting interests:", error);
       }
+    } else if (context === "editProject" && projectInfo) {
+      try {
+        const response = await fetch(
+          `${apiUrl}/projects/${projectInfo.id}/removeInterests`,
+          {
+            method: "DELETE",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(selectedInterestIds),
+          }
+        );
+        if (response.status === 200) {
+          const updatedInterests = projectInfo.interests.filter(
+            (interest) => !selectedInterestIds.includes(interest.id)
+          );
+          setProjectInterests(updatedInterests);
+          setAnimationPlayed(true);
+        } else if (response.status === 500) {
+          console.log("Internal server error");
+        }
+      } catch (error) {
+        console.error("Error deleting project interests:", error);
+      }
     } else {
       const updatedProjectInterests = projectInterests.filter(
-        (_, index) => !selectedInterestIds.includes(index)
+        (interest) => !selectedInterestIds.includes(interest.id)
       );
       setProjectInterests(updatedProjectInterests);
       setAnimationPlayed(true);
     }
-  };
-
-  const defaultOptions = {
-    loop: false,
-    autoplay: false,
-    animationData: RemovedAnimation,
-    rendererSettings: {
-      preserveAspectRatio: "xMidYMid slice",
-    },
   };
 
   return (
@@ -102,51 +151,32 @@ function RemoveInterests({
             </h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-3">
-                <h4> {t('YouCanRemoveOneOrMoreInterestsAtTheSimeTime')}  </h4>
+                <h4> {t("YouCanRemoveOneOrMoreInterestsAtTheSimeTime")} </h4>
                 <TextInput
                   type="text"
-                  placeholder= {t('SearchInterests')}
+                  placeholder={t("SearchInterests")}
                   value={filter}
                   onChange={(e) => setFilter(e.target.value)}
                 />
                 <div className="flex flex-col items-start overflow-y-auto h-36 space-y-2">
-                  {filteredInterests.map((interest, index) => (
-                    <div
-                      key={context === "user" ? interest.id : index}
-                      className="flex items-center gap-2"
-                    >
+                  {filteredInterests.map((interest) => (
+                    <div key={interest.id} className="flex items-center gap-2">
                       <Checkbox
-                        id={
-                          context === "user"
-                            ? interest.id.toString()
-                            : index.toString()
-                        }
-                        checked={selectedInterestIds.includes(
-                          context === "user" ? interest.id : index
-                        )}
-                        onChange={() =>
-                          handleCheckboxChange(
-                            context === "user" ? interest.id : index
-                          )
-                        }
+                        id={interest.id.toString()}
+                        checked={selectedInterestIds.includes(interest.id)}
+                        onChange={() => handleCheckboxChange(interest.id)}
                       />
-                      <Label
-                        htmlFor={
-                          context === "user"
-                            ? interest.id.toString()
-                            : index.toString()
-                        }
-                      >
+                      <Label htmlFor={interest.id.toString()}>
                         {interest.name}
                       </Label>
                     </div>
                   ))}
                 </div>
                 <Button
-                onClick={handleRemoveInterests} 
-                disabled={selectedInterestIds.length === 0}
+                  onClick={handleRemoveInterests}
+                  disabled={selectedInterestIds.length === 0}
                 >
-                  {t('RemoveInterests')}
+                  {t("RemoveInterests")}
                 </Button>
               </div>
               <div
@@ -172,7 +202,7 @@ function RemoveInterests({
                 />
                 {showSuccessText && (
                   <div className="animate-pulse text-green-500 font-bold absolute bottom-0 mb-4">
-                    {t('InterestRemoved')}
+                    {t("InterestRemoved")}
                   </div>
                 )}
                 <Tooltip
