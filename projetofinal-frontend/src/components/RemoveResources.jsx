@@ -1,16 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Button, TextInput } from "flowbite-react";
 import { Checkbox, Label } from "flowbite-react";
 import Lottie from "react-lottie";
 import { Tooltip } from "react-tooltip";
 import useProjectStore from "../Stores/ProjectStore";
+import useApiStore from "../Stores/ApiStore";
 import RemovedAnimation from "../Assets/Removed.json";
-import {useTranslation} from "react-i18next"; 
+import { useTranslation } from "react-i18next";
+import useUserStore from "../Stores/UserStore";
 
 function RemoveResources({
   openPopUpResourcesRemove,
   closePopUpResourcesRemove,
+  projectInfo,
 }) {
+  const apiUrl = useApiStore((state) => state.apiUrl);
+  const token = useUserStore((state) => state.token);
   const projectResources = useProjectStore((state) => state.projectResources);
   const setProjectResources = useProjectStore(
     (state) => state.setProjectResources
@@ -20,11 +25,25 @@ function RemoveResources({
   const [filter, setFilter] = useState("");
   const [selectedResourceIds, setSelectedResourceIds] = useState([]);
   const [showSuccessText, setShowSuccessText] = useState(false);
-  const filteredResources = projectResources.filter((resource) =>
-    resource.name.toLowerCase().includes(filter.toLowerCase())
-  );
+  const [filteredResources, setFilteredResources] = useState([]);
 
-  const {t} = useTranslation();
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    if (projectInfo) {
+      setFilteredResources(
+        projectInfo.resources.filter((resource) =>
+          resource.name.toLowerCase().includes(filter.toLowerCase())
+        )
+      );
+    } else {
+      setFilteredResources(
+        projectResources.filter((resource) =>
+          resource.name.toLowerCase().includes(filter.toLowerCase())
+        )
+      );
+    }
+  }, [filter, projectInfo, projectResources]);
 
   const defaultOptions = {
     loop: false,
@@ -35,22 +54,51 @@ function RemoveResources({
     },
   };
 
-  const handleCheckboxChange = (idOrIndex) => {
-    if (selectedResourceIds.includes(idOrIndex)) {
+  const handleCheckboxChange = (id) => {
+    if (selectedResourceIds.includes(id)) {
       setSelectedResourceIds(
-        selectedResourceIds.filter((id) => id !== idOrIndex)
+        selectedResourceIds.filter((selectedId) => selectedId !== id)
       );
     } else {
-      setSelectedResourceIds([...selectedResourceIds, idOrIndex]);
+      setSelectedResourceIds([...selectedResourceIds, id]);
     }
   };
 
-  const handleRemoveResources = () => {
-    const updatedProjectResources = projectResources.filter(
-      (_, index) => !selectedResourceIds.includes(index)
-    );
-    setProjectResources(updatedProjectResources);
-    setAnimationPlayed(true);
+  const handleRemoveResources = async () => {
+    if (projectInfo) {
+      console.log(token);
+      try {
+        const response = await fetch(
+          `${apiUrl}/projects/${projectInfo.id}/removeResources`,
+          {
+            method: "DELETE",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(selectedResourceIds),
+          }
+        );
+        if (response.status === 200) {
+          const updatedResources = projectInfo.resources.filter(
+            (resource) => !selectedResourceIds.includes(resource.id)
+          );
+          setProjectResources(updatedResources);
+          setAnimationPlayed(true);
+        } else if (response.status === 500) {
+          console.log("Internal server error");
+        }
+      } catch (error) {
+        console.error("Error deleting project resources:", error);
+      }
+    } else {
+      const updatedProjectResources = projectResources.filter(
+        (resource) => !selectedResourceIds.includes(resource.id)
+      );
+      setProjectResources(updatedProjectResources);
+      setAnimationPlayed(true);
+    }
   };
 
   return (
@@ -72,22 +120,26 @@ function RemoveResources({
             </h3>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-3">
-                <h4>{t('You can remove one or more resources at the same time')}</h4>
+                <h4>
+                  {t("You can remove one or more resources at the same time")}
+                </h4>
                 <TextInput
                   type="text"
-                  placeholder= {t('SearchResources')}
+                  placeholder={t("SearchResources")}
                   value={filter}
                   onChange={(e) => setFilter(e.target.value)}
                 />
                 <div className="flex flex-col items-start overflow-y-auto h-36 space-y-2">
-                  {filteredResources.map((resource, index) => (
-                    <div key={index} className="flex items-center gap-2">
+                  {filteredResources.map((resource) => (
+                    <div key={resource.id} className="flex items-center gap-2">
                       <Checkbox
-                        id={index.toString()}
-                        checked={selectedResourceIds.includes(index)}
-                        onChange={() => handleCheckboxChange(index)}
+                        id={resource.id.toString()}
+                        checked={selectedResourceIds.includes(resource.id)}
+                        onChange={() => handleCheckboxChange(resource.id)}
                       />
-                      <Label htmlFor={index.toString()}>{resource.name}</Label>
+                      <Label htmlFor={resource.id.toString()}>
+                        {resource.name}
+                      </Label>
                     </div>
                   ))}
                 </div>
@@ -95,7 +147,7 @@ function RemoveResources({
                   onClick={handleRemoveResources}
                   disabled={selectedResourceIds.length === 0}
                 >
-                  {t('RemoveResources')}
+                  {t("RemoveResources")}
                 </Button>
               </div>
               <div
@@ -121,12 +173,12 @@ function RemoveResources({
                 />
                 {showSuccessText && (
                   <div className="animate-pulse text-green-500 font-bold absolute bottom-0 mb-4">
-                    {t('ResourceRemovedSuccessfully')}
+                    {t("ResourceRemovedSuccessfully")}
                   </div>
                 )}
                 <Tooltip
                   anchorSelect="#icon-element"
-                  content= {t('ClickToRemoveResources')}
+                  content={t("ClickToRemoveResources")}
                   place="top"
                 />
               </div>
