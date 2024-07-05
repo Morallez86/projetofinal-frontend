@@ -36,6 +36,7 @@ function ProjectDetails() {
   );
   const isChatOpenRef = useRef(isChatOpen);
   const [messagesAlone, setMessagesAlone] = useState([]);
+  const [allMsgs, setAllMsgs] = useState([]);
   const [reopenSocket, setReopenSocket] = useState(true);
   const [statePopUpUsers, setStatePopUpUsers] = useState(false);
   const [statePopUpSkills, setStatePopUpSkills] = useState(false);
@@ -158,6 +159,7 @@ function ProjectDetails() {
       setTasks(data.tasks || []);
       setTeam(data.userProjectDtos || []);
       setMessagesAlone(data.chatMessage || []);
+      setAllMsgs(data.chatMessage || []);
 
       const userIds = data.userProjectDtos
         .map((up) => up.userId)
@@ -196,7 +198,7 @@ function ProjectDetails() {
 
   useEffect(() => {
     getUnreadMessages();
-  }, [projectTimestamps, messagesAlone]);
+  }, [projectTimestamps, allMsgs]);
 
   const getUnreadMessages = () => {
     const projectTimestamp = new Date(projectTimestamps[projectId]);
