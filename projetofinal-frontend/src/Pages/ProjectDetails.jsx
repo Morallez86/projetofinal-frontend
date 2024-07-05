@@ -14,6 +14,8 @@ import AddSkills from "../Components/AddSkills";
 import RemoveSkills from "../Components/RemoveSkills";
 import AddInterests from "../Components/AddInterests";
 import RemoveInterests from "../Components/RemoveInterests";
+import AddComponents from "../Components/AddComponents";
+import RemoveComponents from "../Components/RemoveComponents";
 
 function ProjectDetails() {
   const { projectId } = useParams();
@@ -39,6 +41,9 @@ function ProjectDetails() {
   const [statePopUpInterests, setStatePopUpInterests] = useState(false);
   const [statePopUpInterestRemove, setStatePopUpInterestRemove] =
     useState(false);
+  const [statePopUpComponent, setStatePopUpComponent] = useState(false);
+  const [statePopUpComponentsRemove, setStatePopUpComponentsRemove] =
+    useState(false);
 
   const openAddUsersModal = () => setStatePopUpUsers(true);
   const closeAddUsersModal = () => setStatePopUpUsers(false);
@@ -60,6 +65,18 @@ function ProjectDetails() {
   const openAddInterestRemoveModal = () => setStatePopUpInterestRemove(true);
   const closeAddInterestRemoveModal = () => {
     setStatePopUpInterestRemove(false);
+    fetchProjectDetails();
+  };
+
+  const openAddComponentModal = () => setStatePopUpComponent(true);
+  const closeAddComponentModal = () => {
+    setStatePopUpComponent(false);
+    fetchProjectDetails();
+  };
+
+  const openRemoveComponentsModal = () => setStatePopUpComponentsRemove(true);
+  const closeRemoveComponentsModal = () => {
+    setStatePopUpComponentsRemove(false);
     fetchProjectDetails();
   };
 
@@ -202,6 +219,8 @@ function ProjectDetails() {
               openPopUpSkillsRemove={openAddSkillsRemoveModal}
               openPopUpInterests={openAddInterestsModal}
               openPopUpInterestRemove={openAddInterestRemoveModal}
+              openPopUpComponent={openAddComponentModal}
+              openPopUpComponentsRemove={openRemoveComponentsModal}
             />
           </div>
         </div>
@@ -300,6 +319,18 @@ function ProjectDetails() {
       <RemoveInterests
         openPopUpInterestRemove={statePopUpInterestRemove}
         closePopUpInterestRemove={closeAddInterestRemoveModal}
+        projectInfo={project}
+        context={"editProject"}
+      />
+      <AddComponents
+        openPopUpComponent={statePopUpComponent}
+        closePopUpComponent={closeAddComponentModal}
+        projectInfo={project}
+        context={"editProject"}
+      />
+      <RemoveComponents
+        openPopUpComponentsRemove={statePopUpComponentsRemove}
+        closePopUpComponentsRemove={closeRemoveComponentsModal}
         projectInfo={project}
         context={"editProject"}
       />

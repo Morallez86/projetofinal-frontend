@@ -28,6 +28,8 @@ function ProjectDetailsCard({
   openPopUpSkillsRemove,
   openPopUpInterests,
   openPopUpInterestRemove,
+  openPopUpComponent,
+  openPopUpComponentsRemove,
 }) {
   const { projectId } = useParams();
   const { t } = useTranslation();
@@ -598,6 +600,63 @@ function ProjectDetailsCard({
                   <Tooltip
                     anchorSelect="#tip-all-interests"
                     content={t("CheckAllInterests")}
+                    place="top"
+                  />
+                </div>
+              )}
+          </div>
+        </div>
+        {/* Components */}
+        <div className="mt-4">
+          <div className="flex items-center">
+            <Label
+              htmlFor="components"
+              value={t("Components")}
+              className="font-semibold text-base"
+            />
+            <div
+              className="inline-flex items-center cursor-pointer"
+              id="icon-element5"
+              onClick={openPopUpComponent}
+            >
+              <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
+            </div>
+            <div
+              className="inline-flex items-center cursor-pointer"
+              id="icon-element-remove5"
+              onClick={openPopUpComponentsRemove}
+            >
+              <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
+            </div>
+            <Tooltip
+              anchorSelect="#icon-element5"
+              content={t("AddNewComponent")}
+              place="top"
+            />
+            <Tooltip
+              anchorSelect="#icon-element-remove5"
+              content={t("RemoveComponent")}
+              place="top"
+            />
+          </div>
+          <div className="flex items-center text-sm mt-2 font-medium text-gray-900 dark:text-gray-400">
+            <p>
+              {Array.isArray(projectDetails.components)
+                ? projectDetails.components
+                    .slice(0, 3)
+                    .map((component) => component.name)
+                    .join(", ")
+                : ""}
+            </p>
+            {Array.isArray(projectDetails.components) &&
+              projectDetails.components.length > 3 && (
+                <div id="tip-all-components">
+                  <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+                    {`+${projectDetails.components.length - 3}`}
+                  </button>
+                  <Tooltip
+                    anchorSelect="#tip-all-components"
+                    content={t("CheckAllComponents")}
                     place="top"
                   />
                 </div>

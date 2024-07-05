@@ -7,13 +7,16 @@ import useApiStore from "../Stores/ApiStore.js";
 import AddedAnimation from "../Assets/Added.json";
 import Lottie from "react-lottie";
 import { TbLockFilled } from "react-icons/tb";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
+import { useParams } from "react-router-dom";
 
 function AddComponents({
   openPopUpComponent,
   closePopUpComponent,
   projectInfo,
+  context,
 }) {
+  const { projectId } = useParams();
   const token = useUserStore((state) => state.token);
   const apiUrl = useApiStore((state) => state.apiUrl);
   const projectComponents = useProjectStore((state) => state.projectComponents);
@@ -28,12 +31,12 @@ function AddComponents({
   const [showSuccessText, setShowSuccessText] = useState(false);
   const [error, setError] = useState("");
 
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const getAvailableComponents = async () => {
       if (!projectInfo.workplace.name) {
-        setError( t('PleaseSelectAWorkplaceFirst') );
+        setError(t("PleaseSelectAWorkplaceFirst"));
         return;
       }
 
@@ -98,16 +101,47 @@ function AddComponents({
   const handleSubmit = async () => {
     if (!selectedComponent) return;
 
-    const data = [
-      {
-        name: selectedComponent.value,
-      },
-    ];
+    const data = {
+      name: selectedComponent.value,
+    };
 
-    setProjectComponents([...projectComponents, ...data]);
-    setAnimationPlayed(true);
-    setShowSuccessText(true);
-    setSelectedComponent(null);
+    if (context === "editProject") {
+      try {
+        console.log(data)
+        const response = await fetch(
+          `${apiUrl}/projects/${projectId}/addComponent`,
+          {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              component: data,
+            }),
+          }
+        );
+        if (response.status === 200) {
+          setAnimationPlayed(true);
+          setShowSuccessText(true);
+          setSelectedComponent(null);
+        } else if (response.status === 409) {
+          console.error("Component already exists in the project");
+        } else if (response.status === 404) {
+          console.error("Project not found");
+        } else {
+          console.error("Failed to add component to project");
+        }
+      } catch (error) {
+        console.error("Error adding component to project:", error);
+      }
+    } else {
+      setProjectComponents([...projectComponents, data]);
+      setAnimationPlayed(true);
+      setShowSuccessText(true);
+      setSelectedComponent(null);
+    }
   };
 
   return (
@@ -129,7 +163,7 @@ function AddComponents({
           </h3>
           {error && <p className="text-red-500">{error}</p>}
           <div className="space-y-3">
-            <h4> {t('CreateNewComponentOrChooseOneOfTheExistingOnes')} </h4>
+            <h4> {t("CreateNewComponentOrChooseOneOfTheExistingOnes")} </h4>
             <div className="flex items-start space-x-4 min-h-[25rem] relative">
               <div className="text center z-10">
                 <CreatableSelect
@@ -145,7 +179,7 @@ function AddComponents({
                       {option.isDisabled ? <TbLockFilled /> : null}
                     </div>
                   )}
-                  placeholder= {t('SearchComponents')}
+                  placeholder={t("SearchComponents")}
                   value={selectedComponent}
                   isDisabled={!projectInfo.workplace}
                 />
@@ -181,7 +215,7 @@ function AddComponents({
                 </div>
                 {showSuccessText && (
                   <div className="animate-pulse text-green-500 font-bold absolute bottom-0">
-                    {t('ComponentAdded')}
+                    {t("ComponentAdded")}
                   </div>
                 )}
               </div>
@@ -191,7 +225,7 @@ function AddComponents({
                 onClick={handleSubmit}
                 disabled={!selectedComponent || !projectInfo.workplace}
               >
-                {t('AddComponent')}
+                {t("AddComponent")}
               </Button>
             </div>
           </div>
