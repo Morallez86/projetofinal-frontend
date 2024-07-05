@@ -194,6 +194,10 @@ function ProjectDetails() {
     fetchProjectDetails();
   }, [projectId, apiUrl, token]);
 
+  useEffect(() => {
+    getUnreadMessages();
+  }, [projectTimestamps, messagesAlone]);
+
   const getUnreadMessages = () => {
     const projectTimestamp = new Date(projectTimestamps[projectId]);
     let count = 0;
