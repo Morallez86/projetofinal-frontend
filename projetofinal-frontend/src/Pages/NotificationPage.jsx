@@ -10,9 +10,10 @@ import { Tooltip } from "react-tooltip";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { useWebSocket } from "../WebSocketContext";
 import { useTranslation } from "react-i18next";
-import SessionTimeoutModal from "../Components/SessionTimeoutModal";
+import { useNavigate } from "react-router-dom";
 
 function NotificationsPage() {
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -20,16 +21,7 @@ function NotificationsPage() {
   const [type, setType] = useState(null); // Initialize with null
   const [seen, setSeen] = useState(false); // State for seen filter
   const { registerMessageHandler, unregisterMessageHandler } = useWebSocket();
-  const [showSessionModal, setShowSessionModal] = useState(false);
-  const {
-    token,
-    clearToken,
-    clearUserId,
-    clearProfileImage,
-    clearSkills,
-    clearInterests,
-    clearProjectTimestamps,
-  } = useUserStore();
+  const { token } = useUserStore();
 
   const apiUrl = useApiStore.getState().apiUrl;
   const { t } = useTranslation();
@@ -66,7 +58,7 @@ function NotificationsPage() {
 
         // Differentiate based on error message
         if (errorMessage === "Invalid token") {
-          setShowSessionModal(true); // Session timeout
+          handleSessionTimeout(); // Session timeout
         } else {
           console.error("Error fetching notifications:", errorMessage);
         }
@@ -121,6 +113,19 @@ function NotificationsPage() {
         }),
       });
 
+      // Check for 401 specifically to handle session timeout
+      if (response.status === 401) {
+        const data = await response.json();
+        const errorMessage = data.message || "Unauthorized";
+
+        if (errorMessage === "Invalid token") {
+          handleSessionTimeout(); // Session timeout
+          return; // Exit early if session timeout
+        } else {
+          console.error("Error updating seen status:", errorMessage);
+        }
+      }
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -156,6 +161,19 @@ function NotificationsPage() {
         }), // Send notification IDs and new status
       });
 
+      // Check for 401 specifically to handle session timeout
+      if (response.status === 401) {
+        const data = await response.json();
+        const errorMessage = data.message || "Unauthorized";
+
+        if (errorMessage === "Invalid token") {
+          handleSessionTimeout(); // Session timeout
+          return; // Exit early if session timeout
+        } else {
+          console.error("Error updating seen status:", errorMessage);
+        }
+      }
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -167,19 +185,12 @@ function NotificationsPage() {
     }
   };
 
-  const handleLogout = () => {
-    clearToken();
-    clearUserId();
-    clearProfileImage();
-    clearSkills();
-    clearInterests();
-    clearProjectTimestamps();
-    navigate("/");
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
   };
 
   return (
     <div className="flex flex-col min-h-screen">
-      <SessionTimeoutModal show={showSessionModal} onLogout={handleLogout} />
       <div className="flex p-14">
         <div className="w-1/6">
           <div className="flex flex-col h-full bg-white p-4 rounded-lg shadow-lg border-2 border-red-900">

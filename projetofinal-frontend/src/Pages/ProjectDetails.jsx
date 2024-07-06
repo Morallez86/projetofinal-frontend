@@ -18,20 +18,10 @@ import AddComponents from "../Components/AddComponents";
 import RemoveComponents from "../Components/RemoveComponents";
 import AddResources from "../Components/AddResources";
 import RemoveResources from "../Components/RemoveResources";
-import SessionTimeoutModal from "../Components/SessionTimeoutModal";
 
 function ProjectDetails() {
   const { projectId } = useParams();
-  const [showSessionModal, setShowSessionModal] = useState(false);
-  const {
-    token,
-    clearToken,
-    clearUserId,
-    clearProfileImage,
-    clearSkills,
-    clearInterests,
-    clearProjectTimestamps,
-  } = useUserStore();
+  const { token } = useUserStore();
 
   const [project, setProject] = useState(null);
   const [tasks, setTasks] = useState([]);
@@ -166,7 +156,7 @@ function ProjectDetails() {
             const errorData = await response.json();
             const errorMessage = errorData.message || "Unauthorized";
             if (errorMessage === "Invalid token") {
-              setShowSessionModal(true); // Session timeout
+              handleSessionTimeout();
             }
             console.error(`Error fetching project details: ${errorMessage}`);
           } catch (error) {
@@ -263,19 +253,12 @@ function ProjectDetails() {
     return <div>No project found</div>;
   }
 
-  const handleLogout = () => {
-    clearToken();
-    clearUserId();
-    clearProfileImage();
-    clearSkills();
-    clearInterests();
-    clearProjectTimestamps();
-    navigate("/");
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
   };
 
   return (
     <div className="flex flex-col min-h-screen">
-      <SessionTimeoutModal show={showSessionModal} onLogout={handleLogout} />
       <div className="flex flex-wrap justify-center">
         <div className="w-full md:w-1/3 p-4">
           <div className="flex flex-col overflow-y-auto bg-transparent h-[45rem]">

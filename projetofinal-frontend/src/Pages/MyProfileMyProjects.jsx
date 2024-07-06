@@ -8,6 +8,7 @@ import useInterests from "../Hooks/useInterests";
 import { jwtDecode } from "jwt-decode";
 
 const useProjects = (userId, page, rowsPerPage) => {
+  const navigate = useNavigate();
   const apiUrl = useApiStore.getState().apiUrl;
   const token = useUserStore((state) => state.token);
   const [projects, setProjects] = useState([]);
@@ -19,6 +20,10 @@ const useProjects = (userId, page, rowsPerPage) => {
     (state) => state.setProjectTimestamp
   );
   const projectTimestamps = useUserStore((state) => state.projectTimestamps);
+
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  };
 
   useEffect(() => {
     if (token) {
@@ -56,6 +61,18 @@ const useProjects = (userId, page, rowsPerPage) => {
             },
           }
         );
+
+        if (response.status === 401) {
+          const data = await response.json();
+          const errorMessage = data.message || "Unauthorized";
+
+          if (errorMessage === "Invalid token") {
+            handleSessionTimeout(); // Session timeout
+            return; // Exit early if session timeout
+          } else {
+            console.error("Error updating seen status:", errorMessage);
+          }
+        }
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

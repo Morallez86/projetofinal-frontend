@@ -8,7 +8,6 @@ import useSkillStore from "../Stores/SkillStore";
 import useInterestStore from "../Stores/InterestStore";
 import basePhoto from "../Assets/092.png";
 import MessageModal from "../Components/MessageModal";
-import SessionTimeoutModal from "../Components/SessionTimeoutModal";
 import "../index.css";
 import { useTranslation } from "react-i18next";
 
@@ -26,12 +25,10 @@ function UsersGrid() {
   const workplaces = useWorkplaceStore((state) => state.workplaces);
   const skills = useSkillStore((state) => state.skills);
   const interests = useInterestStore((state) => state.interests);
-  const { token, clearToken, clearUserId, clearProfileImage, clearSkills, clearInterests, clearProjectTimestamps } = useUserStore();
+  const { token } = useUserStore();
 
 
   const { t } = useTranslation();
-
-  const [showSessionModal, setShowSessionModal] = useState(false);
 
   const fetchUserImages = useCallback(
     async (users) => {
@@ -111,7 +108,7 @@ function UsersGrid() {
           
           // Differentiate based on error message
           if (errorMessage === "Invalid token") {
-            setShowSessionModal(true); // Session timeout
+            handleSessionTimeout();
           }
         } else {
           console.error("Error fetching users");
@@ -155,20 +152,12 @@ function UsersGrid() {
     setIsModalOpen(false);
   };
 
-  const handleLogout = () => {
-    clearToken();
-    clearUserId();
-    clearProfileImage();
-    clearSkills();
-    clearInterests();
-    clearProjectTimestamps();
-    navigate("/");
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
   };
 
   return (
     <div className="flex flex-col min-h-screen">
-      <SessionTimeoutModal show={showSessionModal} onLogout={handleLogout} />
-
       <div className="p-8">
         <div className="flex items-center mb-4">
           <TextInput
