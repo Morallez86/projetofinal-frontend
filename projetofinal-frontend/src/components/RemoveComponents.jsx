@@ -86,6 +86,9 @@ function RemoveComponents({
           );
           setProjectComponents(updatedComponents);
           setAnimationPlayed(true);
+          setTimeout(() => {
+            closePopUpComponentsRemove();
+          }, 2000);
         } else if (response.status === 500) {
           console.log("Internal server error");
         }

@@ -86,6 +86,9 @@ function RemoveResources({
           );
           setProjectResources(updatedResources);
           setAnimationPlayed(true);
+          setTimeout(() => {
+            closePopUpResourcesRemove();
+          }, 2000);
         } else if (response.status === 500) {
           console.log("Internal server error");
         }

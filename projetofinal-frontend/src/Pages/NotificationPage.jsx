@@ -9,8 +9,8 @@ import { MdOutlineManageAccounts } from "react-icons/md";
 import { Tooltip } from "react-tooltip";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { useWebSocket } from "../WebSocketContext";
-import {useTranslation} from "react-i18next";
-
+import { useTranslation } from "react-i18next";
+import SessionTimeoutModal from "../Components/SessionTimeoutModal";
 
 function NotificationsPage() {
   const [notifications, setNotifications] = useState([]);
@@ -20,9 +20,18 @@ function NotificationsPage() {
   const [type, setType] = useState(null); // Initialize with null
   const [seen, setSeen] = useState(false); // State for seen filter
   const { registerMessageHandler, unregisterMessageHandler } = useWebSocket();
+  const [showSessionModal, setShowSessionModal] = useState(false);
+  const {
+    token,
+    clearToken,
+    clearUserId,
+    clearProfileImage,
+    clearSkills,
+    clearInterests,
+    clearProjectTimestamps,
+  } = useUserStore();
 
   const apiUrl = useApiStore.getState().apiUrl;
-  const token = useUserStore((state) => state.token);
   const { t } = useTranslation();
 
   // Fetch notifications function
@@ -48,7 +57,23 @@ function NotificationsPage() {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+
       const data = await response.json();
+
+      // Check for 401 specifically to handle session timeout
+      if (response.status === 401) {
+        const errorMessage = data.message || "Unauthorized";
+
+        // Differentiate based on error message
+        if (errorMessage === "Invalid token") {
+          setShowSessionModal(true); // Session timeout
+        } else {
+          console.error("Error fetching notifications:", errorMessage);
+        }
+        return; // Exit early if session timeout
+      }
+
+      // Process successful response
       console.log(data);
       setNotifications(data.notifications);
       setTotalPages(data.totalPages);
@@ -142,15 +167,26 @@ function NotificationsPage() {
     }
   };
 
+  const handleLogout = () => {
+    clearToken();
+    clearUserId();
+    clearProfileImage();
+    clearSkills();
+    clearInterests();
+    clearProjectTimestamps();
+    navigate("/");
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
+      <SessionTimeoutModal show={showSessionModal} onLogout={handleLogout} />
       <div className="flex p-14">
         <div className="w-1/6">
           <div className="flex flex-col h-full bg-white p-4 rounded-lg shadow-lg border-2 border-red-900">
             <div className="flex flex-col space-y-2 flex-grow">
               {/* Type toggles */}
               <div className="flex items-center justify-between mb-2">
-                <h2 className="text-center"> {t('Notifications')}  </h2>
+                <h2 className="text-center"> {t("Notifications")} </h2>
                 <div className="text-right">
                   <button
                     onClick={() => setSeen(!seen)}
@@ -171,7 +207,7 @@ function NotificationsPage() {
                   </button>
                   <Tooltip
                     anchorSelect="#seenBtn"
-                    content={seen ? t('Seen') :  t('Unseen')}
+                    content={seen ? t("Seen") : t("Unseen")}
                     place="top"
                     effect="solid"
                   />
@@ -192,7 +228,7 @@ function NotificationsPage() {
               </button>
               <Tooltip
                 anchorSelect="#allBtn"
-                content= {t('All')}
+                content={t("All")}
                 place="top"
                 effect="solid"
               />
@@ -212,7 +248,7 @@ function NotificationsPage() {
               </button>
               <Tooltip
                 anchorSelect="#projectBtn"
-                content= {t('Project')}
+                content={t("Project")}
                 place="top"
                 effect="solid"
               />
@@ -232,7 +268,7 @@ function NotificationsPage() {
               </button>
               <Tooltip
                 anchorSelect="#managingBtn"
-                content= {t('Managing')}
+                content={t("Managing")}
                 place="top"
                 effect="solid"
               />
@@ -252,7 +288,7 @@ function NotificationsPage() {
               </button>
               <Tooltip
                 anchorSelect="#invitationBtn"
-                content= {t('Invitation')}
+                content={t("Invitation")}
                 place="top"
                 effect="solid"
               />

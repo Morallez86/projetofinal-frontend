@@ -30,6 +30,7 @@ function AddComponents({
   const [animationPlayed, setAnimationPlayed] = useState(false);
   const [showSuccessText, setShowSuccessText] = useState(false);
   const [error, setError] = useState("");
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const { t } = useTranslation();
 
@@ -56,6 +57,7 @@ function AddComponents({
         if (response.status === 200) {
           const data = await response.json();
           setComponents(data);
+          setCurrentIndex(data.length);
         } else if (response.status === 404) {
           console.log("Components not found");
           setComponents([]);
@@ -72,14 +74,10 @@ function AddComponents({
     setInputValue(value);
   };
 
-  const generateUniqueId = () => {
-    return `component-${Math.random().toString(36).substr(2, 9)}`;
-  };
-
-  const options = components.map((component) => ({
+  const options = components.map((component, index) => ({
     value: component,
     label: component,
-    id: generateUniqueId(),
+    id: index + 1, // Use index + 1 for unique numeric ID
     isDisabled: projectComponents.some(
       (projectComponent) => projectComponent.name === component
     ),
@@ -138,7 +136,7 @@ function AddComponents({
       }
     } else {
       const data = {
-        id: selectedComponent.value,
+        id: currentIndex + 1, // Use currentIndex for the new component
         name: selectedComponent.value,
       };
       setProjectComponents([...projectComponents, data]);

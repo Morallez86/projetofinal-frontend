@@ -10,6 +10,7 @@ const useInterestStore = create(
         set((state) => ({
           interests: [...state.interests, newInterest],
         })),
+      clearInterests: () => set({ interests: [] }),
     }),
     {
       name: "interestStorage",

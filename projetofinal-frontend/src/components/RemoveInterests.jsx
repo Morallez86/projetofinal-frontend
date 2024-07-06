@@ -117,6 +117,9 @@ function RemoveInterests({
           );
           setProjectInterests(updatedInterests);
           setAnimationPlayed(true);
+          setTimeout(() => {
+            closePopUpInterestRemove();
+          }, 2000);
         } else if (response.status === 500) {
           console.log("Internal server error");
         }

@@ -39,7 +39,7 @@ function RemoveSkills({
         )
       );
     } else if (context === "editProject" && projectInfo) {
-      console.log(projectInfo)
+      console.log(projectInfo);
       setFilteredSkills(
         projectInfo.skills.filter((skill) =>
           skill.name.toLowerCase().includes(filter.toLowerCase())
@@ -118,6 +118,9 @@ function RemoveSkills({
           );
           setProjectSkills(updatedSkills);
           setAnimationPlayed(true);
+          setTimeout(() => {
+            closePopUpSkillsRemove();
+          }, 2000);
         } else if (response.status === 500) {
           console.log("Internal server error");
         }

@@ -10,6 +10,7 @@ const useSkillStore = create(
         set((state) => ({
           skills: [...state.skills, newSkill],
         })),
+      clearSkills: () => set({ skills: [] }),
     }),
     {
       name: "skillStorage",
