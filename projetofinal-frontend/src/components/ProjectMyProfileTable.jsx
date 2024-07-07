@@ -5,6 +5,7 @@ import { TextInput } from "flowbite-react";
 import { GoProjectRoadmap } from "react-icons/go";
 import { Tooltip } from "react-tooltip";
 import { useTranslation } from "react-i18next";
+import ProjectMyProfileCards from "./ProjectMyProfileCards";
 
 // Helper function to convert the date array to a JS Date object
 const formatDate = (dateArray) => {
@@ -131,6 +132,7 @@ function ProjectMyProfileTable({
       className="w-3/4 sm:w-1/4"
     />
   </div>
+  <div className="hidden md:block">
   <DataTable
     columns={columns}
     data={filteredItems}
@@ -151,6 +153,9 @@ function ProjectMyProfileTable({
       rangeSeparatorText: t('of'),
     }}
   />
+  </div>
+  <div className="md:hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
+  <ProjectMyProfileCards data={filteredItems} onRowClick={onRowClick} />        </div>
 </div>
   );
 }

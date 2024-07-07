@@ -7,6 +7,8 @@ import useSkills from "../Hooks/useSkills";
 import useInterests from "../Hooks/useInterests";
 import { jwtDecode } from "jwt-decode";
 
+
+
 const useProjects = (userId, page, rowsPerPage) => {
   const navigate = useNavigate();
   const apiUrl = useApiStore.getState().apiUrl;
@@ -106,6 +108,7 @@ function MyProfileMyProjects() {
     page,
     rowsPerPage
   );
+  const [viewMode, setViewMode] = useState('table');
 
   const handleRowClick = (projectId) => {
     navigate(`/myProjects/${projectId}/ganttChart`);
