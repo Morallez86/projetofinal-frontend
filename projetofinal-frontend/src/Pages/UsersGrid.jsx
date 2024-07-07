@@ -9,24 +9,24 @@ import useInterestStore from "../Stores/InterestStore";
 import basePhoto from "../Assets/092.png";
 import MessageModal from "../Components/MessageModal";
 import "../index.css";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 function UsersGrid() {
   const apiUrl = useApiStore((state) => state.apiUrl);
-  const { token } = useUserStore();
   const navigate = useNavigate();
-
   const [users, setUsers] = useState([]);
   const [userImages, setUserImages] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedWorkplace, setSelectedWorkplace] = useState("");
   const [selectedSkills, setSelectedSkills] = useState("");
   const [selectedInterests, setSelectedInterests] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false); 
-  const [selectedUser, setSelectedUser] = useState(null); 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
   const workplaces = useWorkplaceStore((state) => state.workplaces);
   const skills = useSkillStore((state) => state.skills);
   const interests = useInterestStore((state) => state.interests);
+  const { token } = useUserStore();
+
 
   const { t } = useTranslation();
 
@@ -92,10 +92,10 @@ function UsersGrid() {
             Authorization: `Bearer ${token}`,
           },
         });
-
+        console.log(response);
+        const data = await response.json();
+        console.log(data.message);
         if (response.ok) {
-          const data = await response.json();
-
           if (data.length > 0) {
             setUsers(data);
             await fetchUserImages(data);
@@ -103,8 +103,17 @@ function UsersGrid() {
             setUsers([]);
             console.warn("No users found.");
           }
+        } else if (response.status === 401) {
+          const errorMessage = data.message || "Unauthorized";
+          
+          // Differentiate based on error message
+          if (errorMessage === "Invalid token") {
+            handleSessionTimeout();
+          }
         } else {
           console.error("Error fetching users");
+          const data = await response.json();
+          console.log(data);
         }
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -143,6 +152,10 @@ function UsersGrid() {
     setIsModalOpen(false);
   };
 
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       <div className="p-8">
@@ -160,7 +173,7 @@ function UsersGrid() {
             onChange={(e) => handleWorkplaceChange(e.target.value)}
             className="mx-2"
           >
-            <option value="">{t('SelectWorkplace')}</option>
+            <option value="">{t("SelectWorkplace")}</option>
             {workplaces.map((workplace) => (
               <option key={workplace.id} value={workplace.name}>
                 {workplace.name}
@@ -173,7 +186,7 @@ function UsersGrid() {
             onChange={(e) => handleSkillsChange(e.target.value)}
             className="mx-2"
           >
-            <option value="">{t('SelectSkills')}</option>
+            <option value="">{t("SelectSkills")}</option>
             {skills.map((skill) => (
               <option key={skill.id} value={skill.name}>
                 {skill.name}
@@ -186,14 +199,14 @@ function UsersGrid() {
             onChange={(e) => handleInterestsChange(e.target.value)}
             className="mx-2"
           >
-            <option value="">{t('SelectInterests')}</option>
+            <option value="">{t("SelectInterests")}</option>
             {interests.map((interest) => (
               <option key={interest.id} value={interest.name}>
                 {interest.name}
               </option>
             ))}
           </select>
-          <Button onClick={handleSearch}>{t('Search')}</Button>
+          <Button onClick={handleSearch}>{t("Search")}</Button>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {users.map((user) => (
@@ -217,11 +230,11 @@ function UsersGrid() {
                     size="sm"
                     onClick={() => navigate(`/users/${user.id}`)}
                   >
-                    {t('Profile')}
+                    {t("Profile")}
                   </Button>
                 ) : (
                   <Button size="sm" disabled>
-                    {t('Profile')}
+                    {t("Profile")}
                   </Button>
                 )}
                 <button
@@ -229,7 +242,7 @@ function UsersGrid() {
                   onClick={() => openMessageModal(user)}
                 >
                   <span className="flex items-stretch transition-all duration-200 rounded-md px-3 py-1.5 text-sm">
-                    {t('Message')}
+                    {t("Message")}
                   </span>
                 </button>
               </div>

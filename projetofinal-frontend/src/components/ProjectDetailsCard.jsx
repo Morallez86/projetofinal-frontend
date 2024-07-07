@@ -19,6 +19,7 @@ import TeamCard from "./TeamCard";
 import { useTranslation } from "react-i18next";
 import { LuPlusCircle } from "react-icons/lu";
 import { MdOutlineRemoveCircleOutline } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 function ProjectDetailsCard({
   project,
@@ -40,6 +41,10 @@ function ProjectDetailsCard({
   const apiUrl = useApiStore((state) => state.apiUrl);
   const token = useUserStore((state) => state.token);
   const workplaces = useWorkplaceStore((state) => state.workplaces);
+  const navigate = useNavigate();
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  };
   let currentUserId;
 
   if (token) {
@@ -166,6 +171,16 @@ function ProjectDetailsCard({
       if (response.status === 200) {
         console.log("Project details updated successfully");
         setEditMode(false);
+      } else if (response.status === 401) {
+        const data = await response.json();
+        const errorMessage = data.message || "Unauthorized";
+
+        if (errorMessage === "Invalid token") {
+          handleSessionTimeout(); // Session timeout
+          return; // Exit early if session timeout
+        } else {
+          console.error("Error updating seen status:", errorMessage);
+        }
       } else {
         console.error("Error updating project details");
       }
@@ -196,6 +211,16 @@ function ProjectDetailsCard({
           ),
         }));
         console.log("User status updated successfully");
+      } else if (response.status === 401) {
+        const data = await response.json();
+        const errorMessage = data.message || "Unauthorized";
+
+        if (errorMessage === "Invalid token") {
+          handleSessionTimeout(); // Session timeout
+          return; // Exit early if session timeout
+        } else {
+          console.error("Error updating seen status:", errorMessage);
+        }
       } else {
         console.error("Error updating user status");
       }
@@ -226,6 +251,16 @@ function ProjectDetailsCard({
           ),
         }));
         console.log("User deactivated successfully");
+      } else if (response.status === 401) {
+        const data = await response.json();
+        const errorMessage = data.message || "Unauthorized";
+
+        if (errorMessage === "Invalid token") {
+          handleSessionTimeout(); // Session timeout
+          return; // Exit early if session timeout
+        } else {
+          console.error("Error updating seen status:", errorMessage);
+        }
       } else {
         console.error("Error deactivating user");
       }

@@ -23,7 +23,7 @@ export async function confirmRegistration(emailToken, apiUrl) {
 
 export async function updatePassword(apiUrl, token, oldPassword, newPassword) {
     try {
-        const response = await fetch(`${apiUrl}/rest/users/updatePassword`, {
+        const response = await fetch(`${apiUrl}/users/updatePassword`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",

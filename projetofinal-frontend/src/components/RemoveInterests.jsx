@@ -8,6 +8,7 @@ import RemovedAnimation from "../Assets/Removed.json";
 import Lottie from "react-lottie";
 import { Tooltip } from "react-tooltip";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 function RemoveInterests({
   openPopUpInterestRemove,
@@ -29,6 +30,10 @@ function RemoveInterests({
   const [animationPlayed, setAnimationPlayed] = useState(false);
   const [showSuccessText, setShowSuccessText] = useState(false);
   const [filteredInterests, setFilteredInterests] = useState([]);
+  const navigate = useNavigate();
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  };
 
   const { t } = useTranslation();
 
@@ -91,6 +96,16 @@ function RemoveInterests({
           );
           setUserInterests(updatedInterests);
           setAnimationPlayed(true);
+        } else if (response.status === 401) {
+          const data = await response.json();
+          const errorMessage = data.message || "Unauthorized";
+
+          if (errorMessage === "Invalid token") {
+            handleSessionTimeout(); // Session timeout
+            return; // Exit early if session timeout
+          } else {
+            console.error("Error updating seen status:", errorMessage);
+          }
         } else if (response.status === 500) {
           console.log("Internal server error");
         }
@@ -117,6 +132,19 @@ function RemoveInterests({
           );
           setProjectInterests(updatedInterests);
           setAnimationPlayed(true);
+          setTimeout(() => {
+            closePopUpInterestRemove();
+          }, 2000);
+        } else if (response.status === 401) {
+          const data = await response.json();
+          const errorMessage = data.message || "Unauthorized";
+
+          if (errorMessage === "Invalid token") {
+            handleSessionTimeout(); // Session timeout
+            return; // Exit early if session timeout
+          } else {
+            console.error("Error updating seen status:", errorMessage);
+          }
         } else if (response.status === 500) {
           console.log("Internal server error");
         }

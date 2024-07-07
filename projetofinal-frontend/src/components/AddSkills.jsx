@@ -10,6 +10,7 @@ import Lottie from "react-lottie";
 import useSkillStore from "../Stores/SkillStore";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
   const { projectId } = useParams();
@@ -27,6 +28,10 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
   const [inputValue, setInputValue] = useState("");
   const [animationPlayed, setAnimationPlayed] = useState(false);
   const [showSuccessText, setShowSuccessText] = useState(false);
+  const navigate = useNavigate();
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  };
 
   const { t } = useTranslation();
 
@@ -118,6 +123,16 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
           setShowSuccessText(true);
           setSelectedSkill(null);
           setSelectedCategory(null);
+        } else if (response.status === 401) {
+          const data = await response.json();
+          const errorMessage = data.message || "Unauthorized";
+
+          if (errorMessage === "Invalid token") {
+            handleSessionTimeout(); // Session timeout
+            return; // Exit early if session timeout
+          } else {
+            console.error("Error updating seen status:", errorMessage);
+          }
         } else if (response.status === 500) {
           console.error("Internal Server Error");
         }
@@ -150,6 +165,16 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
           setShowSuccessText(true);
           setSelectedSkill(null);
           setSelectedCategory(null);
+        } else if (response.status === 401) {
+          const data = await response.json();
+          const errorMessage = data.message || "Unauthorized";
+
+          if (errorMessage === "Invalid token") {
+            handleSessionTimeout(); // Session timeout
+            return; // Exit early if session timeout
+          } else {
+            console.error("Error updating seen status:", errorMessage);
+          }
         } else if (response.status === 409) {
           console.error("Skill already exists in the project");
         } else if (response.status === 404) {

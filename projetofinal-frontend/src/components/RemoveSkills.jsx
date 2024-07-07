@@ -8,6 +8,7 @@ import Lottie from "react-lottie";
 import { Tooltip } from "react-tooltip";
 import useProjectStore from "../Stores/ProjectStore";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 function RemoveSkills({
   openPopUpSkillsRemove,
@@ -28,6 +29,10 @@ function RemoveSkills({
   const [selectedSkillIds, setSelectedSkillIds] = useState([]);
   const [showSuccessText, setShowSuccessText] = useState(false);
   const [filteredSkills, setFilteredSkills] = useState([]);
+  const navigate = useNavigate();
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  };
 
   const { t } = useTranslation();
 
@@ -39,7 +44,7 @@ function RemoveSkills({
         )
       );
     } else if (context === "editProject" && projectInfo) {
-      console.log(projectInfo)
+      console.log(projectInfo);
       setFilteredSkills(
         projectInfo.skills.filter((skill) =>
           skill.name.toLowerCase().includes(filter.toLowerCase())
@@ -91,6 +96,16 @@ function RemoveSkills({
           );
           setUserSkills(updatedSkills);
           setAnimationPlayed(true);
+        } else if (response.status === 401) {
+          const data = await response.json();
+          const errorMessage = data.message || "Unauthorized";
+
+          if (errorMessage === "Invalid token") {
+            handleSessionTimeout(); // Session timeout
+            return; // Exit early if session timeout
+          } else {
+            console.error("Error updating seen status:", errorMessage);
+          }
         } else if (response.status === 500) {
           console.log("Internal server error");
         }
@@ -118,6 +133,19 @@ function RemoveSkills({
           );
           setProjectSkills(updatedSkills);
           setAnimationPlayed(true);
+          setTimeout(() => {
+            closePopUpSkillsRemove();
+          }, 2000);
+        } else if (response.status === 401) {
+          const data = await response.json();
+          const errorMessage = data.message || "Unauthorized";
+
+          if (errorMessage === "Invalid token") {
+            handleSessionTimeout(); // Session timeout
+            return; // Exit early if session timeout
+          } else {
+            console.error("Error updating seen status:", errorMessage);
+          }
         } else if (response.status === 500) {
           console.log("Internal server error");
         }

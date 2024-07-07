@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Button } from "flowbite-react";
 import ComponentResourceCardDetails from "../Components/ComponentResourceCardDetails";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 function ComponentsResources() {
   const apiUrl = useApiStore((state) => state.apiUrl);
@@ -18,7 +19,10 @@ function ComponentsResources() {
   const [filterText, setFilterText] = useState("");
   const [showModal, setShowModal] = useState(false);
   const { t } = useTranslation();
-
+  const navigate = useNavigate();
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  };
 
   const getResources = async () => {
     setLoading(true); // Ensure loading is set to true each time getResources is called
@@ -42,6 +46,16 @@ function ComponentsResources() {
         setResources(data.resources);
         setTotalPages(data.totalPages);
         console.log(data);
+      } else if (response.status === 401) {
+        const data = await response.json();
+        const errorMessage = data.message || "Unauthorized";
+
+        if (errorMessage === "Invalid token") {
+          handleSessionTimeout(); // Session timeout
+          return; // Exit early if session timeout
+        } else {
+          console.error("Error updating seen status:", errorMessage);
+        }
       } else {
         console.error("Error fetching resources" + response.status);
       }

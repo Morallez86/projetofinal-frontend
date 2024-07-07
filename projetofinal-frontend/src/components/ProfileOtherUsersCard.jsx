@@ -7,12 +7,17 @@ import { MdOutlineEdit } from "react-icons/md";
 import basePhoto from "../Assets/092.png";
 import { jwtDecode } from "jwt-decode";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 function ProfileOtherUsersCard() {
   const { userId } = useParams();
   const [editMode, setEditMode] = useState(false);
   const apiUrl = useApiStore((state) => state.apiUrl);
   const token = useUserStore((state) => state.token);
+  const navigate = useNavigate();
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  };
 
   const { t } = useTranslation();
 
@@ -62,6 +67,16 @@ function ProfileOtherUsersCard() {
             role: userInfoData.role,
           });
           fetchProfileImage(userId);
+        } else if (response.status === 401) {
+          const data = await response.json();
+          const errorMessage = data.message || "Unauthorized";
+
+          if (errorMessage === "Invalid token") {
+            handleSessionTimeout(); // Session timeout
+            return; // Exit early if session timeout
+          } else {
+            console.error("Error updating seen status:", errorMessage);
+          }
         }
       } catch (error) {
         console.error("Error fetching user info:", error);
@@ -84,6 +99,16 @@ function ProfileOtherUsersCard() {
         } else if (response.status === 404) {
           console.log("User image not found, using base photo");
           setProfileImage(basePhoto);
+        } else if (response.status === 401) {
+          const data = await response.json();
+          const errorMessage = data.message || "Unauthorized";
+
+          if (errorMessage === "Invalid token") {
+            handleSessionTimeout(); // Session timeout
+            return; // Exit early if session timeout
+          } else {
+            console.error("Error updating seen status:", errorMessage);
+          }
         } else {
           console.error("Error fetching user image");
         }
@@ -122,7 +147,20 @@ function ProfileOtherUsersCard() {
 
       if (response.status === 200) {
         setEditMode(false);
-        fetchUserInfo();
+        setUserInfo((prevUserInfo) => ({
+          ...prevUserInfo,
+          role: updatedData.role,
+        }));
+      } else if (response.status === 401) {
+        const data = await response.json();
+        const errorMessage = data.message || "Unauthorized";
+
+        if (errorMessage === "Invalid token") {
+          handleSessionTimeout(); // Session timeout
+          return; // Exit early if session timeout
+        } else {
+          console.error("Error updating seen status:", errorMessage);
+        }
       } else {
         console.error("Error saving user info");
       }

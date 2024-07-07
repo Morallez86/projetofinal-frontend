@@ -10,6 +10,7 @@ import AddedAnimation from "../Assets/Added.json";
 import Lottie from "react-lottie";
 import useInterestStore from "../Stores/InterestStore";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
   const { projectId } = useParams();
@@ -30,6 +31,10 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
   const [inputValue, setInputValue] = useState("");
   const [animationPlayed, setAnimationPlayed] = useState(false);
   const [showSuccessText, setShowSuccessText] = useState(false);
+  const navigate = useNavigate();
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  };
 
   const { t } = useTranslation();
 
@@ -114,6 +119,16 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
           setAnimationPlayed(true);
           setShowSuccessText(true);
           setSelectedInterest(null);
+        } else if (response.status === 401) {
+          const data = await response.json();
+          const errorMessage = data.message || "Unauthorized";
+
+          if (errorMessage === "Invalid token") {
+            handleSessionTimeout(); // Session timeout
+            return; // Exit early if session timeout
+          } else {
+            console.error("Error updating seen status:", errorMessage);
+          }
         } else if (response.status === 500) {
           console.error("Internal Server Error");
         }
@@ -145,6 +160,16 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
           setAnimationPlayed(true);
           setShowSuccessText(true);
           setSelectedInterest(null);
+        } else if (response.status === 401) {
+          const data = await response.json();
+          const errorMessage = data.message || "Unauthorized";
+
+          if (errorMessage === "Invalid token") {
+            handleSessionTimeout(); // Session timeout
+            return; // Exit early if session timeout
+          } else {
+            console.error("Error updating seen status:", errorMessage);
+          }
         } else if (response.status === 409) {
           console.error("Interest already exists in the project");
         } else if (response.status === 404) {

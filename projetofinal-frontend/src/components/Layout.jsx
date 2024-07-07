@@ -17,14 +17,12 @@ import useUserStore from "../Stores/UserStore";
 import criticalLogo from "../Assets/CriticalLogo.jpg";
 import useApiStore from "../Stores/ApiStore";
 import { jwtDecode } from "jwt-decode";
-import {ToggleSwitch} from "flowbite-react";
+import { ToggleSwitch } from "flowbite-react";
 import { useState } from "react";
 import i18n from "../Language/i18n";
 import { Dialog, Transition } from '@headlessui/react';
 import { MenuIcon } from '@heroicons/react/outline';
 import BurgerMenu from './BurguerMenu'; 
-
-
 
 function Layout({
   activeTab,
@@ -35,18 +33,23 @@ function Layout({
   unreadNotifications,
   children,
 }) {
-  const navigate = useNavigate();
   const apiUrl = useApiStore((state) => state.apiUrl);
-  const { token, setToken, profileImage, setProfileImage, clearProfileImage} = useUserStore();
+  const { token, setToken, profileImage, setProfileImage, clearProfileImage } =
+    useUserStore();
   const projectTimestamps = useUserStore((state) => state.projectTimestamps);
   const [switch2, setSwitch2] = useState(false);
   const languageApp = useUserStore((state) => state.language);
   const setLanguageApp = useUserStore((state) => state.setLanguage);
+  const navigate = useNavigate();
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  };
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
  
 
   const handleLanguageToggle = () => {
-    const newLanguage = languageApp === 'en' ? 'pt' : 'en';
+    const newLanguage = languageApp === "en" ? "pt" : "en";
     setLanguageApp(newLanguage);
     i18n.changeLanguage(newLanguage);
   };
@@ -54,7 +57,6 @@ function Layout({
   useEffect(() => {
     console.log(projectTimestamps);
   }, [projectTimestamps]);
-
 
   let userId, username;
   if (token) {
@@ -83,6 +85,16 @@ function Layout({
             const imageBlob = await response.blob();
             const imageObjectURL = URL.createObjectURL(imageBlob);
             setProfileImage(imageObjectURL);
+          } else if (response.status === 401) {
+            const data = await response.json();
+            const errorMessage = data.message || "Unauthorized";
+
+            if (errorMessage === "Invalid token") {
+              handleSessionTimeout(); // Session timeout
+              return; // Exit early if session timeout
+            } else {
+              console.error("Error updating seen status:", errorMessage);
+            }
           } else {
             console.error("Failed to fetch profile image:", response.status);
           }
@@ -105,7 +117,7 @@ function Layout({
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ projectTimestamps })
+          body: JSON.stringify({ projectTimestamps }),
         });
 
         if (response.ok) {
@@ -371,17 +383,16 @@ function Layout({
         <div className="flex justify-end items-start space-x-2">
           {token && (
             <>
-            <div className="relative mt-3 mr-0 p-0">
-            <ToggleSwitch
-  checked={languageApp === 'pt'}
-  label={
-    languageApp === 'en'
-      ? "Change to PT" 
-      : "Change to EN" 
-  }
-  onChange={() => { handleLanguageToggle();  setSwitch2(prevState => !prevState);  }}
-/>
-          </div>
+              <div className="relative mt-3 mr-0 p-0">
+                <ToggleSwitch
+                  checked={languageApp === "pt"}
+                  label={languageApp === "en" ? "Change to PT" : "Change to EN"}
+                  onChange={() => {
+                    handleLanguageToggle();
+                    setSwitch2((prevState) => !prevState);
+                  }}
+                />
+              </div>
               <div className="relative mt-3 cursor-pointer">
                 <MdOutlineMessage
                   size={35}
@@ -414,25 +425,25 @@ function Layout({
             </>
           )}
           {!token && (
-  <>
-    <div className="relative mt-3 mr-0 p-0">
-      <ToggleSwitch
-        checked={languageApp === 'pt'}
-        label={languageApp === 'en' ? "Change to PT" : "Change to EN"}
-        onChange={() => {
-          handleLanguageToggle();
-          setSwitch2(prevState => !prevState);
-        }}
-      />
-    </div>
-    <button
-      className="p-2 flex border border-gray-600 hover:bg-cyan-700 hover:text-white items-center justify-center rounded-full bg-white transition-colors duration-200 text-black font-bold"
-      onClick={() => navigate("/Login")}
-    >
-      <TbLogin2 size={35} />
-    </button>
-  </>
-)}
+            <>
+              <div className="relative mt-3 mr-0 p-0">
+                <ToggleSwitch
+                  checked={languageApp === "pt"}
+                  label={languageApp === "en" ? "Change to PT" : "Change to EN"}
+                  onChange={() => {
+                    handleLanguageToggle();
+                    setSwitch2((prevState) => !prevState);
+                  }}
+                />
+              </div>
+              <button
+                className="p-2 flex border border-gray-600 hover:bg-cyan-700 hover:text-white items-center justify-center rounded-full bg-white transition-colors duration-200 text-black font-bold"
+                onClick={() => navigate("/Login")}
+              >
+                <TbLogin2 size={35} />
+              </button>
+            </>
+          )}
         </div>
       </div>
       <div className="relative">{children}</div>

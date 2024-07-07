@@ -9,10 +9,11 @@ import { MdOutlineManageAccounts } from "react-icons/md";
 import { Tooltip } from "react-tooltip";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa6";
 import { useWebSocket } from "../WebSocketContext";
-import {useTranslation} from "react-i18next";
-
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 function NotificationsPage() {
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -20,9 +21,9 @@ function NotificationsPage() {
   const [type, setType] = useState(null); // Initialize with null
   const [seen, setSeen] = useState(false); // State for seen filter
   const { registerMessageHandler, unregisterMessageHandler } = useWebSocket();
+  const { token } = useUserStore();
 
   const apiUrl = useApiStore.getState().apiUrl;
-  const token = useUserStore((state) => state.token);
   const { t } = useTranslation();
 
   // Fetch notifications function
@@ -48,7 +49,23 @@ function NotificationsPage() {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+
       const data = await response.json();
+
+      // Check for 401 specifically to handle session timeout
+      if (response.status === 401) {
+        const errorMessage = data.message || "Unauthorized";
+
+        // Differentiate based on error message
+        if (errorMessage === "Invalid token") {
+          handleSessionTimeout(); // Session timeout
+        } else {
+          console.error("Error fetching notifications:", errorMessage);
+        }
+        return; // Exit early if session timeout
+      }
+
+      // Process successful response
       console.log(data);
       setNotifications(data.notifications);
       setTotalPages(data.totalPages);
@@ -96,6 +113,19 @@ function NotificationsPage() {
         }),
       });
 
+      // Check for 401 specifically to handle session timeout
+      if (response.status === 401) {
+        const data = await response.json();
+        const errorMessage = data.message || "Unauthorized";
+
+        if (errorMessage === "Invalid token") {
+          handleSessionTimeout(); // Session timeout
+          return; // Exit early if session timeout
+        } else {
+          console.error("Error updating seen status:", errorMessage);
+        }
+      }
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -131,6 +161,19 @@ function NotificationsPage() {
         }), // Send notification IDs and new status
       });
 
+      // Check for 401 specifically to handle session timeout
+      if (response.status === 401) {
+        const data = await response.json();
+        const errorMessage = data.message || "Unauthorized";
+
+        if (errorMessage === "Invalid token") {
+          handleSessionTimeout(); // Session timeout
+          return; // Exit early if session timeout
+        } else {
+          console.error("Error updating seen status:", errorMessage);
+        }
+      }
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -142,6 +185,10 @@ function NotificationsPage() {
     }
   };
 
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flex p-14">
@@ -150,7 +197,7 @@ function NotificationsPage() {
             <div className="flex flex-col space-y-2 flex-grow">
               {/* Type toggles */}
               <div className="flex items-center justify-between mb-2">
-                <h2 className="text-center"> {t('Notifications')}  </h2>
+                <h2 className="text-center"> {t("Notifications")} </h2>
                 <div className="text-right">
                   <button
                     onClick={() => setSeen(!seen)}
@@ -171,7 +218,7 @@ function NotificationsPage() {
                   </button>
                   <Tooltip
                     anchorSelect="#seenBtn"
-                    content={seen ? t('Seen') :  t('Unseen')}
+                    content={seen ? t("Seen") : t("Unseen")}
                     place="top"
                     effect="solid"
                   />
@@ -192,7 +239,7 @@ function NotificationsPage() {
               </button>
               <Tooltip
                 anchorSelect="#allBtn"
-                content= {t('All')}
+                content={t("All")}
                 place="top"
                 effect="solid"
               />
@@ -212,7 +259,7 @@ function NotificationsPage() {
               </button>
               <Tooltip
                 anchorSelect="#projectBtn"
-                content= {t('Project')}
+                content={t("Project")}
                 place="top"
                 effect="solid"
               />
@@ -232,7 +279,7 @@ function NotificationsPage() {
               </button>
               <Tooltip
                 anchorSelect="#managingBtn"
-                content= {t('Managing')}
+                content={t("Managing")}
                 place="top"
                 effect="solid"
               />
@@ -252,7 +299,7 @@ function NotificationsPage() {
               </button>
               <Tooltip
                 anchorSelect="#invitationBtn"
-                content= {t('Invitation')}
+                content={t("Invitation")}
                 place="top"
                 effect="solid"
               />

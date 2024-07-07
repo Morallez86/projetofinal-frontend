@@ -21,12 +21,13 @@ import RemoveResources from "../Components/RemoveResources";
 
 function ProjectDetails() {
   const { projectId } = useParams();
+  const { token } = useUserStore();
+
   const [project, setProject] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [userImages, setUserImages] = useState({});
   const [loading, setLoading] = useState(true);
   const apiUrl = useApiStore((state) => state.apiUrl);
-  const token = useUserStore((state) => state.token);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [team, setTeam] = useState([]);
   const [unreadMessages, setUnreadMessages] = useState(0);
@@ -91,14 +92,13 @@ function ProjectDetails() {
   const closeAddResourcesModal = () => {
     setStatePopUpResources(false);
     fetchProjectDetails();
-
-  }
+  };
 
   const openRemoveResourcesModal = () => setStatePopUpResourcesRemove(true);
 
   const closeRemoveResourcesModal = () => {
     setStatePopUpResourcesRemove(false);
-        fetchProjectDetails();
+    fetchProjectDetails();
   };
 
   const onMessageChat = (message) => {
@@ -150,40 +150,60 @@ function ProjectDetails() {
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log(data);
-      setProject(data);
-      setTasks(data.tasks || []);
-      setTeam(data.userProjectDtos || []);
-      setMessagesAlone(data.chatMessage || []);
-      setAllMsgs(data.chatMessage || []);
-
-      const userIds = data.userProjectDtos
-        .map((up) => up.userId)
-        .filter((value, index, self) => self.indexOf(value) === index);
-
-      const imagesResponse = await fetch(`${apiUrl}/users/images`, {
-        method: "POST",
-        headers: {
-          Accept: "*/*",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(userIds),
-      });
-
-      if (imagesResponse.ok) {
-        const imagesData = await imagesResponse.json();
-        const imagesMap = {};
-        imagesData.forEach((img) => {
-          imagesMap[img.id] = img;
-        });
-        setUserImages(imagesMap);
+        if (response.status === 401) {
+          // Handle session timeout
+          try {
+            const errorData = await response.json();
+            const errorMessage = errorData.message || "Unauthorized";
+            if (errorMessage === "Invalid token") {
+              handleSessionTimeout();
+            }
+            console.error(`Error fetching project details: ${errorMessage}`);
+          } catch (error) {
+            console.error("Error parsing error response:", error);
+          }
+        } else {
+          // Handle other HTTP errors
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
       } else {
-        console.error("Error fetching user images");
+        // Successful response processing
+        const data = await response.json();
+        console.log(data);
+        setProject(data);
+        setTasks(data.tasks || []);
+        setTeam(data.userProjectDtos || []);
+        setMessagesAlone(data.chatMessage || []);
+        setAllMsgs(data.chatMessage || []);
+
+        // Fetch user images based on userIds
+        const userIds = data.userProjectDtos
+          .map((up) => up.userId)
+          .filter((value, index, self) => self.indexOf(value) === index);
+
+        const imagesResponse = await fetch(`${apiUrl}/users/images`, {
+          method: "POST",
+          headers: {
+            Accept: "*/*",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(userIds),
+        });
+
+        if (imagesResponse.ok) {
+          const imagesData = await imagesResponse.json();
+          const imagesMap = {};
+          imagesData.forEach((img) => {
+            imagesMap[img.id] = img;
+          });
+          setUserImages(imagesMap);
+        } else {
+          console.error(
+            "Error fetching user images:",
+            imagesResponse.statusText
+          );
+        }
       }
     } catch (error) {
       console.error("Error fetching project details:", error);
@@ -232,6 +252,10 @@ function ProjectDetails() {
   if (!project) {
     return <div>No project found</div>;
   }
+
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  };
 
   return (
     <div className="flex flex-col min-h-screen">

@@ -5,7 +5,8 @@ import useProjectStore from "../Stores/ProjectStore";
 import useApiStore from "../Stores/ApiStore";
 import basePhoto from "../Assets/092.png";
 import { jwtDecode } from "jwt-decode";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 function AddUsers({ openPopUpUsers, closePopUpUsers, projectInfo }) {
   const token = useUserStore((state) => state.token);
@@ -13,15 +14,19 @@ function AddUsers({ openPopUpUsers, closePopUpUsers, projectInfo }) {
   const projectUsers = useProjectStore((state) => state.projectUsers);
   const setProjectUsers = useProjectStore((state) => state.setProjectUsers);
   let currentUserId;
-  if(token){
-      const decodedToken = jwtDecode(token);
-      currentUserId = decodedToken.id;
+  if (token) {
+    const decodedToken = jwtDecode(token);
+    currentUserId = decodedToken.id;
   }
 
   const [users, setUsers] = useState([]);
   const [userImages, setUserImages] = useState({});
   const [inputValue, setInputValue] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  };
   const { t } = useTranslation();
 
   const handleSearch = async () => {
@@ -44,6 +49,16 @@ function AddUsers({ openPopUpUsers, closePopUpUsers, projectInfo }) {
           setUsers(data);
           console.log(data);
           fetchUserImages(data);
+        } else if (response.status === 401) {
+          const data = await response.json();
+          const errorMessage = data.message || "Unauthorized";
+
+          if (errorMessage === "Invalid token") {
+            handleSessionTimeout(); // Session timeout
+            return; // Exit early if session timeout
+          } else {
+            console.error("Error updating seen status:", errorMessage);
+          }
         } else if (response.status === 404) {
           console.log("Users not found");
           setUsers([]);
@@ -78,6 +93,16 @@ function AddUsers({ openPopUpUsers, closePopUpUsers, projectInfo }) {
           imagesMap[img.id] = img;
         });
         setUserImages(imagesMap);
+      } else if (response.status === 401) {
+        const data = await response.json();
+        const errorMessage = data.message || "Unauthorized";
+
+        if (errorMessage === "Invalid token") {
+          handleSessionTimeout(); // Session timeout
+          return; // Exit early if session timeout
+        } else {
+          console.error("Error updating seen status:", errorMessage);
+        }
       } else {
         console.error("Error fetching user images");
       }
@@ -141,16 +166,16 @@ function AddUsers({ openPopUpUsers, closePopUpUsers, projectInfo }) {
             {t("addUsers")}
           </h3>
           <div className="space-y-3">
-            <h4>{t('SearchForAuserByTypingAtLeast3Letters')}</h4>
+            <h4>{t("SearchForAuserByTypingAtLeast3Letters")}</h4>
             <div className="flex items-center space-x-4">
               <TextInput
                 id="search"
                 type="text"
-                placeholder={t('SearchForAUser')}
+                placeholder={t("SearchForAUser")}
                 value={inputValue}
                 onChange={handleInputChange}
               />
-              <Button onClick={handleSearch}>{t('Search')}</Button>
+              <Button onClick={handleSearch}>{t("Search")}</Button>
             </div>
             <div className="mt-4 w-full">
               {users.length > 0 ? (
@@ -183,7 +208,7 @@ function AddUsers({ openPopUpUsers, closePopUpUsers, projectInfo }) {
                   ))}
                 </ul>
               ) : (
-                <p className="text-gray-500">{t('NoUsersFound')}</p>
+                <p className="text-gray-500">{t("NoUsersFound")}</p>
               )}
             </div>
             {error && <p className="text-red-500">{error}</p>}

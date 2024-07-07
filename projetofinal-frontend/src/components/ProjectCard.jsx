@@ -15,7 +15,8 @@ import useWorkplaceStore from "../Stores/WorkplaceStore";
 import useUserStore from "../Stores/UserStore";
 import { FaStarOfLife } from "react-icons/fa";
 import useProjectStore from "../Stores/ProjectStore.js";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 function ProjectCard({
   openPopUpSkills,
@@ -35,12 +36,16 @@ function ProjectCard({
   const { workplaces } = useWorkplaceStore();
   const [selectedWorkLocation, setSelectedWorkLocation] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  
+  const navigate = useNavigate();
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  };
+
   const clearAllProjectDetails = useProjectStore(
     (state) => state.clearAllProjectDetails
   );
-  
-  const {t} = useTranslation();
+
+  const { t } = useTranslation();
 
   useEffect(() => {
     clearAllProjectDetails();
@@ -83,7 +88,7 @@ function ProjectCard({
     });
 
     if (!isFormValid) {
-      alert(t('PleaseFillAllMandatoryFields'));
+      alert(t("PleaseFillAllMandatoryFields"));
       return;
     }
 
@@ -109,6 +114,16 @@ function ProjectCard({
         setTimeout(() => {
           setSuccessMessage(false);
         }, 3000);
+      } else if (response.status === 401) {
+        const data = await response.json();
+        const errorMessage = data.message || "Unauthorized";
+
+        if (errorMessage === "Invalid token") {
+          handleSessionTimeout(); // Session timeout
+          return; // Exit early if session timeout
+        } else {
+          console.error("Error updating seen status:", errorMessage);
+        }
       } else {
         console.error("Error creating project");
       }
@@ -119,7 +134,7 @@ function ProjectCard({
 
   return (
     <Card className="border-gray-600 bg-gradient-to-r from-gray-400 via-gray-75 to-white rounded-lg shadow-md w-3/4 h-auto mx-auto">
-      <h1 className="text-3xl font-bold text-center mb-6">{t('NewProject')}</h1>
+      <h1 className="text-3xl font-bold text-center mb-6">{t("NewProject")}</h1>
       <div className="grid grid-cols-3 gap-10 p-4">
         <div>
           <div className="mb-2 flex items-center">
@@ -549,10 +564,7 @@ function ProjectCard({
       </div>
       <div className="mb-2 ml-4 flex items-center col-span-full">
         <FaStarOfLife className="text-red-500 mr-2 text-xs" />
-        <Label
-          htmlFor="warning"
-          value={t("MandatoryFields")}
-        />
+        <Label htmlFor="warning" value={t("MandatoryFields")} />
       </div>
       {successMessage === true && (
         <div className="mb-2 ml-4 flex items-center col-span-full">

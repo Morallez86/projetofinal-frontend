@@ -9,6 +9,7 @@ import Lottie from "react-lottie";
 import { TbLockFilled } from "react-icons/tb";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function AddComponents({
   openPopUpComponent,
@@ -30,6 +31,11 @@ function AddComponents({
   const [animationPlayed, setAnimationPlayed] = useState(false);
   const [showSuccessText, setShowSuccessText] = useState(false);
   const [error, setError] = useState("");
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const navigate = useNavigate();
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  };
 
   const { t } = useTranslation();
 
@@ -56,6 +62,17 @@ function AddComponents({
         if (response.status === 200) {
           const data = await response.json();
           setComponents(data);
+          setCurrentIndex(data.length);
+        } else if (response.status === 401) {
+          const data = await response.json();
+          const errorMessage = data.message || "Unauthorized";
+
+          if (errorMessage === "Invalid token") {
+            handleSessionTimeout(); // Session timeout
+            return; // Exit early if session timeout
+          } else {
+            console.error("Error updating seen status:", errorMessage);
+          }
         } else if (response.status === 404) {
           console.log("Components not found");
           setComponents([]);
@@ -72,14 +89,10 @@ function AddComponents({
     setInputValue(value);
   };
 
-  const generateUniqueId = () => {
-    return `component-${Math.random().toString(36).substr(2, 9)}`;
-  };
-
-  const options = components.map((component) => ({
+  const options = components.map((component, index) => ({
     value: component,
     label: component,
-    id: generateUniqueId(),
+    id: index + 1, // Use index + 1 for unique numeric ID
     isDisabled: projectComponents.some(
       (projectComponent) => projectComponent.name === component
     ),
@@ -126,6 +139,16 @@ function AddComponents({
           setAnimationPlayed(true);
           setShowSuccessText(true);
           setSelectedComponent(null);
+        } else if (response.status === 401) {
+          const data = await response.json();
+          const errorMessage = data.message || "Unauthorized";
+
+          if (errorMessage === "Invalid token") {
+            handleSessionTimeout(); // Session timeout
+            return; // Exit early if session timeout
+          } else {
+            console.error("Error updating seen status:", errorMessage);
+          }
         } else if (response.status === 409) {
           console.error("Component already exists in the project");
         } else if (response.status === 404) {
@@ -138,7 +161,7 @@ function AddComponents({
       }
     } else {
       const data = {
-        id: selectedComponent.value,
+        id: currentIndex + 1, // Use currentIndex for the new component
         name: selectedComponent.value,
       };
       setProjectComponents([...projectComponents, data]);

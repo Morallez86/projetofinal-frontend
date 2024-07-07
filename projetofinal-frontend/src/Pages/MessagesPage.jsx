@@ -12,8 +12,10 @@ import { Tooltip } from "react-tooltip";
 import NewMessageModal from "../Components/NewMessageModal";
 import { useWebSocket } from "../WebSocketContext";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 function MessagesPage() {
+  const navigate = useNavigate();
   const [messages, setMessages] = useState([]);
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -28,6 +30,10 @@ function MessagesPage() {
   const apiUrl = useApiStore.getState().apiUrl;
   const token = useUserStore((state) => state.token);
   const { t } = useTranslation();
+
+  const handleSessionTimeout = useCallback(() => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  }, [navigate]);
 
   const fetchMessages = useCallback(async () => {
     try {
@@ -52,6 +58,18 @@ function MessagesPage() {
 
       const response = await fetch(url, { headers });
 
+      if (response.status === 401) {
+        const data = await response.json();
+        const errorMessage = data.message || "Unauthorized";
+
+        if (errorMessage === "Invalid token") {
+          handleSessionTimeout(); // Session timeout
+          return; // Exit early if session timeout
+        } else {
+          console.error("Error updating seen status:", errorMessage);
+        }
+      }
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -71,6 +89,7 @@ function MessagesPage() {
     usernameFilter,
     contentFilter,
     searchActive,
+    handleSessionTimeout, // Ensure handleSessionTimeout is listed as a dependency
   ]);
 
   useEffect(() => {
@@ -112,6 +131,18 @@ function MessagesPage() {
         }),
       });
 
+      if (response.status === 401) {
+        const data = await response.json();
+        const errorMessage = data.message || "Unauthorized";
+
+        if (errorMessage === "Invalid token") {
+          handleSessionTimeout(); // Session timeout
+          return; // Exit early if session timeout
+        } else {
+          console.error("Error updating seen status:", errorMessage);
+        }
+      }
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -144,6 +175,18 @@ function MessagesPage() {
         headers,
         body: JSON.stringify({ messageOrNotificationIds, seen: newStatus }), // Send message IDs and new status
       });
+
+      if (response.status === 401) {
+        const data = await response.json();
+        const errorMessage = data.message || "Unauthorized";
+
+        if (errorMessage === "Invalid token") {
+          handleSessionTimeout(); // Session timeout
+          return; // Exit early if session timeout
+        } else {
+          console.error("Error updating seen status:", errorMessage);
+        }
+      }
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -185,7 +228,7 @@ function MessagesPage() {
           <div className="flex flex-col h-full bg-white p-4 rounded-lg shadow-lg border-2 border-red-900">
             <div className="flex flex-col space-y-4 flex-grow">
               <div className="flex items-center justify-between mb-2">
-                <h2 className="text-center"> {t('Messages')}</h2>
+                <h2 className="text-center"> {t("Messages")}</h2>
               </div>
               <button
                 onClick={handleOpenModal}
@@ -198,7 +241,7 @@ function MessagesPage() {
               </button>
               <Tooltip
                 anchorSelect="#newMessageBtn"
-                content= {t('NewMessage')}
+                content={t("NewMessage")}
                 place="top"
                 effect="solid"
               />
@@ -217,7 +260,7 @@ function MessagesPage() {
               </button>
               <Tooltip
                 anchorSelect="#receivedBtn"
-                content= {t('ReceivedMessages')}
+                content={t("ReceivedMessages")}
                 place="top"
                 effect="solid"
               />
@@ -237,7 +280,7 @@ function MessagesPage() {
               </button>
               <Tooltip
                 anchorSelect="#sentBtn"
-                content= {t('SentMessages')}
+                content={t("SentMessages")}
                 place="top"
                 effect="solid"
               />
@@ -257,7 +300,7 @@ function MessagesPage() {
               </button>
               <Tooltip
                 anchorSelect="#unreadBtn"
-                content= {t('UnreadMessages')}
+                content={t("UnreadMessages")}
                 place="top"
                 effect="solid"
               />
@@ -276,18 +319,18 @@ function MessagesPage() {
                       : "bg-cyan-500 text-white hover:bg-cyan-700"
                   } px-4 py-1 rounded`}
                 >
-                  {searchActive ? t('Clear') : t('Search')}
+                  {searchActive ? t("Clear") : t("Search")}
                 </button>
                 <input
                   type="text"
-                  placeholder= {t('SearchByUsername')}
+                  placeholder={t("SearchByUsername")}
                   className="px-2 py-1 border border-cyan-500 rounded"
                   value={usernameFilter}
                   onChange={(e) => setUsernameFilter(e.target.value)}
                 />
                 <input
                   type="text"
-                  placeholder= {t('SearchByContent')}
+                  placeholder={t("SearchByContent")}
                   className="px-2 py-1 border border-cyan-500 rounded"
                   value={contentFilter}
                   onChange={(e) => setContentFilter(e.target.value)}
