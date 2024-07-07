@@ -20,7 +20,9 @@ import { jwtDecode } from "jwt-decode";
 import {ToggleSwitch} from "flowbite-react";
 import { useState } from "react";
 import i18n from "../Language/i18n";
-
+import { Dialog, Transition } from '@headlessui/react';
+import { MenuIcon } from '@heroicons/react/outline';
+import BurgerMenu from './BurguerMenu'; 
 
 
 
@@ -40,7 +42,7 @@ function Layout({
   const [switch2, setSwitch2] = useState(false);
   const languageApp = useUserStore((state) => state.language);
   const setLanguageApp = useUserStore((state) => state.setLanguage);
-
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
  
 
   const handleLanguageToggle = () => {
@@ -128,8 +130,62 @@ function Layout({
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="grid grid-cols-[1fr_2fr_1fr] gap-4 p-4 px-8">
-        <div className="flex flex-col items-start">
+    <div className="md:hidden p-4 flex justify-between items-center space-x-1"> {/* Adicionado 'flex justify-between items-center' */}
+    <button onClick={() => setIsMenuOpen(true)}>
+      <MenuIcon className="h-6 w-6" />
+    </button>
+    <div className="inline-flex justify-end items-center space-x-1"> {/* Espaçamento reduzido para space-x-1 */}
+    {/* Toggle de linguagem */}
+    <ToggleSwitch
+      checked={languageApp === 'pt'}
+      label={languageApp === 'en' ? "EN" : "PT"} 
+      onChange={handleLanguageToggle}
+    />
+    {/* Ícone de mensagens com contêiner relativo */}
+    <div className="cursor-pointer relative">
+      <MdOutlineMessage size={25} onClick={() => navigate("/messages")} />
+      {unreadMessages > 0 && (
+        <div className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-red-600 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">
+          {unreadMessages}
+        </div>
+      )}
+    </div>
+    {/* Ícone de notificações com contêiner relativo */}
+    <div className="cursor-pointer relative">
+      <IoIosNotificationsOutline size={25} onClick={() => navigate("/notifications")} />
+      {unreadNotifications > 0 && (
+        <div className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-red-600 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">
+          {unreadNotifications}
+        </div>
+      )}
+    </div>
+    {/* Foto do perfil e botão de logout */}
+    <div className="flex items-center">
+      <Avatar img={profileImage} alt="avatar" size="sm" rounded/> 
+      <button
+        className="ml-1 p-1 flex border border-gray-600 hover:bg-cyan-700 items-center justify-center rounded-full bg-white transition-colors duration-200 text-black font-bold" 
+        onClick={handleLogout}
+      >
+        <TbLogout2 size={25} /> {/* Tamanho do ícone reduzido */}
+      </button>
+  </div>
+</div>
+    </div>
+    <Dialog open={isMenuOpen} onClose={() => setIsMenuOpen(false)} className="relative z-50 md:hidden">
+      <Transition.Child as="div" className="fixed top-0 left-0 w-3/4 h-full bg-white p-4 shadow-xl"
+        enter="transition-transform ease-in-out duration-300"
+        enterFrom="-translate-x-full"
+        enterTo="translate-x-0"
+        leave="transition-transform ease-in-out duration-300"
+        leaveFrom="translate-x-0"
+        leaveTo="-translate-x-full">
+        {/* Aqui você pode substituir os botões pelo BurgerMenu se ele contiver os links/navegação */}
+        <BurgerMenu />
+      </Transition.Child>
+    </Dialog>
+    
+      <div className="hidden md:grid grid-cols-[1fr_2fr_1fr] gap-4 p-4 px-8">
+      <div className="flex flex-col items-start">
           <img
             src={criticalLogo}
             alt="Critical Logo"
