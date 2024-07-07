@@ -14,8 +14,8 @@ const useProjects = (userId, page, rowsPerPage) => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(0);
-  const { skills } = useSkills();
-  const { interests } = useInterests();
+  useSkills();
+  useInterests();
   const setProjectTimestamp = useUserStore(
     (state) => state.setProjectTimestamp
   );

@@ -4,7 +4,8 @@ import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
 import { TextInput, Button, Select } from "flowbite-react";
 import { jwtDecode } from "jwt-decode";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 function AllprojectsProjectList() {
   const [projects, setProjects] = useState([]);
@@ -18,6 +19,10 @@ function AllprojectsProjectList() {
   const [status, setStatus] = useState("");
   const apiUrl = useApiStore.getState().apiUrl;
   const token = useUserStore((state) => state.token);
+  const navigate = useNavigate();
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  };
 
   const { t } = useTranslation();
 
@@ -62,6 +67,17 @@ function AllprojectsProjectList() {
 
         const response = await fetch(url, { headers });
 
+        if (response.status === 401) {
+          const data = await response.json();
+          const errorMessage = data.message || "Unauthorized";
+
+          if (errorMessage === "Invalid token") {
+            handleSessionTimeout(); // Session timeout
+            return; // Exit early if session timeout
+          } else {
+            console.error("Error updating seen status:", errorMessage);
+          }
+        }
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -102,6 +118,18 @@ function AllprojectsProjectList() {
         method: "GET",
         headers,
       });
+
+      if (response.status === 401) {
+        const data = await response.json();
+        const errorMessage = data.message || "Unauthorized";
+
+        if (errorMessage === "Invalid token") {
+          handleSessionTimeout(); // Session timeout
+          return; // Exit early if session timeout
+        } else {
+          console.error("Error updating seen status:", errorMessage);
+        }
+      }
 
       if (!response.ok) {
         console.log("HTTP error! status:", response.status);
@@ -148,12 +176,12 @@ function AllprojectsProjectList() {
             onChange={(e) => setStatus(e.target.value)}
             className="w-1/4"
           >
-            <option value="">{t('AllStatuses')}</option>
-            <option value="100">{t('Planning')}</option>
-            <option value="200">{t('Ready')}</option>
-            <option value="300">{t('InProgress')}</option>
-            <option value="400">{t('Finished')}</option>
-            <option value="500">{t('Cancelled')}</option>
+            <option value="">{t("AllStatuses")}</option>
+            <option value="100">{t("Planning")}</option>
+            <option value="200">{t("Ready")}</option>
+            <option value="300">{t("InProgress")}</option>
+            <option value="400">{t("Finished")}</option>
+            <option value="500">{t("Cancelled")}</option>
           </Select>
           <Button onClick={handleSearch} className="ml-2">
             {t("Search")}

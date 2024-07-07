@@ -4,6 +4,7 @@ import basePhoto from "../Assets/092.png";
 import { TbEyeSearch } from "react-icons/tb";
 import { useState } from "react";
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 import {
   ChatContainer,
@@ -36,7 +37,10 @@ function GroupProjectChat({
   const [messages, setMessages] = useState(initialMessages);
   const [reopenSocket, setReopenSocket] = useState(true);
   const [firstMessage, setFirstMessage] = useState(true);
-
+  const navigate = useNavigate();
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  };
 
   console.log(users);
 
@@ -108,12 +112,24 @@ function GroupProjectChat({
             messageData.timestamp = messageData.timestamp.slice(0, 5);
           }
           console.log(messageData);
-          {/*!firstMessage
+          {
+            /*!firstMessage
             ? setMessages((prevMessages) => [...prevMessages, messageData])
             : console.log("first msg");
-          !firstMessage ? changeParent((prevMessages) => [...prevMessages, messageData]) : console.log("first msg");*/}
+          !firstMessage ? changeParent((prevMessages) => [...prevMessages, messageData]) : console.log("first msg");*/
+          }
 
           console.log("msg created");
+        } else if (response.status === 401) {
+          const data = await response.json();
+          const errorMessage = data.message || "Unauthorized";
+
+          if (errorMessage === "Invalid token") {
+            handleSessionTimeout(); // Session timeout
+            return; // Exit early if session timeout
+          } else {
+            console.error("Error updating seen status:", errorMessage);
+          }
         } else {
           console.log("msg not created", response.status);
         }

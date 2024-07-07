@@ -3,8 +3,9 @@ import { TiTick, TiTimes } from "react-icons/ti";
 import { Button, Label } from "flowbite-react";
 import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
-import {useTranslation} from "react-i18next";
-import { jwtDecode } from "jwt-decode"; 
+import { useTranslation } from "react-i18next";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 
 const NotificationModal = ({ isOpen, closeModal, notification }) => {
   const apiUrl = useApiStore.getState().apiUrl;
@@ -12,7 +13,10 @@ const NotificationModal = ({ isOpen, closeModal, notification }) => {
   const [successMessage, setSuccessMessage] = useState(false);
   const [currentUserId, setCurrentUserId] = useState(null);
   const { t } = useTranslation();
-  console.log(notification);
+  const navigate = useNavigate();
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  };
 
   useEffect(() => {
     if (token) {
@@ -64,7 +68,7 @@ const NotificationModal = ({ isOpen, closeModal, notification }) => {
       if (notification.type === "INVITATION") {
         body.type = "400";
         console.log(body);
-      //Notification where the user wants to join a project
+        //Notification where the user wants to join a project
       } else if (
         notification.type === "MANAGING" &&
         notification.action === "INVITATION"
@@ -88,6 +92,16 @@ const NotificationModal = ({ isOpen, closeModal, notification }) => {
           setSuccessMessage(false);
           closeModal();
         }, 3000);
+      } else if (response.status === 401) {
+        const data = await response.json();
+        const errorMessage = data.message || "Unauthorized";
+
+        if (errorMessage === "Invalid token") {
+          handleSessionTimeout(); // Session timeout
+          return; // Exit early if session timeout
+        } else {
+          console.error("Error updating seen status:", errorMessage);
+        }
       } else {
         console.error("Failed to approve notification");
       }
@@ -128,6 +142,16 @@ const NotificationModal = ({ isOpen, closeModal, notification }) => {
           setSuccessMessage(false);
           closeModal();
         }, 3000);
+      } else if (response.status === 401) {
+        const data = await response.json();
+        const errorMessage = data.message || "Unauthorized";
+
+        if (errorMessage === "Invalid token") {
+          handleSessionTimeout(); // Session timeout
+          return; // Exit early if session timeout
+        } else {
+          console.error("Error updating seen status:", errorMessage);
+        }
       } else {
         console.error("Failed to reject notification");
       }
@@ -170,7 +194,10 @@ const NotificationModal = ({ isOpen, closeModal, notification }) => {
             />
           </div>
         )}
-        {((notification.type === "MANAGING" && notification.action === "INVITATION") || (notification.type === "MANAGING" && notification.action === "PROJECT") ||
+        {((notification.type === "MANAGING" &&
+          notification.action === "INVITATION") ||
+          (notification.type === "MANAGING" &&
+            notification.action === "PROJECT") ||
           notification.type === "INVITATION") &&
           !notification.seen && (
             <div className="flex mt-4">

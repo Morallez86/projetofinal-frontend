@@ -7,10 +7,10 @@ import useUserStore from "../Stores/UserStore";
 import { Button } from "flowbite-react";
 import AddTaskCard from "../Components/AddTaskCard";
 import { jwtDecode } from "jwt-decode";
-
-
+import { useNavigate } from "react-router-dom";
 
 const GanttChartPage = () => {
+  const navigate = useNavigate();
   const { projectId } = useParams();
   const [viewMode, setViewMode] = useState(ViewMode.Day);
 
@@ -21,22 +21,26 @@ const GanttChartPage = () => {
   const [dependentTasksState, setDependentTasksState] = useState([]);
   const [dependencieTasks, setDependencieTasks] = useState([]);
   const [myTasks, setMyTasks] = useState([]);
-  
+
   const decodedToken = jwtDecode(token);
-    const username = decodedToken.username;
+  const username = decodedToken.username;
 
   const [popUpShow, setPopUpShow] = useState(false);
 
   const [isFilterActive, setIsFilterActive] = useState(false);
 
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  };
 
-  
   const openPopUpCreateTask = () => {
     setPopUpShow(true);
   };
 
   const filterMyTasks = () => {
-    const myTaskIds = allTasks.filter(task => task.userName === username).map(task => task.id);
+    const myTaskIds = allTasks
+      .filter((task) => task.userName === username)
+      .map((task) => task.id);
     console.log(username);
     console.log(allTasks);
     console.log(myTaskIds);
@@ -44,16 +48,15 @@ const GanttChartPage = () => {
     setIsFilterActive(!isFilterActive);
   };
 
-  
-
   useEffect(() => {
-    if (dependentTaskss !== 0) { // Considerando que 0 é um valor não válido para ID
-      const foundTask = allTasks.find(task => task.id === dependentTaskss);
+    if (dependentTaskss !== 0) {
+      // Considerando que 0 é um valor não válido para ID
+      const foundTask = allTasks.find((task) => task.id === dependentTaskss);
       if (foundTask) {
         console.log("Tarefa encontrada:", foundTask);
         // Atualiza o estado com o array dependentTasks da tarefa encontrada
         setDependentTasksState(foundTask.dependentTasks || []);
-        setDependencieTasks(foundTask.dependencies || [])
+        setDependencieTasks(foundTask.dependencies || []);
       } else {
         console.log("Tarefa não encontrada");
       }
@@ -62,7 +65,7 @@ const GanttChartPage = () => {
 
   console.log(dependentTasksState);
 
-   const isDependent = (taskId) => {
+  const isDependent = (taskId) => {
     return dependentTasksState.includes(taskId);
   };
 
@@ -73,8 +76,6 @@ const GanttChartPage = () => {
   const isMyTask = (taskId) => {
     return myTasks.includes(taskId);
   };
-
-
 
   useEffect(() => {
     getTasks();
@@ -96,6 +97,16 @@ const GanttChartPage = () => {
           const tasksData = await response.json();
           console.log(tasksData);
           setAllTasks(tasksData);
+        } else if (response.status === 401) {
+          const data = await response.json();
+          const errorMessage = data.message || "Unauthorized";
+
+          if (errorMessage === "Invalid token") {
+            handleSessionTimeout(); // Session timeout
+            return; // Exit early if session timeout
+          } else {
+            console.error("Error updating seen status:", errorMessage);
+          }
         }
       })
       .catch((error) => {
@@ -109,17 +120,19 @@ const GanttChartPage = () => {
     console.log("in");
     tasks = allTasks.map((task) => {
       // Verifica se plannedStartingDate é uma string e a converte para array
-      const startingDateArray = typeof task.plannedStartingDate === 'string' ?
-        task.plannedStartingDate.split('-').map(Number) :
-        [...task.plannedStartingDate]; 
-      startingDateArray[1] -= 1; 
-    
+      const startingDateArray =
+        typeof task.plannedStartingDate === "string"
+          ? task.plannedStartingDate.split("-").map(Number)
+          : [...task.plannedStartingDate];
+      startingDateArray[1] -= 1;
+
       // Verifica se plannedEndingDate é uma string e a converte para array
-      const endingDateArray = typeof task.plannedEndingDate === 'string' ?
-        task.plannedEndingDate.split('-').map(Number) :
-        [...task.plannedEndingDate];
-      endingDateArray[1] -= 1; 
-    
+      const endingDateArray =
+        typeof task.plannedEndingDate === "string"
+          ? task.plannedEndingDate.split("-").map(Number)
+          : [...task.plannedEndingDate];
+      endingDateArray[1] -= 1;
+
       const start = new Date(
         startingDateArray[0],
         startingDateArray[1],
@@ -130,8 +143,7 @@ const GanttChartPage = () => {
         endingDateArray[1],
         ...endingDateArray.slice(2)
       );
-    
-     
+
       return {
         start: start,
         end: end,
@@ -142,7 +154,13 @@ const GanttChartPage = () => {
         dependencies: task.dependencies || [],
         styles: {
           backgroundSelectedColor: "red",
-          backgroundColor: (isDependent(task.id) || isDependency(task.id) || (isFilterActive && isMyTask(task.id))) ? "red" : "gray",        },
+          backgroundColor:
+            isDependent(task.id) ||
+            isDependency(task.id) ||
+            (isFilterActive && isMyTask(task.id))
+              ? "red"
+              : "gray",
+        },
       };
     });
   }
@@ -184,13 +202,17 @@ const GanttChartPage = () => {
               preStepsCount={0}
               rowHeight={30}
               todayColor="orange"
-              arrowIndent={20} 
+              arrowIndent={20}
               onClick={(task) => setDependentTaskss(task.id)}
             />
           )}
         </div>
       </div>
-      <AddTaskCard popUpShow={popUpShow} setPopUpShow={setPopUpShow} setTasks={setAllTasks} />
+      <AddTaskCard
+        popUpShow={popUpShow}
+        setPopUpShow={setPopUpShow}
+        setTasks={setAllTasks}
+      />
     </div>
   );
 };

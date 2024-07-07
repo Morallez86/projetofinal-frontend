@@ -9,6 +9,7 @@ import Lottie from "react-lottie";
 import { TbLockFilled } from "react-icons/tb";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function AddComponents({
   openPopUpComponent,
@@ -31,6 +32,10 @@ function AddComponents({
   const [showSuccessText, setShowSuccessText] = useState(false);
   const [error, setError] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
+  const navigate = useNavigate();
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  };
 
   const { t } = useTranslation();
 
@@ -58,6 +63,16 @@ function AddComponents({
           const data = await response.json();
           setComponents(data);
           setCurrentIndex(data.length);
+        } else if (response.status === 401) {
+          const data = await response.json();
+          const errorMessage = data.message || "Unauthorized";
+
+          if (errorMessage === "Invalid token") {
+            handleSessionTimeout(); // Session timeout
+            return; // Exit early if session timeout
+          } else {
+            console.error("Error updating seen status:", errorMessage);
+          }
         } else if (response.status === 404) {
           console.log("Components not found");
           setComponents([]);
@@ -124,6 +139,16 @@ function AddComponents({
           setAnimationPlayed(true);
           setShowSuccessText(true);
           setSelectedComponent(null);
+        } else if (response.status === 401) {
+          const data = await response.json();
+          const errorMessage = data.message || "Unauthorized";
+
+          if (errorMessage === "Invalid token") {
+            handleSessionTimeout(); // Session timeout
+            return; // Exit early if session timeout
+          } else {
+            console.error("Error updating seen status:", errorMessage);
+          }
         } else if (response.status === 409) {
           console.error("Component already exists in the project");
         } else if (response.status === 404) {

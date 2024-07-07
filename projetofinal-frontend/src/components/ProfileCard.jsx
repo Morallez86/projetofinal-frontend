@@ -17,7 +17,8 @@ import { LuPlusCircle } from "react-icons/lu";
 import { Tooltip } from "react-tooltip";
 import { MdOutlineRemoveCircleOutline, MdOutlineEdit } from "react-icons/md";
 import useApiStore from "../Stores/ApiStore";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 function ProfileCard({
   openPopUpSkills,
@@ -41,8 +42,12 @@ function ProfileCard({
   const setProfileImage = useUserStore((state) => state.setProfileImage);
   const initialProfileImage = useUserStore((state) => state.profileImage);
   const workplaces = useWorkplaceStore((state) => state.workplaces);
+  const navigate = useNavigate();
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  };
 
-  const {t} = useTranslation();
+  const { t } = useTranslation();
 
   const [editMode, setEditMode] = useState(false);
   const [profileImage, setProfileImageLocal] = useState(null);
@@ -103,6 +108,16 @@ function ProfileCard({
 
       if (response.status === 404) {
         console.log("User with this token is not found");
+      } else if (response.status === 401) {
+        const data = await response.json();
+        const errorMessage = data.message || "Unauthorized";
+
+        if (errorMessage === "Invalid token") {
+          handleSessionTimeout(); // Session timeout
+          return; // Exit early if session timeout
+        } else {
+          console.error("Error updating seen status:", errorMessage);
+        }
       } else if (response.status === 200) {
         const userInfoData = await response.json();
         console.log(userInfoData);
@@ -147,6 +162,16 @@ function ProfileCard({
 
         if (imageResponse.status === 200) {
           console.log("Image uploaded successfully");
+        } else if (response.status === 401) {
+          const data = await response.json();
+          const errorMessage = data.message || "Unauthorized";
+
+          if (errorMessage === "Invalid token") {
+            handleSessionTimeout(); // Session timeout
+            return; // Exit early if session timeout
+          } else {
+            console.error("Error updating seen status:", errorMessage);
+          }
         } else {
           console.log("Image upload failed");
         }
@@ -173,6 +198,16 @@ function ProfileCard({
       if (response.status === 200) {
         console.log("User info updated successfully");
         setEditMode(false);
+      } else if (response.status === 401) {
+        const data = await response.json();
+        const errorMessage = data.message || "Unauthorized";
+
+        if (errorMessage === "Invalid token") {
+          handleSessionTimeout(); // Session timeout
+          return; // Exit early if session timeout
+        } else {
+          console.error("Error updating seen status:", errorMessage);
+        }
       } else {
         console.error("Error updating user info");
       }
@@ -195,7 +230,7 @@ function ProfileCard({
 
   return (
     <Card className="bg-gray-200 transition-colors px-4 duration-200 w-1/2 h-100vh border-gray-600 bg-gradient-to-r from-gray-400 via-gray-50 to-white rounded-lg">
-      <h1 className="text-3xl font-bold text-center mb-2">{t('MyProfile')}</h1>
+      <h1 className="text-3xl font-bold text-center mb-2">{t("MyProfile")}</h1>
       <div className="flex flex-col pb-10 ">
         <div className="relative flex items-center  justify-center">
           <MdOutlineEdit
@@ -222,7 +257,7 @@ function ProfileCard({
           <div className="mt-4">
             <Label
               htmlFor="name"
-              value={t('Name')}
+              value={t("Name")}
               className="font-semibold text-base"
             />
             {editMode ? (
@@ -243,12 +278,12 @@ function ProfileCard({
           <div className="mt-4">
             <Label
               htmlFor="jobLocation"
-              value={t('JobLocation')}
+              value={t("JobLocation")}
               className="font-semibold text-base"
             />
             {editMode ? (
               <Dropdown
-                label={userInfo.jobLocation || t('SelectWorkplace')}
+                label={userInfo.jobLocation || t("SelectWorkplace")}
                 dismissOnClick={true}
                 onSelect={(workplace) =>
                   setUserInfo((prevInfo) => ({
@@ -281,7 +316,7 @@ function ProfileCard({
           <div className="mt-4">
             <Label
               htmlFor="nickname"
-              value={t('Nickname')}
+              value={t("Nickname")}
               className="font-semibold text-base"
             />
             {editMode ? (
@@ -302,7 +337,7 @@ function ProfileCard({
           <div className="mt-4">
             <Label
               htmlFor="visibility"
-              value={t('Visibility')}
+              value={t("Visibility")}
               className="font-semibold text-base"
             />
             {editMode ? (
@@ -313,12 +348,12 @@ function ProfileCard({
                 onChange={handleChange}
                 className="text-sm text-gray-500 dark:text-gray-400"
               >
-                <option value="true">{t('Public')}</option>
-                <option value="false">{t('Private')}</option>
+                <option value="true">{t("Public")}</option>
+                <option value="false">{t("Private")}</option>
               </Select>
             ) : (
               <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
-                {userInfo.visibility ? t('Public') : t('Private')}
+                {userInfo.visibility ? t("Public") : t("Private")}
               </p>
             )}
           </div>
@@ -326,7 +361,7 @@ function ProfileCard({
         <div className="mt-4">
           <Label
             htmlFor="biography"
-            value={t('Biography')}
+            value={t("Biography")}
             className="font-semibold text-base"
           />
           {editMode ? (
@@ -354,7 +389,7 @@ function ProfileCard({
           <div className="flex items-center">
             <Label
               htmlFor="skills"
-              value={t('Skills')}
+              value={t("Skills")}
               className="font-semibold text-base"
             />
             <div
@@ -373,12 +408,12 @@ function ProfileCard({
             </div>
             <Tooltip
               anchorSelect="#icon-element"
-              content={t('AddNewSkill')}
+              content={t("AddNewSkill")}
               place="top"
             />
             <Tooltip
               anchorSelect="#icon-element-remove"
-              content={t('RemoveSkill')}
+              content={t("RemoveSkill")}
               place="top"
             />
           </div>
@@ -395,7 +430,7 @@ function ProfileCard({
                 </button>
                 <Tooltip
                   anchorSelect="#tip-all-skills"
-                  content={t('CheckAllSkills')} 
+                  content={t("CheckAllSkills")}
                   place="top"
                 />
               </div>
@@ -406,7 +441,7 @@ function ProfileCard({
           <div className="flex items-center">
             <Label
               htmlFor="interests"
-              value={t('Interests')}
+              value={t("Interests")}
               className="font-semibold text-base"
             />
             <div
@@ -425,12 +460,12 @@ function ProfileCard({
             </div>
             <Tooltip
               anchorSelect="#icon-element-interests"
-              content={t('AddNewInterest')}
+              content={t("AddNewInterest")}
               place="top"
             />
             <Tooltip
               anchorSelect="#icon-element-remove-interest"
-              content={t('RemoveInterest')}
+              content={t("RemoveInterest")}
               place="top"
             />
           </div>
@@ -448,7 +483,7 @@ function ProfileCard({
                   </button>
                   <Tooltip
                     anchorSelect="#tip-all-interests"
-                    content={t('CheckAllInterests')}
+                    content={t("CheckAllInterests")}
                     place="top"
                   />
                 </div>
@@ -458,10 +493,10 @@ function ProfileCard({
         {editMode && (
           <div className="flex justify-end mt-4">
             <Button onClick={handleSaveClick} className="px-2 mr-2">
-              {t('Save')}
+              {t("Save")}
             </Button>
             <Button onClick={handleCancelClick} className="bg-gray-700">
-              {t('Cancel')}
+              {t("Cancel")}
             </Button>
           </div>
         )}

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import useApiStore from "../Stores/ApiStore";
 import { IoMdSearch } from "react-icons/io";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 const NewMessageModal = ({ isOpen, closeModal, authToken }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -10,6 +11,10 @@ const NewMessageModal = ({ isOpen, closeModal, authToken }) => {
   const [messageContent, setMessageContent] = useState("");
   const apiUrl = useApiStore.getState().apiUrl;
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  };
 
   // Function to fetch users based on searchTerm
   const fetchUsers = async () => {
@@ -25,7 +30,16 @@ const NewMessageModal = ({ isOpen, closeModal, authToken }) => {
           },
         }
       );
-
+      if (response.status === 401) {
+        const data = await response.json();
+        const errorMessage = data.message || "Unauthorized";
+        if (errorMessage === "Invalid token") {
+          handleSessionTimeout(); // Session timeout
+          return; // Exit early if session timeout
+        } else {
+          console.error("Error updating seen status:", errorMessage);
+        }
+      }
       if (!response.ok) {
         throw new Error("Failed to fetch users");
       }
@@ -55,7 +69,16 @@ const NewMessageModal = ({ isOpen, closeModal, authToken }) => {
           receiverId: selectedUser.id,
         }),
       });
-
+      if (response.status === 401) {
+        const data = await response.json();
+        const errorMessage = data.message || "Unauthorized";
+        if (errorMessage === "Invalid token") {
+          handleSessionTimeout(); // Session timeout
+          return; // Exit early if session timeout
+        } else {
+          console.error("Error updating seen status:", errorMessage);
+        }
+      }
       if (!response.ok) {
         throw new Error("Failed to send message");
       }
@@ -107,12 +130,12 @@ const NewMessageModal = ({ isOpen, closeModal, authToken }) => {
         className="modal-content bg-white opacity-95 border border-gray-600 bg-gradient-to-r from-gray-400 via-gray-50 to-gray-400  w-full max-w-md p-6 rounded-lg shadow-lg"
         onClick={handleModalClick}
       >
-        <h2 className="text-xl font-bold mb-4"> {t('NewMessage')}</h2>
+        <h2 className="text-xl font-bold mb-4"> {t("NewMessage")}</h2>
 
         <div className="relative mb-2">
           <input
             type="text"
-            placeholder= {t('SearchUser')}
+            placeholder={t("SearchUser")}
             className="w-full border rounded-md p-2"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -147,7 +170,7 @@ const NewMessageModal = ({ isOpen, closeModal, authToken }) => {
         <textarea
           value={messageContent}
           onChange={(e) => setMessageContent(e.target.value)}
-          placeholder= {t('MessageContent')}
+          placeholder={t("MessageContent")}
           rows={4}
           className="w-full border rounded-md p-2 mb-2"
         />
@@ -155,14 +178,14 @@ const NewMessageModal = ({ isOpen, closeModal, authToken }) => {
           onClick={handleSendMessage}
           className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
         >
-          {t('Send')}
+          {t("Send")}
         </button>
 
         <button
           onClick={closeModal}
           className="bg-gray-700 ml-4 text-white px-4 py-2 rounded-md hover:bg-gray-400"
         >
-          {t('Close')}
+          {t("Close")}
         </button>
       </div>
     </div>

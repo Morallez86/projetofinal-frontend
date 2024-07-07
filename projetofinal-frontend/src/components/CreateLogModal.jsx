@@ -5,9 +5,8 @@ import { useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import useUserStore from "../Stores/UserStore";
 import useApiStore from "../Stores/ApiStore";
-import { HiInformationCircle} from "react-icons/hi";
-import { MdOutlineEdit } from "react-icons/md";
-
+import { HiInformationCircle } from "react-icons/hi";
+import { useNavigate } from "react-router-dom";
 
 function CreateLogModal({ onClose, tasks, projectId, addNewLog }) {
   const options = [
@@ -17,6 +16,10 @@ function CreateLogModal({ onClose, tasks, projectId, addNewLog }) {
   const token = useUserStore((state) => state.token);
   const apiUrl = useApiStore((state) => state.apiUrl);
   const [warning, setWarning] = useState(0);
+  const navigate = useNavigate();
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  };
 
   let userIdFromToken;
 
@@ -57,7 +60,17 @@ function CreateLogModal({ onClose, tasks, projectId, addNewLog }) {
         },
         body: JSON.stringify(formData),
       });
+      if (response.status === 401) {
+        const data = await response.json();
+        const errorMessage = data.message || "Unauthorized";
 
+        if (errorMessage === "Invalid token") {
+          handleSessionTimeout(); // Session timeout
+          return; // Exit early if session timeout
+        } else {
+          console.error("Error updating seen status:", errorMessage);
+        }
+      }
       if (!response.ok) {
         throw new Error("Failed to create log");
       }
@@ -109,12 +122,20 @@ function CreateLogModal({ onClose, tasks, projectId, addNewLog }) {
         </div>
         {warning === 1 && (
           <Alert color="failure" icon={HiInformationCircle}>
-            <span className="font-medium">At least the description about log is required</span>
+            <span className="font-medium">
+              At least the description about log is required
+            </span>
           </Alert>
         )}
       </Modal.Body>
       <Modal.Footer>
-      <Button color="gray" onClick={() => {setWarning(0); onClose(); }}>
+        <Button
+          color="gray"
+          onClick={() => {
+            setWarning(0);
+            onClose();
+          }}
+        >
           Cancel
         </Button>
         <Button color="gray" onClick={handleSubmit}>

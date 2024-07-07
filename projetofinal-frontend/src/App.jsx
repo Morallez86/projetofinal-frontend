@@ -31,7 +31,7 @@ function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [skills, setSkills] = useState("");
   const [interests, setInterests] = useState("");
-  const { workplaces } = useWorkplaces();
+  useWorkplaces();
 
   const fetchGreeting = async () => {
     try {

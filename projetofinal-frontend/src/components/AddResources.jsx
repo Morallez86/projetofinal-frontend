@@ -9,6 +9,7 @@ import Lottie from "react-lottie";
 import { TbLockFilled } from "react-icons/tb";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function AddResources({ openPopUpResources, closePopUpResources, context }) {
   const { projectId } = useParams();
@@ -24,6 +25,10 @@ function AddResources({ openPopUpResources, closePopUpResources, context }) {
   const [inputValue, setInputValue] = useState("");
   const [animationPlayed, setAnimationPlayed] = useState(false);
   const [showSuccessText, setShowSuccessText] = useState(false);
+  const navigate = useNavigate();
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  };
 
   const { t } = useTranslation();
 
@@ -43,6 +48,16 @@ function AddResources({ openPopUpResources, closePopUpResources, context }) {
           const data = await response.json();
           setResources(data);
           console.log(data);
+        } else if (response.status === 401) {
+          const data = await response.json();
+          const errorMessage = data.message || "Unauthorized";
+
+          if (errorMessage === "Invalid token") {
+            handleSessionTimeout(); // Session timeout
+            return; // Exit early if session timeout
+          } else {
+            console.error("Error updating seen status:", errorMessage);
+          }
         } else if (response.status === 404) {
           console.log("Resources not found");
         }
@@ -108,6 +123,16 @@ function AddResources({ openPopUpResources, closePopUpResources, context }) {
           setAnimationPlayed(true);
           setShowSuccessText(true);
           setSelectedResource(null);
+        } else if (response.status === 401) {
+          const data = await response.json();
+          const errorMessage = data.message || "Unauthorized";
+
+          if (errorMessage === "Invalid token") {
+            handleSessionTimeout(); // Session timeout
+            return; // Exit early if session timeout
+          } else {
+            console.error("Error updating seen status:", errorMessage);
+          }
         } else if (response.status === 409) {
           console.error("Resource already exists in the project");
         } else if (response.status === 404) {

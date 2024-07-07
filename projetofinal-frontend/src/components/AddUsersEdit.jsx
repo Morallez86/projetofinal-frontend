@@ -5,10 +5,15 @@ import useApiStore from "../Stores/ApiStore";
 import basePhoto from "../Assets/092.png";
 import { jwtDecode } from "jwt-decode";
 import ConfirmationModal from "./ConfirmationModal";
+import { useNavigate } from "react-router-dom";
 
 function AddUsersEdit({ openPopUpUsers, closePopUpUsers, projectInfo }) {
   const token = useUserStore((state) => state.token);
   const apiUrl = useApiStore((state) => state.apiUrl);
+  const navigate = useNavigate();
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  };
   let currentUserId;
 
   if (token) {
@@ -45,6 +50,16 @@ function AddUsersEdit({ openPopUpUsers, closePopUpUsers, projectInfo }) {
         } else if (response.status === 404) {
           setUsers([]);
           setUserImages({});
+        } else if (response.status === 401) {
+          const data = await response.json();
+          const errorMessage = data.message || "Unauthorized";
+
+          if (errorMessage === "Invalid token") {
+            handleSessionTimeout(); // Session timeout
+            return; // Exit early if session timeout
+          } else {
+            console.error("Error updating seen status:", errorMessage);
+          }
         }
       } catch (error) {
         console.error("Error searching users:", error);
@@ -75,6 +90,16 @@ function AddUsersEdit({ openPopUpUsers, closePopUpUsers, projectInfo }) {
           imagesMap[img.id] = img;
         });
         setUserImages(imagesMap);
+      } else if (response.status === 401) {
+        const data = await response.json();
+        const errorMessage = data.message || "Unauthorized";
+
+        if (errorMessage === "Invalid token") {
+          handleSessionTimeout(); // Session timeout
+          return; // Exit early if session timeout
+        } else {
+          console.error("Error updating seen status:", errorMessage);
+        }
       } else {
         console.error("Error fetching user images");
       }
@@ -142,6 +167,16 @@ function AddUsersEdit({ openPopUpUsers, closePopUpUsers, projectInfo }) {
         setUsers([]);
         setUserImages({});
         setShowConfirmation(false);
+      } else if (response.status === 401) {
+        const data = await response.json();
+        const errorMessage = data.message || "Unauthorized";
+
+        if (errorMessage === "Invalid token") {
+          handleSessionTimeout(); // Session timeout
+          return; // Exit early if session timeout
+        } else {
+          console.error("Error updating seen status:", errorMessage);
+        }
       } else {
         console.error("Error adding user to project");
         setError("Error adding user to project");

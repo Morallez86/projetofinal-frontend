@@ -1,6 +1,7 @@
 // src/Components/TaskCard.js
 import React from "react";
 import { Card, TextInput, Textarea, Select, Button } from "flowbite-react";
+import { useNavigate } from "react-router-dom";
 
 import { useState } from "react";
 import {
@@ -17,6 +18,10 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
   const [editMode, setEditMode] = useState(false);
   const apiUrl = useApiStore((state) => state.apiUrl);
   const token = useUserStore((state) => state.token);
+  const navigate = useNavigate();
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  };
 
   const [taskData, setTaskData] = useState({
     projectId: task.projectId,
@@ -43,6 +48,17 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
       },
       body: JSON.stringify(taskData),
     }).then(async (response) => {
+      if (response.status === 401) {
+        const data = await response.json();
+        const errorMessage = data.message || "Unauthorized";
+
+        if (errorMessage === "Invalid token") {
+          handleSessionTimeout(); // Session timeout
+          return; // Exit early if session timeout
+        } else {
+          console.error("Error updating seen status:", errorMessage);
+        }
+      }
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -58,7 +74,7 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
       if (originalTaskIndex !== -1) {
         newTotalTasks.splice(originalTaskIndex, 1);
       }
-      newTotalTasks.splice(updatedTaskIndex, 0, updatedTask); 
+      newTotalTasks.splice(updatedTaskIndex, 0, updatedTask);
       setTotalTasks(newTotalTasks);
       setEditMode(false);
     });

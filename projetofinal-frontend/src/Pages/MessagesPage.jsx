@@ -31,9 +31,9 @@ function MessagesPage() {
   const token = useUserStore((state) => state.token);
   const { t } = useTranslation();
 
-  const handleSessionTimeout = () => {
+  const handleSessionTimeout = useCallback(() => {
     navigate("/", { state: { showSessionTimeoutModal: true } });
-  };
+  }, [navigate]);
 
   const fetchMessages = useCallback(async () => {
     try {
@@ -89,6 +89,7 @@ function MessagesPage() {
     usernameFilter,
     contentFilter,
     searchActive,
+    handleSessionTimeout, // Ensure handleSessionTimeout is listed as a dependency
   ]);
 
   useEffect(() => {

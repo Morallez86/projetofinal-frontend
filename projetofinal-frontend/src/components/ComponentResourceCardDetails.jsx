@@ -3,11 +3,16 @@ import { Label, Modal, Button, TextInput, Textarea } from "flowbite-react";
 import useUserStore from "../Stores/UserStore";
 import useApiStore from "../Stores/ApiStore";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 function ComponentResourceCardDetails({ data, context, onClose }) {
   const token = useUserStore((state) => state.token);
   const apiUrl = useApiStore((state) => state.apiUrl);
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  };
 
   const [formData, setFormData] = useState({
     id: data.id || "",
@@ -60,6 +65,16 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
           } successfully`
         );
         onClose();
+      } else if (response.status === 401) {
+        const data = await response.json();
+        const errorMessage = data.message || "Unauthorized";
+
+        if (errorMessage === "Invalid token") {
+          handleSessionTimeout(); // Session timeout
+          return; // Exit early if session timeout
+        } else {
+          console.error("Error updating seen status:", errorMessage);
+        }
       } else {
         const errorMessage = await response.text();
         alert(`Error: ${errorMessage}`);
@@ -189,7 +204,7 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={handleSave}>{t('Save')}</Button>
+        <Button onClick={handleSave}>{t("Save")}</Button>
       </Modal.Footer>
     </Modal>
   );

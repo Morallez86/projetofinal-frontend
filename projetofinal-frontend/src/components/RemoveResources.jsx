@@ -8,6 +8,7 @@ import useApiStore from "../Stores/ApiStore";
 import RemovedAnimation from "../Assets/Removed.json";
 import { useTranslation } from "react-i18next";
 import useUserStore from "../Stores/UserStore";
+import { useNavigate } from "react-router-dom";
 
 function RemoveResources({
   openPopUpResourcesRemove,
@@ -26,6 +27,10 @@ function RemoveResources({
   const [selectedResourceIds, setSelectedResourceIds] = useState([]);
   const [showSuccessText, setShowSuccessText] = useState(false);
   const [filteredResources, setFilteredResources] = useState([]);
+  const navigate = useNavigate();
+  const handleSessionTimeout = () => {
+    navigate("/", { state: { showSessionTimeoutModal: true } });
+  };
 
   const { t } = useTranslation();
 
@@ -89,6 +94,16 @@ function RemoveResources({
           setTimeout(() => {
             closePopUpResourcesRemove();
           }, 2000);
+        } else if (response.status === 401) {
+          const data = await response.json();
+          const errorMessage = data.message || "Unauthorized";
+
+          if (errorMessage === "Invalid token") {
+            handleSessionTimeout(); // Session timeout
+            return; // Exit early if session timeout
+          } else {
+            console.error("Error updating seen status:", errorMessage);
+          }
         } else if (response.status === 500) {
           console.log("Internal server error");
         }
