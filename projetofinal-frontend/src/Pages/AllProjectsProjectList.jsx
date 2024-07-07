@@ -174,7 +174,7 @@ function AllprojectsProjectList() {
         <Select
           value={status}
           onChange={(e) => setStatus(e.target.value)}
-          className="flex-auto mb-2 sm:mb-0 sm:w-1/4"
+          className="flex-auto mb-2 mt-1 sm:mb-0 sm:w-1/4"
         >
           <option value="">{t("AllStatuses")}</option>
           <option value="100">{t("Planning")}</option>

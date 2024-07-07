@@ -161,11 +161,42 @@ function AllProjectsTable({
     },
   ];
 
+  const ProjectCard = ({ project }) => {
+    // Calcula slotsOpen para este projeto específico
+    const activeUsersCount = project.userProjectDtos.filter(
+      (projectUser) => projectUser.status === "active"
+    ).length;
+    const slotsOpen = project.maxUsers - activeUsersCount - 1;
+  
+    return (
+      <div className="p-4 m-2 border border-gray-200 rounded-lg shadow-lg">
+        <h2 className="text-xl font-bold">{project.title}</h2>
+        <p>{getStatusString(project.status)}</p>
+        <p> Skills: {getSkillsString(project.skills)}</p>
+        <p>Interests: {getInterestsString(project.interests)}</p>
+        <p>Slots Open: {slotsOpen}</p>
+        <p>Creation Date: {formatDate(project.creationDate)}</p>
+        {/* Adicione mais detalhes conforme necessário */}
+        <button
+          className={`mt-4 px-4 py-2 rounded ${
+            slotsOpen > 0 ? "bg-blue-500 hover:bg-blue-700 text-white" : "bg-gray-500 text-gray-200"
+          }`}
+          onClick={slotsOpen > 0 ? () => handleInviteClick(project.id) : null}
+          disabled={slotsOpen <= 0}
+        >
+          Participate
+        </button>
+      </div>
+    );
+  };
+
   return (
     <div className="p-6 border border-gray-600 bg-white rounded-lg">
-      <div className="mb-6 flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-center ml-3">All Projects</h1>
-      </div>
+    <div className="mb-6 flex justify-between items-center">
+      <h1 className="text-3xl font-bold text-center ml-3">All Projects</h1>
+    </div>
+    {/* Tabela visível apenas em telas grandes */}
+    <div className="hidden lg:block">
       <DataTable
         columns={columns}
         data={data}
@@ -184,6 +215,13 @@ function AllProjectsTable({
         }}
       />
     </div>
+    {/* Cards visíveis apenas em telas pequenas */}
+    <div className="lg:hidden">
+      {data.map((project) => (
+        <ProjectCard key={project.id} project={project} />
+      ))}
+    </div>
+  </div>
   );
 }
 
