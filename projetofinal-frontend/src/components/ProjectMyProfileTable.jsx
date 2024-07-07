@@ -122,36 +122,36 @@ function ProjectMyProfileTable({
 
   return (
     <div className="p-6 border border-gray-600 bg-white rounded-lg">
-      <div className="mb-6 flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-center ml-3">{t('MyProjects')}</h1>
-        <TextInput
-          placeholder={t('SearchProjectbyName')}
-          onChange={handleFilter}
-          value={filterText}
-          className="w-1/4"
-        />
-      </div>
-      <DataTable
-        columns={columns}
-        data={filteredItems}
-        progressPending={loading}
-        pagination={pagination}
-        paginationServer={paginationServer}
-        paginationTotalRows={paginationTotalRows}
-        onChangePage={onChangePage}
-        onChangeRowsPerPage={onChangeRowsPerPage}
-        paginationRowsPerPageOptions={[10, 20, 30, 40, 50]}
-        paginationDefaultRowsPerPage={10}
-        paginationPerPage={rowsPerPage}
-        fixedHeader
-        striped
-        responsive
-        paginationComponentOptions={{
-          rowsPerPageText: t('RowsPerPage'),
-          rangeSeparatorText: t('of'),
-        }}
-      />
-    </div>
+  <div className="mb-6 flex flex-col sm:flex-row justify-between items-center">
+    <h1 className="text-2xl sm:text-3xl font-bold text-center ml-3 mb-4 sm:mb-0">{t('MyProjects')}</h1>
+    <TextInput
+      placeholder={t('SearchProjectbyName')}
+      onChange={handleFilter}
+      value={filterText}
+      className="w-3/4 sm:w-1/4"
+    />
+  </div>
+  <DataTable
+    columns={columns}
+    data={filteredItems}
+    progressPending={loading}
+    pagination={pagination}
+    paginationServer={paginationServer}
+    paginationTotalRows={paginationTotalRows}
+    onChangePage={onChangePage}
+    onChangeRowsPerPage={onChangeRowsPerPage}
+    paginationRowsPerPageOptions={[10, 20, 30, 40, 50]}
+    paginationDefaultRowsPerPage={10}
+    paginationPerPage={rowsPerPage}
+    fixedHeader
+    striped
+    responsive
+    paginationComponentOptions={{
+      rowsPerPageText: t('RowsPerPage'),
+      rangeSeparatorText: t('of'),
+    }}
+  />
+</div>
   );
 }
 
