@@ -7,6 +7,8 @@ import useSkills from "../Hooks/useSkills";
 import useInterests from "../Hooks/useInterests";
 import { jwtDecode } from "jwt-decode";
 
+
+
 const useProjects = (userId, page, rowsPerPage) => {
   const navigate = useNavigate();
   const apiUrl = useApiStore.getState().apiUrl;
@@ -106,6 +108,7 @@ function MyProfileMyProjects() {
     page,
     rowsPerPage
   );
+  const [viewMode, setViewMode] = useState('table');
 
   const handleRowClick = (projectId) => {
     navigate(`/myProjects/${projectId}/ganttChart`);
@@ -113,22 +116,22 @@ function MyProfileMyProjects() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="p-14">
-        <ProjectMyProfileTable
-          data={projects}
-          onRowClick={handleRowClick}
-          loading={loading}
-          pagination
-          paginationServer
-          paginationTotalRows={totalPages * rowsPerPage}
-          onChangePage={(newPage) => setPage(newPage)}
-          onChangeRowsPerPage={(newRowsPerPage) =>
-            setRowsPerPage(newRowsPerPage)
-          }
-          rowsPerPage={rowsPerPage}
-        />
-      </div>
+    <div className="p-4 sm:p-8 md:p-14">
+      <ProjectMyProfileTable
+        data={projects}
+        onRowClick={handleRowClick}
+        loading={loading}
+        pagination
+        paginationServer
+        paginationTotalRows={totalPages * rowsPerPage}
+        onChangePage={(newPage) => setPage(newPage)}
+        onChangeRowsPerPage={(newRowsPerPage) =>
+          setRowsPerPage(newRowsPerPage)
+        }
+        rowsPerPage={rowsPerPage}
+      />
     </div>
+  </div>
   );
 }
 

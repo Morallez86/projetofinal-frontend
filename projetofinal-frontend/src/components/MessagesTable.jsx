@@ -106,6 +106,23 @@ const MessagesTable = ({
     },
   ];
 
+  const renderCards = () => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      {data.map((message) => (
+        <div
+          key={message.id}
+          className="bg-white p-4 rounded-lg shadow border cursor-pointer hover:shadow-md"
+          onClick={() => openModal(message)}
+        >
+          <h3 className="font-semibold">{view === "received" ? t('From') : t('To')}: {view === "received" ? message.senderUsername : message.receiverUsername}</h3>
+          <p>{message.content}</p>
+          <p>{t('Seen')}: {message.seen ? t('Yes') : t('No')}</p>
+        </div>
+      ))}
+    </div>
+  );
+
+
   return (
     <div className="p-6 bg-white rounded-lg h-[44rem] shadow-lg border-2 border-red-900">
       <style>
@@ -121,6 +138,7 @@ const MessagesTable = ({
           }
         `}
       </style>
+      <div className="hidden sm:block">
       <DataTable
         columns={columns}
         data={data}
@@ -147,6 +165,10 @@ const MessagesTable = ({
         }}
         striped={true}
       />
+      </div>
+      <div className="sm:hidden">
+        {renderCards()}
+      </div>
       <MessageModal
         isOpen={modalIsOpen}
         closeModal={closeModal}

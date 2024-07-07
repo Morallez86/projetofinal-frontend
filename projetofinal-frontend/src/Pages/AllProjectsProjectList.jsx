@@ -151,42 +151,42 @@ function AllprojectsProjectList() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="p-14">
-        <div className="flex items-center mb-4 space-x-2">
-          <TextInput
-            placeholder={t("SearchByProjectName")}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-1/4"
-          />
-          <TextInput
-            placeholder={t("SearchBySkills")}
-            value={skills}
-            onChange={(e) => setSkills(e.target.value)}
-            className="w-1/4"
-          />
-          <TextInput
-            placeholder={t("SearchByInterests")}
-            value={interests}
-            onChange={(e) => setInterests(e.target.value)}
-            className="w-1/4"
-          />
-          <Select
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            className="w-1/4"
-          >
-            <option value="">{t("AllStatuses")}</option>
-            <option value="100">{t("Planning")}</option>
-            <option value="200">{t("Ready")}</option>
-            <option value="300">{t("InProgress")}</option>
-            <option value="400">{t("Finished")}</option>
-            <option value="500">{t("Cancelled")}</option>
-          </Select>
-          <Button onClick={handleSearch} className="ml-2">
-            {t("Search")}
-          </Button>
-        </div>
+    <div className="p-4 sm:p-14">
+      <div className="flex flex-wrap items-center mb-4 space-x-2">
+        <TextInput
+          placeholder={t("SearchByProjectName")}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="flex-auto mb-2 sm:mb-0 sm:w-1/4"
+        />
+        <TextInput
+          placeholder={t("SearchBySkills")}
+          value={skills}
+          onChange={(e) => setSkills(e.target.value)}
+          className="flex-auto mb-2 sm:mb-0 sm:w-1/4"
+        />
+        <TextInput
+          placeholder={t("SearchByInterests")}
+          value={interests}
+          onChange={(e) => setInterests(e.target.value)}
+          className="flex-auto mb-2 sm:mb-0 sm:w-1/4"
+        />
+        <Select
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+          className="flex-auto mb-2 mt-1 sm:mb-0 sm:w-1/4"
+        >
+          <option value="">{t("AllStatuses")}</option>
+          <option value="100">{t("Planning")}</option>
+          <option value="200">{t("Ready")}</option>
+          <option value="300">{t("InProgress")}</option>
+          <option value="400">{t("Finished")}</option>
+          <option value="500">{t("Cancelled")}</option>
+        </Select>
+        <Button onClick={handleSearch} className="w-full sm:w-auto sm:ml-2">
+          {t("Search")}
+        </Button>
+      </div>
         <AllProjectsTable
           data={projects}
           loading={loading}

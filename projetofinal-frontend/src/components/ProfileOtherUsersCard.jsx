@@ -178,27 +178,26 @@ function ProfileOtherUsersCard() {
   };
 
   return (
-    <Card className="bg-gray-200 transition-colors px-4 duration-200 w-1/2 h-100vh border-gray-600 bg-gradient-to-r from-gray-400 via-gray-50 to-white rounded-lg">
-      <h1 className="text-3xl font-bold text-center mb-2">
-        {" "}
-        {t("userProfile")}{" "}
-      </h1>
-      <div className="flex flex-col pb-10">
-        <div className="relative flex items-center space-x-10 justify-center">
-          {currentUserRole === 200 && (
-            <MdOutlineEdit
-              className="h-6 w-6 text-black cursor-pointer absolute top-3 right-6 transform translate-x-1/2 -translate-y-1/2"
-              onClick={handleEditClick}
-            />
-          )}
-          <Avatar
-            img={profileImage}
-            alt="avatar"
-            size="xl"
-            className="border border-black rounded-full mb-2"
-          />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
+    <Card className="bg-gray-200 transition-colors px-4 duration-200 w-full sm:w-3/4 md:w-1/2 h-auto sm:h-100vh border-gray-600 bg-gradient-to-r from-gray-400 via-gray-50 to-white rounded-lg">
+  <h1 className="text-2xl sm:text-3xl font-bold text-center mb-2">
+    {t("userProfile")}
+  </h1>
+  <div className="flex flex-col pb-10">
+    <div className="relative flex items-center space-x-4 sm:space-x-10 justify-center">
+      {currentUserRole === 200 && (
+        <MdOutlineEdit
+          className="h-5 w-5 sm:h-6 sm:w-6 text-black cursor-pointer absolute top-2 sm:top-3 right-4 sm:right-6 transform translate-x-1/2 -translate-y-1/2"
+          onClick={handleEditClick}
+        />
+      )}
+      <Avatar
+        img={profileImage}
+        alt="avatar"
+        size="xl"
+        className="border border-black rounded-full mb-2"
+      />
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="mt-4">
             <Label htmlFor="name" value={t("Name")} />
             <p className="text-sm text-gray-500 dark:text-gray-400">

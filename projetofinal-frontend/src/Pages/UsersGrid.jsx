@@ -158,60 +158,60 @@ function UsersGrid() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="p-8">
-        <div className="flex items-center mb-4">
-          <TextInput
-            type="text"
-            placeholder={t("SearchByUsername")}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-1/3"
-          />
-          <select
-            id="workplace"
-            value={selectedWorkplace}
-            onChange={(e) => handleWorkplaceChange(e.target.value)}
-            className="mx-2"
-          >
-            <option value="">{t("SelectWorkplace")}</option>
-            {workplaces.map((workplace) => (
-              <option key={workplace.id} value={workplace.name}>
-                {workplace.name}
-              </option>
-            ))}
-          </select>
-          <select
-            id="skills"
-            value={selectedSkills}
-            onChange={(e) => handleSkillsChange(e.target.value)}
-            className="mx-2"
-          >
-            <option value="">{t("SelectSkills")}</option>
-            {skills.map((skill) => (
-              <option key={skill.id} value={skill.name}>
-                {skill.name}
-              </option>
-            ))}
-          </select>
-          <select
-            id="interests"
-            value={selectedInterests}
-            onChange={(e) => handleInterestsChange(e.target.value)}
-            className="mx-2"
-          >
-            <option value="">{t("SelectInterests")}</option>
-            {interests.map((interest) => (
-              <option key={interest.id} value={interest.name}>
-                {interest.name}
-              </option>
-            ))}
-          </select>
-          <Button onClick={handleSearch}>{t("Search")}</Button>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {users.map((user) => (
-            <Card key={user.id} className="p-4 flex flex-col items-center">
-              <Avatar
+  <div className="p-4 sm:p-8">
+    <div className="flex flex-col sm:flex-row items-center mb-4 space-y-2 sm:space-y-0 sm:space-x-2">
+      <TextInput
+        type="text"
+        placeholder={t("SearchByUsername")}
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="w-full sm:w-1/3"
+      />
+      <select
+        id="workplace"
+        value={selectedWorkplace}
+        onChange={(e) => handleWorkplaceChange(e.target.value)}
+        className="w-full sm:w-auto"
+      >
+        <option value="">{t("SelectWorkplace")}</option>
+        {workplaces.map((workplace) => (
+          <option key={workplace.id} value={workplace.name}>
+            {workplace.name}
+          </option>
+        ))}
+      </select>
+      <select
+        id="skills"
+        value={selectedSkills}
+        onChange={(e) => handleSkillsChange(e.target.value)}
+        className="w-full sm:w-auto"
+      >
+        <option value="">{t("SelectSkills")}</option>
+        {skills.map((skill) => (
+          <option key={skill.id} value={skill.name}>
+            {skill.name}
+          </option>
+        ))}
+      </select>
+      <select
+        id="interests"
+        value={selectedInterests}
+        onChange={(e) => handleInterestsChange(e.target.value)}
+        className="w-full sm:w-auto"
+      >
+        <option value="">{t("SelectInterests")}</option>
+        {interests.map((interest) => (
+          <option key={interest.id} value={interest.name}>
+            {interest.name}
+          </option>
+        ))}
+      </select>
+      <Button onClick={handleSearch} className="w-full sm:w-auto">{t("Search")}</Button>
+    </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      {users.map((user) => (
+        <Card key={user.id} className="p-4 flex flex-col items-center">
+          <Avatar
                 img={
                   userImages[user.id]?.image
                     ? `data:${userImages[user.id].type};base64,${
@@ -246,19 +246,17 @@ function UsersGrid() {
                   </span>
                 </button>
               </div>
-            </Card>
-          ))}
-        </div>
-      </div>
-
-      {/* Render the NewMessageModal */}
-      <MessageModal
-        isOpen={isModalOpen}
-        closeModal={closeMessageModal}
-        authToken={token}
-        selectedUser={selectedUser}
-      />
+        </Card>
+      ))}
     </div>
+  </div>
+  <MessageModal
+    isOpen={isModalOpen}
+    closeModal={closeMessageModal}
+    authToken={token}
+    selectedUser={selectedUser}
+  />
+</div>
   );
 }
 
