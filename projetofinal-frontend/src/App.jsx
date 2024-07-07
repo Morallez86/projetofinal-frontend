@@ -139,42 +139,44 @@ function App() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <SessionTimeoutModal show={showSessionModal} onLogout={handleLogout} />
+ <SessionTimeoutModal show={showSessionModal} onLogout={handleLogout} />
 
-      <div className="p-8">
-        <div className="flex items-center mb-4 space-x-2">
-          <input
-            type="text"
-            placeholder={t("Search by project name")}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-1/4 rounded border-gray-600"
-          />
-          <input
-            type="text"
-            placeholder={t("Search by skills")}
-            value={skills}
-            onChange={(e) => setSkills(e.target.value)}
-            className="w-1/4 rounded border-gray-600"
-          />
-          <input
-            type="text"
-            placeholder={t("Search by interests")}
-            value={interests}
-            onChange={(e) => setInterests(e.target.value)}
-            className="w-1/4 rounded border-gray-600"
-          />
-          <Button onClick={handleSearch} className="ml-2">
-            {t("Search")}
-          </Button>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {projects.map((project) => (
-            <ProjectsHomeCard key={project.id} project={project} />
-          ))}
-        </div>
-      </div>
+  <div className="p-4 sm:p-8">
+    <div className="flex flex-col sm:flex-row items-center mb-4 space-y-2 sm:space-y-0 sm:space-x-2">
+      <input
+        type="text"
+        placeholder={t("Search by project name")}
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="w-full sm:w-1/4 rounded border-gray-600"
+      />
+      <input
+        type="text"
+        placeholder={t("Search by skills")}
+        value={skills}
+        onChange={(e) => setSkills(e.target.value)}
+        className="w-full sm:w-1/4 rounded border-gray-600"
+      />
+      <input
+        type="text"
+        placeholder={t("Search by interests")}
+        value={interests}
+        onChange={(e) => setInterests(e.target.value)}
+        className="w-full sm:w-1/4 rounded border-gray-600"
+      />
+      <Button onClick={handleSearch} className="w-full sm:w-auto sm:ml-2">
+        {t("Search")}
+      </Button>
     </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 justify-center place-content-center">
+      {projects.map((project) => (
+        <div key={project.id} className="flex justify-center">
+        <ProjectsHomeCard project={project} />
+      </div>
+      ))}
+    </div>
+  </div>
+</div>
   );
 }
 
