@@ -191,10 +191,10 @@ function NotificationsPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="flex p-14">
-        <div className="w-1/6">
-          <div className="flex flex-col h-full bg-white p-4 rounded-lg shadow-lg border-2 border-red-900">
-            <div className="flex flex-col space-y-2 flex-grow">
+    <div className="flex flex-col md:flex-row p-4 md:p-14">
+      <div className="md:w-1/6 w-full">
+        <div className="flex flex-col h-full bg-white p-4 rounded-lg shadow-lg border-2 border-red-900">
+          <div className="flex flex-col space-y-2 flex-grow">
               {/* Type toggles */}
               <div className="flex items-center justify-between mb-2">
                 <h2 className="text-center"> {t("Notifications")} </h2>
@@ -306,8 +306,8 @@ function NotificationsPage() {
             </div>
           </div>
         </div>
-        <div className="w-5/6 h-full">
-          <NotificationsTable
+        <div className="flex-grow mt-4 md:mt-0">
+        <NotificationsTable
             data={notifications}
             pagination
             paginationServer

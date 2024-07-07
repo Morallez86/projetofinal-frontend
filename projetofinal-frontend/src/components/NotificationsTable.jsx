@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import DataTable from "react-data-table-component";
 import NotificationModal from "./NotificationModal";
 import { useTranslation } from "react-i18next";
+import { ToggleSwitch } from "flowbite-react";
 
 const NotificationsTable = ({
   data,
@@ -17,6 +18,10 @@ const NotificationsTable = ({
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState(null);
   const { t } = useTranslation();
+  const [switch2, setSwitch2] = useState(false);
+
+ 
+  
 
   const openModal = (notification) => {
     setSelectedNotification(notification);
@@ -52,6 +57,13 @@ const NotificationsTable = ({
   const handleSeenChange = async (notificationId, currentStatus) => {
     const newStatus = !currentStatus;
     await onUpdateSeenStatus(notificationId, newStatus);
+  };
+
+  const handleSeenChangeResponsive = async (notificationId, currentStatus) => {
+    setTimeout(() => {
+      handleSeenChange(notificationId, currentStatus);
+    }, 500
+      )
   };
 
   const handleBulkSeenChange = async (event) => {
@@ -98,6 +110,36 @@ const NotificationsTable = ({
     },
   ];
 
+  const renderCards = () => {
+    return data.map((notification) => (
+      <div key={notification.id} className="p-4 bg-white rounded-lg shadow-md m-2">
+        <h3 className="font-bold">{notification.type}</h3>
+        <p>{notification.description}</p>
+        <p>{formatDateForInput(notification.timestamp)} {formatTimeForInput(notification.timestamp)}</p>
+        <div className="flex justify-between items-center">
+          <button
+            className="bg-blue-500 text-white p-2 rounded hover:bg-blue-700 transition-colors"
+            onClick={() => openModal(notification)}
+          >
+            {t('View Details')}
+          </button>
+          <label className="flex items-center cursor-pointer">
+            <div className="relative">
+              <ToggleSwitch
+                checked={notification.seen}
+                onChange={() => {handleSeenChangeResponsive(notification.id, notification.seen); setSwitch2((prevState) => !prevState);
+                }}
+                
+              />
+            </div>
+            <div className="ml-3 text-gray-700 font-medium">
+              {notification.seen ? t('Seen') : t('Unseen')}
+            </div>
+          </label>
+        </div>
+      </div>
+    ));
+  };
   return (
     <div className="p-6 bg-white rounded-lg h-[44rem] shadow-lg border-2 border-red-900">
       <style>
@@ -113,6 +155,7 @@ const NotificationsTable = ({
           }
         `}
       </style>
+      <div className="hidden md:block">
       <DataTable
         columns={columns}
         data={data}
@@ -138,6 +181,10 @@ const NotificationsTable = ({
         }}
         striped={true}
       />
+      </div>
+      <div className="md:hidden">
+        {renderCards()}
+      </div>
       <NotificationModal
         isOpen={modalIsOpen}
         closeModal={closeModal}
