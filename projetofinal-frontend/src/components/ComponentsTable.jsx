@@ -66,9 +66,8 @@ function ComponentsTable({
 
   return (
     <div className="p-6 border border-gray-600 bg-white rounded-lg">
-      <div className="mb-6 flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-center ml-3">
-          {" "}
+      <div className="mb-6 flex justify-between items-center flex-wrap">
+        <h1 className="text-3xl font-bold text-center ml-3 w-full md:w-auto">
           {context === "components"
             ? t('Components')
             : context === "resources"
@@ -80,9 +79,10 @@ function ComponentsTable({
           onKeyDown={handleKeyDown}
           onChange={(e) => setSearchKeyword(e.target.value)}
           value={searchKeyword}
-          className="w-1/4"
+          className="mt-4 md:mt-0 w-full md:w-1/4"
         />
       </div>
+      <div className="hidden md:block">
       <DataTable
         columns={columns}
         data={data}
@@ -111,6 +111,18 @@ function ComponentsTable({
           },
         }}
       />
+      </div>
+      <div className="md:hidden">
+          {data.map((item) => (
+            <div key={item.id} className="border p-4 rounded-lg" onClick={() => { setSelectedRow(item); setIsModalOpen(true); }}>
+              <h2 className="text-lg font-bold"> Name: {item.name}</h2>
+              <p>Brand: {item.brand}</p>
+              <p>Supplier: {item.supplier}</p>
+              <p>Identifier: {item.identifier}</p>
+            </div>
+          ))}
+        </div>
+
       {isModalOpen && (
         <ComponentResourceCardDetails
           data={selectedRow}
