@@ -187,6 +187,13 @@ function Layout({
     </>
   ) : (
     <div className="flex justify-end items-center flex-1">
+      {/* Toggle de linguagem */}
+      <ToggleSwitch
+        checked={languageApp === 'pt'}
+        label={languageApp === 'en' ? "EN" : "PT"} 
+        onChange={handleLanguageToggle}
+        className="mr-2" // Adiciona margem à direita para separar do botão de login
+      />
       <button
         className="p-2 flex border border-gray-600 hover:bg-cyan-700 hover:text-white items-center justify-center rounded-full bg-white transition-colors duration-200 text-black font-bold"
         onClick={() => navigate("/Login")}
