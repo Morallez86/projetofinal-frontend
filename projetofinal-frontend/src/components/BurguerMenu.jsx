@@ -52,9 +52,12 @@ function BurgerMenu() {
   const handleItemClick = (path, title) => {
     if (path) {
       navigate(path);
-      setIsOpen(false); // Fechar o menu após a navegação
-    } else {
-      // Passo 2: Alternar a expansão das subtabs
+    }
+    // Fechar o menu após a tentativa de navegação ou ao expandir/clicar em um item sem path
+    setIsOpen(false);
+  
+    if (!path) {
+      // Alternar a expansão das subtabs se não houver path
       setExpandedTab(expandedTab === title ? null : title);
     }
   };
