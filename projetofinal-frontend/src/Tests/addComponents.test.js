@@ -2,7 +2,7 @@
 const fetch = require('node-fetch');
 jest.mock('node-fetch', () => jest.fn());
 
-const { fetchComponents } = require('./addComponents'); // Ajuste o caminho conforme necessário
+const { fetchComponents } = require('./addComponents'); 
 
 describe('fetchComponents', () => {
     it('should handle 200 status', async () => {
