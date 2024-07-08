@@ -36,8 +36,6 @@ const fetchProjects = async (token, searchTerm, skills, interests) => {
         }
     }
     catch (error) {
-            // Log the error or handle it as needed
-            console.error('Fetch error:', error);
             return { status: 500, text: 'Internal Server Error' };
         }
     } 
