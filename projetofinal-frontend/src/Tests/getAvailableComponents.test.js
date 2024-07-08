@@ -20,7 +20,7 @@ describe('getAvailableComponentsGroupedByName', () => {
     });
 
     it('should return 200 OK with component names', async () => {
-        const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBleGFtcGxlLmNvbSIsInJvbGUiOjIwMCwiaWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJwcm9qZWN0VGltZXN0YW1wcyI6e30sImlhdCI6MTcyMDM5NDk1MCwiZXhwIjoxNzIwMzk4NTUwfQ.OGdbfy2Er5TBE0djMkR7ZpVoARg3ZFLi-uI4K1audno'; // Token válido
+        const token = 'eyJhbGciOiJIUzI1NiJ9.leGFtcGxlLmNvbSIsInJvbGUiOjIwMCwiaWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJwcm9qZWN0VGltZXN0YW1wcyI6e30sImlhdCI6MTcyMDM5NDk1MCwiZXhwIjoxNzIwMzk4NTUwfQ'; // Token válido
         const workplaceId = 1; // ID do local de trabalho de teste
 
         const response = await fetchAvailableComponents(token, workplaceId);
