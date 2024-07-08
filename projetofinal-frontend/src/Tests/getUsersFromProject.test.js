@@ -41,6 +41,4 @@ describe('getUsersFromProject', () => {
       },
     });
   });
-
-  // Add more tests as needed for other scenarios
 });
