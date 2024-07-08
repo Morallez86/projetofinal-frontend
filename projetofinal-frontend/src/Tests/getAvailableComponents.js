@@ -4,7 +4,6 @@ const fetchAvailableComponents = async (token, workplaceId) => {
     } else if (!workplaceId) {
         return { status: 400, text: 'Workplace ID is required' };
     } else {
-        // Simula uma resposta bem-sucedida com um JSON de exemplo
         const exampleResponse = JSON.stringify([{ name: 'Component1' }, { name: 'Component2' }]);
         return { status: 200, text: exampleResponse };
     }
