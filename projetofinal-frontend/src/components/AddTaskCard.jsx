@@ -73,6 +73,7 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
 
   useEffect(() => {
     getUsersFromProject();
+    console.log(users);
   }, []);
 
   useEffect(() => {
@@ -295,7 +296,7 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
                 <Label htmlFor="responsible" value="Responsible" />
                 <Select
                   options={users.map((user) => ({
-                    value: user.id,
+                    value: user.userId,
                     label: user.username,
                   }))}
                   placeholder="Select a responsible"
