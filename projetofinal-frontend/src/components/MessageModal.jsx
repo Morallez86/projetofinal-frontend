@@ -10,26 +10,26 @@ const MessageModal = ({
   authToken,
   selectedUser,
 }) => {
-  const [replyContent, setReplyContent] = useState("");
-  const apiUrl = useApiStore.getState().apiUrl;
-  const navigate = useNavigate();
-  const handleSessionTimeout = () => {
-    navigate("/", { state: { showSessionTimeoutModal: true } });
+  const [replyContent, setReplyContent] = useState(""); // Responder ao conteúdo da mensagem
+  const apiUrl = useApiStore.getState().apiUrl; // URL da API
+  const navigate = useNavigate(); 
+  const handleSessionTimeout = () => { // Função para lidar com o timeout da sessão
+    navigate("/", { state: { showSessionTimeoutModal: true } }); // Navegar para a página inicial
   };
-  const { t } = useTranslation();
+  const { t } = useTranslation(); // Função de tradução
 
-  const handleReply = async () => {
+  const handleReply = async () => { // Função para responder
     let sendMessageTo;
 
     if (message) {
       sendMessageTo =
-        message.view === "sent" ? message.receiverId : message.senderId;
+        message.view === "sent" ? message.receiverId : message.senderId; //view da mensagem 
     } else if (selectedUser) {
       sendMessageTo = selectedUser.id;
     }
 
     try {
-      const response = await fetch(`${apiUrl}/messages`, {
+      const response = await fetch(`${apiUrl}/messages`, { // Enviar a mensagem
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -40,12 +40,12 @@ const MessageModal = ({
           receiverId: sendMessageTo,
         }),
       });
-      if (response.status === 401) {
+      if (response.status === 401) { // Verificar se o token é inválido
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
         if (errorMessage === "Invalid token") {
-          handleSessionTimeout(); // Session timeout
-          return; // Exit early if session timeout
+          handleSessionTimeout(); // Lidar com o timeout da sessão
+          return; 
         } else {
           console.error("Error updating seen status:", errorMessage);
         }
@@ -58,15 +58,15 @@ const MessageModal = ({
       console.log("Reply sent successfully:", savedMessage);
       setReplyContent("");
 
-      // Close the modal after replying
+      
       closeModal();
     } catch (error) {
       console.error("Error replying to message:", error);
     }
   };
 
-  const handleModalClick = (e) => {
-    e.stopPropagation();
+  const handleModalClick = (e) => { // Função para lidar com o clique no modal
+    e.stopPropagation(); 
   };
 
   return (

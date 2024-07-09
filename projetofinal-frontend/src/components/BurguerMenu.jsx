@@ -43,7 +43,7 @@ const menuItems = [
   },
 ];
 
-function BurgerMenu() {
+function BurgerMenu() { //BurguerMenu para o Mobile 
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const [expandedTab, setExpandedTab] = useState(null); // Passo 1

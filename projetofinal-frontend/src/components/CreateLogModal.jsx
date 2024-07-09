@@ -9,30 +9,30 @@ import { HiInformationCircle } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 
 function CreateLogModal({ onClose, tasks, projectId, addNewLog }) {
-  const options = [
+  const options = [ // Opções para o select
     { value: null, label: "None" },
     ...tasks.map((task) => ({ value: task.id, label: task.title })),
   ];
-  const token = useUserStore((state) => state.token);
-  const apiUrl = useApiStore((state) => state.apiUrl);
-  const [warning, setWarning] = useState(0);
+  const token = useUserStore((state) => state.token); // obter o token do utilizador
+  const apiUrl = useApiStore((state) => state.apiUrl); // obter o URL da API
+  const [warning, setWarning] = useState(0); // Aviso
   const navigate = useNavigate();
-  const handleSessionTimeout = () => {
-    navigate("/", { state: { showSessionTimeoutModal: true } });
+  const handleSessionTimeout = () => { // Função para lidar com o timeout da sessão
+    navigate("/", { state: { showSessionTimeoutModal: true } }); // Redirecionar para a página inicial
   };
 
-  let userIdFromToken;
+  let userIdFromToken; // ID do utilizador
 
   if (token) {
     try {
-      const decodedToken = jwtDecode(token);
-      userIdFromToken = decodedToken.id;
+      const decodedToken = jwtDecode(token); // Decodificar o token
+      userIdFromToken = decodedToken.id; // Obter o ID do utilizador
     } catch (error) {
       console.error("Invalid token", error);
     }
   }
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({ // Dados do formulário
     newDescription: "",
     type: "",
     timestamp: "",
@@ -41,13 +41,13 @@ function CreateLogModal({ onClose, tasks, projectId, addNewLog }) {
     taskId: "",
   });
 
-  const handleChange = (event) => {
+  const handleChange = (event) => { // Função para lidar com a mudança de valor
     const { name, value } = event.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const addLog = async () => {
-    if (formData.newDescription === "") {
+  const addLog = async () => { // Função para adicionar um log
+    if (formData.newDescription === "") { // Verificar se a descrição está vazia
       setWarning(1);
       return;
     }
@@ -60,7 +60,7 @@ function CreateLogModal({ onClose, tasks, projectId, addNewLog }) {
         },
         body: JSON.stringify(formData),
       });
-      if (response.status === 401) {
+      if (response.status === 401) { // Verificar se o utilizador não está autorizado
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
 
@@ -71,15 +71,15 @@ function CreateLogModal({ onClose, tasks, projectId, addNewLog }) {
           console.error("Error updating seen status:", errorMessage);
         }
       }
-      if (!response.ok) {
+      if (!response.ok) { // Verificar se a resposta não é bem sucedida
         throw new Error("Failed to create log");
       }
 
       const data = await response.json();
-      console.log(data);
-      addNewLog(data);
-      setWarning(0);
-      onClose();
+      
+      addNewLog(data); // Adicionar o novo log
+      setWarning(0); // Reset warning
+      onClose(); // Fechar o modal
     } catch (error) {
       console.error("Failed to create log", error);
     }

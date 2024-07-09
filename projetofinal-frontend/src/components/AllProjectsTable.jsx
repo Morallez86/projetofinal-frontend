@@ -6,17 +6,17 @@ import useUserStore from "../Stores/UserStore";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
-// Helper function to convert the date array to a JS Date object
+// funçao que ajuda a formatar a data
 const formatDate = (dateArray) => {
   if (!Array.isArray(dateArray) || dateArray.length < 3) {
     return "Invalid Date";
   }
-  // Adjust month value as JS Date months are zero-based
-  const [year, month, day, hour = 0, minute = 0] = dateArray;
+  
+  const [year, month, day, hour = 0, minute = 0] = dateArray; 
   return new Date(year, month - 1, day, hour, minute).toLocaleDateString();
 };
 
-// Helper function to map status value to status string
+// funçao que ajuda a obter o status como string
 const getStatusString = (statusValue) => {
   switch (statusValue) {
     case 100:
@@ -34,7 +34,7 @@ const getStatusString = (statusValue) => {
   }
 };
 
-// Helper function to get skills as a comma-separated string
+// funçao que ajuda a obter as skills como string separada por virgulas
 const getSkillsString = (skills) => {
   if (!Array.isArray(skills)) {
     return "No skills";
@@ -42,7 +42,7 @@ const getSkillsString = (skills) => {
   return skills.map((skill) => skill.name).join(", ");
 };
 
-// Helper function to get interests as a comma-separated string
+// funçao que ajuda a obter os interesses como string separada por virgulas
 const getInterestsString = (interests) => {
   if (!Array.isArray(interests)) {
     return "No interests";
@@ -60,25 +60,25 @@ function AllProjectsTable({
   onChangeRowsPerPage,
   rowsPerPage,
 }) {
-  const apiUrl = useApiStore((state) => state.apiUrl);
-  const token = useUserStore((state) => state.token);
+  const apiUrl = useApiStore((state) => state.apiUrl); // Obter o URL da API
+  const token = useUserStore((state) => state.token); // Obter o token do utilizador
   const navigate = useNavigate();
-  const handleSessionTimeout = () => {
-    navigate("/", { state: { showSessionTimeoutModal: true } });
+  const handleSessionTimeout = () => { // Função para lidar com o timeout da sessão
+    navigate("/", { state: { showSessionTimeoutModal: true } }); // Redirecionar para a página inicial
   };
 
   const { t } = useTranslation();
 
-  const handleInviteClick = async (projectId) => {
-    const confirmed = window.confirm(
-      t("AreYouSureYouWantToSendAnInvitationToThisProject")
+  const handleInviteClick = async (projectId) => { // Função para enviar um convite para um projeto
+    const confirmed = window.confirm( // Confirmar a ação
+      t("AreYouSureYouWantToSendAnInvitationToThisProject") 
     );
     if (!confirmed) {
       return;
     }
 
     try {
-      const response = await fetch(`${apiUrl}/notifications`, {
+      const response = await fetch(`${apiUrl}/notifications`, { // Enviar o convite
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -90,15 +90,15 @@ function AllProjectsTable({
         }),
       });
 
-      if (response.ok) {
+      if (response.ok) { // Se a resposta for bem-sucedida
         alert("Invitation sent successfully");
-      } else if (response.status === 401) {
+      } else if (response.status === 401) { // Se a resposta for 401
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
 
         if (errorMessage === "Invalid token") {
-          handleSessionTimeout(); // Session timeout
-          return; // Exit early if session timeout
+          handleSessionTimeout(); // Lidar com o timeout da sessão
+          return; 
         } else {
           console.error("Error updating seen status:", errorMessage);
         }
@@ -111,7 +111,7 @@ function AllProjectsTable({
     }
   };
 
-  const columns = [
+  const columns = [ // Colunas da tabela
     {
       name: t("ProjectName"),
       selector: (row) => row.title,
@@ -136,7 +136,7 @@ function AllProjectsTable({
       name: t("SlotsOpen"),
       selector: (row) => row.maxUsers - row.userProjectDtos.length,
       cell: (row) => {
-        // Count the number of active users in the project
+        // Calcula slotsOpen para este projeto específico
         const activeUsersCount = row.userProjectDtos.filter(
           (projectUser) => projectUser.status === "active"
         ).length;
@@ -176,7 +176,6 @@ function AllProjectsTable({
         <p>Interests: {getInterestsString(project.interests)}</p>
         <p>Slots Open: {slotsOpen}</p>
         <p>Creation Date: {formatDate(project.creationDate)}</p>
-        {/* Adicione mais detalhes conforme necessário */}
         <button
           className={`mt-4 px-4 py-2 rounded ${
             slotsOpen > 0 ? "bg-blue-500 hover:bg-blue-700 text-white" : "bg-gray-500 text-gray-200"

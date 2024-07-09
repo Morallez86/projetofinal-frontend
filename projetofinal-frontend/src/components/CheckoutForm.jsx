@@ -6,7 +6,7 @@ import LoginCard from "./LoginCard";
 import RegisterCard from "./RegisterCard";
 
 
-function CheckoutForm() {
+function CheckoutForm() { // Formulário de checkout
   return (
     <div className="flex justify-center">
       <Tabs aria-label="Default tabs" className="mx-auto">

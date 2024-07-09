@@ -8,28 +8,28 @@ import ConfirmationModal from "./ConfirmationModal";
 import { useNavigate } from "react-router-dom";
 
 function AddUsersEdit({ openPopUpUsers, closePopUpUsers, projectInfo }) {
-  const token = useUserStore((state) => state.token);
-  const apiUrl = useApiStore((state) => state.apiUrl);
+  const token = useUserStore((state) => state.token); // Obter o token do utilizador
+  const apiUrl = useApiStore((state) => state.apiUrl); // Obter o URL da API
   const navigate = useNavigate();
-  const handleSessionTimeout = () => {
-    navigate("/", { state: { showSessionTimeoutModal: true } });
+  const handleSessionTimeout = () => { // Função para lidar com o timeout da sessão
+    navigate("/", { state: { showSessionTimeoutModal: true } }); // Redirecionar para a página inicial
   };
-  let currentUserId;
+  let currentUserId; // ID do utilizador atual
 
   if (token) {
-    const decodedToken = jwtDecode(token);
-    currentUserId = decodedToken.id;
+    const decodedToken = jwtDecode(token); // Decodificar o token
+    currentUserId = decodedToken.id; // Obter o ID do utilizador
   }
 
-  const [users, setUsers] = useState([]);
-  const [userImages, setUserImages] = useState({});
-  const [inputValue, setInputValue] = useState("");
-  const [error, setError] = useState("");
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [users, setUsers] = useState([]); // Utilizadores
+  const [userImages, setUserImages] = useState({}); // Imagens dos utilizadores
+  const [inputValue, setInputValue] = useState(""); // Valor do input
+  const [error, setError] = useState(""); // Erro
+  const [selectedUser, setSelectedUser] = useState(null); // Utilizador selecionado
+  const [showConfirmation, setShowConfirmation] = useState(false); // Mostrar confirmação
 
-  const handleSearch = async () => {
-    if (inputValue.length >= 3) {
+  const handleSearch = async () => { // Função para pesquisar utilizadores
+    if (inputValue.length >= 3) { // Se o valor do input for maior ou igual a 3
       try {
         const response = await fetch(
           `${apiUrl}/users/search?query=${inputValue}`,
@@ -43,20 +43,20 @@ function AddUsersEdit({ openPopUpUsers, closePopUpUsers, projectInfo }) {
           }
         );
 
-        if (response.status === 200) {
+        if (response.status === 200) { // Se a resposta for 200
           const data = await response.json();
-          setUsers(data);
-          fetchUserImages(data);
-        } else if (response.status === 404) {
-          setUsers([]);
-          setUserImages({});
-        } else if (response.status === 401) {
+          setUsers(data); // Definir os utilizadores
+          fetchUserImages(data); // Obter as imagens dos utilizadores
+        } else if (response.status === 404) { // Se a resposta for 404
+          setUsers([]); // Definir os utilizadores como vazio
+          setUserImages({}); // Definir as imagens dos utilizadores como vazio
+        } else if (response.status === 401) { // Se a resposta for 401
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
           if (errorMessage === "Invalid token") {
-            handleSessionTimeout(); // Session timeout
-            return; // Exit early if session timeout
+            handleSessionTimeout(); // Timeout da sessão
+            return; 
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
@@ -70,8 +70,8 @@ function AddUsersEdit({ openPopUpUsers, closePopUpUsers, projectInfo }) {
     }
   };
 
-  const fetchUserImages = async (users) => {
-    const userIds = users.map((user) => user.id);
+  const fetchUserImages = async (users) => { // Função para obter as imagens dos utilizadores
+    const userIds = users.map((user) => user.id); // Mapear os IDs dos utilizadores
     try {
       const response = await fetch(`${apiUrl}/users/images`, {
         method: "POST",
@@ -83,20 +83,20 @@ function AddUsersEdit({ openPopUpUsers, closePopUpUsers, projectInfo }) {
         body: JSON.stringify(userIds),
       });
 
-      if (response.ok) {
+      if (response.ok) { // Se a resposta for 200
         const imagesData = await response.json();
         const imagesMap = {};
         imagesData.forEach((img) => {
           imagesMap[img.id] = img;
         });
         setUserImages(imagesMap);
-      } else if (response.status === 401) {
+      } else if (response.status === 401) { // Se a resposta for 401
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
 
         if (errorMessage === "Invalid token") {
-          handleSessionTimeout(); // Session timeout
-          return; // Exit early if session timeout
+          handleSessionTimeout(); // Timeout da sessão
+          return; 
         } else {
           console.error("Error updating seen status:", errorMessage);
         }
@@ -108,18 +108,18 @@ function AddUsersEdit({ openPopUpUsers, closePopUpUsers, projectInfo }) {
     }
   };
 
-  const handleInputChange = (event) => {
+  const handleInputChange = (event) => { // Função para lidar com a mudança do input
     setInputValue(event.target.value);
   };
 
-  const handleAddUserClick = (user) => {
-    setSelectedUser(user);
-    setShowConfirmation(true);
+  const handleAddUserClick = (user) => { // Função para lidar com o clique para adicionar utilizador
+    setSelectedUser(user); // Definir o utilizador selecionado
+    setShowConfirmation(true); // Mostrar a confirmação
   };
 
   const handleAddUser = async () => {
     const user = selectedUser;
-    // Count the number of active users in the project
+    // Verifica se o número máximo de users na equipa foi atingido
     const activeUsersCount = projectInfo.userProjectDtos.filter(
       (projectUser) => projectUser.status === "active"
     ).length;
@@ -134,7 +134,7 @@ function AddUsersEdit({ openPopUpUsers, closePopUpUsers, projectInfo }) {
       return;
     }
 
-    // Check if the user is already an active member of the project
+    // Verifica se o utilizador já está na equipa
     if (
       projectInfo.userProjectDtos.some(
         (projectUser) =>
@@ -146,7 +146,7 @@ function AddUsersEdit({ openPopUpUsers, closePopUpUsers, projectInfo }) {
     }
 
     try {
-      const response = await fetch(`${apiUrl}/notifications`, {
+      const response = await fetch(`${apiUrl}/notifications`, { // Adicionar notificação
         method: "POST",
         headers: {
           Accept: "*/*",
@@ -160,20 +160,20 @@ function AddUsersEdit({ openPopUpUsers, closePopUpUsers, projectInfo }) {
         }),
       });
 
-      if (response.ok) {
+      if (response.ok) { // Se a resposta for 200
         closePopUpUsers();
         setInputValue("");
         setError("");
         setUsers([]);
         setUserImages({});
         setShowConfirmation(false);
-      } else if (response.status === 401) {
+      } else if (response.status === 401) { // Se a resposta for 401
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
 
         if (errorMessage === "Invalid token") {
-          handleSessionTimeout(); // Session timeout
-          return; // Exit early if session timeout
+          handleSessionTimeout(); // Timeout da sessão
+          return; 
         } else {
           console.error("Error updating seen status:", errorMessage);
         }

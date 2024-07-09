@@ -6,15 +6,15 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 function ComponentResourceCardDetails({ data, context, onClose }) {
-  const token = useUserStore((state) => state.token);
-  const apiUrl = useApiStore((state) => state.apiUrl);
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const handleSessionTimeout = () => {
-    navigate("/", { state: { showSessionTimeoutModal: true } });
+  const token = useUserStore((state) => state.token); // Obter o token do utilizador
+  const apiUrl = useApiStore((state) => state.apiUrl); // Obter o URL da API
+  const { t } = useTranslation(); // Função de tradução
+  const navigate = useNavigate(); 
+  const handleSessionTimeout = () => { // Função para lidar com o timeout da sessão
+    navigate("/", { state: { showSessionTimeoutModal: true } }); // Redirecionar para a página inicial
   };
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({ // Dados do formulário
     id: data.id || "",
     name: data.name || "",
     description: data.description || "",
@@ -27,7 +27,7 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
     ...data,
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e) => { // Função para lidar com a mudança de valores
     const { id, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -35,15 +35,13 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
     }));
   };
 
-  const handleSave = async () => {
-    const endpoint = context === "resources" ? "/resources" : "/components";
+  const handleSave = async () => { // Função para guardar os dados
+    const endpoint = context === "resources" ? "/resources" : "/components"; //É um componente reutiliável
     const method = formData.id ? "PUT" : "POST";
     const url = `${apiUrl}${endpoint}`;
-    console.log(formData);
-    console.log(url);
-    console.log(method);
+    
 
-    const payload = { ...formData };
+    const payload = { ...formData }; // Dados a enviar
     if (context !== "resources") {
       delete payload.projectNames;
     }
@@ -58,20 +56,20 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
         body: JSON.stringify(payload),
       });
 
-      if (response.ok) {
+      if (response.ok) { // Se a resposta for bem-sucedida
         alert(
           `${context === "resources" ? "Resource" : "Component"} ${
             formData.id ? "updated" : "created"
           } successfully`
         );
         onClose();
-      } else if (response.status === 401) {
+      } else if (response.status === 401) { // Se a resposta for 401
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
 
         if (errorMessage === "Invalid token") {
-          handleSessionTimeout(); // Session timeout
-          return; // Exit early if session timeout
+          handleSessionTimeout(); // Lidar com o timeout da sessão
+          return; 
         } else {
           console.error("Error updating seen status:", errorMessage);
         }
@@ -81,8 +79,8 @@ function ComponentResourceCardDetails({ data, context, onClose }) {
       }
     } catch (error) {
       console.error(
-        `Error ${formData.id ? "updating" : "creating"} ${
-          context === "resources" ? "resource" : "component"
+        `Error ${formData.id ? "updating" : "creating"} ${ 
+          context === "resources" ? "resource" : "component" 
         }:`,
         error
       );

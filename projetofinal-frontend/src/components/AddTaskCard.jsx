@@ -13,23 +13,24 @@ import { HiInformationCircle } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 
 function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
-  const token = useUserStore((state) => state.token);
-  const apiUrl = useApiStore((state) => state.apiUrl);
-  const [animationPlayed, setAnimationPlayed] = useState(false);
-  const [showSuccessText, setShowSuccessText] = useState(false);
-  const [users, setUsers] = useState([]);
-  const [dependentTasks, setDependentTasks] = useState([]);
-  const [restUsers, setRestUsers] = useState([]);
-  const [warning, setWarning] = useState(false);
-  const [warningData, setWarningData] = useState(false);
+  
+  const token = useUserStore((state) => state.token); // Obter o token do utilizador
+  const apiUrl = useApiStore((state) => state.apiUrl); // Obter a URL da API
+  const [animationPlayed, setAnimationPlayed] = useState(false); // Gerir a animação
+  const [showSuccessText, setShowSuccessText] = useState(false); // Definir o texto de sucesso exibido
+  const [users, setUsers] = useState([]); // Definir os utilizadores
+  const [dependentTasks, setDependentTasks] = useState([]); // Definir as tarefas dependentes
+  const [restUsers, setRestUsers] = useState([]); // Definir os utilizadores restantes excluindo o selecionado como responsável
+  const [warning, setWarning] = useState(false); // Definir o aviso
+  const [warningData, setWarningData] = useState(false); // Definir o aviso de dados
   const navigate = useNavigate();
-  const handleSessionTimeout = () => {
+  const handleSessionTimeout = () => { // Gerir o tempo limite da sessão
     navigate("/", { state: { showSessionTimeoutModal: true } });
   };
 
-  const { projectId } = useParams();
+  const { projectId } = useParams(); // Obter o id do projeto da URL
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({ // Definir os dados do formulário
     projectId: projectId,
     title: "",
     description: "",
@@ -43,19 +44,19 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
     userId: "",
   });
 
-  const handleChange = (event) => {
+  const handleChange = (event) => { // Gerir a mudança
     const { name, value } = event.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleChangeSelect = (selectedOption) => {
+  const handleChangeSelect = (selectedOption) => { // Gerir a mudança de seleção
     setFormData((prevData) => ({
       ...prevData,
       userName: selectedOption.label,
     }));
   };
 
-  const handleRemoveContributor = (selectedOption) => {
+  const handleRemoveContributor = (selectedOption) => { // Gerir a remoção de contribuidor
     setFormData((prevData) => ({
       ...prevData,
       contributors: formData.contributors.filter(
@@ -64,41 +65,40 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
     }));
   };
 
-  const handleIdSelect = (selectedOption) => {
+  const handleIdSelect = (selectedOption) => { // Gerir a seleção de id
     setFormData((prevData) => ({
       ...prevData,
       userId: selectedOption.value,
     }));
   };
 
-  useEffect(() => {
+  useEffect(() => { // Obter os utilizadores do projeto
     getUsersFromProject();
     console.log(users);
-  }, []);
+  }, []); 
 
   useEffect(() => {
-    setRestUsers(users.filter((user) => user.username !== formData.userName));
-  }, [users, formData.userName]);
+    setRestUsers(users.filter((user) => user.username !== formData.userName)); // Definir os utilizadores restantes excluindo o selecionado como responsável
+  }, [users, formData.userName]); // Dependências que fazem ativar o useEffect
 
-  useEffect(() => {
+  useEffect(() => { // Obter as tarefas dependentes
     getDependentTasks();
     console.log(formatDateForBackend(formData.plannedStartingDate));
-  }, [formData.plannedStartingDate]);
-
-  const formatDateForBackend = (dateString) => {
+  }, [formData.plannedStartingDate]); // Dependências que fazem ativar o useEffect
+ 
+  const formatDateForBackend = (dateString) => { // Formatar a data para o backend
     if (!dateString) {
-      return null; // Handle the case where dateString is null or undefined
+      return null;
     }
 
-    // Append the time part to the date string
-    const formattedDate = `${dateString} 00:00:00`;
-    console.log(formattedDate);
+   
+    const formattedDate = `${dateString} 00:00:00`; 
 
     return formattedDate;
   };
 
-  const getDependentTasks = () => {
-    const plannedStartingDate = formatDateForBackend(
+  const getDependentTasks = () => { // Obter as tarefas dependentes
+    const plannedStartingDate = formatDateForBackend( // Formatar a data de início planeada
       formData.plannedStartingDate
     );
     fetch(
@@ -113,17 +113,17 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
       }
     )
       .then(async (response) => {
-        if (response.status === 200) {
+        if (response.status === 200) { // Se a resposta for 200
           const dependentTasksData = await response.json();
-          console.log(dependentTasksData);
-          setDependentTasks(dependentTasksData);
-        } else if (response.status === 401) {
+        
+          setDependentTasks(dependentTasksData); // Definir as tarefas dependentes
+        } else if (response.status === 401) { // Se a resposta for 401
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
           if (errorMessage === "Invalid token") {
-            handleSessionTimeout(); // Session timeout
-            return; // Exit early if session timeout
+            handleSessionTimeout(); // Tempo limite da sessão
+            return; 
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
@@ -136,7 +136,7 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
       });
   };
 
-  const getUsersFromProject = () => {
+  const getUsersFromProject = () => { // Obter os utilizadores do projeto
     fetch(`${apiUrl}/projects/${projectId}/users`, {
       method: "GET",
       headers: {
@@ -146,17 +146,17 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
       },
     })
       .then(async (response) => {
-        if (response.status === 200) {
+        if (response.status === 200) { // Se a resposta for 200
           const usersData = await response.json();
-          console.log(usersData);
+          
           setUsers(usersData);
-        } else if (response.status === 401) {
+        } else if (response.status === 401) { // Se a resposta for 401
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
           if (errorMessage === "Invalid token") {
-            handleSessionTimeout(); // Session timeout
-            return; // Exit early if session timeout
+            handleSessionTimeout(); // Tempo limite da sessão
+            return; 
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
@@ -169,25 +169,24 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
       });
   };
 
-  const defaultOptions = {
+  const defaultOptions = { // Opções padrão
     loop: false,
     autoplay: false,
     animationData: AddedAnimation,
     rendererSettings: {
-      preserveAspectRatio: "xMidYMid slice",
+      preserveAspectRatio: "xMidYMid slice", 
     },
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async () => { // Submeter
     const contributorsAsString = formData.contributors
       .map((contributor) => contributor.label)
-      .join(",");
+      .join(","); // Definir os contribuidores como string
 
-    setWarning(false);
-    setWarningData(false);
+    setWarning(false); 
+    setWarningData(false);  //Limpa os avisos
 
-    let stop = 0;
-
+    let stop = 0; 
     if (
       !formData.title ||
       !formData.description ||
@@ -197,7 +196,7 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
       !formData.priority
     ) {
       setWarning(true);
-      stop = 1;
+      stop = 1; 
     }
 
     if (formData.plannedStartingDate > formData.plannedEndingDate) {
@@ -205,13 +204,13 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
       stop = 1;
     }
 
-    if (stop != 0) {
+    if (stop != 0) {  //para ele percorrer os 2 alertas
       return;
     }
 
-    console.log(stop);
+   
 
-    fetch(`${apiUrl}/tasks`, {
+    fetch(`${apiUrl}/tasks`, { // Adicionar tarefa
       method: "POST",
       headers: {
         Accept: "*/*",
@@ -221,28 +220,28 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
       body: JSON.stringify({
         ...formData,
         contributors: contributorsAsString,
-        plannedStartingDate: formatDateForBackend(formData.plannedStartingDate),
-        plannedEndingDate: formatDateForBackend(formData.plannedEndingDate),
+        plannedStartingDate: formatDateForBackend(formData.plannedStartingDate), // Formatar a data de início planeada
+        plannedEndingDate: formatDateForBackend(formData.plannedEndingDate), // Formatar a data de fim planeada
       }),
     })
       .then(async (response) => {
-        if (response.status === 201) {
+        if (response.status === 201) { // Se a resposta for 201
           console.log("Task added with success");
-          setAnimationPlayed(true);
-          setShowSuccessText(true);
+          setAnimationPlayed(true); // Ativar a animação
+          setShowSuccessText(true); // Exibir o texto de sucesso
           setTimeout(() => {
-            setPopUpShow(false);
-            setShowSuccessText(false);
-            console.log(formData);
-          }, 2000);
-          setTasks((prevTasks) => [...prevTasks, formData]);
-        } else if (response.status === 401) {
+            setPopUpShow(false); // Fechar o popup
+            setShowSuccessText(false); // Esconder o texto de sucesso
+            
+          }, 2000); // Fechar o popup após 2 segundos
+          setTasks((prevTasks) => [...prevTasks, formData]); // Adicionar a tarefa
+        } else if (response.status === 401) { // Se a resposta for 401  
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
           if (errorMessage === "Invalid token") {
-            handleSessionTimeout(); // Session timeout
-            return; // Exit early if session timeout
+            handleSessionTimeout(); // Tempo limite da sessão
+            return;
           } else {
             console.error("Error updating seen status:", errorMessage);
           }

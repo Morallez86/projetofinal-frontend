@@ -17,21 +17,21 @@ const MessagesTable = ({
   onBulkUpdateSeenStatus,
   authToken,
 }) => {
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [selectedMessage, setSelectedMessage] = useState(null);
-  const { t } = useTranslation();
+  const [modalIsOpen, setModalIsOpen] = useState(false); // Estado do modal
+  const [selectedMessage, setSelectedMessage] = useState(null); // Mensagem selecionada
+  const { t } = useTranslation(); // Função de tradução
 
-  const openModal = (message) => {
+  const openModal = (message) => {  // Função para abrir o modal
     setSelectedMessage(message);
     setModalIsOpen(true);
   };
 
-  const closeModal = () => {
+  const closeModal = () => { // Função para fechar o modal
     setModalIsOpen(false);
     setSelectedMessage(null);
   };
 
-  const formatDateForInput = (dateArray) => {
+  const formatDateForInput = (dateArray) => { // Função para formatar a data
     if (!Array.isArray(dateArray) || dateArray.length < 3) {
       return "";
     }
@@ -40,7 +40,7 @@ const MessagesTable = ({
     return date.toLocaleDateString("pt-BR");
   };
 
-  const formatTimeForInput = (dateArray) => {
+  const formatTimeForInput = (dateArray) => { // Função para formatar o horário
     if (!Array.isArray(dateArray) || dateArray.length < 5) {
       return "";
     }
@@ -52,18 +52,18 @@ const MessagesTable = ({
     });
   };
 
-  const handleSeenChange = async (messageId, currentStatus) => {
+  const handleSeenChange = async (messageId, currentStatus) => { // Função para alterar o estado de visto
     const newStatus = !currentStatus;
     await onUpdateSeenStatus(messageId, newStatus);
   };
 
-  const handleBulkSeenChange = async (event) => {
+  const handleBulkSeenChange = async (event) => { // Função para alterar o visto de uma mensagem
     const newStatus = event.target.checked;
     await onBulkUpdateSeenStatus(newStatus);
   };
 
-  // Define columns dynamically based on the view (received or sent)
-  let columns = [
+
+  let columns = [ // Colunas da tabela
     { name: t('Content'), selector: (row) => row.content, sortable: true },
     {
       name: t('Timestamp'),
