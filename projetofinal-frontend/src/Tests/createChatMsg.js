@@ -1,0 +1,33 @@
+const fetch = require('node-fetch');
+
+async function createChatMsg(token, projectId, message, usernameFromToken, userIdFromToken) {
+    try {
+      const response = await fetch(`https://localhost:8443/projetofinal-backend-1.0-SNAPSHOT/rest/projects/createChatMsg`, {
+        method: "POST",
+        headers: {
+          Accept: "*/*",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          projectId: projectId,
+          content: message,
+          senderUsername: usernameFromToken,
+          senderId: userIdFromToken,
+          senderOnline: true,
+        }),
+      });
+  
+      if (response.status === 201) {
+        const data = await response.json();
+        return data; // Retorna os dados em caso de sucesso
+      } else {
+        const errorResponse = await response.json(); // Assume que a resposta de erro também é um JSON
+        return { error: errorResponse.error || 'Unknown Error', status: response.status }; // Retorna um objeto de erro
+      }
+    } catch (error) {
+      return { error: error.message }; // Retorna um objeto de erro em caso de falha na requisição
+    }
+  }
+
+module.exports = { createChatMsg };
