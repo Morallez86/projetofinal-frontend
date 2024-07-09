@@ -1,7 +1,8 @@
 import { create } from "zustand";
 
-// Define the store
+//Definição da store para armazenar os dados do projeto
 const useProjectStore = create((set) => ({
+  // Estados iniciais
   projectId: null,
   projectName: null,
   projectDescription: null,
@@ -11,7 +12,7 @@ const useProjectStore = create((set) => ({
   projectResources: [],
   projectUsers: [],
 
-  // Functions to update the project details
+  // Funções para atualizar os estados
   setProjectId: (projectId) => set({ projectId }),
   setProjectName: (projectName) => set({ projectName }),
   setProjectDescription: (projectDescription) => set({ projectDescription }),
@@ -21,7 +22,7 @@ const useProjectStore = create((set) => ({
   setProjectResources: (resources) => set({ projectResources: resources }),
   setProjectUsers: (users) => set({ projectUsers: users }),
 
-  // Functions to clear individual project details
+  // Funções para limpar os estados
   clearProjectId: () => set({ projectId: null }),
   clearProjectName: () => set({ projectName: null }),
   clearProjectDescription: () => set({ projectDescription: null }),
@@ -31,7 +32,7 @@ const useProjectStore = create((set) => ({
   clearProjectResources: () => set({ projectResources: [] }),
   clearProjectUsers: () => set({ projectUsers: [] }),
 
-  // Function to clear all project details
+  // Função para limpar todos os estados
   clearAllProjectDetails: () =>
     set({
       projectId: null,
@@ -45,4 +46,5 @@ const useProjectStore = create((set) => ({
     }),
 }));
 
+// Exporta a store
 export default useProjectStore;
