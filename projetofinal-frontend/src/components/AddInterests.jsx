@@ -12,8 +12,12 @@ import useInterestStore from "../Stores/InterestStore";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
+// context serve porque este componente é reutilizável 
+
 function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
+    // Utiliza o hook useParams para obter o projectId da URL
   const { projectId } = useParams();
+  // Utiliza os estados e funções do store do utilizador
   const token = useUserStore((state) => state.token);
   const apiUrl = useApiStore((state) => state.apiUrl);
 
@@ -25,19 +29,21 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
     (state) => state.setProjectInterests
   );
 
-  const { interests, addInterest } = useInterestStore();
+  const { interests, addInterest } = useInterestStore(); // Utiliza os estados e funções do store de interesses
 
-  const [selectedInterest, setSelectedInterest] = useState(null);
-  const [inputValue, setInputValue] = useState("");
-  const [animationPlayed, setAnimationPlayed] = useState(false);
-  const [showSuccessText, setShowSuccessText] = useState(false);
+  const [selectedInterest, setSelectedInterest] = useState(null); // Estado para armazenar o interesse selecionado
+  const [inputValue, setInputValue] = useState(""); // Estado para armazenar o valor do input
+  const [animationPlayed, setAnimationPlayed] = useState(false); // Estado para controlar a animação
+  const [showSuccessText, setShowSuccessText] = useState(false); // Estado para controlar a visibilidade do texto de sucesso
   const navigate = useNavigate();
-  const handleSessionTimeout = () => {
-    navigate("/", { state: { showSessionTimeoutModal: true } });
+  const handleSessionTimeout = () => { // Função para lidar com o timeout da sessão
+    navigate("/", { state: { showSessionTimeoutModal: true } }); 
   };
 
-  const { t } = useTranslation();
+  
+  const { t } = useTranslation(); // Função de tradução
 
+  // Opções para a animação de adição de interesse
   const defaultOptions = {
     loop: false,
     autoplay: false,
@@ -47,20 +53,22 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
     },
   };
 
+  // Função para lidar com a mudança no input
   const handleInputChange = (value) => {
     setInputValue(value);
   };
 
+  // Mapeia os interesses para as opções do select
   const options = interests.map((interest) => {
     let isDisabled = false;
 
     if (context === "user") {
-      // Disable if the interest exists in userInterests
+      // Fica disabled se o user já o tiver na lista
       isDisabled = userInterests.some(
         (userInterest) => userInterest.name === interest.name
       );
     } else if (context === "editProject") {
-      // Disable if the interest exists in projectInterests
+      // Fica disabled se o projeto já o tiver na lista
       isDisabled = projectInterests.some(
         (projectInterest) => projectInterest.name === interest.name
       );
@@ -70,6 +78,7 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
       );
     }
 
+    // Retorna o objeto com os valores necessários
     return {
       value: interest.name,
       label: interest.name,
@@ -78,14 +87,17 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
     };
   });
 
+  // Função para lidar com a mudança na seleção
   const handleSelectChange = (selectedOption) => {
     setSelectedInterest(selectedOption);
   };
 
+  // Verifica se o interesse selecionado está nas opções
   const isInterestInOptions = options.some(
     (option) => option.value === selectedInterest?.value
   );
 
+  // Função para lidar com o submit
   const handleSubmit = async () => {
     const data = [
       {
@@ -98,7 +110,7 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
       return;
     }
 
-    if (context === "user") {
+    if (context === "user") { // Se o contexto for utilizador
       try {
         const response = await fetch(`${apiUrl}/interests`, {
           method: "POST",
@@ -112,20 +124,20 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
 
         if (response.status === 201) {
           const newInterests = await response.json();
-          setUserInterests([...userInterests, ...newInterests]);
+          setUserInterests([...userInterests, ...newInterests]); // Adiciona os novos interesses ao estado
           if (!interests.some((interest) => interest.name === data[0].name)) {
             addInterest(data[0]);
           }
-          setAnimationPlayed(true);
-          setShowSuccessText(true);
-          setSelectedInterest(null);
+          setAnimationPlayed(true); // Ativa a animação
+          setShowSuccessText(true); // Mostra o texto de sucesso
+          setSelectedInterest(null); // Reseta o interesse selecionado
         } else if (response.status === 401) {
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
           if (errorMessage === "Invalid token") {
-            handleSessionTimeout(); // Session timeout
-            return; // Exit early if session timeout
+            handleSessionTimeout(); // Sessão terminada
+            return; 
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
@@ -135,7 +147,7 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
       } catch (error) {
         console.error("Error adding interest:", error);
       }
-    } else if (context === "editProject") {
+    } else if (context === "editProject") { // Se o contexto for editar projeto
       const data = {
         id: isInterestInOptions ? selectedInterest.id : null,
         name: selectedInterest.value,
@@ -165,8 +177,8 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
           const errorMessage = data.message || "Unauthorized";
 
           if (errorMessage === "Invalid token") {
-            handleSessionTimeout(); // Session timeout
-            return; // Exit early if session timeout
+            handleSessionTimeout(); 
+            return; 
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
@@ -185,9 +197,9 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
       if (!interests.some((interest) => interest.name === data[0].name)) {
         addInterest(data[0]);
       }
-      setAnimationPlayed(true);
-      setShowSuccessText(true);
-      setSelectedInterest(null);
+      setAnimationPlayed(true); // Ativa a animação
+      setShowSuccessText(true); // Mostra o texto de sucesso
+      setSelectedInterest(null); // Reseta o interesse selecionado
     }
   };
 
@@ -217,12 +229,12 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
                   onChange={handleSelectChange}
                   onInputChange={handleInputChange}
                   isOptionDisabled={(option) =>
-                    option.isDisabled || inputValue.length > 20
+                    option.isDisabled || inputValue.length > 20 // Desabilita a opção se o input for maior que 20
                   }
                   formatOptionLabel={(option) => (
                     <div>
                       {option.label}
-                      {option.isDisabled ? <TbLockFilled /> : null}
+                      {option.isDisabled ? <TbLockFilled /> : null} 
                     </div>
                   )}
                   placeholder={t("SearchForAInterest")}

@@ -11,28 +11,31 @@ import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
+//O context é usado porque este componente é reutilizável 
+
 function AddResources({ openPopUpResources, closePopUpResources, context }) {
-  const { projectId } = useParams();
-  const token = useUserStore((state) => state.token);
-  const apiUrl = useApiStore((state) => state.apiUrl);
-  const projectResources = useProjectStore((state) => state.projectResources);
-  const setProjectResources = useProjectStore(
+  
+  const { projectId } = useParams(); // Obter o id do projeto da URL
+  const token = useUserStore((state) => state.token); // Obter o token do usuário
+  const apiUrl = useApiStore((state) => state.apiUrl); // Obter a URL da API
+  const projectResources = useProjectStore((state) => state.projectResources); // Obter os recursos do projeto
+  const setProjectResources = useProjectStore( // Definir os recursos do projeto
     (state) => state.setProjectResources
   );
 
-  const [resources, setResources] = useState([]);
-  const [selectedResource, setSelectedResource] = useState(null);
-  const [inputValue, setInputValue] = useState("");
-  const [animationPlayed, setAnimationPlayed] = useState(false);
-  const [showSuccessText, setShowSuccessText] = useState(false);
-  const navigate = useNavigate();
-  const handleSessionTimeout = () => {
-    navigate("/", { state: { showSessionTimeoutModal: true } });
+  const [resources, setResources] = useState([]); // Definir os recursos
+  const [selectedResource, setSelectedResource] = useState(null); // Definir o recurso selecionado
+  const [inputValue, setInputValue] = useState(""); // Definir o valor de entrada
+  const [animationPlayed, setAnimationPlayed] = useState(false); // Gerir a animação 
+  const [showSuccessText, setShowSuccessText] = useState(false); // Definir o texto de sucesso exibido
+  const navigate = useNavigate(); 
+  const handleSessionTimeout = () => { // Gerir o tempo limite da sessão
+    navigate("/", { state: { showSessionTimeoutModal: true } }); 
   };
 
-  const { t } = useTranslation();
+  const { t } = useTranslation(); // Traduzir o texto
 
-  useEffect(() => {
+  useEffect(() => { // Obter todos os recursos
     const getAllResources = async () => {
       try {
         const response = await fetch(`${apiUrl}/resources`, {
@@ -46,15 +49,15 @@ function AddResources({ openPopUpResources, closePopUpResources, context }) {
 
         if (response.status === 200) {
           const data = await response.json();
-          setResources(data);
-          console.log(data);
+          setResources(data); // Definir os recursos
+          
         } else if (response.status === 401) {
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
           if (errorMessage === "Invalid token") {
-            handleSessionTimeout(); // Session timeout
-            return; // Exit early if session timeout
+            handleSessionTimeout(); // Sessão terminada
+            return; 
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
@@ -67,12 +70,14 @@ function AddResources({ openPopUpResources, closePopUpResources, context }) {
     };
 
     getAllResources();
-  }, [apiUrl, token]);
+  }, [apiUrl, token]); // Dependências que fazem ativar o useEffect
 
+  // Gerir a mudança de entrada
   const handleInputChange = (value) => {
     setInputValue(value);
   };
 
+  // Mapear os recursos e definir as opções
   const options = resources.map((resource) => ({
     value: resource.name,
     label: resource.name,
@@ -82,7 +87,7 @@ function AddResources({ openPopUpResources, closePopUpResources, context }) {
     ),
   }));
 
-  const defaultOptions = {
+  const defaultOptions = { // Opções padrão da animação
     loop: false,
     autoplay: false,
     animationData: AddedAnimation,
@@ -91,12 +96,12 @@ function AddResources({ openPopUpResources, closePopUpResources, context }) {
     },
   };
 
-  const handleSelectChange = (selectedOption) => {
+  const handleSelectChange = (selectedOption) => { // Gerir a mudança de seleção
     setSelectedResource(selectedOption);
   };
 
-  const handleSubmit = async () => {
-    if (!selectedResource) return;
+  const handleSubmit = async () => { // Gerir o envio do formulário
+    if (!selectedResource) return; // Se não houver recurso selecionado, sai
 
     const data = {
       name: selectedResource.value,
@@ -120,16 +125,16 @@ function AddResources({ openPopUpResources, closePopUpResources, context }) {
           }
         );
         if (response.status === 200) {
-          setAnimationPlayed(true);
-          setShowSuccessText(true);
-          setSelectedResource(null);
+          setAnimationPlayed(true); // Ativar a animação
+          setShowSuccessText(true); // Exibir o texto de sucesso
+          setSelectedResource(null); // Limpar o recurso selecionado
         } else if (response.status === 401) {
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
           if (errorMessage === "Invalid token") {
-            handleSessionTimeout(); // Session timeout
-            return; // Exit early if session timeout
+            handleSessionTimeout(); // Sessão terminada
+            return; 
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
@@ -149,9 +154,9 @@ function AddResources({ openPopUpResources, closePopUpResources, context }) {
         name: selectedResource.value,
       };
       setProjectResources([...projectResources, data]);
-      setAnimationPlayed(true);
-      setShowSuccessText(true);
-      setSelectedResource(null);
+      setAnimationPlayed(true); // Ativar a animação
+      setShowSuccessText(true); // Exibir o texto de sucesso
+      setSelectedResource(null); // Limpar o recurso selecionado
     }
   };
 
@@ -182,7 +187,7 @@ function AddResources({ openPopUpResources, closePopUpResources, context }) {
                   isOptionDisabled={(option) =>
                     option.isDisabled || inputValue.length > 20
                   }
-                  formatOptionLabel={(option) => (
+                  formatOptionLabel={(option) => ( // Formatar a etiqueta da opção, adicionando um ícone de bloqueio se o recurso estiver desativado
                     <div>
                       {option.label}
                       {option.isDisabled ? <TbLockFilled /> : null}
