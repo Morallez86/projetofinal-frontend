@@ -15,24 +15,24 @@ function RemoveResources({
   closePopUpResourcesRemove,
   projectInfo,
 }) {
-  const apiUrl = useApiStore((state) => state.apiUrl);
-  const token = useUserStore((state) => state.token);
-  const projectResources = useProjectStore((state) => state.projectResources);
-  const setProjectResources = useProjectStore(
+  const apiUrl = useApiStore((state) => state.apiUrl); // obter API URL
+  const token = useUserStore((state) => state.token); // obter token
+  const projectResources = useProjectStore((state) => state.projectResources); // obter recursos do projeto
+  const setProjectResources = useProjectStore( // set dos recursos do projeto
     (state) => state.setProjectResources
   );
 
-  const [animationPlayed, setAnimationPlayed] = useState(false);
-  const [filter, setFilter] = useState("");
-  const [selectedResourceIds, setSelectedResourceIds] = useState([]);
-  const [showSuccessText, setShowSuccessText] = useState(false);
-  const [filteredResources, setFilteredResources] = useState([]);
-  const navigate = useNavigate();
-  const handleSessionTimeout = () => {
-    navigate("/", { state: { showSessionTimeoutModal: true } });
+  const [animationPlayed, setAnimationPlayed] = useState(false); // estado para animação
+  const [filter, setFilter] = useState(""); // estado para filtro
+  const [selectedResourceIds, setSelectedResourceIds] = useState([]); // estado para recursos selecionados
+  const [showSuccessText, setShowSuccessText] = useState(false); // estado para mostrar texto de sucesso
+  const [filteredResources, setFilteredResources] = useState([]); // estado para recursos filtrados
+  const navigate = useNavigate(); 
+  const handleSessionTimeout = () => { // função para timeout
+    navigate("/", { state: { showSessionTimeoutModal: true } }); // navegar para a página inicial
   };
 
-  const { t } = useTranslation();
+  const { t } = useTranslation(); // tradução
 
   useEffect(() => {
     if (projectInfo) {
@@ -50,7 +50,7 @@ function RemoveResources({
     }
   }, [filter, projectInfo, projectResources]);
 
-  const defaultOptions = {
+  const defaultOptions = { // opções padrão
     loop: false,
     autoplay: false,
     animationData: RemovedAnimation,
@@ -59,7 +59,7 @@ function RemoveResources({
     },
   };
 
-  const handleCheckboxChange = (id) => {
+  const handleCheckboxChange = (id) => { // função para checkbox
     if (selectedResourceIds.includes(id)) {
       setSelectedResourceIds(
         selectedResourceIds.filter((selectedId) => selectedId !== id)
@@ -69,7 +69,7 @@ function RemoveResources({
     }
   };
 
-  const handleRemoveResources = async () => {
+  const handleRemoveResources = async () => { // função para remover recursos
     if (projectInfo) {
       console.log(token);
       try {
@@ -85,7 +85,7 @@ function RemoveResources({
             body: JSON.stringify(selectedResourceIds),
           }
         );
-        if (response.status === 200) {
+        if (response.status === 200) { // se o status for 200
           const updatedResources = projectInfo.resources.filter(
             (resource) => !selectedResourceIds.includes(resource.id)
           );
@@ -94,17 +94,17 @@ function RemoveResources({
           setTimeout(() => {
             closePopUpResourcesRemove();
           }, 2000);
-        } else if (response.status === 401) {
+        } else if (response.status === 401) { // se o status for 401
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
-          if (errorMessage === "Invalid token") {
+          if (errorMessage === "Invalid token") { // se a mensagem de erro for "Invalid token"
             handleSessionTimeout(); // Session timeout
             return; // Exit early if session timeout
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
-        } else if (response.status === 500) {
+        } else if (response.status === 500) { // se o status for 500
           console.log("Internal server error");
         }
       } catch (error) {

@@ -15,30 +15,30 @@ function RemoveComponents({
   closePopUpComponentsRemove,
   projectInfo,
 }) {
-  const apiUrl = useApiStore((state) => state.apiUrl);
-  const token = useUserStore((state) => state.token);
-  const projectComponents = useProjectStore((state) => state.projectComponents);
-  const setProjectComponents = useProjectStore(
+  const apiUrl = useApiStore((state) => state.apiUrl); //api url
+  const token = useUserStore((state) => state.token); //token
+  const projectComponents = useProjectStore((state) => state.projectComponents); //componentes do projeto
+  const setProjectComponents = useProjectStore( //setar componentes do projeto
     (state) => state.setProjectComponents
   );
 
-  const [animationPlayed, setAnimationPlayed] = useState(false);
-  const [filter, setFilter] = useState("");
-  const [selectedComponentIds, setSelectedComponentIds] = useState([]);
-  const [showSuccessText, setShowSuccessText] = useState(false);
-  const [filteredComponents, setFilteredComponents] = useState([]);
-  const navigate = useNavigate();
-  const handleSessionTimeout = () => {
-    navigate("/", { state: { showSessionTimeoutModal: true } });
+  const [animationPlayed, setAnimationPlayed] = useState(false); //animação
+  const [filter, setFilter] = useState(""); //filtro
+  const [selectedComponentIds, setSelectedComponentIds] = useState([]); //componentes selecionados
+  const [showSuccessText, setShowSuccessText] = useState(false); //texto de sucesso
+  const [filteredComponents, setFilteredComponents] = useState([]); //componentes filtrados
+  const navigate = useNavigate(); 
+  const handleSessionTimeout = () => { //função para timeout
+    navigate("/", { state: { showSessionTimeoutModal: true } }); //navegar para a página inicial
   };
 
-  const { t } = useTranslation();
+  const { t } = useTranslation(); //tradução
 
   useEffect(() => {
-    if (projectInfo) {
-      setFilteredComponents(
+    if (projectInfo) { //se houver informações do projeto
+      setFilteredComponents( //set dos componentes filtrados
         projectInfo.components.filter((component) =>
-          component.name.toLowerCase().includes(filter.toLowerCase())
+          component.name.toLowerCase().includes(filter.toLowerCase()) 
         )
       );
     } else {
@@ -48,9 +48,9 @@ function RemoveComponents({
         )
       );
     }
-  }, [filter, projectInfo, projectComponents]);
+  }, [filter, projectInfo, projectComponents]); //dependências
 
-  const defaultOptions = {
+  const defaultOptions = { //opções padrão
     loop: false,
     autoplay: false,
     animationData: RemovedAnimation,
@@ -59,7 +59,7 @@ function RemoveComponents({
     },
   };
 
-  const handleCheckboxChange = (id) => {
+  const handleCheckboxChange = (id) => { //função para checkbox
     if (selectedComponentIds.includes(id)) {
       setSelectedComponentIds(
         selectedComponentIds.filter((selectedId) => selectedId !== id)
@@ -69,9 +69,9 @@ function RemoveComponents({
     }
   };
 
-  const handleRemoveComponents = async () => {
+  const handleRemoveComponents = async () => { //função para remover componentes
     if (projectInfo) {
-      console.log(token);
+      
       try {
         const response = await fetch(
           `${apiUrl}/projects/${projectInfo.id}/removeComponents`,
@@ -85,7 +85,7 @@ function RemoveComponents({
             body: JSON.stringify(selectedComponentIds),
           }
         );
-        if (response.status === 200) {
+        if (response.status === 200) { //se a resposta for 200
           const updatedComponents = projectInfo.components.filter(
             (component) => !selectedComponentIds.includes(component.id)
           );
@@ -94,17 +94,17 @@ function RemoveComponents({
           setTimeout(() => {
             closePopUpComponentsRemove();
           }, 2000);
-        } else if (response.status === 401) {
+        } else if (response.status === 401) { //se a resposta for 401
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
-          if (errorMessage === "Invalid token") {
-            handleSessionTimeout(); // Session timeout
-            return; // Exit early if session timeout
+          if (errorMessage === "Invalid token") { //se o token for inválido
+            handleSessionTimeout(); // timeout
+            return; 
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
-        } else if (response.status === 500) {
+        } else if (response.status === 500) { //se a resposta for 500
           console.log("Internal server error");
         }
       } catch (error) {

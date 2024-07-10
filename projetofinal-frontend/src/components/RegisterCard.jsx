@@ -9,10 +9,10 @@ import { useNavigate } from "react-router-dom";
 import {useTranslation} from "react-i18next";
 
 function RegisterCard() {
-  const [formDataName, setFormDataName] = useState({ name: "" });
-  const [formDatapasswords, setFormDatapasswords] = useState({ password: "", passwordConfirmation: "" });
-  const [formDataNames, setFormDataNames] = useState({ firstName: "", lastName: "" });
-  const [formDataRegister, setFormDataRegister] = useState({
+  const [formDataName, setFormDataName] = useState({ name: "" }); //useState para os dados do formulário
+  const [formDatapasswords, setFormDatapasswords] = useState({ password: "", passwordConfirmation: "" }); //useState para as senhas
+  const [formDataNames, setFormDataNames] = useState({ firstName: "", lastName: "" }); //useState para os nomes
+  const [formDataRegister, setFormDataRegister] = useState({ //useState para o registo 
     email: "",
     password: "",
     workplace: "",
@@ -21,20 +21,20 @@ function RegisterCard() {
     username: "",
     biography: "",
   });
-  const [selectedWorkLocation, setSelectedWorkLocation] = useState("");
-  const [warningUsername, setWarningUsername] = useState(0);
-  const [warningPasswordEquals, setWarningPasswordEquals] = useState(0);
+  const [selectedWorkLocation, setSelectedWorkLocation] = useState(""); //useState para a localização do trabalho
+  const [warningUsername, setWarningUsername] = useState(0); //useState para os avisos
+  const [warningPasswordEquals, setWarningPasswordEquals] = useState(0); 
   const [warningPasswordPower, setWarningPasswordPower] = useState(0);
   const [warningNameMax, setWarningNameMax] = useState(0);
   const [warningNameMin, setWarningNameMin] = useState(0);
   const [warningRequiresInputs, setWarningRequiresInputs] = useState(0);
   const [warningEmail, setWarningEmail] = useState(0);
-  const { apiUrl } = useApiStore();
-  const {workplaces} = useWorkplaceStore();
-  const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { apiUrl } = useApiStore(); //api url
+  const {workplaces} = useWorkplaceStore(); //locais de trabalho
+  const navigate = useNavigate(); 
+  const { t } = useTranslation(); //tradução
 
-  const handleChange = (event) => {
+  const handleChange = (event) => { //função para mudar os dados  
     const { name, value } = event.target;
     if (name === "name") {
       setFormDataName((prevDataName) => ({ ...prevDataName, [name]: value }));
@@ -66,7 +66,7 @@ function RegisterCard() {
     }
   };
 
-  const handleWorkLocationChange = (location) => {
+  const handleWorkLocationChange = (location) => { //função para mudar a localização do trabalho
     setSelectedWorkLocation(location);
     setFormDataRegister((prevDataRegister) => ({
       ...prevDataRegister,
@@ -74,14 +74,14 @@ function RegisterCard() {
     }));
   };
 
-  const handleInvalid = (event) => {
+  const handleInvalid = (event) => { //função para invalidar o evento
     event.preventDefault();
   };
 
-  const handleSubmit = async () => {
-    console.log(1);
+  const handleSubmit = async () => { //função para submeter
+    
 
-    // Reset warnings
+    // limpar avisos
     setWarningUsername(0);
     setWarningPasswordEquals(0);
     setWarningPasswordPower(0);
@@ -90,7 +90,7 @@ function RegisterCard() {
     setWarningRequiresInputs(0);
     setWarningEmail(0);
 
-    // Temporary variables to track warnings
+    // variáveis temporárias para os avisos
     let warningUsername = 0;
     let warningPasswordEquals = 0;
     let warningPasswordPower = 0;
@@ -99,34 +99,34 @@ function RegisterCard() {
     let warningRequiresInputs = 0;
     let warningEmail = 0;
 
-    // Perform checks and set temporary variables
-    if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(formDataRegister.email.trim())) {
+    // Verificar se os dados estão corretos
+    if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(formDataRegister.email.trim())) { //verificar se o email está correto
       warningEmail = 1;
-      console.log(2);
+      
     }
 
-    if (/\s/.test(formDataRegister.username)) {
+    if (/\s/.test(formDataRegister.username)) { //verificar se o username tem espaços
       warningUsername = 1;
-      console.log(3);
+      
     }
 
-    if (formDataRegister.password.length < 8 || zxcvbn(formDataRegister.password).score < 3) {
+    if (formDataRegister.password.length < 8 || zxcvbn(formDataRegister.password).score < 3) { //verificar se a password é forte
       warningPasswordPower = 1;
-      console.log(4);
+      
     }
 
-    if (formDataRegister.password !== formDatapasswords.passwordConfirmation) {
+    if (formDataRegister.password !== formDatapasswords.passwordConfirmation) { //verificar se as passwords são iguais
       warningPasswordEquals = 1;
     }
 
-    if (formDataName.name.split(" ").length > 2) {
+    if (formDataName.name.split(" ").length > 2) { //verificar se o nome tem mais de 2 nomes
       warningNameMax = 1;
-      console.log(5);
+      
     }
 
-    if (formDataName.name.split(" ").length < 2) {
+    if (formDataName.name.split(" ").length < 2) { //verificar se o nome tem menos de 2 nomes
       warningNameMin = 1;
-      console.log(6);
+      
     }
 
     if (
@@ -138,10 +138,10 @@ function RegisterCard() {
       formDataNames.lastName === ""
     ) {
       warningRequiresInputs = 1;
-      console.log(7);
+      
     }
 
-    // Set state based on temporary variables
+    // Atualizar avisos
     setWarningEmail(warningEmail);
     setWarningUsername(warningUsername);
     setWarningPasswordPower(warningPasswordPower);
@@ -150,7 +150,7 @@ function RegisterCard() {
     setWarningNameMin(warningNameMin);
     setWarningRequiresInputs(warningRequiresInputs);
 
-    // Check if any warnings are set
+    // Se houver avisos, não entrar em fetch
     if (
       warningUsername === 1 ||
       warningPasswordEquals === 1 ||
@@ -160,14 +160,14 @@ function RegisterCard() {
       warningRequiresInputs === 1 ||
       warningEmail === 1
     ) {
-      console.log("not enter in fetch");
+      
       return;
     }
 
-    console.log("entrei com avisos");
+    
 
     try {
-      const registerResponse = await fetch(
+      const registerResponse = await fetch( //fetch para o registo
         `${apiUrl}/users/register`,
         {
           method: "POST",
@@ -180,12 +180,12 @@ function RegisterCard() {
       );
 
       if (registerResponse.status === 201) {
-        console.log("User registered successfully");
+        
 
         const fileInput = document.getElementById("small-file-upload");
         const file = fileInput.files[0];
 
-        const imageResponse = await fetch(
+        const imageResponse = await fetch( //fetch para a imagem
           `${apiUrl}/users/image`,
           {
             method: "POST",
@@ -198,7 +198,7 @@ function RegisterCard() {
           }
         );
 
-        if (imageResponse.status === 200) {
+        if (imageResponse.status === 200) { //se a imagem for bem sucedida
           console.log("Image uploaded successfully");
         } else {
           console.log("Image upload failed");

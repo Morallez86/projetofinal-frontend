@@ -3,8 +3,8 @@ import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { Button } from "flowbite-react";
 import { useTranslation } from "react-i18next";
 
-function RegistrationConfirmation({ success, onConfirm }) {
-    const { t } = useTranslation();
+function RegistrationConfirmation({ success, onConfirm }) { 
+    const { t } = useTranslation(); //tradução
     return (
         <div className="min-h-screen flex flex-col justify-center items-center">
             <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md text-center">

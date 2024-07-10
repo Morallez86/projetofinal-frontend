@@ -6,18 +6,18 @@ import Lottie from "react-lottie";
 import RemovedAnimation from "../Assets/Removed.json";
 
 function RemoveUsers({ openPopUpUsersRemove, closePopUpUsersRemove }) {
-  const projectUsers = useProjectStore((state) => state.projectUsers);
-  const setProjectUsers = useProjectStore((state) => state.setProjectUsers);
+  const projectUsers = useProjectStore((state) => state.projectUsers); //utilizadores do projeto
+  const setProjectUsers = useProjectStore((state) => state.setProjectUsers);  //set dos utilizadores do projeto
 
-  const [animationPlayed, setAnimationPlayed] = useState(false);
-  const [filter, setFilter] = useState("");
-  const [selectedUserIds, setSelectedUserIds] = useState([]);
-  const [showSuccessText, setShowSuccessText] = useState(false);
+  const [animationPlayed, setAnimationPlayed] = useState(false); //estado para controlar a animação
+  const [filter, setFilter] = useState(""); //estado para filtro
+  const [selectedUserIds, setSelectedUserIds] = useState([]); //estado para utilizadores selecionados
+  const [showSuccessText, setShowSuccessText] = useState(false); //estado para mostrar texto de sucesso
   const filteredUsers = projectUsers.filter((user) =>
-    user.username.toLowerCase().includes(filter.toLowerCase())
+    user.username.toLowerCase().includes(filter.toLowerCase()) //filtrar utilizadores
   );
 
-  const handleCheckboxChange = (idOrIndex) => {
+  const handleCheckboxChange = (idOrIndex) => { //função para selecionar/deselecionar utilizadores
     if (selectedUserIds.includes(idOrIndex)) {
       setSelectedUserIds(selectedUserIds.filter((id) => id !== idOrIndex));
     } else {
@@ -25,7 +25,7 @@ function RemoveUsers({ openPopUpUsersRemove, closePopUpUsersRemove }) {
     }
   };
 
-  const defaultOptions = {
+  const defaultOptions = { //opções para a animação
     loop: false,
     autoplay: false,
     animationData: RemovedAnimation,
@@ -34,7 +34,7 @@ function RemoveUsers({ openPopUpUsersRemove, closePopUpUsersRemove }) {
     },
   };
 
-  const handleRemoveUsers = () => {
+  const handleRemoveUsers = () => { //função para remover utilizadores
     const updatedProjectUsers = projectUsers.filter(
       (_, index) => !selectedUserIds.includes(index)
     );

@@ -15,25 +15,25 @@ const NotificationsTable = ({
   onUpdateSeenStatus,
   onBulkUpdateSeenStatus,
 }) => {
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [selectedNotification, setSelectedNotification] = useState(null);
-  const { t } = useTranslation();
-  const [switch2, setSwitch2] = useState(false);
+  const [modalIsOpen, setModalIsOpen] = useState(false); // Estado do modal
+  const [selectedNotification, setSelectedNotification] = useState(null); // Notificação selecionada
+  const { t } = useTranslation(); // Função de tradução
+  const [switch2, setSwitch2] = useState(false); // Estado do switch
 
  
   
 
-  const openModal = (notification) => {
+  const openModal = (notification) => { // Função para abrir o modal
     setSelectedNotification(notification);
     setModalIsOpen(true);
   };
 
-  const closeModal = () => {
+  const closeModal = () => { // Função para fechar o modal
     setModalIsOpen(false);
     setSelectedNotification(null);
   };
 
-  const formatDateForInput = (dateArray) => {
+  const formatDateForInput = (dateArray) => { // Função para formatar a data
     if (!Array.isArray(dateArray) || dateArray.length < 3) {
       return "";
     }
@@ -42,7 +42,7 @@ const NotificationsTable = ({
     return date.toLocaleDateString("pt-BR");
   };
 
-  const formatTimeForInput = (dateArray) => {
+  const formatTimeForInput = (dateArray) => { // Função para formatar o horário
     if (!Array.isArray(dateArray) || dateArray.length < 5) {
       return "";
     }
@@ -54,24 +54,24 @@ const NotificationsTable = ({
     });
   };
 
-  const handleSeenChange = async (notificationId, currentStatus) => {
+  const handleSeenChange = async (notificationId, currentStatus) => { // Função para alterar o status da notificação
     const newStatus = !currentStatus;
     await onUpdateSeenStatus(notificationId, newStatus);
   };
 
-  const handleSeenChangeResponsive = async (notificationId, currentStatus) => {
+  const handleSeenChangeResponsive = async (notificationId, currentStatus) => { // Função para alterar o status da notificação
     setTimeout(() => {
       handleSeenChange(notificationId, currentStatus);
     }, 500
       )
   };
 
-  const handleBulkSeenChange = async (event) => {
+  const handleBulkSeenChange = async (event) => { // Função para alterar o visto de uma notificação 
     const newStatus = event.target.checked;
     await onBulkUpdateSeenStatus(newStatus);
   };
 
-  const columns = [
+  const columns = [ // Colunas da tabela
     { name:  t('Description'), selector: (row) => row.description, sortable: true },
     {
       name:  t('Timestamp'),
@@ -110,7 +110,7 @@ const NotificationsTable = ({
     },
   ];
 
-  const renderCards = () => {
+  const renderCards = () => { // Função para renderizar os cartões para a responsividade
     return data.map((notification) => (
       <div key={notification.id} className="p-4 bg-white rounded-lg shadow-md m-2">
         <h3 className="font-bold">{notification.type}</h3>

@@ -8,29 +8,29 @@ import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 
 const NotificationModal = ({ isOpen, closeModal, notification }) => {
-  const apiUrl = useApiStore.getState().apiUrl;
-  const token = useUserStore((state) => state.token);
-  const [successMessage, setSuccessMessage] = useState(false);
-  const [currentUserId, setCurrentUserId] = useState(null);
-  const { t } = useTranslation();
+  const apiUrl = useApiStore.getState().apiUrl; // URL da API
+  const token = useUserStore((state) => state.token); // Token do utilizador
+  const [successMessage, setSuccessMessage] = useState(false); // Mensagem de sucesso
+  const [currentUserId, setCurrentUserId] = useState(null); // ID do utilizador atual
+  const { t } = useTranslation(); // Função de tradução
   const navigate = useNavigate();
-  const handleSessionTimeout = () => {
-    navigate("/", { state: { showSessionTimeoutModal: true } });
+  const handleSessionTimeout = () => { // Função para lidar com o timeout da sessão
+    navigate("/", { state: { showSessionTimeoutModal: true } }); // Navegar para a página inicial
   };
 
   useEffect(() => {
     if (token) {
-      const decodedToken = jwtDecode(token);
-      setCurrentUserId(decodedToken.id);
-      console.log(decodedToken.id);
+      const decodedToken = jwtDecode(token); // Decodificar o token
+      setCurrentUserId(decodedToken.id); // ID do utilizador atual
+      
     }
   }, [token]);
 
-  if (!notification) {
+  if (!notification) { 
     return null;
   }
 
-  const formatDateForInput = (dateArray) => {
+  const formatDateForInput = (dateArray) => { // Função para formatar a data
     if (!Array.isArray(dateArray) || dateArray.length < 3) {
       return "";
     }
@@ -39,7 +39,7 @@ const NotificationModal = ({ isOpen, closeModal, notification }) => {
     return date.toLocaleDateString("pt-BR");
   };
 
-  const formatTimeForInput = (dateArray) => {
+  const formatTimeForInput = (dateArray) => { // Função para formatar o horário
     if (!Array.isArray(dateArray) || dateArray.length < 5) {
       return "";
     }
@@ -54,7 +54,7 @@ const NotificationModal = ({ isOpen, closeModal, notification }) => {
   const formattedDate = formatDateForInput(notification.timestamp);
   const formattedTime = formatTimeForInput(notification.timestamp);
 
-  const handleApprove = async () => {
+  const handleApprove = async () => { // Função para aprovar
     try {
       const body = {
         id: notification.id,
@@ -64,20 +64,19 @@ const NotificationModal = ({ isOpen, closeModal, notification }) => {
         approval: true,
       };
 
-      // Notification where the project admin sends to a normal user
-      if (notification.type === "INVITATION") {
+      
+      if (notification.type === "INVITATION") { // Se a notificação for de convite
         body.type = "400";
-        console.log(body);
-        //Notification where the user wants to join a project
-      } else if (
+        
+      } else if ( // Se a notificação for de gestão
         notification.type === "MANAGING" &&
         notification.action === "INVITATION"
       ) {
         body.type = "300";
       }
-      console.log(body);
+      
 
-      const response = await fetch(`${apiUrl}/notifications/approval`, {
+      const response = await fetch(`${apiUrl}/notifications/approval`, {  // Aprovar a notificação
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -86,19 +85,19 @@ const NotificationModal = ({ isOpen, closeModal, notification }) => {
         body: JSON.stringify(body),
       });
 
-      if (response.ok) {
+      if (response.ok) { // Verificar se a resposta é bem-sucedida
         setSuccessMessage(true);
         setTimeout(() => {
           setSuccessMessage(false);
           closeModal();
         }, 3000);
-      } else if (response.status === 401) {
+      } else if (response.status === 401) { // Verificar se o token é inválido
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
 
         if (errorMessage === "Invalid token") {
-          handleSessionTimeout(); // Session timeout
-          return; // Exit early if session timeout
+          handleSessionTimeout(); // Lidar com o timeout da sessão
+          return; 
         } else {
           console.error("Error updating seen status:", errorMessage);
         }
@@ -109,8 +108,8 @@ const NotificationModal = ({ isOpen, closeModal, notification }) => {
       console.error("Error:", error);
     }
   };
-
-  const handleReject = async () => {
+ 
+  const handleReject = async () => { // Função para rejeitar
     try {
       const body = {
         id: notification.id,
@@ -120,14 +119,14 @@ const NotificationModal = ({ isOpen, closeModal, notification }) => {
         approval: false,
       };
 
-      if (notification.type === "INVITATION") {
+      if (notification.type === "INVITATION") { // Se a notificação for de convite
         body.type = "400";
         console.log(body);
-      } else if (notification.type === "MANAGING") {
+      } else if (notification.type === "MANAGING") { // Se a notificação for de gestão
         body.type = "300";
       }
 
-      const response = await fetch(`${apiUrl}/notifications/approval`, {
+      const response = await fetch(`${apiUrl}/notifications/approval`, { 
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -136,19 +135,19 @@ const NotificationModal = ({ isOpen, closeModal, notification }) => {
         body: JSON.stringify(body),
       });
 
-      if (response.ok) {
+      if (response.ok) { // Verificar se a resposta é bem-sucedida
         setSuccessMessage(true);
         setTimeout(() => {
           setSuccessMessage(false);
           closeModal();
         }, 3000);
-      } else if (response.status === 401) {
+      } else if (response.status === 401) { // Verificar se o token é inválido
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
 
         if (errorMessage === "Invalid token") {
-          handleSessionTimeout(); // Session timeout
-          return; // Exit early if session timeout
+          handleSessionTimeout(); // Lidar com o timeout da sessão
+          return; 
         } else {
           console.error("Error updating seen status:", errorMessage);
         }

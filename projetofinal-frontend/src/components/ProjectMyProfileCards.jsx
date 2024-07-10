@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 const ProjectCard = ({ project, onRowClick }) => {
-    const navigate = useNavigate();
-    const { t } = useTranslation();
+    const navigate = useNavigate(); 
+    const { t } = useTranslation(); //tradução
   
-    return (
+    return ( //cards para a responsividade
         <div className="p-4 border border-gray-300 bg-white rounded-lg shadow-md m-2">
         <h2 className="text-xl font-bold mb-2">{project.title}</h2>
         <p>{t('Status')}: {project.status}</p>
