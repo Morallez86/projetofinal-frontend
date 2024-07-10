@@ -5,17 +5,17 @@ import useUserStore from "../Stores/UserStore";
 import { useNavigate } from "react-router-dom";
 
 const useSkills = () => {
-  const setSkills = useSkillStore((state) => state.setSkills);
-  const skills = useSkillStore((state) => state.skills);
-  const { token } = useUserStore();
-  const navigate = useNavigate();
+  const setSkills = useSkillStore((state) => state.setSkills); // setSkills
+  const skills = useSkillStore((state) => state.skills); // skills
+  const { token } = useUserStore(); // token
+  const navigate = useNavigate(); 
 
   useEffect(() => {
-    // Only fetch skills if token exists and they are not already set
-    if (token && (!skills || skills.length === 0)) {
+    
+    if (token && (!skills || skills.length === 0)) { // se o token existir e as skills não existirem
       const fetchData = async () => {
         try {
-          const data = await getSkills(token, navigate); // Pass token to getSkills
+          const data = await getSkills(token, navigate); // fetch das skills
           setSkills(data);
         } catch (error) {
           console.error("Error fetching skills:", error);
@@ -23,7 +23,7 @@ const useSkills = () => {
       };
       fetchData();
     }
-  }, [token, skills, setSkills, navigate]);
+  }, [token, skills, setSkills, navigate]); // dependências
 
   return { skills };
 };

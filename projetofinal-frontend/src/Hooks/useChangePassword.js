@@ -5,23 +5,23 @@ import zxcvbn from "zxcvbn";
 import { updatePassword } from "../Services/apiService";
 
 export default function useChangePassword(apiUrl, token) {
-    const [loading, setLoading] = useState(false);
-    const [passwordStrengthWarning, setPasswordStrengthWarning] = useState(false);
-    const [showWarning, setShowWarning] = useState(false);
+    const [loading, setLoading] = useState(false); // loading
+    const [passwordStrengthWarning, setPasswordStrengthWarning] = useState(false); // aviso de força da password
+    const [showWarning, setShowWarning] = useState(false); // mostrar aviso
 
-    const handleChangePassword = async (oldPassword, newPassword, confirmNewPassword) => {
+    const handleChangePassword = async (oldPassword, newPassword, confirmNewPassword) => { // função para mudar a password
         setLoading(true);
 
         const passwordStrength = zxcvbn(newPassword);
-        if (passwordStrength.score < 3) {
+        if (passwordStrength.score < 3) { // se a força da password for menor que 3
         setPasswordStrengthWarning(true);
         setLoading(false);
         return false;
         }
 
         setPasswordStrengthWarning(false);
-        if (newPassword !== confirmNewPassword) {
-        setShowWarning(true);
+        if (newPassword !== confirmNewPassword) { // se a nova password for diferente da confirmação
+        setShowWarning(true); 
         setLoading(false);
         return false;
         }
