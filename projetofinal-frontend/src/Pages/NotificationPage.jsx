@@ -14,20 +14,20 @@ import { useNavigate } from "react-router-dom";
 
 function NotificationsPage() {
   const navigate = useNavigate();
-  const [notifications, setNotifications] = useState([]);
-  const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [totalPages, setTotalPages] = useState(0);
-  const [type, setType] = useState(null); // Initialize with null
-  const [seen, setSeen] = useState(false); // State for seen filter
-  const { registerMessageHandler, unregisterMessageHandler } = useWebSocket();
-  const { token } = useUserStore();
+  const [notifications, setNotifications] = useState([]); // notificações
+  const [page, setPage] = useState(1); // página
+  const [rowsPerPage, setRowsPerPage] = useState(10); // linhas por página
+  const [totalPages, setTotalPages] = useState(0); // total de páginas
+  const [type, setType] = useState(null); // tipo
+  const [seen, setSeen] = useState(false); // visto
+  const { registerMessageHandler, unregisterMessageHandler } = useWebSocket(); // webSocket
+  const { token } = useUserStore(); // token
 
-  const apiUrl = useApiStore.getState().apiUrl;
-  const { t } = useTranslation();
+  const apiUrl = useApiStore.getState().apiUrl; // apiUrl
+  const { t } = useTranslation(); // tradução
 
-  // Fetch notifications function
-  const fetchNotifications = useCallback(async () => {
+ 
+  const fetchNotifications = useCallback(async () => { // função para buscar as notificações
     try {
       const headers = {
         Accept: "*/*",
@@ -38,62 +38,61 @@ function NotificationsPage() {
         headers.Authorization = `Bearer ${token}`;
       }
 
-      // Construct the URL with conditional query parameters
-      let url = `${apiUrl}/notifications?seen=${seen}&page=${page}&limit=${rowsPerPage}`;
+      
+      let url = `${apiUrl}/notifications?seen=${seen}&page=${page}&limit=${rowsPerPage}`; // url
       if (type !== null) {
         url += `&type=${type}`;
       }
 
       const response = await fetch(url, { headers });
 
-      if (!response.ok) {
+      if (!response.ok) { // se a resposta não for ok
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
 
-      // Check for 401 specifically to handle session timeout
-      if (response.status === 401) {
+      
+      if (response.status === 401) { // status 401
         const errorMessage = data.message || "Unauthorized";
 
-        // Differentiate based on error message
+        
         if (errorMessage === "Invalid token") {
-          handleSessionTimeout(); // Session timeout
+          handleSessionTimeout(); // timeout da sessão
         } else {
           console.error("Error fetching notifications:", errorMessage);
         }
-        return; // Exit early if session timeout
+        return; 
       }
 
-      // Process successful response
-      console.log(data);
+      
       setNotifications(data.notifications);
       setTotalPages(data.totalPages);
     } catch (error) {
       console.error("Error fetching notifications:", error);
     }
-  }, [apiUrl, token, seen, page, rowsPerPage, type]);
+  }, [apiUrl, token, seen, page, rowsPerPage, type]); // dependências
 
-  useEffect(() => {
+  useEffect(() => { // useEffect para buscar as notificações
     fetchNotifications();
   }, [fetchNotifications]);
 
-  useEffect(() => {
+  useEffect(() => { // useEffect para buscar as notificações
     const handleNotification = (message) => {
       if (message.type === "notification") {
-        console.log("Notification received:", message);
-        fetchNotifications(); // Fetch all notifications when a new notification arrives
+        
+        fetchNotifications(); 
       }
     };
 
-    registerMessageHandler(handleNotification);
+    registerMessageHandler(handleNotification); // registrar mensagem
 
     return () => {
       unregisterMessageHandler(handleNotification);
     };
-  }, [fetchNotifications, registerMessageHandler, unregisterMessageHandler]);
+  }, [fetchNotifications, registerMessageHandler, unregisterMessageHandler]); // dependências
 
-  const updateSeenStatus = async (notificationId, newStatus) => {
+  const updateSeenStatus = async (notificationId, newStatus) => { // função para atualizar o status visto
     try {
       const headers = {
         Accept: "*/*",
@@ -104,7 +103,7 @@ function NotificationsPage() {
         headers.Authorization = `Bearer ${token}`;
       }
 
-      const response = await fetch(`${apiUrl}/notifications/seen`, {
+      const response = await fetch(`${apiUrl}/notifications/seen`, { // fetch para atualizar o status visto
         method: "PUT",
         headers,
         body: JSON.stringify({
@@ -113,31 +112,31 @@ function NotificationsPage() {
         }),
       });
 
-      // Check for 401 specifically to handle session timeout
-      if (response.status === 401) {
+      
+      if (response.status === 401) { // status 401
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
 
         if (errorMessage === "Invalid token") {
-          handleSessionTimeout(); // Session timeout
-          return; // Exit early if session timeout
+          handleSessionTimeout(); // timeout da sessão
+          return; 
         } else {
           console.error("Error updating seen status:", errorMessage);
         }
       }
 
-      if (!response.ok) {
+      if (!response.ok) { // se a resposta não for ok
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // Fetch the latest notifications after updating the seen status
-      await fetchNotifications();
+     
+      await fetchNotifications(); // buscar as notificações
     } catch (error) {
       console.error("Error updating seen status:", error);
     }
   };
 
-  const bulkUpdateSeenStatus = async (newStatus) => {
+  const bulkUpdateSeenStatus = async (newStatus) => { // função para atualizar o status visto em massa
     try {
       const headers = {
         Accept: "*/*",
@@ -150,7 +149,7 @@ function NotificationsPage() {
 
       const notificationIds = notifications.map(
         (notification) => notification.id
-      ); // Get all notification IDs
+      ); // notificações
 
       const response = await fetch(`${apiUrl}/notifications/seen`, {
         method: "PUT",
@@ -158,17 +157,17 @@ function NotificationsPage() {
         body: JSON.stringify({
           messageOrNotificationIds: notificationIds,
           seen: newStatus,
-        }), // Send notification IDs and new status
+        }), // atualizar o status visto
       });
 
-      // Check for 401 specifically to handle session timeout
-      if (response.status === 401) {
+      
+      if (response.status === 401) { // status 401
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
 
         if (errorMessage === "Invalid token") {
-          handleSessionTimeout(); // Session timeout
-          return; // Exit early if session timeout
+          handleSessionTimeout(); // timeout da sessão
+          return; 
         } else {
           console.error("Error updating seen status:", errorMessage);
         }
@@ -178,14 +177,13 @@ function NotificationsPage() {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // Fetch the latest notifications after updating the seen status
-      await fetchNotifications();
+      await fetchNotifications(); // obter as notificações
     } catch (error) {
       console.error("Error updating seen status:", error);
     }
   };
 
-  const handleSessionTimeout = () => {
+  const handleSessionTimeout = () => { // timeout da sessão
     navigate("/", { state: { showSessionTimeoutModal: true } });
   };
 
@@ -227,7 +225,7 @@ function NotificationsPage() {
               <button
                 onClick={() => setType(null)}
                 className={`btn flex items-center rounded justify-center ${
-                  type === null // Check for null instead of "ALL"
+                  type === null 
                     ? "border border-cyan-500"
                     : "border border-transparent"
                 }`}

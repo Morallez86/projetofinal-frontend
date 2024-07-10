@@ -10,28 +10,28 @@ import { jwtDecode } from "jwt-decode";
 
 
 const useProjects = (userId, page, rowsPerPage) => {
-  const navigate = useNavigate();
-  const apiUrl = useApiStore.getState().apiUrl;
-  const token = useUserStore((state) => state.token);
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [totalPages, setTotalPages] = useState(0);
-  useSkills();
-  useInterests();
-  const setProjectTimestamp = useUserStore(
+  const navigate = useNavigate(); 
+  const apiUrl = useApiStore.getState().apiUrl; // apiUrl
+  const token = useUserStore((state) => state.token); // token
+  const [projects, setProjects] = useState([]); // projetos
+  const [loading, setLoading] = useState(true); // loading
+  const [totalPages, setTotalPages] = useState(0); // total de páginas
+  useSkills(); // skills
+  useInterests(); // interesses
+  const setProjectTimestamp = useUserStore( // timestamp do projeto
     (state) => state.setProjectTimestamp
-  );
-  const projectTimestamps = useUserStore((state) => state.projectTimestamps);
+  ); 
+  const projectTimestamps = useUserStore((state) => state.projectTimestamps); // timestamps dos projetos
 
-  const handleSessionTimeout = () => {
-    navigate("/", { state: { showSessionTimeoutModal: true } });
+  const handleSessionTimeout = () => { // função para timeout da sessão
+    navigate("/", { state: { showSessionTimeoutModal: true } }); // navegar para a página inicial
   };
 
-  useEffect(() => {
+  useEffect(() => { // useEffect para atualizar o timestamp do projeto
     if (token) {
       try {
-        const decodedToken = jwtDecode(token);
-        console.log(decodedToken);
+        const decodedToken = jwtDecode(token); // decodificar o token
+        console.log(decodedToken); // log do token decodificado
         if (decodedToken.projectTimestamps) {
           Object.entries(decodedToken.projectTimestamps).forEach(
             ([projectId, timestamp]) => {
@@ -43,15 +43,15 @@ const useProjects = (userId, page, rowsPerPage) => {
         console.error("Erro ao decodificar o token:", error);
       }
     }
-  }, [token, setProjectTimestamp]);
+  }, [token, setProjectTimestamp]); // dependências
 
-  console.log(projectTimestamps);
+  
 
-  useEffect(() => {
+  useEffect(() => { // useEffect para buscar os projetos
     if (!userId) return;
 
-    const fetchProjects = async () => {
-      setLoading(true);
+    const fetchProjects = async () => { 
+      setLoading(true); // loading
       try {
         const response = await fetch(
           `${apiUrl}/users/${userId}/myProjects?page=${page}&limit=${rowsPerPage}`,
@@ -64,19 +64,19 @@ const useProjects = (userId, page, rowsPerPage) => {
           }
         );
 
-        if (response.status === 401) {
+        if (response.status === 401) { // status 401
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
-          if (errorMessage === "Invalid token") {
-            handleSessionTimeout(); // Session timeout
-            return; // Exit early if session timeout
+          if (errorMessage === "Invalid token") { // token inválido
+            handleSessionTimeout(); // timeout da sessão
+            return; 
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
         }
 
-        if (!response.ok) {
+        if (!response.ok) { // se a resposta não for ok
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
@@ -91,27 +91,27 @@ const useProjects = (userId, page, rowsPerPage) => {
     };
 
     fetchProjects();
-  }, [page, rowsPerPage, apiUrl, token, userId]);
+  }, [page, rowsPerPage, apiUrl, token, userId]); // dependências
 
-  return { projects, loading, totalPages };
+  return { projects, loading, totalPages }; 
 };
 
-function MyProfileMyProjects() {
+function MyProfileMyProjects() { // função para os projetos do utilizador
   const navigate = useNavigate();
-  const token = useUserStore((state) => state.token);
-  const decodedToken = token ? jwtDecode(token) : null;
-  const userId = decodedToken ? decodedToken.id : null;
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const { projects, loading, totalPages } = useProjects(
+  const token = useUserStore((state) => state.token); // token
+  const decodedToken = token ? jwtDecode(token) : null; // token decodificado
+  const userId = decodedToken ? decodedToken.id : null; // id do utilizador
+  const [page, setPage] = useState(0); // página
+  const [rowsPerPage, setRowsPerPage] = useState(10); // linhas por página
+  const { projects, loading, totalPages } = useProjects( // projetos
     userId,
     page,
     rowsPerPage
   );
-  const [viewMode, setViewMode] = useState('table');
+  const [viewMode, setViewMode] = useState('table'); 
 
-  const handleRowClick = (projectId) => {
-    navigate(`/myProjects/${projectId}/ganttChart`);
+  const handleRowClick = (projectId) => { // função para clicar numa linha
+    navigate(`/myProjects/${projectId}/ganttChart`); // navegar para a página do projeto
   };
 
   return (

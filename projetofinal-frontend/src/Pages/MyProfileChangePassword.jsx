@@ -10,12 +10,12 @@ import { useTranslation } from "react-i18next";
 
 
 function MyProfileChangePassword() {
-  const { token } = useUserStore();
-  const apiUrl = useApiStore((state) => state.apiUrl);
-  const [formValues, handleChange] = useForm({ oldPassword: "", newPassword: "", confirmNewPassword: "" });
-  const { loading, passwordStrengthWarning, showWarning, handleChangePassword } = useChangePassword(apiUrl, token);
+  const { token } = useUserStore(); // token
+  const apiUrl = useApiStore((state) => state.apiUrl); // apiUrl
+  const [formValues, handleChange] = useForm({ oldPassword: "", newPassword: "", confirmNewPassword: "" }); //dados do formulário
+  const { loading, passwordStrengthWarning, showWarning, handleChangePassword } = useChangePassword(apiUrl, token); // função para alterar a senha
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => { // função para submeter o formulário
     e.preventDefault();
     const { oldPassword, newPassword, confirmNewPassword } = formValues;
     const success = await handleChangePassword(oldPassword, newPassword, confirmNewPassword);
@@ -24,7 +24,7 @@ function MyProfileChangePassword() {
     }
   };
 
-  const {t} = useTranslation();
+  const {t} = useTranslation(); // tradução
 
   return (
     <div className="flex flex-col min-h-screen items-center">

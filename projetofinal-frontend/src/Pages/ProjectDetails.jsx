@@ -20,88 +20,88 @@ import AddResources from "../Components/AddResources";
 import RemoveResources from "../Components/RemoveResources";
 
 function ProjectDetails() {
-  const { projectId } = useParams();
-  const { token } = useUserStore();
+  const { projectId } = useParams(); // projectId
+  const { token } = useUserStore(); // token
 
-  const [project, setProject] = useState(null);
-  const [tasks, setTasks] = useState([]);
-  const [userImages, setUserImages] = useState({});
-  const [loading, setLoading] = useState(true);
-  const apiUrl = useApiStore((state) => state.apiUrl);
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [team, setTeam] = useState([]);
-  const [unreadMessages, setUnreadMessages] = useState(0);
-  const projectTimestamps = useUserStore((state) => state.projectTimestamps);
+  const [project, setProject] = useState(null); // projeto
+  const [tasks, setTasks] = useState([]); // tarefas
+  const [userImages, setUserImages] = useState({}); // imagens do usuário
+  const [loading, setLoading] = useState(true); // loading
+  const apiUrl = useApiStore((state) => state.apiUrl); // apiUrl
+  const [isChatOpen, setIsChatOpen] = useState(false); // chat aberto
+  const [team, setTeam] = useState([]); // equipa
+  const [unreadMessages, setUnreadMessages] = useState(0); // mensagens não lidas
+  const projectTimestamps = useUserStore((state) => state.projectTimestamps); // timestamps dos projetos
   const setProjectTimestamp = useUserStore(
-    (state) => state.setProjectTimestamp
+    (state) => state.setProjectTimestamp // set do timestamp do projeto
   );
-  const isChatOpenRef = useRef(isChatOpen);
-  const [messagesAlone, setMessagesAlone] = useState([]);
-  const [allMsgs, setAllMsgs] = useState([]);
-  const [reopenSocket, setReopenSocket] = useState(true);
-  const [statePopUpUsers, setStatePopUpUsers] = useState(false);
-  const [statePopUpSkills, setStatePopUpSkills] = useState(false);
-  const [statePopUpSkillsRemove, setStatePopUpSkillsRemove] = useState(false);
-  const [statePopUpInterests, setStatePopUpInterests] = useState(false);
-  const [statePopUpInterestRemove, setStatePopUpInterestRemove] =
-    useState(false);
-  const [statePopUpComponent, setStatePopUpComponent] = useState(false);
+  const isChatOpenRef = useRef(isChatOpen); // chat aberto ref
+  const [messagesAlone, setMessagesAlone] = useState([]); //array de mensagens temporárioas 
+  const [allMsgs, setAllMsgs] = useState([]); // todas as mensagens
+  const [reopenSocket, setReopenSocket] = useState(true); // reabrir o socket
+  const [statePopUpUsers, setStatePopUpUsers] = useState(false); // popup de utilizadores
+  const [statePopUpSkills, setStatePopUpSkills] = useState(false);  // popup de skills
+  const [statePopUpSkillsRemove, setStatePopUpSkillsRemove] = useState(false); // popup de remover skills
+  const [statePopUpInterests, setStatePopUpInterests] = useState(false); // popup de interesses
+  const [statePopUpInterestRemove, setStatePopUpInterestRemove] = 
+    useState(false); // popup de remover interesses
+  const [statePopUpComponent, setStatePopUpComponent] = useState(false); // popup de componentes
   const [statePopUpComponentsRemove, setStatePopUpComponentsRemove] =
-    useState(false);
+    useState(false); // popup de remover componentes
   const [statePopUpResources, setStatePopUpResources] = useState(false);
   const [statePopUpResourcesRemove, setStatePopUpResourcesRemove] =
-    useState(false);
+    useState(false); // popup de remover recursos
 
-  const openAddUsersModal = () => setStatePopUpUsers(true);
-  const closeAddUsersModal = () => setStatePopUpUsers(false);
-  const openAddSkillsModal = () => setStatePopUpSkills(true);
-  const closeAddSkillsModal = () => {
+  const openAddUsersModal = () => setStatePopUpUsers(true); // abrir popup de utilizadores
+  const closeAddUsersModal = () => setStatePopUpUsers(false); // fechar popup de utilizadores
+  const openAddSkillsModal = () => setStatePopUpSkills(true); // abrir popup de skills
+  const closeAddSkillsModal = () => { // fechar popup de skills
     setStatePopUpSkills(false);
-    fetchProjectDetails(); // Fetch project details after closing AddSkills modal
+    fetchProjectDetails(); 
   };
-  const openAddSkillsRemoveModal = () => setStatePopUpSkillsRemove(true);
-  const closeAddSkillsRemoveModal = () => {
+  const openAddSkillsRemoveModal = () => setStatePopUpSkillsRemove(true); // abrir popup de remover skills
+  const closeAddSkillsRemoveModal = () => { // fechar popup de remover skills
     setStatePopUpSkillsRemove(false);
     fetchProjectDetails();
   };
-  const openAddInterestsModal = () => setStatePopUpInterests(true);
-  const closeAddInterestsModal = () => {
+  const openAddInterestsModal = () => setStatePopUpInterests(true); // abrir popup de interesses
+  const closeAddInterestsModal = () => { // fechar popup de interesses
     setStatePopUpInterests(false);
     fetchProjectDetails();
   };
-  const openAddInterestRemoveModal = () => setStatePopUpInterestRemove(true);
-  const closeAddInterestRemoveModal = () => {
+  const openAddInterestRemoveModal = () => setStatePopUpInterestRemove(true); // abrir popup de remover interesses
+  const closeAddInterestRemoveModal = () => { // fechar popup de remover interesses
     setStatePopUpInterestRemove(false);
     fetchProjectDetails();
   };
 
-  const openAddComponentModal = () => setStatePopUpComponent(true);
-  const closeAddComponentModal = () => {
+  const openAddComponentModal = () => setStatePopUpComponent(true); // abrir popup de componentes
+  const closeAddComponentModal = () => { // fechar popup de componentes
     setStatePopUpComponent(false);
     fetchProjectDetails();
   };
 
-  const openRemoveComponentsModal = () => setStatePopUpComponentsRemove(true);
-  const closeRemoveComponentsModal = () => {
+  const openRemoveComponentsModal = () => setStatePopUpComponentsRemove(true); // abrir popup de remover componentes
+  const closeRemoveComponentsModal = () => { // fechar popup de remover componentes
     setStatePopUpComponentsRemove(false);
     fetchProjectDetails();
   };
 
-  const openAddResourcesModal = () => setStatePopUpResources(true);
+  const openAddResourcesModal = () => setStatePopUpResources(true); // abrir popup de recursos
 
-  const closeAddResourcesModal = () => {
+  const closeAddResourcesModal = () => { // fechar popup de recursos
     setStatePopUpResources(false);
     fetchProjectDetails();
   };
 
-  const openRemoveResourcesModal = () => setStatePopUpResourcesRemove(true);
+  const openRemoveResourcesModal = () => setStatePopUpResourcesRemove(true); // abrir popup de remover recursos
 
-  const closeRemoveResourcesModal = () => {
+  const closeRemoveResourcesModal = () => { // fechar popup de remover recursos
     setStatePopUpResourcesRemove(false);
     fetchProjectDetails();
   };
 
-  const onMessageChat = (message) => {
+  const onMessageChat = (message) => { // função para receber mensagens
     setMessagesAlone((prevMessages) => [
       ...prevMessages,
       {
@@ -114,21 +114,21 @@ function ProjectDetails() {
       },
     ]);
 
-    if (!isChatOpen) {
-      setUnreadMessages((prevCount) => prevCount + 1);
+    if (!isChatOpen) { // se o chat não estiver aberto
+      setUnreadMessages((prevCount) => prevCount + 1); // incrementar o contador de mensagens não lidas
     }
   };
 
-  WebSocketProjChat(projectId, token, onMessageChat, reopenSocket);
+  WebSocketProjChat(projectId, token, onMessageChat, reopenSocket); // websocket
 
-  useEffect(() => {
-    isChatOpenRef.current = isChatOpen;
-  }, [isChatOpen]);
+  useEffect(() => { // useEffect para atualizar o chat  
+    isChatOpenRef.current = isChatOpen; // chat aberto ref
+  }, [isChatOpen]); // dependências
 
-  useEffect(() => {
-    console.log("Project details updated");
+  useEffect(() => { // useEffect para atualizar os detalhes do projeto
+    
     return () => {
-      if (isChatOpenRef.current && project && project.id != null) {
+      if (isChatOpenRef.current && project && project.id != null) { // se o chat estiver aberto
         const now = new Date();
         const localTimestamp = new Date(
           now.getTime() - now.getTimezoneOffset() * 60000
@@ -136,10 +136,10 @@ function ProjectDetails() {
         setProjectTimestamp(project.id, localTimestamp);
       }
     };
-  }, [project, setProjectTimestamp]);
+  }, [project, setProjectTimestamp]); // dependências
 
-  const fetchProjectDetails = async () => {
-    setLoading(true);
+  const fetchProjectDetails = async () => { // função para buscar os detalhes do projeto
+    setLoading(true); // loading
     try {
       const response = await fetch(`${apiUrl}/projects/${projectId}`, {
         headers: {
@@ -149,9 +149,9 @@ function ProjectDetails() {
         },
       });
 
-      if (!response.ok) {
-        if (response.status === 401) {
-          // Handle session timeout
+      if (!response.ok) { // se a resposta não for ok
+        if (response.status === 401) { // status 401
+          
           try {
             const errorData = await response.json();
             const errorMessage = errorData.message || "Unauthorized";
@@ -163,25 +163,25 @@ function ProjectDetails() {
             console.error("Error parsing error response:", error);
           }
         } else {
-          // Handle other HTTP errors
+          
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-      } else {
-        // Successful response processing
+      } else { // se a resposta for ok
+        
         const data = await response.json();
-        console.log(data);
-        setProject(data);
-        setTasks(data.tasks || []);
-        setTeam(data.userProjectDtos || []);
-        setMessagesAlone(data.chatMessage || []);
-        setAllMsgs(data.chatMessage || []);
+        
+        setProject(data); // set do projeto
+        setTasks(data.tasks || []); // set das tarefas
+        setTeam(data.userProjectDtos || []); // set da equipa
+        setMessagesAlone(data.chatMessage || []); // set das mensagens
+        setAllMsgs(data.chatMessage || []); // set de todas as mensagens
 
-        // Fetch user images based on userIds
+        
         const userIds = data.userProjectDtos
           .map((up) => up.userId)
-          .filter((value, index, self) => self.indexOf(value) === index);
+          .filter((value, index, self) => self.indexOf(value) === index); // ids dos utilizadores
 
-        const imagesResponse = await fetch(`${apiUrl}/users/images`, {
+        const imagesResponse = await fetch(`${apiUrl}/users/images`, { // fetch das imagens dos utilizadores
           method: "POST",
           headers: {
             Accept: "*/*",
@@ -191,13 +191,13 @@ function ProjectDetails() {
           body: JSON.stringify(userIds),
         });
 
-        if (imagesResponse.ok) {
+        if (imagesResponse.ok) { // se a resposta for ok
           const imagesData = await imagesResponse.json();
           const imagesMap = {};
-          imagesData.forEach((img) => {
+          imagesData.forEach((img) => { // mapear as imagens
             imagesMap[img.id] = img;
           });
-          setUserImages(imagesMap);
+          setUserImages(imagesMap); // set das imagens
         } else {
           console.error(
             "Error fetching user images:",
@@ -212,19 +212,19 @@ function ProjectDetails() {
     }
   };
 
-  useEffect(() => {
-    fetchProjectDetails();
-  }, [projectId, apiUrl, token]);
+  useEffect(() => { // useEffect para buscar os detalhes do projeto
+    fetchProjectDetails(); // fetch dos detalhes do projeto
+  }, [projectId, apiUrl, token]); // dependências
 
-  useEffect(() => {
-    getUnreadMessages();
-  }, [projectTimestamps, allMsgs]);
+  useEffect(() => { // useEffect para atualizar as mensagens não lidas
+    getUnreadMessages(); // função para obter as mensagens não lidas
+  }, [projectTimestamps, allMsgs]); // dependências
 
-  const getUnreadMessages = () => {
-    const projectTimestamp = new Date(projectTimestamps[projectId]);
+  const getUnreadMessages = () => { // função para obter as mensagens não lidas
+    const projectTimestamp = new Date(projectTimestamps[projectId]); // timestamp do projeto
     let count = 0;
 
-    messagesAlone.forEach((message) => {
+    messagesAlone.forEach((message) => { // para cada mensagem
       const messageDate = new Date(
         Date.UTC(
           message.timestamp[0],
@@ -237,12 +237,12 @@ function ProjectDetails() {
         )
       );
 
-      if (messageDate > projectTimestamp) {
+      if (messageDate > projectTimestamp) { // se a mensagem for mais recente que o timestamp do projeto
         count++;
       }
     });
 
-    setUnreadMessages(count);
+    setUnreadMessages(count); // set das mensagens não lidas
   };
 
   if (loading) {
@@ -253,8 +253,8 @@ function ProjectDetails() {
     return <div>No project found</div>;
   }
 
-  const handleSessionTimeout = () => {
-    navigate("/", { state: { showSessionTimeoutModal: true } });
+  const handleSessionTimeout = () => { // função para timeout da sessão
+    navigate("/", { state: { showSessionTimeoutModal: true } }); // navegar para a página inicial
   };
 
   return (

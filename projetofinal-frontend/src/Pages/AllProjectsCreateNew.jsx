@@ -14,101 +14,101 @@ import RemoveUsers from "../Components/RemoveUsers";
 import useProjectInfo from "../Hooks/useProjectInfo";
 
 function AllProjectsCreateNew() {
-  const [statePopUpSkills, setStatePopUpSkills] = useState(false);
-  const [statePopUpInterests, setStatePopUpInterests] = useState(false);
-  const [statePopUpSkillsRemove, setStatePopUpSkillsRemove] = useState(false);
-  const [statePopUpInterestRemove, setStatePopUpInterestRemove] =
-    useState(false);
-  const [statePopUpComponent, setStatePopUpComponent] = useState(false);
-  const [statePopUpComponentsRemove, setStatePopUpComponentsRemove] =
-    useState(false);
-  const [statePopUpResources, setStatePopUpResources] = useState(false);
+  const [statePopUpSkills, setStatePopUpSkills] = useState(false); // Skills
+  const [statePopUpInterests, setStatePopUpInterests] = useState(false); // Interesses
+  const [statePopUpSkillsRemove, setStatePopUpSkillsRemove] = useState(false); // Remover Skills pop up
+  const [statePopUpInterestRemove, setStatePopUpInterestRemove] = 
+    useState(false); // Remover Interesses pop up 
+  const [statePopUpComponent, setStatePopUpComponent] = useState(false); // Componentes pop up
+  const [statePopUpComponentsRemove, setStatePopUpComponentsRemove] = 
+    useState(false); // Remover Componentes pop up 
+  const [statePopUpResources, setStatePopUpResources] = useState(false); // Recursos pop up
   const [statePopUpResourcesRemove, setStatePopUpResourcesRemove] =
-    useState(false);
-  const [statePopUpUsers, setStatePopUpUsers] = useState(false); 
-  const [statePopUpUsersRemove, setStatePopUpUsersRemove] = useState(false);
+    useState(false); // Remover Recursos pop up
+  const [statePopUpUsers, setStatePopUpUsers] = useState(false);  // Utilizadores pop up
+  const [statePopUpUsersRemove, setStatePopUpUsersRemove] = useState(false); // Remover Utilizadores 
 
-  const { projectInfo, handleChange, handleWorkplaceChange } = useProjectInfo();
-  console.log(projectInfo);
+  const { projectInfo, handleChange, handleWorkplaceChange } = useProjectInfo(); // Custom Hook
+  
 
-  function openAddSkillsModal() {
-    setStatePopUpSkills(true);
+  function openAddSkillsModal() { // Função para abrir o modal de adicionar skills
+    setStatePopUpSkills(true); 
   }
 
-  function closeAddSkillsModal() {
+  function closeAddSkillsModal() { // Função para fechar o modal de adicionar skills
     setStatePopUpSkills(false);
   }
 
-  function openAddInterestsModal() {
+  function openAddInterestsModal() { // Função para abrir o modal de adicionar interesses
     setStatePopUpInterests(true);
   }
 
-  function closeAddInterestsModal() {
+  function closeAddInterestsModal() { // Função para fechar o modal de adicionar interesses
     setStatePopUpInterests(false);
   }
 
-  function openAddSkillsRemoveModal() {
-    setStatePopUpSkillsRemove(true);
+  function openAddSkillsRemoveModal() { // Função para abrir o modal de remover skills
+    setStatePopUpSkillsRemove(true); 
   }
 
-  function closeAddSkillsRemoveModal() {
+  function closeAddSkillsRemoveModal() { // Função para fechar o modal de remover skills
     setStatePopUpSkillsRemove(false);
   }
 
-  function openAddInterestRemoveModal() {
+  function openAddInterestRemoveModal() {   // Função para abrir o modal de remover interesses
     setStatePopUpInterestRemove(true);
   }
 
-  function closeAddInterestRemoveModal() {
+  function closeAddInterestRemoveModal() { // Função para fechar o modal de remover interesses
     setStatePopUpInterestRemove(false);
   }
 
-  function openAddComponentModal() {
+  function openAddComponentModal() { // Função para abrir o modal de adicionar componentes
     setStatePopUpComponent(true);
   }
 
-  function closeAddComponentModal() {
+  function closeAddComponentModal() { // Função para fechar o modal de adicionar componentes
     setStatePopUpComponent(false);
   }
 
-  function openRemoveComponentsModal() {
+  function openRemoveComponentsModal() { // Função para abrir o modal de remover componentes
     setStatePopUpComponentsRemove(true);
   }
 
-  function closeRemoveComponentsModal() {
+  function closeRemoveComponentsModal() { // Função para fechar o modal de remover componentes
     setStatePopUpComponentsRemove(false);
   }
 
-  function openAddResourcesModal() {
+  function openAddResourcesModal() { // Função para abrir o modal de adicionar recursos
     setStatePopUpResources(true);
   }
 
-  function closeAddResourcesModal() {
-    setStatePopUpResources(false);
+  function closeAddResourcesModal() { // Função para fechar o modal de adicionar recursos
+    setStatePopUpResources(false); 
   }
 
-  function openRemoveResourcesModal() {
+  function openRemoveResourcesModal() { // Função para abrir o modal de remover recursos
     setStatePopUpResourcesRemove(true);
   }
 
-  function closeRemoveResourcesModal() {
+  function closeRemoveResourcesModal() { // Função para fechar o modal de remover recursos
     setStatePopUpResourcesRemove(false);
   }
 
-  function openAddUsersModal() {
+  function openAddUsersModal() { // Função para abrir o modal de adicionar utilizadores
     setStatePopUpUsers(true); 
   }
 
-  function closeAddUsersModal() {
+  function closeAddUsersModal() { // Função para fechar o modal de adicionar utilizadores
     setStatePopUpUsers(false); 
   }
 
-  function openRemoveUsersModal() {
-    console.log("Opening remove users modal");
+  function openRemoveUsersModal() { // Função para abrir o modal de remover utilizadores
+   
     setStatePopUpUsersRemove(true); 
   }
 
-  function closeRemoveUsersModal() {
+  function closeRemoveUsersModal() { // Função para fechar o modal de remover utilizadores
     setStatePopUpUsersRemove(false);
   }
 

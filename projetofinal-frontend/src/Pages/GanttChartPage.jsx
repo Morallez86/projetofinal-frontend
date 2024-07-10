@@ -9,7 +9,7 @@ import AddTaskCard from "../Components/AddTaskCard";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 
-const OrientationModal = ({ show }) => {
+const OrientationModal = ({ show }) => { // Modal de orientação para mobile
   if (!show) return null;
 
   return (
@@ -40,56 +40,54 @@ const OrientationModal = ({ show }) => {
 };
 
 const GanttChartPage = () => {
-  const navigate = useNavigate();
-  const { projectId } = useParams();
-  const [viewMode, setViewMode] = useState(ViewMode.Day);
+  const navigate = useNavigate(); 
+  const { projectId } = useParams(); // ID do projeto através do URL
+  const [viewMode, setViewMode] = useState(ViewMode.Day);  // Modo de visualização
 
-  const apiUrl = useApiStore((state) => state.apiUrl);
-  const token = useUserStore((state) => state.token);
-  const [allTasks, setAllTasks] = useState([]);
-  const [dependentTaskss, setDependentTaskss] = useState(0);
-  const [dependentTasksState, setDependentTasksState] = useState([]);
-  const [dependencieTasks, setDependencieTasks] = useState([]);
-  const [myTasks, setMyTasks] = useState([]);
+  const apiUrl = useApiStore((state) => state.apiUrl); // URL da API
+  const token = useUserStore((state) => state.token); // Token
+  const [allTasks, setAllTasks] = useState([]); // Todas as tarefas
+  const [dependentTaskss, setDependentTaskss] = useState(0); // Tarefas dependentes
+  const [dependentTasksState, setDependentTasksState] = useState([]); // Estado das tarefas dependentes
+  const [dependencieTasks, setDependencieTasks] = useState([]); // Tarefas de dependência
+  const [myTasks, setMyTasks] = useState([]); // Minhas tarefas
 
-  const decodedToken = jwtDecode(token);
-  const username = decodedToken.username;
+  const decodedToken = jwtDecode(token);  // Decodificar o token
+  const username = decodedToken.username; // Nome de utilizador
 
-  const [popUpShow, setPopUpShow] = useState(false);
+  const [popUpShow, setPopUpShow] = useState(false); // Pop-up de criação de tarefa
 
-  const [isFilterActive, setIsFilterActive] = useState(false);
+  const [isFilterActive, setIsFilterActive] = useState(false); // Filtro ativo
 
-  const [isLandscape, setIsLandscape] = useState(window.innerWidth > window.innerHeight);
-  const [showModal, setShowModal] = useState(!isLandscape);
+  const [isLandscape, setIsLandscape] = useState(window.innerWidth > window.innerHeight); // Orientação do dispositivo
+  const [showModal, setShowModal] = useState(!isLandscape); // Modal
 
-  useEffect(() => {
-    const handleOrientationChange = () => {
+  useEffect(() => { // Efeito para lidar com a orientação do dispositivo
+    const handleOrientationChange = () => { 
       const newIsLandscape = window.innerWidth > window.innerHeight;
       setIsLandscape(newIsLandscape);
       setShowModal(!newIsLandscape);
     };
 
-    window.addEventListener('resize', handleOrientationChange);
+    window.addEventListener('resize', handleOrientationChange); 
     return () => {
       window.removeEventListener('resize', handleOrientationChange);
     };
   }, []);
 
-  const handleSessionTimeout = () => {
+  const handleSessionTimeout = () => { // Função para lidar com o timeout da sessão
     navigate("/", { state: { showSessionTimeoutModal: true } });
   };
 
-  const openPopUpCreateTask = () => {
+  const openPopUpCreateTask = () => { // Função para abrir o pop-up de criação de tarefa
     setPopUpShow(true);
   };
 
-  const filterMyTasks = () => {
+  const filterMyTasks = () => { // Função para filtrar as minhas tarefas
     const myTaskIds = allTasks
       .filter((task) => task.userName === username)
       .map((task) => task.id);
-    console.log(username);
-    console.log(allTasks);
-    console.log(myTaskIds);
+  
     setMyTasks(myTaskIds);
     setIsFilterActive(!isFilterActive);
   };
@@ -109,25 +107,25 @@ const GanttChartPage = () => {
     }
   }, [dependentTaskss, allTasks]);
 
-  console.log(dependentTasksState);
+  
 
-  const isDependent = (taskId) => {
+  const isDependent = (taskId) => { // Função para verificar se é dependente
     return dependentTasksState.includes(taskId);
   };
 
-  const isDependency = (taskId) => {
+  const isDependency = (taskId) => { // Função para verificar se é dependência
     return dependencieTasks.includes(taskId);
   };
 
-  const isMyTask = (taskId) => {
+  const isMyTask = (taskId) => { // Função para verificar se é a minha tarefa
     return myTasks.includes(taskId);
   };
 
-  useEffect(() => {
+  useEffect(() => { // Efeito para obter as tarefas
     getTasks();
   }, []);
 
-  const getTasks = () => {
+  const getTasks = () => { // Função para obter as tarefas
     fetch(`${apiUrl}/projects/${projectId}/tasks`, {
       method: "GET",
       headers: {
@@ -137,19 +135,19 @@ const GanttChartPage = () => {
       },
     })
       .then(async (response) => {
-        if (response.status === 404) {
+        if (response.status === 404) { // Se o status for 404
           console.log("Project with this ID is not found");
-        } else if (response.status === 200) {
+        } else if (response.status === 200) { // Se o status for 200
           const tasksData = await response.json();
-          console.log(tasksData);
+
           setAllTasks(tasksData);
-        } else if (response.status === 401) {
+        } else if (response.status === 401) { // Se o status for 401
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
           if (errorMessage === "Invalid token") {
-            handleSessionTimeout(); // Session timeout
-            return; // Exit early if session timeout
+            handleSessionTimeout(); // Lidar com o timeout da sessão
+            return; 
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
@@ -162,7 +160,7 @@ const GanttChartPage = () => {
 
   let tasks = [];
 
-  if (allTasks && allTasks.length > 0) {
+  if (allTasks && allTasks.length > 0) { // Se existirem tarefas
     console.log("in");
     tasks = allTasks.map((task) => {
       // Verifica se plannedStartingDate é uma string e a converte para array

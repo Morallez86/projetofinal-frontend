@@ -8,39 +8,39 @@ import useForm from "../Hooks/useForm";
 import { resetPassword } from "../Services/apiService";
 
 function ForgotPassword() {
-  const { token } = useParams();
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [showWarning, setShowWarning] = useState(false);
-  const [passwordStrengthWarning, setPasswordStrengthWarning] = useState(false);
-  const [formValues, handleChange] = useForm({ password: '', confirmPassword: '' });
-
-  const isStrongPassword = (password) => {
-    const passwordPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/;
-    return passwordPattern.test(password);
+  const { token } = useParams(); // token do url
+  const navigate = useNavigate(); 
+  const [loading, setLoading] = useState(false); // Loading
+  const [showWarning, setShowWarning] = useState(false); // Mostrar aviso
+  const [passwordStrengthWarning, setPasswordStrengthWarning] = useState(false); // Aviso de força da password
+  const [formValues, handleChange] = useForm({ password: '', confirmPassword: '' }); // Formulário
+   
+  const isStrongPassword = (password) => { // Função para verificar se a password é forte
+    const passwordPattern = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/; // Padrão da password
+    return passwordPattern.test(password); // Testar a password
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => { // Função para submeter o formulário
     e.preventDefault();
     const { password, confirmPassword } = formValues;
 
-    if (password !== confirmPassword) {
-      setShowWarning(true);
+    if (password !== confirmPassword) { // Se a password for diferente da password confirmada
+      setShowWarning(true); // Mostrar aviso
       return;
     }
 
-    if (!isStrongPassword(password)) {
-      setPasswordStrengthWarning(true);
+    if (!isStrongPassword(password)) { // Se a password não for forte
+      setPasswordStrengthWarning(true); // Aviso de força da password
       return;
     }
 
     setLoading(true);
     try {
       await resetPassword(token, password);
-      navigate('/', { replace: true });
+      navigate('/', { replace: true }); // Navegar para a página inicial
     } catch (error) {
       console.error('Error resetting password:', error);
-      // Handle error
+      
     } finally {
       setLoading(false);
     }
