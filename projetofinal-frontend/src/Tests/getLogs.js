@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 
-async function getLogs(apiUrl, projectId, token, formData) {
+async function getLogs(apiUrl, projectId, token, formData) { // Função para obter logs
   const response = await fetch(`https://localhost:8443/projetofinal-backend-1.0-SNAPSHOT/rest/projectHistory/${projectId}`, {
     method: "POST",
     headers: {
@@ -11,23 +11,23 @@ async function getLogs(apiUrl, projectId, token, formData) {
   });
 
   if (response.status === 401) {
-    const errorResponse = await response.json(); // Assumindo que a mensagem de erro está em formato JSON
-    const errorMessage = errorResponse.message; // Assumindo que a mensagem de erro está armazenada em um campo 'message'
+    const errorResponse = await response.json(); 
+    const errorMessage = errorResponse.message;   
 
-    if (errorMessage === "Invalid token") {
-      // Aqui você pode lidar com o erro específico de "Invalid token", por exemplo, tentar atualizar o token, deslogar o usuário, mostrar uma mensagem de erro, etc.
+    if (errorMessage === "Invalid token") { // Se o token for inválido
+       
       throw new Error('Unauthorized: Invalid token.');
-    } else {
-      // Lidar com outros erros de 401 que não sejam "Invalid token"
+    } else { // Se não
+     
       throw new Error('Unauthorized: Access is denied due to invalid credentials.');
     }
-  } else if (!response.ok) {
-    // Lidar com outros erros HTTP
+  } else if (!response.ok) { // Se a resposta não for ok
+   
     const errorText = await response.text();
     throw new Error(errorText);
   }
 
-  // Se a resposta estiver OK, parse e retorne os dados
+  
   const data = await response.json();
   return data;
 }

@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 
-async function logoutUser(apiUrl, token, projectTimestamps) {
+async function logoutUser(apiUrl, token, projectTimestamps) { // Função para fazer logout do usuário
     try {
       const response = await fetch(`${apiUrl}`, {
         method: "POST",
@@ -11,11 +11,11 @@ async function logoutUser(apiUrl, token, projectTimestamps) {
         body: JSON.stringify({ projectTimestamps }),
       });
   
-      if (response.ok) {
-        const data = await response.json(); // Assume que a resposta de sucesso é um JSON
+      if (response.ok) { // Se a resposta for ok
+        const data = await response.json(); 
         return { success: true, data }; // Retorna um objeto indicando sucesso e os dados
       } else {
-        const errorResponse = await response.json(); // Assume que a resposta de erro também é um JSON
+        const errorResponse = await response.json(); 
         return { error: errorResponse.error || 'Unknown Error', status: response.status }; // Retorna um objeto de erro
       }
     } catch (error) {

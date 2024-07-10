@@ -1,24 +1,23 @@
 const { fetchGetAllResources } = require('./getAllResources');
 
-describe('fetchGetAllResources', () => {
-    it('should return 401 for invalid token', async () => {
-        // Simulando um contexto onde o token é inválido
-        global.token = 'invalid-token'; // Ajuste conforme necessário para refletir como o token é passado/manipulado na sua função
+describe('fetchGetAllResources', () => { // Testes para a função fetchGetAllResources
+    it('should return 401 for invalid token', async () => { // Teste para token inválido
+        
+        global.token = 'invalid-token'; 
 
         const response = await fetchGetAllResources();
 
-        expect(response.status).toBe(401);
+        expect(response.status).toBe(401); // Verifica se o status é o esperado
     });
 
-    it('should return 200 and resources for valid token', async () => {
-        // Simulando um contexto onde o token é válido
-        global.token = 'eyJhbGciOiJIUzI1NiJ9.valid-token'; // Ajuste conforme necessário para refletir como o token é passado/manipulado na sua função
-
+    it('should return 200 and resources for valid token', async () => { // Teste para token válido
+        
+        global.token = 'eyJhbGciOiJIUzI1NiJ9.valid-token'; 
         const response = await fetchGetAllResources();
 
-        expect(response.status).toBe(200);
+        expect(response.status).toBe(200); // Verifica se o status é o esperado
         const resources = JSON.parse(response.text);
-        expect(Array.isArray(resources)).toBe(true);
-        expect(resources).toEqual([{ name: 'Resource1' }, { name: 'Resource2' }]);
+        expect(Array.isArray(resources)).toBe(true); // Verifica se o retorno é um array
+        expect(resources).toEqual([{ name: 'Resource1' }, { name: 'Resource2' }]); // Verifica se o JSON é o esperado
     });
 });

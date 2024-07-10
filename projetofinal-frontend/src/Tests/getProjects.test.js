@@ -1,23 +1,23 @@
 const { fetchProjects } = require('./getProjects');
 const fetch = require('node-fetch');
 
-// Mock the global fetch
+
 jest.mock('node-fetch', () => jest.fn());
 
-describe('fetchProjects', () => {
+describe('fetchProjects', () => { // Testes para a função fetchProjects
     const apiUrl = 'http://example.com/api';
     const token = 'eyJhbGciOiJIUzI1NiJ9.valid-token';
 
-    beforeEach(() => {
+    beforeEach(() => { // Limpa o mock da função fetch
         fetch.mockClear();
     });
 
-    it('returns 401 for invalid token', async () => {
+    it('returns 401 for invalid token', async () => { // Teste para token inválido
         const response = await fetchProjects('invalid-token');
-        expect(response.status).toBe(401);
+        expect(response.status).toBe(401); // Verifica se o status é o esperado
     });
 
-    it('fetches projects successfully with valid token and parameters', async () => {
+    it('fetches projects successfully with valid token and parameters', async () => { // Teste para token válido
         const mockProjects = [{ id: 1, name: 'Project 1' }, { id: 2, name: 'Project 2' }];
         fetch.mockResolvedValueOnce({
             ok: true,
@@ -37,15 +37,15 @@ describe('fetchProjects', () => {
               },
             }
           );
-        expect(response.status).toBe(200);
-        expect(JSON.parse(response.text)).toEqual(mockProjects);
+        expect(response.status).toBe(200); // Verifica se o status é o esperado
+        expect(JSON.parse(response.text)).toEqual(mockProjects); // Verifica se o JSON é o esperado
     });
 
-    it('handles fetch error gracefully', async () => {
+    it('handles fetch error gracefully', async () => { // Teste para erro na requisição
         fetch.mockRejectedValueOnce(new Error('Network error'));
 
         const response = await fetchProjects(token);
-        expect(response.status).toBe(500);
-        expect(response.text).toBe('Internal Server Error');
+        expect(response.status).toBe(500); // Verifica se o status é o esperado
+        expect(response.text).toBe('Internal Server Error'); // Verifica se a mensagem de erro é a esperada
     });
 });
