@@ -1,8 +1,8 @@
 import useApiStore from "../Stores/ApiStore";
 
-const apiUrl = useApiStore.getState().apiUrl;
+const apiUrl = useApiStore.getState().apiUrl; // apiUrl
 
-export const getInterests = async (token) => {
+export const getInterests = async (token) => { // função para obter os interesses
   try {
     const response = await fetch(`${apiUrl}/interests`, {
       method: "GET",
@@ -13,13 +13,13 @@ export const getInterests = async (token) => {
       },
     });
 
-    if (response.status === 200) {
+    if (response.status === 200) { // se o status for 200
       const data = await response.json();
       return data;
-    } else if (response.status === 404) {
-      console.log("Interests not found");
+    } else if (response.status === 404) { // se o status for 404
+      
       return [];
-    } else {
+    } else { // se não
       throw new Error("Failed to fetch interests");
     }
   } catch (error) {
