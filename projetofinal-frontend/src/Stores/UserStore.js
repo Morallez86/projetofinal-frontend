@@ -1,9 +1,10 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-// Define the store
+// Definição da store para armazenar os dados do utilizador
 const useUserStore = create(
   persist(
+    //Estados iniciais
     (set) => ({
       token: null,
       role: null,
@@ -15,7 +16,7 @@ const useUserStore = create(
       projectTimestamps: {},
       language: null,
 
-      // Function to update the token and role
+      //Funções para atualizar os estados
       setToken: (token) => set({ token }),
       setRole: (role) => set({ role }),
       setUsername: (username) => set({ username }),
@@ -29,7 +30,7 @@ const useUserStore = create(
       setLanguage: (language) => set({ language }),
 
 
-      // Function to clear the token and role
+      //Funções para limpar os estados
       clearToken: () => set({ token: null }),
       clearRole: () => set({ role: null }),
       clearUsername: () => set({ username: null }),
@@ -40,10 +41,11 @@ const useUserStore = create(
       clearProjectTimestamps: () => set({ projectTimestamps: {} }),
     }),
     {
+      // Configuração do middleware persist
       name: "userTokenStore",
-      storage: createJSONStorage(() => sessionStorage),
+      storage: createJSONStorage(() => sessionStorage), // Define o armazenamento em sessionStorage
       partialize: (state) => ({
-        // Include both token and projectTimestamps in the persisted state
+        // Define quais estados serão persistidos
         token: state.token,
         projectTimestamps: state.projectTimestamps,
         language: state.language,
@@ -52,4 +54,5 @@ const useUserStore = create(
   )
 );
 
+// Exporta a store
 export default useUserStore;

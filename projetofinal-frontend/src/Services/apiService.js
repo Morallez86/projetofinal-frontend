@@ -1,18 +1,18 @@
 
-export async function confirmRegistration(emailToken, apiUrl) {
+export async function confirmRegistration(emailToken, apiUrl) { // função para confirmar o registo
     try {
-        const response = await fetch(`${apiUrl}/users/confirmRegistration`, {
+        const response = await fetch(`${apiUrl}/users/confirmRegistration`, { // fetch para confirmar o registo
             method: 'GET',
             headers: {
                 'emailToken': emailToken
             }
         });
 
-        if (response.status === 200) {
-            console.log(emailToken)
+        if (response.status === 200) { // se o status for 200
+            
             return true;
-        } else {
-            console.log(emailToken)
+        } else { // se não
+            
             return false;
         }
     } catch (error) {
@@ -21,9 +21,9 @@ export async function confirmRegistration(emailToken, apiUrl) {
     }
 }
 
-export async function updatePassword(apiUrl, token, oldPassword, newPassword) {
+export async function updatePassword(apiUrl, token, oldPassword, newPassword) { // função para atualizar a password
     try {
-        const response = await fetch(`${apiUrl}/users/updatePassword`, {
+        const response = await fetch(`${apiUrl}/users/updatePassword`, { 
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
@@ -32,30 +32,30 @@ export async function updatePassword(apiUrl, token, oldPassword, newPassword) {
         body: JSON.stringify({ oldPassword, newPassword }),
         });
 
-        if (!response.ok) {
+        if (!response.ok) { // se a resposta não for ok
             const errorData = await response.json();
             throw new Error(errorData.message);
         }
 
         return true;
-    } catch (error) {
+    } catch (error) { // erro
         console.error("Error updating password", error);
         throw error;
     }
 }
 
-export async function resetPassword(apiUrl, token, password) {
+export async function resetPassword(apiUrl, token, password) { // função para resetar a password
     try {
-        const response = await fetch(`${apiUrl}/users/forgotPassword`, {
+        const response = await fetch(`${apiUrl}/users/forgotPassword`, { 
             headers: {
                 'Content-Type': 'application/json',
             },
             method: 'PUT',
             body: JSON.stringify({ token, password }),
         });
-        if (response.status === 200) {
+        if (response.status === 200) { // se o status for 200
             return true;
-        } else {
+        } else { // se não
             throw new Error('Failed to reset password');
         }
     } catch (error) {

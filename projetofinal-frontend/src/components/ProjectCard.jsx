@@ -33,39 +33,38 @@ function ProjectCard({
   handleChange,
   handleWorkplaceChange,
 }) {
-  const { workplaces } = useWorkplaceStore();
-  const [selectedWorkLocation, setSelectedWorkLocation] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
-  const navigate = useNavigate();
-  const handleSessionTimeout = () => {
-    navigate("/", { state: { showSessionTimeoutModal: true } });
+  const { workplaces } = useWorkplaceStore(); // Obter locais de trabalho
+  const [selectedWorkLocation, setSelectedWorkLocation] = useState(""); // Local de trabalho selecionado
+  const [successMessage, setSuccessMessage] = useState(""); // Mensagem de sucesso
+  const navigate = useNavigate(); 
+  const handleSessionTimeout = () => { // Função para lidar com o timeout da sessão
+    navigate("/", { state: { showSessionTimeoutModal: true } }); // Navegar para a página inicial
   };
 
-  const clearAllProjectDetails = useProjectStore(
+  const clearAllProjectDetails = useProjectStore( // Limpar todos os detalhes do projeto
     (state) => state.clearAllProjectDetails
   );
 
-  const { t } = useTranslation();
+  const { t } = useTranslation(); // Função de tradução
 
   useEffect(() => {
     clearAllProjectDetails();
   }, [clearAllProjectDetails]);
 
-  const formatDateForBackend = (dateString) => {
+  const formatDateForBackend = (dateString) => { // Função para formatar a data para o backend
     if (!dateString) {
-      return null; // Handle the case where dateString is null or undefined
+      return null; 
     }
 
-    // Append the time part to the date string
-    const formattedDate = `${dateString} 00:00:00`;
+    const formattedDate = `${dateString} 00:00:00`; 
 
     return formattedDate;
   };
 
-  const token = useUserStore((state) => state.token);
+  const token = useUserStore((state) => state.token); // Token do utilizador
 
-  const handleSubmit = async () => {
-    const requiredFields = [
+  const handleSubmit = async () => { // Função para submeter
+    const requiredFields = [ // Campos obrigatórios
       "title",
       "startingDate",
       "plannedEndDate",
@@ -74,7 +73,7 @@ function ProjectCard({
       "interests",
     ];
 
-    const isFormValid = requiredFields.every((field) => {
+    const isFormValid = requiredFields.every((field) => { // Verificar se o formulário é válido
       if (field === "workplace") {
         return selectedWorkLocation !== "";
       }
@@ -92,19 +91,19 @@ function ProjectCard({
       return;
     }
 
-    const formattedProjectInfo = {
+    const formattedProjectInfo = { // Informações do projeto formatadas
       ...projectInfo,
       startingDate: formatDateForBackend(projectInfo.startingDate),
       plannedEndDate: formatDateForBackend(projectInfo.plannedEndDate),
       workplace: JSON.parse(selectedWorkLocation),
     };
 
-    console.log("Formatted project info:", formattedProjectInfo);
+    
 
     try {
-      const newProject = await createProject(formattedProjectInfo, token);
-      if (newProject) {
-        console.log("Project created successfully");
+      const response = await createProject(formattedProjectInfo, token); // Criar um novo projeto
+      if (response && response.ok) {
+        
         setSuccessMessage(true);
         setSelectedWorkLocation("");
         clearAllProjectDetails();
@@ -119,8 +118,8 @@ function ProjectCard({
         const errorMessage = data.message || "Unauthorized";
 
         if (errorMessage === "Invalid token") {
-          handleSessionTimeout(); // Session timeout
-          return; // Exit early if session timeout
+          handleSessionTimeout(); // Lidar com o timeout da sessão
+          return; 
         } else {
           console.error("Error updating seen status:", errorMessage);
         }

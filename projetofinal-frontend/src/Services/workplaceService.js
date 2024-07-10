@@ -1,8 +1,8 @@
 import useApiStore from '../Stores/ApiStore';
 
-const apiUrl = useApiStore.getState().apiUrl;
+const apiUrl = useApiStore.getState().apiUrl; // apiUrl
 
-export const getWorkplaces = async () => {
+export const getWorkplaces = async () => { // função para obter os locais de trabalho
   try {
     const response = await fetch(
       `${apiUrl}/workplaces`,
@@ -15,16 +15,16 @@ export const getWorkplaces = async () => {
       }
     );
 
-    if (response.status === 200) {
+    if (response.status === 200) { // se o status for 200
       const data = await response.json();
       return data;
-    } else if (response.status === 404) {
-      console.log("Workplaces not found");
+    } else if (response.status === 404) { // se o status for 404
+      
       return [];
-    } else {
+    } else { // se não
       throw new Error("Failed to fetch workplaces");
     }
-  } catch (error) {
+  } catch (error) { // erro
     console.error("Error fetching workplaces:", error);
     throw error;
   }

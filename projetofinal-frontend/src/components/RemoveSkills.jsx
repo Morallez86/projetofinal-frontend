@@ -16,34 +16,34 @@ function RemoveSkills({
   context,
   projectInfo,
 }) {
-  console.log(projectInfo);
-  const apiUrl = useApiStore((state) => state.apiUrl);
-  const userSkills = useUserStore((state) => state.skills);
-  const projectSkills = useProjectStore((state) => state.projectSkills);
-  const token = useUserStore((state) => state.token);
-  const setUserSkills = useUserStore((state) => state.setSkills);
-  const setProjectSkills = useProjectStore((state) => state.setProjectSkills);
+  
+  const apiUrl = useApiStore((state) => state.apiUrl); //api url
+  const userSkills = useUserStore((state) => state.skills); //skills do utilizador
+  const projectSkills = useProjectStore((state) => state.projectSkills); //skills do projeto
+  const token = useUserStore((state) => state.token); //token do utilizador 
+  const setUserSkills = useUserStore((state) => state.setSkills); //set das skills do utilizador
+  const setProjectSkills = useProjectStore((state) => state.setProjectSkills); //set das skills do projeto
 
-  const [animationPlayed, setAnimationPlayed] = useState(false);
-  const [filter, setFilter] = useState("");
-  const [selectedSkillIds, setSelectedSkillIds] = useState([]);
-  const [showSuccessText, setShowSuccessText] = useState(false);
-  const [filteredSkills, setFilteredSkills] = useState([]);
+  const [animationPlayed, setAnimationPlayed] = useState(false); //estado para animação
+  const [filter, setFilter] = useState(""); //estado para filtro
+  const [selectedSkillIds, setSelectedSkillIds] = useState([]); //estado para skills selecionadas
+  const [showSuccessText, setShowSuccessText] = useState(false); //estado para mostrar texto de sucesso
+  const [filteredSkills, setFilteredSkills] = useState([]); //estado para skills filtradas
   const navigate = useNavigate();
-  const handleSessionTimeout = () => {
-    navigate("/", { state: { showSessionTimeoutModal: true } });
+  const handleSessionTimeout = () => { //função para timeout
+    navigate("/", { state: { showSessionTimeoutModal: true } }); //navegar para a página inicial
   };
 
   const { t } = useTranslation();
 
   useEffect(() => {
-    if (context === "user") {
+    if (context === "user") { //se o contexto for o utilizador
       setFilteredSkills(
         userSkills.filter((skill) =>
           skill.name.toLowerCase().includes(filter.toLowerCase())
         )
       );
-    } else if (context === "editProject" && projectInfo) {
+    } else if (context === "editProject" && projectInfo) { //se o contexto for editar projeto e houver informações do projeto
       console.log(projectInfo);
       setFilteredSkills(
         projectInfo.skills.filter((skill) =>
@@ -57,10 +57,10 @@ function RemoveSkills({
         )
       );
     }
-  }, [filter, context, userSkills, projectInfo, projectSkills]);
+  }, [filter, context, userSkills, projectInfo, projectSkills]); //quando o filtro, contexto, skills do utilizador, informações do projeto e skills do projeto mudam
 
-  const defaultOptions = {
-    loop: false,
+  const defaultOptions = { //opções para a animação
+    loop: false, 
     autoplay: false,
     animationData: RemovedAnimation,
     rendererSettings: {
@@ -68,7 +68,7 @@ function RemoveSkills({
     },
   };
 
-  const handleCheckboxChange = (id) => {
+  const handleCheckboxChange = (id) => { //função para checkbox
     if (selectedSkillIds.includes(id)) {
       setSelectedSkillIds(
         selectedSkillIds.filter((selectedId) => selectedId !== id)
@@ -78,7 +78,7 @@ function RemoveSkills({
     }
   };
 
-  const handleRemoveSkills = async () => {
+  const handleRemoveSkills = async () => { //função para remover skills
     if (context === "user") {
       try {
         const response = await fetch(`${apiUrl}/skills`, {
@@ -90,19 +90,19 @@ function RemoveSkills({
           },
           body: JSON.stringify(selectedSkillIds),
         });
-        if (response.status === 204) {
+        if (response.status === 204) { //se o status for 204
           const updatedSkills = userSkills.filter(
             (skill) => !selectedSkillIds.includes(skill.id)
           );
           setUserSkills(updatedSkills);
           setAnimationPlayed(true);
-        } else if (response.status === 401) {
+        } else if (response.status === 401) { //se o status for 401
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
           if (errorMessage === "Invalid token") {
-            handleSessionTimeout(); // Session timeout
-            return; // Exit early if session timeout
+            handleSessionTimeout(); // timeout
+            return; 
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
@@ -112,7 +112,7 @@ function RemoveSkills({
       } catch (error) {
         console.error("Error deleting skills:", error);
       }
-    } else if (context === "editProject" && projectInfo) {
+    } else if (context === "editProject" && projectInfo) { //se o contexto for editar projeto e houver informações do projeto
       try {
         console.log(selectedSkillIds);
         const response = await fetch(
@@ -127,7 +127,7 @@ function RemoveSkills({
             body: JSON.stringify(selectedSkillIds),
           }
         );
-        if (response.status === 200) {
+        if (response.status === 200) { //se o status for 200
           const updatedSkills = projectInfo.skills.filter(
             (skill) => !selectedSkillIds.includes(skill.id)
           );
@@ -136,24 +136,24 @@ function RemoveSkills({
           setTimeout(() => {
             closePopUpSkillsRemove();
           }, 2000);
-        } else if (response.status === 401) {
+        } else if (response.status === 401) { //se o status for 401
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
           if (errorMessage === "Invalid token") {
-            handleSessionTimeout(); // Session timeout
-            return; // Exit early if session timeout
+            handleSessionTimeout(); // timeout
+            return; 
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
-        } else if (response.status === 500) {
+        } else if (response.status === 500) { //se o status for 500
           console.log("Internal server error");
         }
       } catch (error) {
         console.error("Error deleting project skills:", error);
       }
     } else {
-      // If context is not for users, save project skills to Zustand store
+     
       const updatedProjectSkills = projectSkills.filter(
         (skill) => !selectedSkillIds.includes(skill.id)
       );

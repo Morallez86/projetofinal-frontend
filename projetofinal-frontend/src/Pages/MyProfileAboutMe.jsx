@@ -6,41 +6,41 @@ import RemoveSkills from "../Components/RemoveSkills";
 import RemoveInterests from "../Components/RemoveInterests";
 
 function MyProfile_AboutMe() {
-  const [statePopUpSkills, setStatePopUpSkills] = useState(false);
-  const [statePopUpInterests, setStatePopUpInterests] = useState(false);
-  const [statePopUpSkillsRemove, setStatePopUpSkillsRemove] = useState(false);
-  const [statePopUpInterestRemove, setStatePopUpInterestRemove] =
-    useState(false);
+  const [statePopUpSkills, setStatePopUpSkills] = useState(false); // Skills
+  const [statePopUpInterests, setStatePopUpInterests] = useState(false); // Interesses
+  const [statePopUpSkillsRemove, setStatePopUpSkillsRemove] = useState(false); // Remover Skills pop up
+  const [statePopUpInterestRemove, setStatePopUpInterestRemove] = 
+    useState(false); // Remover Interesses pop up
 
-  function openAddSkillsModal() {
+  function openAddSkillsModal() { // Função para abrir o modal de adicionar skills
     setStatePopUpSkills(true);
   }
 
-  function closeAddSkillsModal() {
+  function closeAddSkillsModal() { // Função para fechar o modal de adicionar skills
     setStatePopUpSkills(false);
   }
 
-  function openAddInterestsModal() {
+  function openAddInterestsModal() {  // Função para abrir o modal de adicionar interesses
     setStatePopUpInterests(true);
   }
 
-  function closeAddInterestsModal() {
+  function closeAddInterestsModal() { // Função para fechar o modal de adicionar interesses
     setStatePopUpInterests(false);
   }
 
-  function openAddSkillsRemoveModal() {
+  function openAddSkillsRemoveModal() { // Função para abrir o modal de remover skills
     setStatePopUpSkillsRemove(true);
   }
 
-  function closeAddSkillsRemoveModal() {
+  function closeAddSkillsRemoveModal() { // Função para fechar o modal de remover skills
     setStatePopUpSkillsRemove(false);
   }
 
-  function openAddInterestRemoveModal() {
+  function openAddInterestRemoveModal() {  // Função para abrir o modal de remover interesses
     setStatePopUpInterestRemove(true);
   }
 
-  function closeAddInterestRemoveModal() {
+  function closeAddInterestRemoveModal() { // Função para fechar o modal de remover
     setStatePopUpInterestRemove(false);
   }
 

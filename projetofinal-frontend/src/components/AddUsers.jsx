@@ -9,31 +9,31 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 function AddUsers({ openPopUpUsers, closePopUpUsers, projectInfo }) {
-  const token = useUserStore((state) => state.token);
-  const apiUrl = useApiStore((state) => state.apiUrl);
-  const projectUsers = useProjectStore((state) => state.projectUsers);
-  const setProjectUsers = useProjectStore((state) => state.setProjectUsers);
-  let currentUserId;
+  const token = useUserStore((state) => state.token); // Obter o token do utilizador
+  const apiUrl = useApiStore((state) => state.apiUrl); // Obter o URL da API
+  const projectUsers = useProjectStore((state) => state.projectUsers); // Obter os utilizadores do projeto
+  const setProjectUsers = useProjectStore((state) => state.setProjectUsers); // Definir os utilizadores do projeto
+  let currentUserId; // ID do utilizador atual
   if (token) {
-    const decodedToken = jwtDecode(token);
-    currentUserId = decodedToken.id;
+    const decodedToken = jwtDecode(token); // Decodificar o token
+    currentUserId = decodedToken.id; // Obter o ID do utilizador
   }
 
-  const [users, setUsers] = useState([]);
-  const [userImages, setUserImages] = useState({});
-  const [inputValue, setInputValue] = useState("");
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
-  const handleSessionTimeout = () => {
-    navigate("/", { state: { showSessionTimeoutModal: true } });
+  const [users, setUsers] = useState([]); // Utilizadores
+  const [userImages, setUserImages] = useState({}); // Imagens dos utilizadores
+  const [inputValue, setInputValue] = useState(""); // Valor do input
+  const [error, setError] = useState(""); // Erro
+  const navigate = useNavigate(); 
+  const handleSessionTimeout = () => { // Função para lidar com o timeout da sessão
+    navigate("/", { state: { showSessionTimeoutModal: true } }); // Redirecionar para a página inicial
   };
-  const { t } = useTranslation();
+  const { t } = useTranslation(); // Função de tradução
 
-  const handleSearch = async () => {
-    if (inputValue.length >= 3) {
-      try {
+  const handleSearch = async () => { // Função para pesquisar utilizadores
+    if (inputValue.length >= 3) { // Se o valor do input for maior ou igual a 3
+      try { 
         const response = await fetch(
-          `${apiUrl}/users/search?query=${inputValue}`,
+          `${apiUrl}/users/search?query=${inputValue}`, 
           {
             method: "GET",
             headers: {
@@ -44,37 +44,37 @@ function AddUsers({ openPopUpUsers, closePopUpUsers, projectInfo }) {
           }
         );
 
-        if (response.status === 200) {
+        if (response.status === 200) { // Se a resposta for 200
           const data = await response.json();
           setUsers(data);
-          console.log(data);
-          fetchUserImages(data);
-        } else if (response.status === 401) {
+          
+          fetchUserImages(data); // Obter as imagens dos utilizadores
+        } else if (response.status === 401) { // Se a resposta for 401
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
           if (errorMessage === "Invalid token") {
-            handleSessionTimeout(); // Session timeout
-            return; // Exit early if session timeout
+            handleSessionTimeout(); // Timeout da sessão
+            return; 
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
-        } else if (response.status === 404) {
+        } else if (response.status === 404) { // Se a resposta for 404
           console.log("Users not found");
-          setUsers([]);
-          setUserImages({});
+          setUsers([]); // Definir os utilizadores como vazio
+          setUserImages({}); // Definir as imagens dos utilizadores como vazio
         }
       } catch (error) {
         console.error("Error searching users:", error);
       }
     } else {
-      setUsers([]);
-      setUserImages({});
+      setUsers([]); // Definir os utilizadores como vazio
+      setUserImages({}); // Definir as imagens dos utilizadores como vazio
     }
   };
 
-  const fetchUserImages = async (users) => {
-    const userIds = users.map((user) => user.id);
+  const fetchUserImages = async (users) => { // Função para obter as imagens dos utilizadores
+    const userIds = users.map((user) => user.id); // Mapear os IDs dos utilizadores
     try {
       const response = await fetch(`${apiUrl}/users/images`, {
         method: "POST",
@@ -89,17 +89,17 @@ function AddUsers({ openPopUpUsers, closePopUpUsers, projectInfo }) {
       if (response.ok) {
         const imagesData = await response.json();
         const imagesMap = {};
-        imagesData.forEach((img) => {
-          imagesMap[img.id] = img;
+        imagesData.forEach((img) => { // Mapear as imagens
+          imagesMap[img.id] = img; // Adicionar a imagem ao mapa
         });
-        setUserImages(imagesMap);
-      } else if (response.status === 401) {
+        setUserImages(imagesMap); // Definir as imagens dos utilizadores
+      } else if (response.status === 401) {  // Se a resposta for 401
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
 
         if (errorMessage === "Invalid token") {
-          handleSessionTimeout(); // Session timeout
-          return; // Exit early if session timeout
+          handleSessionTimeout(); // Timeout da sessão
+          return; 
         } else {
           console.error("Error updating seen status:", errorMessage);
         }
@@ -111,34 +111,33 @@ function AddUsers({ openPopUpUsers, closePopUpUsers, projectInfo }) {
     }
   };
 
-  const handleInputChange = (event) => {
+  const handleInputChange = (event) => { // Função para lidar com a mudança do input
     setInputValue(event.target.value);
   };
 
-  const handleAddUser = (user) => {
+  const handleAddUser = (user) => { // Função para adicionar um utilizador
     if (projectUsers.length >= projectInfo.maxUsers - 1) {
       setError(`Cannot add more than ${projectInfo.maxUsers - 1} users`);
       return;
     }
-    console.log(user.id);
-    console.log(currentUserId);
+    
 
-    if (user.id === currentUserId) {
+    if (user.id === currentUserId) { // Se o ID do utilizador for igual ao ID do utilizador atual
       setError("You cannot add yourself to the project team");
       return;
     }
 
-    if (projectUsers.some((projectUser) => projectUser.userId === user.id)) {
+    if (projectUsers.some((projectUser) => projectUser.userId === user.id)) { // Se o utilizador já estiver no projeto
       setError("This user is already in the project team");
       return;
     }
 
     const userData = { userId: user.id, username: user.username };
 
-    // Add the user to the project users
-    setProjectUsers([...projectUsers, userData]);
-
-    // Clear the input field and close the modal
+   
+    setProjectUsers([...projectUsers, userData]); // Adicionar o utilizador ao projeto
+ 
+    // Limpar os valores
     setInputValue("");
     setError("");
     setUsers([]);

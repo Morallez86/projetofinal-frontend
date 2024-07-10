@@ -4,13 +4,13 @@ import useInterestStore from "../Stores/InterestStore";
 import useUserStore from "../Stores/UserStore";
 
 const useInterests = () => {
-  const setInterests = useInterestStore((state) => state.setInterests);
-  const interests = useInterestStore((state) => state.interests);
-  const { token } = useUserStore();
+  const setInterests = useInterestStore((state) => state.setInterests); // setInterests
+  const interests = useInterestStore((state) => state.interests); // interesses
+  const { token } = useUserStore(); // token
 
   useEffect(() => {
-    // Only fetch interests if token exists and they are not already set
-    if (token && (!interests || interests.length === 0)) {
+    
+    if (token && (!interests || interests.length === 0)) { // se o token existir e os interesses não existirem
       const fetchData = async () => {
         try {
           const data = await getInterests(token);

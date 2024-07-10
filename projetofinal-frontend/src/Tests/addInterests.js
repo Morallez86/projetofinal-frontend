@@ -1,6 +1,6 @@
-const fetchAddInterests = async (token, interests) => {
-    if (!token.startsWith('eyJhbGciOiJIUzI1NiJ9')) {
-        return { status: 401 };
+const fetchAddInterests = async (token, interests) => { // função para adicionar interesses
+    if (!token.startsWith('eyJhbGciOiJIUzI1NiJ9')) { // se o token não começar com 'eyJhb
+        return { status: 401 }; 
     } 
     else {
         // Simula uma resposta bem-sucedida com um JSON de exemplo
@@ -9,4 +9,4 @@ const fetchAddInterests = async (token, interests) => {
     }
   };
 
-module.exports = { fetchAddInterests };
+module.exports = { fetchAddInterests }; // exporta a função fetchAddInterests

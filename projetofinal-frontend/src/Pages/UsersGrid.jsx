@@ -12,29 +12,29 @@ import "../index.css";
 import { useTranslation } from "react-i18next";
 
 function UsersGrid() {
-  const apiUrl = useApiStore((state) => state.apiUrl);
-  const navigate = useNavigate();
-  const [users, setUsers] = useState([]);
-  const [userImages, setUserImages] = useState({});
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedWorkplace, setSelectedWorkplace] = useState("");
-  const [selectedSkills, setSelectedSkills] = useState("");
-  const [selectedInterests, setSelectedInterests] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const workplaces = useWorkplaceStore((state) => state.workplaces);
-  const skills = useSkillStore((state) => state.skills);
-  const interests = useInterestStore((state) => state.interests);
-  const { token } = useUserStore();
+  const apiUrl = useApiStore((state) => state.apiUrl); // apiUrl
+  const navigate = useNavigate(); 
+  const [users, setUsers] = useState([]); // utilizadores
+  const [userImages, setUserImages] = useState({}); // imagens dos utilizadores
+  const [searchTerm, setSearchTerm] = useState(""); // termo de pesquisa 
+  const [selectedWorkplace, setSelectedWorkplace] = useState(""); // local de trabalho selecionado
+  const [selectedSkills, setSelectedSkills] = useState(""); // skills selecionadas
+  const [selectedInterests, setSelectedInterests] = useState(""); // interesses selecionados
+  const [isModalOpen, setIsModalOpen] = useState(false); // modal aberto
+  const [selectedUser, setSelectedUser] = useState(null); // utilizador selecionado
+  const workplaces = useWorkplaceStore((state) => state.workplaces); // locais de trabalho
+  const skills = useSkillStore((state) => state.skills); // skills
+  const interests = useInterestStore((state) => state.interests); // interesses
+  const { token } = useUserStore(); // token
 
 
-  const { t } = useTranslation();
+  const { t } = useTranslation(); // tradução
 
-  const fetchUserImages = useCallback(
-    async (users) => {
+  const fetchUserImages = useCallback( // função para buscar as imagens dos utilizadores
+    async (users) => { 
       const userIds = users.map((user) => user.id);
       try {
-        const response = await fetch(`${apiUrl}/users/images`, {
+        const response = await fetch(`${apiUrl}/users/images`, { // fetch das imagens dos utilizadores
           method: "POST",
           headers: {
             Accept: "*/*",
@@ -44,13 +44,13 @@ function UsersGrid() {
           body: JSON.stringify(userIds),
         });
 
-        if (response.ok) {
+        if (response.ok) { // se a resposta for ok
           const imagesData = await response.json();
           const imagesMap = {};
-          imagesData.forEach((img) => {
+          imagesData.forEach((img) => { // mapear as imagens
             imagesMap[img.id] = img;
           });
-          setUserImages(imagesMap);
+          setUserImages(imagesMap); // set das imagens
         } else {
           console.error("Error fetching user images");
         }
@@ -58,33 +58,33 @@ function UsersGrid() {
         console.error("Error fetching user images:", error);
       }
     },
-    [apiUrl, token]
+    [apiUrl, token] // dependências
   );
 
-  const fetchUsers = useCallback(
-    async (searchTerm = "", filters = {}) => {
+  const fetchUsers = useCallback( // função para buscar os utilizadores
+    async (searchTerm = "", filters = {}) => {  // termo de pesquisa e filtros
       let url = `${apiUrl}/users`;
       const params = new URLSearchParams();
 
       if (searchTerm) {
-        params.append("searchTerm", searchTerm);
+        params.append("searchTerm", searchTerm); // adicionar termo de pesquisa
       }
       if (filters.workplace) {
-        params.append("workplace", filters.workplace);
+        params.append("workplace", filters.workplace); // adicionar local de trabalho
       }
       if (filters.skills) {
-        params.append("skills", filters.skills);
+        params.append("skills", filters.skills); // adicionar skills
       }
       if (filters.interests) {
-        params.append("interests", filters.interests);
+        params.append("interests", filters.interests); // adicionar interesses
       }
 
       if (params.toString()) {
-        url += `?${params.toString()}`;
+        url += `?${params.toString()}`; // url com os parâmetros
       }
 
       try {
-        const response = await fetch(url, {
+        const response = await fetch(url, { // fetch dos utilizadores
           method: "GET",
           headers: {
             Accept: "*/*",
@@ -92,45 +92,45 @@ function UsersGrid() {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log(response);
+        
         const data = await response.json();
-        console.log(data.message);
-        if (response.ok) {
-          if (data.length > 0) {
-            setUsers(data);
+        
+        if (response.ok) { // se a resposta for ok
+          if (data.length > 0) { // se houver utilizadores
+            setUsers(data); // set dos utilizadores
             await fetchUserImages(data);
           } else {
             setUsers([]);
             console.warn("No users found.");
           }
-        } else if (response.status === 401) {
+        } else if (response.status === 401) { // se o status for 401
           const errorMessage = data.message || "Unauthorized";
           
           // Differentiate based on error message
-          if (errorMessage === "Invalid token") {
-            handleSessionTimeout();
+          if (errorMessage === "Invalid token") { // token inválido
+            handleSessionTimeout(); // timeout da sessão
           }
         } else {
           console.error("Error fetching users");
           const data = await response.json();
-          console.log(data);
+          
         }
       } catch (error) {
         console.error("Error fetching users:", error);
       }
     },
-    [apiUrl, token, fetchUserImages]
+    [apiUrl, token, fetchUserImages] // dependências
   );
 
-  // Initial fetch on component mount
-  useEffect(() => {
-    const fetchInitialUsers = async () => {
+ 
+  useEffect(() => { // useEffect para buscar os utilizadores
+    const fetchInitialUsers = async () => { 
       await fetchUsers();
     };
     fetchInitialUsers();
-  }, [fetchUsers]);
+  }, [fetchUsers]); // dependências
 
-  const handleSearch = () => {
+  const handleSearch = () => { // função para pesquisar
     fetchUsers(searchTerm, {
       workplace: selectedWorkplace,
       skills: selectedSkills,
@@ -138,22 +138,22 @@ function UsersGrid() {
     });
   };
 
-  const handleWorkplaceChange = (value) => setSelectedWorkplace(value);
-  const handleSkillsChange = (value) => setSelectedSkills(value);
-  const handleInterestsChange = (value) => setSelectedInterests(value);
+  const handleWorkplaceChange = (value) => setSelectedWorkplace(value); // função para mudar o local de trabalho
+  const handleSkillsChange = (value) => setSelectedSkills(value); // função para mudar as skills
+  const handleInterestsChange = (value) => setSelectedInterests(value); // função para mudar os interesses
 
-  const openMessageModal = (user) => {
+  const openMessageModal = (user) => { // função para abrir o modal de mensagem
     setSelectedUser(user);
     setIsModalOpen(true);
   };
 
-  const closeMessageModal = () => {
-    setSelectedUser(null);
+  const closeMessageModal = () => { // função para fechar o modal de mensagem
+    setSelectedUser(null); 
     setIsModalOpen(false);
   };
 
-  const handleSessionTimeout = () => {
-    navigate("/", { state: { showSessionTimeoutModal: true } });
+  const handleSessionTimeout = () => { // função para timeout da sessão
+    navigate("/", { state: { showSessionTimeoutModal: true } }); // navegar para a página inicial
   };
 
   return (

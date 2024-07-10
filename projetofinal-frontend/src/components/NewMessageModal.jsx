@@ -5,19 +5,19 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 const NewMessageModal = ({ isOpen, closeModal, authToken }) => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [users, setUsers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [messageContent, setMessageContent] = useState("");
-  const apiUrl = useApiStore.getState().apiUrl;
-  const { t } = useTranslation();
+  const [searchTerm, setSearchTerm] = useState(""); // Estado do input de pesquisa
+  const [users, setUsers] = useState([]);  // Estado dos utilizadores
+  const [selectedUser, setSelectedUser] = useState(null); // Estado do utilizador selecionado
+  const [messageContent, setMessageContent] = useState(""); // Estado do conteúdo da mensagem
+  const apiUrl = useApiStore.getState().apiUrl; // URL da API
+  const { t } = useTranslation(); // Função de tradução
   const navigate = useNavigate();
-  const handleSessionTimeout = () => {
-    navigate("/", { state: { showSessionTimeoutModal: true } });
+  const handleSessionTimeout = () => { // Função para lidar com o timeout da sessão
+    navigate("/", { state: { showSessionTimeoutModal: true } }); // Navegar para a página inicial
   };
 
-  // Function to fetch users based on searchTerm
-  const fetchUsers = async () => {
+  
+  const fetchUsers = async () => { // Função para obter os utilizadores 
     if (!searchTerm) return;
     try {
       const response = await fetch(
@@ -34,13 +34,13 @@ const NewMessageModal = ({ isOpen, closeModal, authToken }) => {
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
         if (errorMessage === "Invalid token") {
-          handleSessionTimeout(); // Session timeout
-          return; // Exit early if session timeout
+          handleSessionTimeout(); // Lidar com o timeout da sessão
+          return;
         } else {
           console.error("Error updating seen status:", errorMessage);
         }
       }
-      if (!response.ok) {
+      if (!response.ok) { // Verificar se a resposta é bem-sucedida
         throw new Error("Failed to fetch users");
       }
 
@@ -51,14 +51,14 @@ const NewMessageModal = ({ isOpen, closeModal, authToken }) => {
     }
   };
 
-  const handleSendMessage = async () => {
+  const handleSendMessage = async () => { // Função para enviar a mensagem
     if (!selectedUser) {
       alert("Please select a user to send the message to.");
       return;
     }
 
     try {
-      const response = await fetch(`${apiUrl}/messages`, {
+      const response = await fetch(`${apiUrl}/messages`, { // Enviar a mensagem
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -69,12 +69,12 @@ const NewMessageModal = ({ isOpen, closeModal, authToken }) => {
           receiverId: selectedUser.id,
         }),
       });
-      if (response.status === 401) {
+      if (response.status === 401) { // Verificar se o token é inválido
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
         if (errorMessage === "Invalid token") {
-          handleSessionTimeout(); // Session timeout
-          return; // Exit early if session timeout
+          handleSessionTimeout(); // Lidar com o timeout da sessão
+          return; 
         } else {
           console.error("Error updating seen status:", errorMessage);
         }
@@ -86,33 +86,33 @@ const NewMessageModal = ({ isOpen, closeModal, authToken }) => {
       const savedMessage = await response.json();
       console.log("Message sent successfully:", savedMessage);
       setMessageContent("");
-      // Close the modal after sending
+      
       closeModal();
     } catch (error) {
       console.error("Error sending message:", error);
     }
   };
 
-  const handleModalClick = (e) => {
+  const handleModalClick = (e) => { // Função para lidar com o clique no modal
     e.stopPropagation();
   };
 
-  const handleSearch = () => {
-    // Trigger user search
-    setUsers([]); // Clear previous search results
+  const handleSearch = () => { // Função para pesquisar
+    
+    setUsers([]);
     fetchUsers();
   };
 
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
+  const handleKeyPress = (e) => { // Função para lidar com a tecla pressionada
+    if (e.key === "Enter") { // Verificar se a tecla pressionada é Enter
       handleSearch();
     }
   };
 
-  const handleUserSelection = (user) => {
+  const handleUserSelection = (user) => { // Função para selecionar o utilizador
     setSelectedUser(user);
-    setUsers([]); // Clear search results after user selection
-    setSearchTerm(user.username); // Clear search term
+    setUsers([]); 
+    setSearchTerm(user.username);
   };
 
   if (!isOpen) {

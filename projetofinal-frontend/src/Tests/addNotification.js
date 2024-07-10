@@ -1,6 +1,6 @@
-const fetch = require('node-fetch');
+const fetch = require('node-fetch'); // Importa o módulo node-fetch para fazer requisições HTTP
 
-async function addNotification(token, user, projectInfo, type) {
+async function addNotification(token, user, projectInfo, type) { // Função para adicionar notificação
   const response = await fetch(`https://localhost:8443/projetofinal-backend-1.0-SNAPSHOT/rest/notifications`, {
     method: "POST",
     headers: {
@@ -15,13 +15,13 @@ async function addNotification(token, user, projectInfo, type) {
     }),
   });
 
-  if (response.ok) {
+  if (response.ok) { // Se a resposta for ok
     const data = await response.json();
-    return data; // Assuming the response contains some data on success
+    return data;   // Retorna os dados
   } else if (response.status === 401) {
     throw new Error('Unauthorized: Access is denied due to invalid credentials.');
   } else {
-    // Handle other errors or statuses as needed
+    
     const errorText = await response.text();
     throw new Error(errorText);
   }

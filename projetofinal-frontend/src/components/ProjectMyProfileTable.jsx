@@ -7,8 +7,8 @@ import { Tooltip } from "react-tooltip";
 import { useTranslation } from "react-i18next";
 import ProjectMyProfileCards from "./ProjectMyProfileCards";
 
-// Helper function to convert the date array to a JS Date object
-const formatDate = (dateArray) => {
+
+const formatDate = (dateArray) => { //função para formatar a data
   if (!Array.isArray(dateArray) || dateArray.length < 3) {
     return "";
   }
@@ -18,8 +18,8 @@ const formatDate = (dateArray) => {
     .split("T")[0];
 };
 
-// Helper function to map status value to status string
-const getStatusString = (statusValue) => {
+
+const getStatusString = (statusValue) => { //função para retornar o status
   switch (statusValue) {
     case 100:
       return "PLANNING";
@@ -48,9 +48,9 @@ function ProjectMyProfileTable({
   rowsPerPage,
 }) {
   const navigate = useNavigate();
-  const {t} = useTranslation();
+  const {t} = useTranslation(); //tradução
 
-  const columns = [
+  const columns = [ //colunas da tabela
     {
       name: t('ProjectName'),
       selector: (row) => row.title,
@@ -108,12 +108,12 @@ function ProjectMyProfileTable({
 
   const [filterText, setFilterText] = useState("");
 
-  const filteredItems = data.filter(
+  const filteredItems = data.filter( //filtro para a busca
     (item) =>
       item.title && item.title.toLowerCase().includes(filterText.toLowerCase())
   );
 
-  const handleFilter = (e) => {
+  const handleFilter = (e) => { //função para filtrar
     setFilterText(e.target.value);
   };
 

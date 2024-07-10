@@ -5,18 +5,18 @@ import { Tooltip } from "react-tooltip";
 import {useTranslation} from "react-i18next";
 
 const ProjectsHomeCard = ({ project }) => {
-  const [showModal, setShowModal] = useState(false);
-  const { t } = useTranslation();
+  const [showModal, setShowModal] = useState(false); //modal
+  const { t } = useTranslation(); //tradução
 
-  const handleOpenModal = () => {
+  const handleOpenModal = () => { //função para abrir o modal
     setShowModal(true);
   };
 
-  const handleCloseModal = () => {
+  const handleCloseModal = () => { //função para fechar o modal
     setShowModal(false);
   };
 
-  const formatDateForInput = (dateArray) => {
+  const formatDateForInput = (dateArray) => { //função para formatar a data
     if (!Array.isArray(dateArray) || dateArray.length < 3) {
       return "";
     }
@@ -26,7 +26,7 @@ const ProjectsHomeCard = ({ project }) => {
       .split("T")[0];
   };
 
-  const getBadge = (approved) => {
+  const getBadge = (approved) => { //função para retornar o badge
     if (approved === true) {
       return (
         <>

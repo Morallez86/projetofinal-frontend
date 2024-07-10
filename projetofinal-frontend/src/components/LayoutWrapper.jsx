@@ -7,16 +7,16 @@ import useUserStore from "../Stores/UserStore";
 import { useWebSocket } from "../WebSocketContext";
 
 const LayoutWrapper = () => {
-  const location = useLocation();
-  const apiUrl = useApiStore.getState().apiUrl;
-  const token = useUserStore((state) => state.token);
-  const { registerMessageHandler, unregisterMessageHandler } = useWebSocket();
+  const location = useLocation();  //obtém a localizaçao atual
+  const apiUrl = useApiStore.getState().apiUrl; //obtém o URL da API
+  const token = useUserStore((state) => state.token); //obtém o token do utilizador
+  const { registerMessageHandler, unregisterMessageHandler } = useWebSocket(); //obtém os handlers de mensagens
 
-  const [unreadMessages, setUnreadMessages] = useState(null);
-  const [unreadNotifications, setUnreadNotifications] = useState(null);
+  const [unreadMessages, setUnreadMessages] = useState(null); //mensagens não lidas
+  const [unreadNotifications, setUnreadNotifications] = useState(null);   //notificações não lidas
 
-  // Fetch unread counts
-  const fetchUnreadCounts = useCallback(async () => {
+  
+  const fetchUnreadCounts = useCallback(async () => { //função para obter as contagens não lidas
     if (token) {
       try {
         const headers = {
@@ -25,15 +25,15 @@ const LayoutWrapper = () => {
           Authorization: `Bearer ${token}`,
         };
 
-        // Fetch unread messages count
-        const messagesResponse = await fetch(
+       
+        const messagesResponse = await fetch( //obtém as mensagens não lidas
           `${apiUrl}/messages/unread/count`,
           { headers }
         );
-        if (messagesResponse.ok) {
+        if (messagesResponse.ok) { //se a resposta for bem-sucedida
           const messagesData = await messagesResponse.json();
           console.log(messagesData)
-          setUnreadMessages(messagesData.unreadCount);
+          setUnreadMessages(messagesData.unreadCount); //atualiza o estado das mensagens não lidas
         } else {
           console.error(
             "Failed to fetch unread messages count:",
@@ -41,15 +41,15 @@ const LayoutWrapper = () => {
           );
         }
 
-        // Fetch unread notifications count
-        const notificationsResponse = await fetch(
+       
+        const notificationsResponse = await fetch( //obtém as notificações não lidas
           `${apiUrl}/notifications/unread/count`,
           { headers }
         );
         if (notificationsResponse.ok) {
           const notificationsData = await notificationsResponse.json();
-          console.log(notificationsData);
-          setUnreadNotifications(notificationsData.unreadCount);
+         
+          setUnreadNotifications(notificationsData.unreadCount); //atualiza o estado das notificações não lidas
         } else {
           console.error(
             "Failed to fetch unread notifications count:",
@@ -60,14 +60,14 @@ const LayoutWrapper = () => {
         console.error("Error fetching unread counts:", error);
       }
     }
-  }, [apiUrl, token]);
+  }, [apiUrl, token]); //dependências
 
   useEffect(() => {
-    fetchUnreadCounts();
-  }, [fetchUnreadCounts]);
+    fetchUnreadCounts(); //obtém as contagens não lidas
+  }, [fetchUnreadCounts]); //dependências
 
   useEffect(() => {
-    const handleMessage = (message) => {
+    const handleMessage = (message) => { //função para lidar com as mensagens
       if (message.type === "message") {
         fetchUnreadCounts();
       } else if (message.type === "notification") {
@@ -79,13 +79,13 @@ const LayoutWrapper = () => {
 
     registerMessageHandler(handleMessage);
 
-    return () => {
+    return () => { 
       unregisterMessageHandler(handleMessage);
     };
-  }, [fetchUnreadCounts, registerMessageHandler, unregisterMessageHandler]);
+  }, [fetchUnreadCounts, registerMessageHandler, unregisterMessageHandler]); //dependências
 
-  // Define the activeTab and subTabs based on the current path
-  let activeTab, activeSubTabProfile, activeSubProjects, activeSubComponents;
+  
+  let activeTab, activeSubTabProfile, activeSubProjects, activeSubComponents; //abas ativas
 
   switch (location.pathname) {
     case "/myProjects":

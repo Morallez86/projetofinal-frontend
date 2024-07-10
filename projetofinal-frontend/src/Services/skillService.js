@@ -1,8 +1,8 @@
 import useApiStore from "../Stores/ApiStore";
 
-const apiUrl = useApiStore.getState().apiUrl;
+const apiUrl = useApiStore.getState().apiUrl; // apiUrl
 
-export const getSkills = async (token, navigate) => {
+export const getSkills = async (token, navigate) => { // função para obter as skills
   try {
     const response = await fetch(`${apiUrl}/skills`, {
       method: "GET",
@@ -13,31 +13,31 @@ export const getSkills = async (token, navigate) => {
       },
     });
 
-    if (response.status === 200) {
+    if (response.status === 200) { // se o status for 200
       const data = await response.json();
       return data;
-    } else if (response.status === 404) {
-      console.log("Skills not found");
-      return [];
-    } else if (response.status === 401) {
+    } else if (response.status === 404) { // se o status for 404
+      
+      return []; 
+    } else if (response.status === 401) { // se o status for 401
       const data = await response.json();
       const errorMessage = data.message || "Unauthorized";
 
       if (errorMessage === "Invalid token") {
-        handleSessionTimeout(navigate); // Session timeout
-        return; // Exit early if session timeout
-      } else {
+        handleSessionTimeout(navigate); // timeout da sessão
+        return; 
+      } else { // erro
         console.error("Error updating seen status:", errorMessage);
       }
-    } else {
+    } else { // erro
       throw new Error("Failed to fetch skills");
     }
-  } catch (error) {
+  } catch (error) { // erro
     console.error("Error fetching skills:", error);
     throw error;
   }
 };
 
-const handleSessionTimeout = (navigate) => {
-  navigate("/");
+const handleSessionTimeout = (navigate) => { // função para timeout da sessão
+  navigate("/"); // navegar para a página inicial
 };

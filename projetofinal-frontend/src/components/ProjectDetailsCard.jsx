@@ -34,29 +34,29 @@ function ProjectDetailsCard({
   openPopUpResources,
   openPopUpResourcesRemove,
 }) {
-  const { projectId } = useParams();
-  const { t } = useTranslation();
-  const [editMode, setEditMode] = useState(false);
-  const [projectDetails, setProjectDetails] = useState({ ...project });
-  const apiUrl = useApiStore((state) => state.apiUrl);
-  const token = useUserStore((state) => state.token);
-  const workplaces = useWorkplaceStore((state) => state.workplaces);
-  const navigate = useNavigate();
-  const handleSessionTimeout = () => {
+  const { projectId } = useParams(); //obter o id do projeto através do url
+  const { t } = useTranslation();  //função de tradução
+  const [editMode, setEditMode] = useState(false); //estado para editar o projeto
+  const [projectDetails, setProjectDetails] = useState({ ...project }); //detalhes do projeto
+  const apiUrl = useApiStore((state) => state.apiUrl); //URL da API
+  const token = useUserStore((state) => state.token); //token do utilizador
+  const workplaces = useWorkplaceStore((state) => state.workplaces); //locais de trabalho
+  const navigate = useNavigate(); //navegar para outra página
+  const handleSessionTimeout = () => { //função para lidar com o timeout da sessão
     navigate("/", { state: { showSessionTimeoutModal: true } });
   };
   let currentUserId;
 
   if (token) {
-    const decodedToken = jwtDecode(token);
-    currentUserId = decodedToken.id;
+    const decodedToken = jwtDecode(token); //decodificar o token
+    currentUserId = decodedToken.id; //id do utilizador
   }
 
-  const currentUserIsAdmin = projectDetails.userProjectDtos?.some(
+  const currentUserIsAdmin = projectDetails.userProjectDtos?.some( //verificar se o utilizador é administrador
     (user) => user.userId === currentUserId && user.admin
   );
 
-  const statusOptions = [
+  const statusOptions = [ //opções de estado
     ...(projectDetails.status === 100
       ? [
           { value: 100, label: "PLANNING" },
@@ -86,7 +86,7 @@ function ProjectDetailsCard({
       : []),
   ];
 
-  const handleChange = (e) => {
+  const handleChange = (e) => { //função para lidar com a mudança
     const { name, value } = e.target;
     console.log(value);
 
@@ -118,15 +118,15 @@ function ProjectDetailsCard({
     }
   };
 
-  const formatDateForBackend = (dateArray) => {
+  const formatDateForBackend = (dateArray) => { //formatar a data para o backend
     if (!dateArray || dateArray.length !== 5) {
       return null;
     }
 
     const [year, month, day, hours, minutes] = dateArray;
 
-    // Ensure month and day are two digits (zero-padded if necessary)
-    const formattedMonth = `${month + 1}`.padStart(2, "0"); // Note: month in JavaScript Date object is 0-indexed
+ 
+    const formattedMonth = `${month + 1}`.padStart(2, "0"); 
     const formattedDay = `${day}`.padStart(2, "0");
 
     const formattedDate = `${year}-${formattedMonth}-${formattedDay} ${hours}:${minutes}0:00`;
@@ -134,16 +134,16 @@ function ProjectDetailsCard({
     return formattedDate;
   };
 
-  const convertDateToArray = (dateString) => {
+  const convertDateToArray = (dateString) => { //converter a data para um array
     const date = new Date(dateString);
     console.log(dateString);
     const year = date.getFullYear();
-    const month = date.getMonth() + 1; // getMonth() returns months from 0-11
+    const month = date.getMonth() + 1; 
     const day = date.getDate();
     return [year, month, day, 10, 0];
   };
 
-  const handleSaveClick = async () => {
+  const handleSaveClick = async () => { //função para lidar com o clique no botão de guardar
     const updatedProjectDetails = {
       title: projectDetails.title,
       status: projectDetails.status,
@@ -155,10 +155,10 @@ function ProjectDetailsCard({
       maxUsers: projectDetails.maxUsers,
     };
 
-    console.log(updatedProjectDetails);
+    
 
     try {
-      const response = await fetch(`${apiUrl}/projects/${projectId}`, {
+      const response = await fetch(`${apiUrl}/projects/${projectId}`, { //atualizar os detalhes do projeto
         method: "PUT",
         headers: {
           Accept: "*/*",
@@ -168,16 +168,16 @@ function ProjectDetailsCard({
         body: JSON.stringify(updatedProjectDetails),
       });
 
-      if (response.status === 200) {
-        console.log("Project details updated successfully");
+      if (response.status === 200) { //se a resposta for 200
+        
         setEditMode(false);
-      } else if (response.status === 401) {
+      } else if (response.status === 401) { //se a resposta for 401
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
 
-        if (errorMessage === "Invalid token") {
-          handleSessionTimeout(); // Session timeout
-          return; // Exit early if session timeout
+        if (errorMessage === "Invalid token") { //se a mensagem de erro for "Invalid token"
+          handleSessionTimeout(); 
+          return; 
         } else {
           console.error("Error updating seen status:", errorMessage);
         }
@@ -189,7 +189,7 @@ function ProjectDetailsCard({
     }
   };
 
-  const handleAdminChange = async (userId, isAdmin) => {
+  const handleAdminChange = async (userId, isAdmin) => { //função para alterar o administrador
     try {
       const response = await fetch(
         `${apiUrl}/projects/${projectId}/users/${userId}/status`,
@@ -203,21 +203,21 @@ function ProjectDetailsCard({
         }
       );
 
-      if (response.status === 200) {
+      if (response.status === 200) { //se a resposta for 200
         setProjectDetails((prevDetails) => ({
           ...prevDetails,
           userProjectDtos: prevDetails.userProjectDtos.map((user) =>
             user.userId === userId ? { ...user, admin: isAdmin } : user
           ),
         }));
-        console.log("User status updated successfully");
-      } else if (response.status === 401) {
+        
+      } else if (response.status === 401) { //se a resposta for 401
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
 
         if (errorMessage === "Invalid token") {
-          handleSessionTimeout(); // Session timeout
-          return; // Exit early if session timeout
+          handleSessionTimeout(); // sessão terminada
+          return; 
         } else {
           console.error("Error updating seen status:", errorMessage);
         }
@@ -229,7 +229,7 @@ function ProjectDetailsCard({
     }
   };
 
-  const handleUserDeactivation = async (userId) => {
+  const handleUserDeactivation = async (userId) => { //função para desativar o utilizador
     try {
       const response = await fetch(
         `${apiUrl}/projects/${projectId}/users/${userId}/inactive`,
@@ -238,26 +238,26 @@ function ProjectDetailsCard({
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ active: false }),
+          }, 
+          body: JSON.stringify({ active: false }), 
         }
       );
 
-      if (response.status === 200) {
-        setProjectDetails((prevDetails) => ({
+      if (response.status === 200) { //se a resposta for 200
+        setProjectDetails((prevDetails) => ({ 
           ...prevDetails,
           userProjectDtos: prevDetails.userProjectDtos.map((user) =>
             user.userId === userId ? { ...user, active: false } : user
           ),
         }));
-        console.log("User deactivated successfully");
+       
       } else if (response.status === 401) {
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
 
         if (errorMessage === "Invalid token") {
-          handleSessionTimeout(); // Session timeout
-          return; // Exit early if session timeout
+          handleSessionTimeout(); // sessão terminada
+          return; 
         } else {
           console.error("Error updating seen status:", errorMessage);
         }
@@ -269,7 +269,7 @@ function ProjectDetailsCard({
     }
   };
 
-  const handleCancelClick = () => {
+  const handleCancelClick = () => { //função para lidar com o clique no botão de cancelar
     setProjectDetails({ ...project });
     setEditMode(false);
   };
@@ -278,7 +278,7 @@ function ProjectDetailsCard({
     setProjectDetails({ ...project });
   }, [project]);
 
-  const formatDateForInput = (dateArray) => {
+  const formatDateForInput = (dateArray) => { //formatar a data para o input
     if (!Array.isArray(dateArray) || dateArray.length < 3) {
       return "";
     }
@@ -289,7 +289,7 @@ function ProjectDetailsCard({
     return isoString.split("T")[0];
   };
 
-  const getBadge = (approved) => {
+  const getBadge = (approved) => { //obter o crachá
     if (approved === true) {
       return (
         <>

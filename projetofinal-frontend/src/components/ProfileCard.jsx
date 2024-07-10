@@ -26,33 +26,33 @@ function ProfileCard({
   openPopUpSkillsRemove,
   openPopUpInterestRemove,
 }) {
-  const apiUrl = useApiStore((state) => state.apiUrl);
-  const token = useUserStore((state) => state.token);
-  let userId = null;
+  const apiUrl = useApiStore((state) => state.apiUrl); // URL da API
+  const token = useUserStore((state) => state.token); // Token do utilizador
+  let userId = null; 
   let email = null;
   if (token !== null) {
-    const decodedToken = jwtDecode(token);
-    userId = decodedToken.id;
-    email = decodedToken.sub;
+    const decodedToken = jwtDecode(token); // Decodificar o token
+    userId = decodedToken.id; // ID do utilizador
+    email = decodedToken.sub; // Email do utilizador
   }
-  const setSkills = useUserStore((state) => state.setSkills);
-  const setInterests = useUserStore((state) => state.setInterests);
-  const userSkills = useUserStore((state) => state.skills);
-  const userInterests = useUserStore((state) => state.interests);
-  const setProfileImage = useUserStore((state) => state.setProfileImage);
-  const initialProfileImage = useUserStore((state) => state.profileImage);
-  const workplaces = useWorkplaceStore((state) => state.workplaces);
-  const navigate = useNavigate();
-  const handleSessionTimeout = () => {
-    navigate("/", { state: { showSessionTimeoutModal: true } });
+  const setSkills = useUserStore((state) => state.setSkills); // Função para definir as skills
+  const setInterests = useUserStore((state) => state.setInterests); // Função para definir os interesses
+  const userSkills = useUserStore((state) => state.skills); // Skills do utilizador
+  const userInterests = useUserStore((state) => state.interests); // Interesses do utilizador
+  const setProfileImage = useUserStore((state) => state.setProfileImage); // Função para definir a imagem de perfil
+  const initialProfileImage = useUserStore((state) => state.profileImage); // Imagem de perfil inicial
+  const workplaces = useWorkplaceStore((state) => state.workplaces); // Locais de trabalho
+  const navigate = useNavigate(); 
+  const handleSessionTimeout = () => { // Função para lidar com o timeout da sessão
+    navigate("/", { state: { showSessionTimeoutModal: true } }); // Navegar para a página inicial
   };
 
   const { t } = useTranslation();
 
-  const [editMode, setEditMode] = useState(false);
-  const [profileImage, setProfileImageLocal] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [userInfo, setUserInfo] = useState({
+  const [editMode, setEditMode] = useState(false); // Modo de edição
+  const [profileImage, setProfileImageLocal] = useState(null); // Imagem de perfil
+  const [selectedImage, setSelectedImage] = useState(null); // Imagem selecionada
+  const [userInfo, setUserInfo] = useState({ // Informações do utilizador
     name: "",
     jobLocation: "",
     nickname: "",
@@ -62,8 +62,8 @@ function ProfileCard({
     biography: "",
   });
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
+  const handleFileChange = (e) => { // Função para lidar com a mudança de foto
+    const file = e.target.files[0]; 
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setProfileImage(imageUrl);
@@ -76,26 +76,26 @@ function ProfileCard({
   }, []);
 
   useEffect(() => {
-    setUserInfo((prevInfo) => ({
+    setUserInfo((prevInfo) => ({ // Definir as skills do utilizador
       ...prevInfo,
       skills: userSkills.map((skill) => skill.name),
     }));
   }, [userSkills]);
 
   useEffect(() => {
-    setUserInfo((prevInfo) => ({
+    setUserInfo((prevInfo) => ({ // Definir os interesses do utilizador
       ...prevInfo,
       interests: userInterests.map((interest) => interest.name),
     }));
   }, [userInterests]);
 
   useEffect(() => {
-    if (initialProfileImage) {
+    if (initialProfileImage) { // Definir a imagem de perfil inicial
       setProfileImageLocal(initialProfileImage);
     }
   }, [initialProfileImage]);
 
-  const fetchUserInfo = async () => {
+  const fetchUserInfo = async () => { // Função para obter as informações do utilizador
     try {
       const response = await fetch(`${apiUrl}/users/profile/${userId}`, {
         method: "GET",
@@ -106,19 +106,19 @@ function ProfileCard({
         },
       });
 
-      if (response.status === 404) {
+      if (response.status === 404) { // Utilizador com este token não encontrado
         console.log("User with this token is not found");
       } else if (response.status === 401) {
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
 
-        if (errorMessage === "Invalid token") {
-          handleSessionTimeout(); // Session timeout
-          return; // Exit early if session timeout
+        if (errorMessage === "Invalid token") { // Token inválido
+          handleSessionTimeout(); // Sessão terminada 
+          return; 
         } else {
           console.error("Error updating seen status:", errorMessage);
         }
-      } else if (response.status === 200) {
+      } else if (response.status === 200) { // Resposta bem-sucedida
         const userInfoData = await response.json();
         console.log(userInfoData);
         setSkills(userInfoData.skills);
@@ -138,11 +138,11 @@ function ProfileCard({
     }
   };
 
-  const handleEditClick = () => {
+  const handleEditClick = () => { // Função para editar
     setEditMode(true);
   };
 
-  const handleSaveClick = async () => {
+  const handleSaveClick = async () => { // Função para guardar
     try {
       console.log(selectedImage);
       if (selectedImage) {
@@ -160,15 +160,15 @@ function ProfileCard({
           body: file,
         });
 
-        if (imageResponse.status === 200) {
+        if (imageResponse.status === 200) { // Imagem carregada com sucesso
           console.log("Image uploaded successfully");
-        } else if (response.status === 401) {
+        } else if (response.status === 401) { // Token inválido
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
-          if (errorMessage === "Invalid token") {
-            handleSessionTimeout(); // Session timeout
-            return; // Exit early if session timeout
+          if (errorMessage === "Invalid token") { 
+            handleSessionTimeout(); // Sessão terminada
+            return; 
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
@@ -177,8 +177,8 @@ function ProfileCard({
         }
       }
 
-      // Update the user info
-      const response = await fetch(`${apiUrl}/users/profile/${userId}`, {
+     
+      const response = await fetch(`${apiUrl}/users/profile/${userId}`, { // Atualizar as informações do utilizador
         method: "PUT",
         headers: {
           Accept: "*/*",
@@ -186,8 +186,8 @@ function ProfileCard({
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          firstName: userInfo.name.split(" ")[0],
-          lastName: userInfo.name.split(" ")[1],
+          firstName: userInfo.name.split(" ")[0], // Primeiro nome
+          lastName: userInfo.name.split(" ")[1], // Último nome
           username: userInfo.nickname,
           biography: userInfo.biography,
           workplace: userInfo.jobLocation,
@@ -195,10 +195,10 @@ function ProfileCard({
         }),
       });
 
-      if (response.status === 200) {
-        console.log("User info updated successfully");
+      if (response.status === 200) { // Informações do utilizador atualizadas com sucesso
+        
         setEditMode(false);
-      } else if (response.status === 401) {
+      } else if (response.status === 401) { // Token inválido
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
 
@@ -216,11 +216,11 @@ function ProfileCard({
     }
   };
 
-  const handleCancelClick = () => {
+  const handleCancelClick = () => { // Função para cancelar
     setEditMode(false);
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e) => { // Função para lidar com a mudança
     const { name, value } = e.target;
     setUserInfo((prevInfo) => ({
       ...prevInfo,

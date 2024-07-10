@@ -10,24 +10,24 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 function ProfileOtherUsersCard() {
-  const { userId } = useParams();
-  const [editMode, setEditMode] = useState(false);
-  const apiUrl = useApiStore((state) => state.apiUrl);
-  const token = useUserStore((state) => state.token);
-  const navigate = useNavigate();
-  const handleSessionTimeout = () => {
-    navigate("/", { state: { showSessionTimeoutModal: true } });
+  const { userId } = useParams(); // ID do utilizador
+  const [editMode, setEditMode] = useState(false); // Modo de edição
+  const apiUrl = useApiStore((state) => state.apiUrl); // URL da API
+  const token = useUserStore((state) => state.token); // Token do utilizador
+  const navigate = useNavigate(); 
+  const handleSessionTimeout = () => { // Função para lidar com o timeout da sessão
+    navigate("/", { state: { showSessionTimeoutModal: true } }); // Navegar para a página inicial
   };
 
-  const { t } = useTranslation();
+  const { t } = useTranslation(); // Função de tradução
 
   let currentUserRole;
   if (token) {
-    const decodedToken = jwtDecode(token);
-    currentUserRole = decodedToken.role;
+    const decodedToken = jwtDecode(token); // Decodificar o token
+    currentUserRole = decodedToken.role;  // Obter o papel do utilizador
   }
 
-  const [userInfo, setUserInfo] = useState({
+  const [userInfo, setUserInfo] = useState({ // Informações do utilizador
     name: "",
     jobLocation: "",
     nickname: "",
@@ -37,10 +37,10 @@ function ProfileOtherUsersCard() {
     biography: "",
     role: 100,
   });
-  const [profileImage, setProfileImage] = useState(basePhoto);
+  const [profileImage, setProfileImage] = useState(basePhoto); // Imagem de perfil
 
   useEffect(() => {
-    const fetchUserInfo = async () => {
+    const fetchUserInfo = async () => { // Função para obter as informações do utilizador
       try {
         const response = await fetch(`${apiUrl}/users/profile/${userId}`, {
           method: "GET",
@@ -51,11 +51,11 @@ function ProfileOtherUsersCard() {
           },
         });
 
-        if (response.status === 404) {
+        if (response.status === 404) { // Se o utilizador não for encontrado
           console.log("User with this ID is not found");
-        } else if (response.status === 200) {
+        } else if (response.status === 200) { // Se o utilizador for encontrado
           const userInfoData = await response.json();
-          console.log(userInfoData);
+          
           setUserInfo({
             name: `${userInfoData.firstName} ${userInfoData.lastName}`,
             nickname: userInfoData.username,
@@ -67,13 +67,13 @@ function ProfileOtherUsersCard() {
             role: userInfoData.role,
           });
           fetchProfileImage(userId);
-        } else if (response.status === 401) {
+        } else if (response.status === 401) { // Se o utilizador não estiver autorizado
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
           if (errorMessage === "Invalid token") {
-            handleSessionTimeout(); // Session timeout
-            return; // Exit early if session timeout
+            handleSessionTimeout(); // Timeout da sessão
+            return;
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
@@ -83,7 +83,7 @@ function ProfileOtherUsersCard() {
       }
     };
 
-    const fetchProfileImage = async (userId) => {
+    const fetchProfileImage = async (userId) => { // Função para obter a imagem de perfil do utilizador
       try {
         const response = await fetch(`${apiUrl}/users/${userId}/image`, {
           method: "GET",
@@ -92,20 +92,20 @@ function ProfileOtherUsersCard() {
           },
         });
 
-        if (response.status === 200) {
+        if (response.status === 200) { // Se a imagem for encontrada
           const imageData = await response.blob();
           const imageObjectURL = URL.createObjectURL(imageData);
           setProfileImage(imageObjectURL);
-        } else if (response.status === 404) {
-          console.log("User image not found, using base photo");
+        } else if (response.status === 404) { // Se a imagem não for encontrada
+          
           setProfileImage(basePhoto);
-        } else if (response.status === 401) {
+        } else if (response.status === 401) { // Se o utilizador não estiver autorizado
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
           if (errorMessage === "Invalid token") {
-            handleSessionTimeout(); // Session timeout
-            return; // Exit early if session timeout
+            handleSessionTimeout(); // Timeout da sessão
+            return; 
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
@@ -121,15 +121,15 @@ function ProfileOtherUsersCard() {
     fetchUserInfo();
   }, [apiUrl, token, userId]);
 
-  const handleEditClick = () => {
+  const handleEditClick = () => { // Função para lidar com o clique no botão de edição
     setEditMode(true);
   };
 
-  const handleCancelClick = () => {
+  const handleCancelClick = () => { // Função para lidar com o clique no botão de cancelamento
     setEditMode(false);
   };
 
-  const handleSaveClick = async () => {
+  const handleSaveClick = async () => { // Função para lidar com o clique no botão de guardar
     const updatedData = {
       role: userInfo.role,
     };
@@ -145,19 +145,19 @@ function ProfileOtherUsersCard() {
         body: JSON.stringify(updatedData),
       });
 
-      if (response.status === 200) {
+      if (response.status === 200) { // Se o papel do utilizador for atualizado com sucesso
         setEditMode(false);
         setUserInfo((prevUserInfo) => ({
           ...prevUserInfo,
           role: updatedData.role,
         }));
-      } else if (response.status === 401) {
+      } else if (response.status === 401) { // Se o utilizador não estiver autorizado
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
 
         if (errorMessage === "Invalid token") {
-          handleSessionTimeout(); // Session timeout
-          return; // Exit early if session timeout
+          handleSessionTimeout(); // Timeout da sessão
+          return; 
         } else {
           console.error("Error updating seen status:", errorMessage);
         }
@@ -169,7 +169,7 @@ function ProfileOtherUsersCard() {
     }
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e) => { // Função para lidar com a mudança de input
     const { name, value } = e.target;
     setUserInfo((prevUserInfo) => ({
       ...prevUserInfo,

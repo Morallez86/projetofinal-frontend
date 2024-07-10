@@ -12,41 +12,43 @@ import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
+// O contexto é usado porque este componente é reutilizável 
 function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
-  const { projectId } = useParams();
-  const token = useUserStore((state) => state.token);
-  const apiUrl = useApiStore((state) => state.apiUrl);
-  const userSkills = useUserStore((state) => state.skills);
+  const { projectId } = useParams(); // Obter o id do projeto da URL
+  // Obter dados do zustand
+  const token = useUserStore((state) => state.token); 
+  const apiUrl = useApiStore((state) => state.apiUrl); 
+  const userSkills = useUserStore((state) => state.skills); 
   const setUserSkills = useUserStore((state) => state.setSkills);
   const projectSkills = useProjectStore((state) => state.projectSkills);
   const setProjectSkills = useProjectStore((state) => state.setProjectSkills);
 
-  const { skills, addSkill } = useSkillStore();
+  const { skills, addSkill } = useSkillStore(); 
 
-  const [selectedSkill, setSelectedSkill] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [inputValue, setInputValue] = useState("");
-  const [animationPlayed, setAnimationPlayed] = useState(false);
-  const [showSuccessText, setShowSuccessText] = useState(false);
+  const [selectedSkill, setSelectedSkill] = useState(null); // Definir a competência selecionada
+  const [selectedCategory, setSelectedCategory] = useState(null); // Definir a categoria selecionada
+  const [inputValue, setInputValue] = useState(""); // Definir o valor de entrada
+  const [animationPlayed, setAnimationPlayed] = useState(false); // Gerir a animação
+  const [showSuccessText, setShowSuccessText] = useState(false); // Definir o texto de sucesso exibido
   const navigate = useNavigate();
-  const handleSessionTimeout = () => {
+  const handleSessionTimeout = () => { // Gerir o tempo limite da sessão
     navigate("/", { state: { showSessionTimeoutModal: true } });
   };
 
-  const { t } = useTranslation();
+  const { t } = useTranslation(); // Traduzir o texto
 
-  const skillCategoryMapping = {
+  const skillCategoryMapping = { // Mapear as categorias de competências
     Software: 200,
     Knowledge: 100,
     Hardware: 300,
     Tools: 400,
   };
 
-  const handleInputChange = (value) => {
+  const handleInputChange = (value) => { // Gerir a entrada
     setInputValue(value);
   };
 
-  const options = skills.map((skill) => ({
+  const options = skills.map((skill) => ({ // Mapear as opções
     value: skill.name,
     label: skill.name,
     type: skill.type,
@@ -59,7 +61,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
           ),
   }));
 
-  const defaultOptions = {
+  const defaultOptions = { // Opções padrão da animação
     loop: false,
     autoplay: false,
     animationData: AddedAnimation,
@@ -68,13 +70,14 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
     },
   };
 
-  const handleSelectChange = (selectedOption) => {
+  const handleSelectChange = (selectedOption) => { // Gerir a mudança de seleção
     setSelectedSkill(selectedOption);
     const selectedSkill = skills.find(
       (skill) => skill.name === selectedOption.value
     );
 
-    if (selectedSkill) {
+    // Alter a categoria consoante a competência selecionada
+    if (selectedSkill) { 
       setSelectedCategory(
         Object.keys(skillCategoryMapping).find(
           (key) => skillCategoryMapping[key] === selectedSkill.type
@@ -83,15 +86,15 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
     }
   };
 
-  const handleCategoryChange = (selectedOption) => {
+  const handleCategoryChange = (selectedOption) => { // Gerir a mudança de categoria
     setSelectedCategory(selectedOption);
   };
 
-  const isSkillInOptions = options.some(
+  const isSkillInOptions = options.some( // Verificar se a competência está nas opções
     (option) => option.value === selectedSkill?.value
   );
 
-  const handleSubmit = async () => {
+  const handleSubmit = async () => { // Gerir o envio do formulário
     console.log(context);
     const data = [
       {
@@ -101,7 +104,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
       },
     ];
 
-    if (context === "user") {
+    if (context === "user") { // Se o contexto for para utilizadores
       try {
         const response = await fetch(`${apiUrl}/skills`, {
           method: "POST",
@@ -119,17 +122,17 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
           if (!skills.some((skill) => skill.name === data[0].name)) {
             addSkill(data[0]);
           }
-          setAnimationPlayed(true);
-          setShowSuccessText(true);
-          setSelectedSkill(null);
+          setAnimationPlayed(true); // Ativar a animação
+          setShowSuccessText(true); // Exibir o texto de sucesso
+          setSelectedSkill(null); // Limpar a competência selecionada
           setSelectedCategory(null);
         } else if (response.status === 401) {
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
           if (errorMessage === "Invalid token") {
-            handleSessionTimeout(); // Session timeout
-            return; // Exit early if session timeout
+            handleSessionTimeout(); // Sessão terminada
+            return;
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
@@ -139,7 +142,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
       } catch (error) {
         console.error("Error adding skill:", error);
       }
-    } else if (context === "editProject") {
+    } else if (context === "editProject") { // Se o contexto for para editar o projeto
       const data = {
         id: isSkillInOptions ? selectedSkill.id : null,
         name: selectedSkill.value,
@@ -160,24 +163,24 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
             }),
           }
         );
-        if (response.status === 200) {
-          setAnimationPlayed(true);
-          setShowSuccessText(true);
-          setSelectedSkill(null);
-          setSelectedCategory(null);
+        if (response.status === 200) { // Se a resposta for 200
+          setAnimationPlayed(true); // Ativar a animação
+          setShowSuccessText(true); // Exibir o texto de sucesso
+          setSelectedSkill(null); // Limpar a competência selecionada
+          setSelectedCategory(null); // Limpar a categoria selecionada
         } else if (response.status === 401) {
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
           if (errorMessage === "Invalid token") {
-            handleSessionTimeout(); // Session timeout
-            return; // Exit early if session timeout
+            handleSessionTimeout(); // Sessão terminada
+            return; 
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
-        } else if (response.status === 409) {
+        } else if (response.status === 409) { // Se a resposta for 409
           console.error("Skill already exists in the project");
-        } else if (response.status === 404) {
+        } else if (response.status === 404) { // Se a resposta for 404
           console.error("Project not found");
         } else {
           console.error("Failed to add skill to project");
@@ -186,15 +189,15 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
         console.error("Error adding skill to project:", error);
       }
     } else {
-      // If context is not for users, save project skills to Zustand store
+      // Adicionar a competência ao projeto
       setProjectSkills([...projectSkills, ...data]);
       if (!skills.some((skill) => skill.name === data[0].name)) {
         addSkill(data[0]);
       }
-      setAnimationPlayed(true);
-      setShowSuccessText(true);
-      setSelectedSkill(null);
-      setSelectedCategory(null);
+      setAnimationPlayed(true); // Ativar a animação
+      setShowSuccessText(true); // Exibir o texto de sucesso
+      setSelectedSkill(null); // Limpar a competência selecionada 
+      setSelectedCategory(null); // Limpar a categoria selecionada
     }
   };
 
@@ -241,9 +244,9 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
                   onChange={handleSelectChange}
                   onInputChange={handleInputChange}
                   isOptionDisabled={(option) =>
-                    option.isDisabled || inputValue.length > 20
+                    option.isDisabled || inputValue.length > 20 // Desativar a opção se a competência já existir ou se o comprimento da entrada for maior que 20
                   }
-                  formatOptionLabel={(option) => (
+                  formatOptionLabel={(option) => ( // Formatar a etiqueta da opção, adicionando um ícone de bloqueio se a competência estiver desativada
                     <div>
                       {option.label}
                       {option.isDisabled ? <TbLockFilled /> : null}
@@ -275,8 +278,8 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
                       {
                         eventName: "complete",
                         callback: () => {
-                          setAnimationPlayed(false);
-                          setTimeout(() => setShowSuccessText(false), 500);
+                          setAnimationPlayed(false); // Desativar a animação
+                          setTimeout(() => setShowSuccessText(false), 500); // Definir o texto de sucesso para falso após 500ms
                         },
                       },
                     ]}

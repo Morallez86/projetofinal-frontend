@@ -20,45 +20,45 @@ import i18n from "../Language/i18n";
 
 
 function LoginCard() {
-  const apiUrl = useApiStore((state) => state.apiUrl);
+  const apiUrl = useApiStore((state) => state.apiUrl); // Obter o URL da API
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({ // Dados do formulário
     email: "",
     password: "",
   });
 
-  const [emailRecovery, setEmailRecovery] = useState({
+  const [emailRecovery, setEmailRecovery] = useState({ // Recuperação de email
     email: "",
   });
 
-  const {t} = useTranslation();
-  const setLanguage = useUserStore((state) => state.setLanguage);
+  const {t} = useTranslation(); // Função de tradução
+  const setLanguage = useUserStore((state) => state.setLanguage); // Função para definir a linguagem
 
-  const languageApp = useUserStore((state) => state.language);
+  const languageApp = useUserStore((state) => state.language); // Obter a linguagem da aplicação
   
 
  
 
-  const handleLanguageToggle = () => {
+  const handleLanguageToggle = () => { // Função para alternar a linguagem
     const newLanguage = languageApp === 'en' ? 'pt' : 'en';
     setLanguage(newLanguage);
     i18n.changeLanguage(newLanguage);
   };
 
 
-  const [loading, setLoading] = useState(false);
-  const [warning, setWarning] = useState(0);
-  const [openPopUp, setOpenPopUp] = useState(false);
-  const [warningEmailFormat, setWarningEmailFormat] = useState(0);
-  const [emailRecoverySuccess, setEmailRecoverySuccess] = useState(false);
-  const [emailRecoveryError, setEmailRecoveryError] = useState(false);
+  const [loading, setLoading] = useState(false); // Carregamento
+  const [warning, setWarning] = useState(0); // Aviso
+  const [openPopUp, setOpenPopUp] = useState(false); // Pop-up
+  const [warningEmailFormat, setWarningEmailFormat] = useState(0); // Aviso de formato de email
+  const [emailRecoverySuccess, setEmailRecoverySuccess] = useState(false); // Sucesso na recuperação de email
+  const [emailRecoveryError, setEmailRecoveryError] = useState(false); // Erro na recuperação de email
 
-  const setToken = useUserStore((state) => state.setToken);
-  const setRole = useUserStore((state) => state.setRole);
-  const setUsername = useUserStore((state) => state.setUsername);
-  const setUserId = useUserStore((state) => state.setUserId);
+  const setToken = useUserStore((state) => state.setToken); // Função para definir o token
+  const setRole = useUserStore((state) => state.setRole); // Função para definir o role
+  const setUsername = useUserStore((state) => state.setUsername); // Função para definir o nome de utilizador
+  const setUserId = useUserStore((state) => state.setUserId);  // Função para definir o ID do utilizador
 
-  const fetchGreeting = async () => {
+  const fetchGreeting = async () => { // Função para buscar a localização e alterar o idioma consonate a resposta
     try {
       const response = await fetch(
         "https://localhost:8443/projetofinal-backend-1.0-SNAPSHOT/rest/greetings",
@@ -71,21 +71,21 @@ function LoginCard() {
         }
       );
 
-      if (!response.ok) {
+      if (!response.ok) { // em caso de ok
         throw new Error("Erro na requisição: " + response.statusText);
       }
 
       const data = await response.json();
-      console.log(data);
+     
 
       
-      const languageCode = data.locale.substring(0, 2);
-      console.log(languageCode);
-      setLanguage(languageCode);
+      const languageCode = data.locale.substring(0, 2); // Obter o código do idioma
+    
+      setLanguage(languageCode); // Definir o idioma
 
-      i18n.changeLanguage(languageCode);
+      i18n.changeLanguage(languageCode); // Alterar o idioma
     } catch (error) {
-      console.error("Erro ao buscar a saudação:", error.message);
+      console.error("Error: ", error.message);
       throw error;
     }
   };
@@ -94,35 +94,35 @@ function LoginCard() {
     fetchGreeting();
   }, []);
 
-  const handleChange = (event) => {
+  const handleChange = (event) => { // Função para lidar com a mudança de valor
     const { name, value } = event.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleChangeEmailRecovery = (event) => {
+  const handleChangeEmailRecovery = (event) => { // Função para lidar com a recuperação de email
     const { name, value } = event.target;
     setEmailRecovery((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  // Function to store token and role in Zustand state
+  // Função para armazenar o token e o role
   const storeTokenAndRole = (token) => {
-    setToken(token); // Store the token
-    const decodedToken = jwtDecode(token); // Decode the token
-    const role = decodedToken.role; // Extract the role from decoded token
-    setRole(role); // Store the role in Zustand
+    setToken(token); 
+    const decodedToken = jwtDecode(token);  // Decodificar o token
+    const role = decodedToken.role; 
+    setRole(role); 
     const username = decodedToken.username;
     setUsername(username);
     const userId = decodedToken.id;
     setUserId(userId);
   };
 
-  const handleSubmitRecover = async () => {
+  const handleSubmitRecover = async () => { // Função para lidar com a recuperação de email
     if (
       !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(
         emailRecovery.email
       )
     ) {
-      setWarningEmailFormat(1);
+      setWarningEmailFormat(1); // Aviso de formato de email
       return;
     }
     setLoading(true);
@@ -131,7 +131,7 @@ function LoginCard() {
     setEmailRecoveryError(false);
 
     try {
-      const response = await fetch(`${apiUrl}/users/emailRecoveryPassword`, {
+      const response = await fetch(`${apiUrl}/users/emailRecoveryPassword`, { // Enviar o email de recuperação
         method: "POST",
         headers: {
           Accept: "*/*",
@@ -140,7 +140,7 @@ function LoginCard() {
         body: JSON.stringify(emailRecovery.email),
       });
 
-      if (response.status === 200) {
+      if (response.status === 200) {  // Verificar se o email foi enviado
         console.log("Email sent");
         setEmailRecoverySuccess(true);
         setEmailRecovery("");
@@ -152,7 +152,7 @@ function LoginCard() {
         console.log("Email could not be sent");
         setEmailRecoveryError(true);
       }
-    } catch (error) {
+    } catch (error) { // Em caso de erro
       console.error("Error fetching user:", error);
       setEmailRecoveryError(true);
     } finally {
@@ -160,15 +160,15 @@ function LoginCard() {
     }
   };
 
-  const handleSubmit = async () => {
-    if (!formData.email || !formData.password) {
+  const handleSubmit = async () => { // Função para lidar com o envio
+    if (!formData.email || !formData.password) { // Verificar se os campos estão preenchidos
       setWarning(2);
       return;
     }
     setLoading(true);
     setWarning(0);
     try {
-      const response = await fetch(`${apiUrl}/users/login`, {
+      const response = await fetch(`${apiUrl}/users/login`, { // Enviar o pedido de login
         method: "POST",
         headers: {
           Accept: "*/*",
@@ -177,37 +177,37 @@ function LoginCard() {
         body: JSON.stringify(formData),
       });
 
-      if (response.status === 401) {
+      if (response.status === 401) { // Verificar se as credenciais são inválidas
         setWarning(1);
         console.log("Invalid information");
-      } else if (response.status === 200) {
+      } else if (response.status === 200) { // Verificar se o login foi bem-sucedido
         setWarning(0);
         const data = await response.json();
         const token = data.token;
         console.log(token);
         storeTokenAndRole(token);
         console.log("Successful login");
-        navigate("/myProjects");
+        navigate("/myProjects"); // Navegar para a página de projetos
       } else {
         console.log("Unexpected response status:", response.status);
       }
     } catch (error) {
       console.error("Error fetching user:", error);
-      setWarning(3);
+      setWarning(3); 
     } finally {
       setLoading(false);
     }
   };
 
-  const handleInvalid = (event) => {
+  const handleInvalid = (event) => { // Função para lidar com a invalidade
     event.preventDefault();
   };
 
-  const openEmailInput = () => {
+  const openEmailInput = () => {  // Função para abrir o input de email
     setOpenPopUp(true);
   };
 
-  const cleanWarnings = () => {
+  const cleanWarnings = () => { // Função para limpar os avisos
     setWarning(0);
     setWarningEmailFormat(0);
   };

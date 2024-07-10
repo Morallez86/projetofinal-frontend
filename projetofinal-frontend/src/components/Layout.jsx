@@ -33,37 +33,35 @@ function Layout({
   unreadNotifications,
   children,
 }) {
-  const apiUrl = useApiStore((state) => state.apiUrl);
+  const apiUrl = useApiStore((state) => state.apiUrl); // Obter o URL da API
   const { token, setToken, profileImage, setProfileImage, clearProfileImage } =
-    useUserStore();
-  const projectTimestamps = useUserStore((state) => state.projectTimestamps);
-  const [switch2, setSwitch2] = useState(false);
-  const languageApp = useUserStore((state) => state.language);
-  const setLanguageApp = useUserStore((state) => state.setLanguage);
-  const navigate = useNavigate();
-  const handleSessionTimeout = () => {
-    navigate("/", { state: { showSessionTimeoutModal: true } });
+    useUserStore(); // Obter o token, a imagem de perfil e as funções para definir o token e a imagem de perfil
+  const projectTimestamps = useUserStore((state) => state.projectTimestamps); // Obter os timestamps dos projetos
+  const [switch2, setSwitch2] = useState(false); // Estado do switch
+  const languageApp = useUserStore((state) => state.language); // Obter a linguagem da aplicação
+  const setLanguageApp = useUserStore((state) => state.setLanguage); // Função para definir a linguagem da aplicação
+  const navigate = useNavigate(); 
+  const handleSessionTimeout = () => { // Função para lidar com o timeout da sessão
+    navigate("/", { state: { showSessionTimeoutModal: true } }); // Navegar para a página inicial
   };
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
  
 
-  const handleLanguageToggle = () => {
-    const newLanguage = languageApp === "en" ? "pt" : "en";
+  const handleLanguageToggle = () => { // Função para alternar a linguagem
+    const newLanguage = languageApp === "en" ? "pt" : "en"; 
     setLanguageApp(newLanguage);
     i18n.changeLanguage(newLanguage);
   };
 
-  useEffect(() => {
-    console.log(projectTimestamps);
-  }, [projectTimestamps]);
+  
 
   let userId, username;
   if (token) {
     try {
-      const decodedToken = jwtDecode(token);
-      userId = decodedToken.id;
-      username = decodedToken.username;
+      const decodedToken = jwtDecode(token); // Decodificar o token
+      userId = decodedToken.id; // Obter o ID do utilizador
+      username = decodedToken.username; // Obter o nome de utilizador
     } catch (error) {
       console.error("Invalid token", error);
     }
@@ -90,8 +88,8 @@ function Layout({
             const errorMessage = data.message || "Unauthorized";
 
             if (errorMessage === "Invalid token") {
-              handleSessionTimeout(); // Session timeout
-              return; // Exit early if session timeout
+              handleSessionTimeout(); // Lidar com o timeout da sessão
+              return; 
             } else {
               console.error("Error updating seen status:", errorMessage);
             }
@@ -104,10 +102,10 @@ function Layout({
       }
     };
 
-    fetchProfileImage();
-  }, [apiUrl, token, userId, setProfileImage]);
+    fetchProfileImage(); // Chamar a função fetchProfileImage
+  }, [apiUrl, token, userId, setProfileImage]); // Dependências do useEffect
 
-  const handleLogout = async () => {
+  const handleLogout = async () => { // Função para fazer logout
     console.log(token);
     if (token) {
       try {
@@ -120,23 +118,23 @@ function Layout({
           body: JSON.stringify({ projectTimestamps }),
         });
 
-        if (response.ok) {
+        if (response.ok) { // Se o logout for bem-sucedido
           console.log(token);
           setToken(null);
           clearProfileImage();
           navigate("/");
         } else {
           console.log(token);
-          setToken(null); // Clear the token even if logout fails
+          setToken(null); // Limpar o token em caso de erro
           navigate("/");
         }
       } catch (error) {
         console.log(token);
-        setToken(null); // Clear the token on error
+        setToken(null); // Limpar o token em caso de erro
         navigate("/");
       }
     } else {
-      navigate("/");
+      navigate("/"); // Navegar para a página inicial
     }
   };
 
@@ -211,7 +209,7 @@ function Layout({
         leave="transition-transform ease-in-out duration-300"
         leaveFrom="translate-x-0"
         leaveTo="-translate-x-full">
-        {/* Aqui você pode substituir os botões pelo BurgerMenu se ele contiver os links/navegação */}
+        
         <BurgerMenu />
       </Transition.Child>
     </Dialog>

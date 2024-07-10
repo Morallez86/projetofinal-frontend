@@ -5,7 +5,7 @@ import { useState } from "react";
 import ComponentResourceCardDetails from "./ComponentResourceCardDetails";
 import { useTranslation } from "react-i18next";
 
-function ComponentsTable({
+function ComponentsTable({ // Tabela de componentes e recursos apesar de no nome ter só componentes
   data,
   loading,
   pagination,
@@ -19,10 +19,10 @@ function ComponentsTable({
   getComponents,
   getResources,
 }) {
-  console.log(data);
-  const { t } = useTranslation();
+  
+  const { t } = useTranslation(); // tradução
 
-  const columns = [
+  const columns = [ // Colunas da tabela
     {
       name: t('Name'),
       selector: (row) => row.name,
@@ -45,17 +45,17 @@ function ComponentsTable({
     },
   ];
 
-  const [searchKeyword, setSearchKeyword] = useState("");
-  const [selectedRow, setSelectedRow] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState(""); // Palavra-chave de pesquisa
+  const [selectedRow, setSelectedRow] = useState(null); // Linha selecionada
+  const [isModalOpen, setIsModalOpen] = useState(false); // Modal aberto
 
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      setFilterText(searchKeyword);
+  const handleKeyDown = (e) => {  // Função para lidar com a tecla pressionada
+    if (e.key === "Enter") { // Se a tecla pressionada for Enter
+      setFilterText(searchKeyword); // Definir o texto do filtro
     }
   };
 
-  const handleModalClose = () => {
+  const handleModalClose = () => { // Função para fechar o modal
     setIsModalOpen(false);
     if(context === "components"){
       getComponents();

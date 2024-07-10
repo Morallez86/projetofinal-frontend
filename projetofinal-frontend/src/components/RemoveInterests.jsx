@@ -16,50 +16,50 @@ function RemoveInterests({
   context,
   projectInfo,
 }) {
-  const apiUrl = useApiStore((state) => state.apiUrl);
-  const userInterests = useUserStore((state) => state.interests);
-  const projectInterests = useProjectStore((state) => state.projectInterests);
-  const token = useUserStore((state) => state.token);
-  const setUserInterests = useUserStore((state) => state.setInterests);
-  const setProjectInterests = useProjectStore(
+  const apiUrl = useApiStore((state) => state.apiUrl); //api url
+  const userInterests = useUserStore((state) => state.interests); //interesses do utilizador
+  const projectInterests = useProjectStore((state) => state.projectInterests); //interesses do projeto
+  const token = useUserStore((state) => state.token); //token do utilizador 
+  const setUserInterests = useUserStore((state) => state.setInterests); //set dos interesses do utilizador
+  const setProjectInterests = useProjectStore( //set dos interesses do projeto
     (state) => state.setProjectInterests
   );
 
-  const [filter, setFilter] = useState("");
-  const [selectedInterestIds, setSelectedInterestIds] = useState([]);
-  const [animationPlayed, setAnimationPlayed] = useState(false);
-  const [showSuccessText, setShowSuccessText] = useState(false);
-  const [filteredInterests, setFilteredInterests] = useState([]);
-  const navigate = useNavigate();
-  const handleSessionTimeout = () => {
-    navigate("/", { state: { showSessionTimeoutModal: true } });
+  const [filter, setFilter] = useState(""); //filtro
+  const [selectedInterestIds, setSelectedInterestIds] = useState([]); //interesses selecionados
+  const [animationPlayed, setAnimationPlayed] = useState(false); //animação
+  const [showSuccessText, setShowSuccessText] = useState(false); //texto de sucesso
+  const [filteredInterests, setFilteredInterests] = useState([]); //interesses filtrados
+  const navigate = useNavigate();  
+  const handleSessionTimeout = () => { //função para lidar com o timeout da sessão
+    navigate("/", { state: { showSessionTimeoutModal: true } }); //navegar para a página inicial
   };
 
-  const { t } = useTranslation();
+  const { t } = useTranslation(); //tradução
 
   useEffect(() => {
-    if (context === "user") {
+    if (context === "user") { //se o contexto for o utilizador
       setFilteredInterests(
         userInterests.filter((interest) =>
           interest.name.toLowerCase().includes(filter.toLowerCase())
         )
       );
-    } else if (context === "editProject" && projectInfo) {
+    } else if (context === "editProject" && projectInfo) { //se o contexto for editar projeto e houver informações do projeto
       setFilteredInterests(
         projectInfo.interests.filter((interest) =>
           interest.name.toLowerCase().includes(filter.toLowerCase())
         )
       );
-    } else {
+    } else { //se não
       setFilteredInterests(
         projectInterests.filter((interest) =>
           interest.name.toLowerCase().includes(filter.toLowerCase())
         )
       );
     }
-  }, [filter, context, userInterests, projectInfo, projectInterests]);
+  }, [filter, context, userInterests, projectInfo, projectInterests]); //dependências
 
-  const defaultOptions = {
+  const defaultOptions = {  //opções da animação
     loop: false,
     autoplay: false,
     animationData: RemovedAnimation,
@@ -68,8 +68,8 @@ function RemoveInterests({
     },
   };
 
-  const handleCheckboxChange = (id) => {
-    if (selectedInterestIds.includes(id)) {
+  const handleCheckboxChange = (id) => { //função para lidar com a mudança de checkbox
+    if (selectedInterestIds.includes(id)) { 
       setSelectedInterestIds(
         selectedInterestIds.filter((selectedId) => selectedId !== id)
       );
@@ -78,8 +78,8 @@ function RemoveInterests({
     }
   };
 
-  const handleRemoveInterests = async () => {
-    if (context === "user") {
+  const handleRemoveInterests = async () => { //função para lidar com a remoção de interesses
+    if (context === "user") { //se o contexto for o utilizador
       try {
         const response = await fetch(`${apiUrl}/interests`, {
           method: "DELETE",
@@ -90,29 +90,29 @@ function RemoveInterests({
           },
           body: JSON.stringify(selectedInterestIds),
         });
-        if (response.status === 204) {
+        if (response.status === 204) { //se a resposta for 204
           const updatedInterests = userInterests.filter(
             (interest) => !selectedInterestIds.includes(interest.id)
           );
           setUserInterests(updatedInterests);
           setAnimationPlayed(true);
-        } else if (response.status === 401) {
+        } else if (response.status === 401) { //se a resposta for 401
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
           if (errorMessage === "Invalid token") {
-            handleSessionTimeout(); // Session timeout
-            return; // Exit early if session timeout
+            handleSessionTimeout(); // timeout
+            return; 
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
-        } else if (response.status === 500) {
+        } else if (response.status === 500) { //se a resposta for 500
           console.log("Internal server error");
         }
       } catch (error) {
         console.error("Error deleting interests:", error);
       }
-    } else if (context === "editProject" && projectInfo) {
+    } else if (context === "editProject" && projectInfo) { //se o contexto for editar projeto e houver informações do projeto
       try {
         const response = await fetch(
           `${apiUrl}/projects/${projectInfo.id}/removeInterests`,
@@ -126,7 +126,7 @@ function RemoveInterests({
             body: JSON.stringify(selectedInterestIds),
           }
         );
-        if (response.status === 200) {
+        if (response.status === 200) { //se a resposta for 200
           const updatedInterests = projectInfo.interests.filter(
             (interest) => !selectedInterestIds.includes(interest.id)
           );
@@ -139,13 +139,13 @@ function RemoveInterests({
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
-          if (errorMessage === "Invalid token") {
-            handleSessionTimeout(); // Session timeout
-            return; // Exit early if session timeout
+          if (errorMessage === "Invalid token") { //se a mensagem de erro for token inválido
+            handleSessionTimeout(); // timeout
+            return; 
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
-        } else if (response.status === 500) {
+        } else if (response.status === 500) { //se a resposta for 500
           console.log("Internal server error");
         }
       } catch (error) {

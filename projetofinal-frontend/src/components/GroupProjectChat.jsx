@@ -30,23 +30,22 @@ function GroupProjectChat({
   messages: initialMessages,
   changeParent,
 }) {
-  const [isSeparated, setIsSeparated] = useState(false);
-  const token = useUserStore((state) => state.token);
-  const apiUrl = useApiStore((state) => state.apiUrl);
-  const { projectId } = useParams();
-  const [messages, setMessages] = useState(initialMessages);
-  const [reopenSocket, setReopenSocket] = useState(true);
-  const [firstMessage, setFirstMessage] = useState(true);
-  const navigate = useNavigate();
-  const handleSessionTimeout = () => {
-    navigate("/", { state: { showSessionTimeoutModal: true } });
+  const [isSeparated, setIsSeparated] = useState(false); // Separar avatares
+  const token = useUserStore((state) => state.token); // Obter o token do utilizador
+  const apiUrl = useApiStore((state) => state.apiUrl); // Obter o URL da API
+  const { projectId } = useParams(); // Obter o ID do projeto
+  const [messages, setMessages] = useState(initialMessages); // Inicializar as mensagens
+  const [reopenSocket, setReopenSocket] = useState(true); // Reabrir o socket
+  const [firstMessage, setFirstMessage] = useState(true); // Primeira mensagem
+  const navigate = useNavigate(); 
+  const handleSessionTimeout = () => { // Função para lidar com o timeout da sessão
+    navigate("/", { state: { showSessionTimeoutModal: true } }); // Navegar para a página inicial
   };
 
-  console.log(users);
 
-  const onMessageChat = (message) => {
-    console.log("called");
-    setMessages((prevMessages) => [
+  const onMessageChat = (message) => { // Função para lidar com as mensagens
+    
+    setMessages((prevMessages) => [ // Adicionar a mensagem ao estado
       ...prevMessages,
       (message = {
         content: message.content,
@@ -58,7 +57,7 @@ function GroupProjectChat({
       }),
     ]);
 
-    changeParent((prevMessages) => [
+    changeParent((prevMessages) => [ // Adicionar a mensagem ao estado do componente pai
       ...prevMessages,
       (message = {
         content: message.content,
@@ -70,25 +69,25 @@ function GroupProjectChat({
       }),
     ]);
 
-    setFirstMessage(false);
+    setFirstMessage(false); // Atualizar o estado da primeira mensagem
   };
 
-  WebSocketProjChat(projectId, token, onMessageChat, reopenSocket);
+  WebSocketProjChat(projectId, token, onMessageChat, reopenSocket); // Inicializar o WebSocket
 
-  let userIdFromToken;
-  let usernameFromToken;
+  let userIdFromToken; // ID do utilizador
+  let usernameFromToken; // Nome do utilizador
 
   if (token) {
     try {
-      const decodedToken = jwtDecode(token);
-      userIdFromToken = decodedToken.id;
-      usernameFromToken = decodedToken.username;
+      const decodedToken = jwtDecode(token); // Decodificar o token
+      userIdFromToken = decodedToken.id;  // Obter o ID do utilizador
+      usernameFromToken = decodedToken.username; // Obter o nome do utilizador
     } catch (error) {
       console.error("Invalid token", error);
     }
   }
 
-  const handleSubmit = (message) => {
+  const handleSubmit = (message) => { // Função para submeter a mensagem
     fetch(`${apiUrl}/projects/createChatMsg`, {
       method: "POST",
       headers: {
@@ -105,28 +104,20 @@ function GroupProjectChat({
       }),
     })
       .then(async (response) => {
-        if (response.status === 201) {
+        if (response.status === 201) { // Se a resposta for 201
           const messageData = await response.json();
           console.log(messageData);
-          if (messageData.timestamp.length > 5) {
+          if (messageData.timestamp.length > 5) { // Se o tamanho do timestamp for maior que 5
             messageData.timestamp = messageData.timestamp.slice(0, 5);
           }
-          console.log(messageData);
-          {
-            /*!firstMessage
-            ? setMessages((prevMessages) => [...prevMessages, messageData])
-            : console.log("first msg");
-          !firstMessage ? changeParent((prevMessages) => [...prevMessages, messageData]) : console.log("first msg");*/
-          }
-
-          console.log("msg created");
+        
         } else if (response.status === 401) {
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
           if (errorMessage === "Invalid token") {
-            handleSessionTimeout(); // Session timeout
-            return; // Exit early if session timeout
+            handleSessionTimeout(); // Lidar com o timeout da sessão
+            return; 
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
@@ -139,7 +130,7 @@ function GroupProjectChat({
       });
   };
 
-  const convertTimestampToDate = (timestamp) => {
+  const convertTimestampToDate = (timestamp) => { // Função para converter o timestamp para data
     return new Date(
       timestamp[0],
       timestamp[1] - 1,

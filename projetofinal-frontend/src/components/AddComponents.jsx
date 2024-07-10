@@ -11,21 +11,27 @@ import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
+// context serve porque este componente é reutilizável 
+
 function AddComponents({
   openPopUpComponent,
   closePopUpComponent,
   projectInfo,
   context,
 }) {
+  // Exporta o componente ActivityLogs como padrão
   const { projectId } = useParams();
+    // Acessa o token do utilizador e a URL da API através de stores personalizadas
   const token = useUserStore((state) => state.token);
   const apiUrl = useApiStore((state) => state.apiUrl);
+  // Acessa o estado global dos componentes do projeto e a função para atualizá-lo
   const projectComponents = useProjectStore((state) => state.projectComponents);
   const setProjectComponents = useProjectStore(
     (state) => state.setProjectComponents
   );
 
-  const [components, setComponents] = useState([]);
+  // Define estados locais 
+  const [components, setComponents] = useState([]); 
   const [selectedComponent, setSelectedComponent] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [animationPlayed, setAnimationPlayed] = useState(false);
@@ -33,12 +39,15 @@ function AddComponents({
   const [error, setError] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
   const navigate = useNavigate();
+  // Função para lidar com o tempo limite da sessão
   const handleSessionTimeout = () => {
     navigate("/", { state: { showSessionTimeoutModal: true } });
   };
 
+  // Função para traduzir o texto
   const { t } = useTranslation();
 
+  // Obtém os componentes disponíveis para o local de trabalho selecionado
   useEffect(() => {
     const getAvailableComponents = async () => {
       if (!projectInfo.workplace.name) {
@@ -61,21 +70,21 @@ function AddComponents({
 
         if (response.status === 200) {
           const data = await response.json();
-          setComponents(data);
-          setCurrentIndex(data.length);
+          setComponents(data);  // Define os componentes disponíveis
+          setCurrentIndex(data.length); 
         } else if (response.status === 401) {
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
           if (errorMessage === "Invalid token") {
-            handleSessionTimeout(); // Session timeout
-            return; // Exit early if session timeout
+            handleSessionTimeout(); //Sessão terminada
+            return; 
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
         } else if (response.status === 404) {
           console.log("Components not found");
-          setComponents([]);
+          setComponents([]); // Define os componentes como um array vazio
         }
       } catch (error) {
         console.error("Error fetching components:", error);
@@ -83,21 +92,24 @@ function AddComponents({
     };
 
     getAvailableComponents();
-  }, [apiUrl, token, projectInfo.workplace]);
+  }, [apiUrl, token, projectInfo.workplace]); // Atualiza a lista de componentes disponíveis sempre que o local de trabalho, o URL da API ou o token do utilizador são alterados
 
+  // Função para lidar com a alteração do valor de entrada
   const handleInputChange = (value) => {
     setInputValue(value);
   };
 
+  // Mapeia os componentes disponíveis para o formato de opções do React Select
   const options = components.map((component, index) => ({
     value: component,
     label: component,
-    id: index + 1, // Use index + 1 for unique numeric ID
+    id: index + 1, // Adiciona 1 ao índice para evitar que o índice 0 seja considerado falso
     isDisabled: projectComponents.some(
       (projectComponent) => projectComponent.name === component
     ),
   }));
 
+  // Define as opções padrão para a animação Lottie
   const defaultOptions = {
     loop: false,
     autoplay: false,
@@ -107,15 +119,17 @@ function AddComponents({
     },
   };
 
+  // Função para lidar com a alteração da seleção
   const handleSelectChange = (selectedOption) => {
     setSelectedComponent(selectedOption);
   };
 
+  // Função para lidar com a submissão do formulário de adição de componentes
   const handleSubmit = async () => {
-    if (!selectedComponent) return;
+    if (!selectedComponent) return; // Sai da função se não houver componente selecionado
 
     const data = {
-      name: selectedComponent.value,
+      name: selectedComponent.value, 
     };
 
     if (context === "editProject") {
@@ -136,16 +150,16 @@ function AddComponents({
           }
         );
         if (response.status === 200) {
-          setAnimationPlayed(true);
-          setShowSuccessText(true);
-          setSelectedComponent(null);
+          setAnimationPlayed(true);  // Define a animação como reproduzida
+          setShowSuccessText(true); // Exibe o texto de sucesso
+          setSelectedComponent(null); // Limpa o componente selecionado
         } else if (response.status === 401) {
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
           if (errorMessage === "Invalid token") {
-            handleSessionTimeout(); // Session timeout
-            return; // Exit early if session timeout
+            handleSessionTimeout(); // Sessão terminada
+            return; 
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
@@ -161,7 +175,7 @@ function AddComponents({
       }
     } else {
       const data = {
-        id: currentIndex + 1, // Use currentIndex for the new component
+        id: currentIndex + 1, // Adiciona 1 ao índice para evitar que o índice 0 seja considerado falso
         name: selectedComponent.value,
       };
       setProjectComponents([...projectComponents, data]);
@@ -172,18 +186,20 @@ function AddComponents({
   };
 
   return (
+    // Renderiza o componente Modal
     <Modal
       show={openPopUpComponent}
       size="xl"
       onClose={() => {
-        closePopUpComponent();
-        setSelectedComponent(null);
-        setError("");
+        closePopUpComponent(); // Fecha o modal
+        setSelectedComponent(null); // Limpa o componente selecionado
+        setError(""); // Limpa a mensagem de erro
       }}
       popup
     >
       <Modal.Header />
       <Modal.Body>
+        {/* Renderiza o conteúdo do modal */}
         <div className="flex flex-col items-center justify-center space-y-5 overflow-x-hidden overflow-y-hidden">
           <h3 className="text-lg font-bold text-gray-500 dark:text-gray-400">
             {t("AddComponents")}
@@ -193,6 +209,7 @@ function AddComponents({
             <h4> {t("CreateNewComponentOrChooseOneOfTheExistingOnes")} </h4>
             <div className="flex items-start space-x-4 min-h-[25rem] relative">
               <div className="text center z-10">
+                {/* Renderiza o componente CreatableSelect */}
                 <CreatableSelect
                   options={options}
                   onChange={handleSelectChange}
@@ -203,7 +220,7 @@ function AddComponents({
                   formatOptionLabel={(option) => (
                     <div>
                       {option.label}
-                      {option.isDisabled ? <TbLockFilled /> : null}
+                      {option.isDisabled ? <TbLockFilled /> : null} {/* Renderiza o ícone de bloqueio se o utilizador já o tiver na lista */}
                     </div>
                   )}
                   placeholder={t("SearchComponents")}
@@ -232,15 +249,16 @@ function AddComponents({
                     eventListeners={[
                       {
                         eventName: "complete",
-                        callback: () => {
-                          setAnimationPlayed(false);
-                          setTimeout(() => setShowSuccessText(false), 500);
+                        callback: () => { 
+                          setAnimationPlayed(false);  // Define a animação como não reproduzida
+                          setTimeout(() => setShowSuccessText(false), 500); // Define o texto de sucesso como falso após 500ms
                         },
                       },
                     ]}
                   />
                 </div>
                 {showSuccessText && (
+                  // Renderiza o texto de sucesso
                   <div className="animate-pulse text-green-500 font-bold absolute bottom-0">
                     {t("ComponentAdded")}
                   </div>

@@ -16,26 +16,26 @@ import { useNavigate } from "react-router-dom";
 
 function MessagesPage() {
   const navigate = useNavigate();
-  const [messages, setMessages] = useState([]);
-  const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [totalPages, setTotalPages] = useState(0);
-  const [view, setView] = useState("received"); // Toggle between 'received', 'sent', and 'unread'
-  const [usernameFilter, setUsernameFilter] = useState(""); // State for username search filter
-  const [contentFilter, setContentFilter] = useState(""); // State for content search filter
-  const [searchActive, setSearchActive] = useState(false); // State to track if search filter is active
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
-  const { registerMessageHandler, unregisterMessageHandler } = useWebSocket();
+  const [messages, setMessages] = useState([]); // Mensagens
+  const [page, setPage] = useState(1); // Página
+  const [rowsPerPage, setRowsPerPage] = useState(10); // Linhas por página
+  const [totalPages, setTotalPages] = useState(0); // Total de páginas
+  const [view, setView] = useState("received");  // Visualização
+  const [usernameFilter, setUsernameFilter] = useState("");  // Filtro de utilizador
+  const [contentFilter, setContentFilter] = useState("");  // Filtro de conteúdo
+  const [searchActive, setSearchActive] = useState(false);  // Pesquisa ativa
+  const [isModalOpen, setIsModalOpen] = useState(false);  // Modal aberto
+  const { registerMessageHandler, unregisterMessageHandler } = useWebSocket(); // Registar e desregistrar o handler de mensagens
 
-  const apiUrl = useApiStore.getState().apiUrl;
-  const token = useUserStore((state) => state.token);
-  const { t } = useTranslation();
+  const apiUrl = useApiStore.getState().apiUrl; // URL da API
+  const token = useUserStore((state) => state.token);  // Token
+  const { t } = useTranslation(); // Função de tradução
 
-  const handleSessionTimeout = useCallback(() => {
-    navigate("/", { state: { showSessionTimeoutModal: true } });
+  const handleSessionTimeout = useCallback(() => { // Função para lidar com o timeout da sessão
+    navigate("/", { state: { showSessionTimeoutModal: true } }); // Navegar para a página inicial
   }, [navigate]);
 
-  const fetchMessages = useCallback(async () => {
+  const fetchMessages = useCallback(async () => { // Função para buscar mensagens
     try {
       const headers = {
         Accept: "*/*",
@@ -63,8 +63,8 @@ function MessagesPage() {
         const errorMessage = data.message || "Unauthorized";
 
         if (errorMessage === "Invalid token") {
-          handleSessionTimeout(); // Session timeout
-          return; // Exit early if session timeout
+          handleSessionTimeout(); // Lidar com o timeout da sessão
+          return; 
         } else {
           console.error("Error updating seen status:", errorMessage);
         }
@@ -89,18 +89,18 @@ function MessagesPage() {
     usernameFilter,
     contentFilter,
     searchActive,
-    handleSessionTimeout, // Ensure handleSessionTimeout is listed as a dependency
+    handleSessionTimeout, 
   ]);
 
-  useEffect(() => {
+  useEffect(() => { // Efeito para buscar mensagens
     fetchMessages();
   }, [fetchMessages]);
 
-  useEffect(() => {
+  useEffect(() => { // Efeito para lidar com as mensagens
     const handleMessage = (message) => {
       if (message.type === "message") {
-        console.log("working");
-        fetchMessages(); // Fetch all messages when a new message of type "message" arrives
+        
+        fetchMessages(); 
       }
     };
 
@@ -109,9 +109,9 @@ function MessagesPage() {
     return () => {
       unregisterMessageHandler(handleMessage);
     };
-  }, [fetchMessages, registerMessageHandler, unregisterMessageHandler]);
+  }, [fetchMessages, registerMessageHandler, unregisterMessageHandler]); // Dependências
 
-  const updateSeenStatus = async (messageId, newStatus) => {
+  const updateSeenStatus = async (messageId, newStatus) => { // Função para atualizar o status de visto
     try {
       const headers = {
         Accept: "*/*",
@@ -136,20 +136,20 @@ function MessagesPage() {
         const errorMessage = data.message || "Unauthorized";
 
         if (errorMessage === "Invalid token") {
-          handleSessionTimeout(); // Session timeout
-          return; // Exit early if session timeout
+          handleSessionTimeout(); // Timeout da sessão
+          return; 
         } else {
           console.error("Error updating seen status:", errorMessage);
         }
       }
 
-      if (!response.ok) {
+      if (!response.ok) { // Se a resposta não for ok
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       setMessages((prevMessages) =>
         prevMessages.map((message) =>
-          message.id === messageId ? { ...message, seen: newStatus } : message
+          message.id === messageId ? { ...message, seen: newStatus } : message // Atualizar o status de visto
         )
       );
     } catch (error) {
@@ -157,7 +157,7 @@ function MessagesPage() {
     }
   };
 
-  const bulkUpdateSeenStatus = async (newStatus) => {
+  const bulkUpdateSeenStatus = async (newStatus) => { // Função para atualizar o status de visto em massa
     try {
       const headers = {
         Accept: "*/*",
@@ -168,31 +168,31 @@ function MessagesPage() {
         headers.Authorization = `Bearer ${token}`;
       }
 
-      const messageOrNotificationIds = messages.map((message) => message.id); // Get all message IDs
+      const messageOrNotificationIds = messages.map((message) => message.id); // IDs das mensagens
 
       const response = await fetch(`${apiUrl}/messages/seen`, {
         method: "PUT",
         headers,
-        body: JSON.stringify({ messageOrNotificationIds, seen: newStatus }), // Send message IDs and new status
+        body: JSON.stringify({ messageOrNotificationIds, seen: newStatus }), 
       });
 
-      if (response.status === 401) {
+      if (response.status === 401) { // Se o status for 401
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
 
         if (errorMessage === "Invalid token") {
-          handleSessionTimeout(); // Session timeout
-          return; // Exit early if session timeout
+          handleSessionTimeout(); // Timeout da sessão
+          return; 
         } else {
           console.error("Error updating seen status:", errorMessage);
         }
       }
 
-      if (!response.ok) {
+      if (!response.ok) { // Se a resposta não for ok
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // Update the local state with the new seen status for all messages
+      // Atualizar o status de visto
       setMessages((prevMessages) =>
         prevMessages.map((message) => ({ ...message, seen: newStatus }))
       );
@@ -202,22 +202,22 @@ function MessagesPage() {
   };
 
   const handleSearchSubmit = () => {
-    setPage(1); // Reset page number to 1 when applying a new search
+    setPage(1); // volta à página 1 quando a pesquisa é submetida
     setSearchActive(true);
   };
 
   const handleClearSearch = () => {
-    setPage(1); // Reset page number to 1 when clearing search
+    setPage(1); // volta à página 1 quando a pesquisa é limpa
     setSearchActive(false);
     setUsernameFilter("");
     setContentFilter("");
   };
 
-  const handleOpenModal = () => {
+  const handleOpenModal = () => { // Função para abrir o modal
     setIsModalOpen(true);
   };
 
-  const handleCloseModal = () => {
+  const handleCloseModal = () => { // Função para fechar o modal
     setIsModalOpen(false);
   };
 

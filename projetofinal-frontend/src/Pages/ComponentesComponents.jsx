@@ -8,24 +8,24 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 function ComponentesComponents() {
-  const apiUrl = useApiStore((state) => state.apiUrl);
-  const token = useUserStore((state) => state.token);
-  const [components, setComponents] = useState([]);
-  const [totalPages, setTotalPages] = useState(0);
-  const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [loading, setLoading] = useState(true);
-  const [filterText, setFilterText] = useState("");
-  const [showModal, setShowModal] = useState(false);
-  const navigate = useNavigate();
-  const handleSessionTimeout = () => {
-    navigate("/", { state: { showSessionTimeoutModal: true } });
+  const apiUrl = useApiStore((state) => state.apiUrl); // URL da API
+  const token = useUserStore((state) => state.token); // Token
+  const [components, setComponents] = useState([]); // Componentes
+  const [totalPages, setTotalPages] = useState(0); // Total de páginas
+  const [page, setPage] = useState(1); // Página
+  const [rowsPerPage, setRowsPerPage] = useState(10); // Linhas por página
+  const [loading, setLoading] = useState(true); // Loading
+  const [filterText, setFilterText] = useState(""); // Texto de filtro
+  const [showModal, setShowModal] = useState(false); // Modal
+  const navigate = useNavigate(); 
+  const handleSessionTimeout = () => { // Função para lidar com o timeout da sessão
+    navigate("/", { state: { showSessionTimeoutModal: true } }); // Navegar para a página inicial
   };
 
-  const { t } = useTranslation();
+  const { t } = useTranslation(); // Função de tradução
 
-  const getComponents = async () => {
-    setLoading(true); // Ensure loading is set to true at the start
+  const getComponents = async () => { // Função para obter os componentes
+    setLoading(true); //  Ativar o loading
     try {
       const response = await fetch(
         `${apiUrl}/components/toTables?page=${page}&limit=${rowsPerPage}&filter=${encodeURIComponent(
@@ -40,19 +40,19 @@ function ComponentesComponents() {
           },
         }
       );
-      if (response.status === 200) {
-        console.log("components fetched successfully");
+      if (response.status === 200) { // Se a resposta for 200
+        
         const data = await response.json();
         setComponents(data.components);
         setTotalPages(data.totalPages);
-        console.log(data);
+       
       } else if (response.status === 401) {
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
 
         if (errorMessage === "Invalid token") {
-          handleSessionTimeout(); // Session timeout
-          return; // Exit early if session timeout
+          handleSessionTimeout(); // Lidar com o timeout da sessão
+          return; 
         } else {
           console.error("Error updating seen status:", errorMessage);
         }
@@ -66,13 +66,13 @@ function ComponentesComponents() {
     }
   };
 
-  useEffect(() => {
+  useEffect(() => { // Atualizar os componentes
     getComponents();
-  }, [page, rowsPerPage, filterText, apiUrl, token]); // Added apiUrl and token as dependencies
+  }, [page, rowsPerPage, filterText, apiUrl, token]); // Atualizar os componentes
 
-  const handleModalClose = () => {
+  const handleModalClose = () => { // Função para fechar o modal
     setShowModal(false);
-    getComponents(); // Refresh the data after creation
+    getComponents(); // Obter os componentes
   };
 
   return (

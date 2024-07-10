@@ -2,16 +2,16 @@ import { useState, useEffect } from "react";
 import useProjectStore from "../Stores/ProjectStore";
 
 const useProjectInfo = () => {
-  const projectSkills = useProjectStore((state) => state.projectSkills);
-  const projectInterests = useProjectStore((state) => state.projectInterests);
-  const projectComponents = useProjectStore((state) => state.projectComponents);
-  const projectResources = useProjectStore((state) => state.projectResources);
-  const projectUsers = useProjectStore((state) => state.projectUsers);
+  const projectSkills = useProjectStore((state) => state.projectSkills); // skills
+  const projectInterests = useProjectStore((state) => state.projectInterests); // interesses
+  const projectComponents = useProjectStore((state) => state.projectComponents); // componentes
+  const projectResources = useProjectStore((state) => state.projectResources); // recursos
+  const projectUsers = useProjectStore((state) => state.projectUsers); // utilizadores
   const clearProjectComponents = useProjectStore(
-    (state) => state.clearProjectComponents
+    (state) => state.clearProjectComponents // limpar componentes
   );
 
-  const [projectInfo, setProjectInfo] = useState({
+  const [projectInfo, setProjectInfo] = useState({ // informações do projeto
     title: "",
     description: "",
     motivation: "",
@@ -26,8 +26,8 @@ const useProjectInfo = () => {
     userProjectDtos: [],
   });
 
-  useEffect(() => {
-    setProjectInfo((prevInfo) => ({
+  useEffect(() => { // useEffect
+    setProjectInfo((prevInfo) => ({ // set das informações do projeto
       ...prevInfo,
       skills: projectSkills,
       interests: projectInterests,
@@ -43,16 +43,16 @@ const useProjectInfo = () => {
     projectUsers,
   ]);
 
-  const handleChange = (e) => {
+  const handleChange = (e) => { // função para mudar os valores
     const { name, value } = e.target;
-    setProjectInfo((prevInfo) => ({
+    setProjectInfo((prevInfo) => ({ // set das informações do projeto
       ...prevInfo,
       [name]: value,
     }));
   };
 
-  const handleWorkplaceChange = (e) => {
-    clearProjectComponents();
+  const handleWorkplaceChange = (e) => { // função para mudar o local de trabalho
+    clearProjectComponents(); // limpar componentes
     const selectedWorkplace = JSON.parse(e.target.value);
     setProjectInfo((prevInfo) => ({
       ...prevInfo,

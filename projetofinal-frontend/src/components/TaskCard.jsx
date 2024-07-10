@@ -14,16 +14,16 @@ import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
 
 const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [editMode, setEditMode] = useState(false);
-  const apiUrl = useApiStore((state) => state.apiUrl);
-  const token = useUserStore((state) => state.token);
+  const [isExpanded, setIsExpanded] = useState(false); //estado para expandir
+  const [editMode, setEditMode] = useState(false); //estado para editar
+  const apiUrl = useApiStore((state) => state.apiUrl); //api url
+  const token = useUserStore((state) => state.token); //token
   const navigate = useNavigate();
-  const handleSessionTimeout = () => {
-    navigate("/", { state: { showSessionTimeoutModal: true } });
+  const handleSessionTimeout = () => { //função para timeout
+    navigate("/", { state: { showSessionTimeoutModal: true } }); //navegar para a página inicial
   };
 
-  const [taskData, setTaskData] = useState({
+  const [taskData, setTaskData] = useState({ //dados da tarefa
     projectId: task.projectId,
     id: task.id,
     title: task.title,
@@ -34,12 +34,12 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
     userName: task.userName,
   });
 
-  const handleChange = (event) => {
+  const handleChange = (event) => { //função para mudar
     const { name, value } = event.target;
     setTaskData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSubmitClick = () => {
+  const handleSubmitClick = () => { //função para submeter
     fetch(`${apiUrl}/tasks`, {
       method: "PUT",
       headers: {
@@ -48,21 +48,21 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
       },
       body: JSON.stringify(taskData),
     }).then(async (response) => {
-      if (response.status === 401) {
+      if (response.status === 401) { //se o status for 401
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
 
         if (errorMessage === "Invalid token") {
-          handleSessionTimeout(); // Session timeout
-          return; // Exit early if session timeout
+          handleSessionTimeout(); //chama a função de timeout
+          return; 
         } else {
           console.error("Error updating seen status:", errorMessage);
         }
       }
-      if (!response.ok) {
+      if (!response.ok) { //se não for ok
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      console.log("task updated successfully");
+      
       const updatedTaskResponse = await response.json();
       const updatedTask = updatedTaskResponse.taskDto;
       const updatedTaskIndex = updatedTaskResponse.index;
@@ -80,7 +80,7 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
     });
   };
 
-  const handleCancelClick = () => {
+  const handleCancelClick = () => { //função para cancelar
     setEditMode(false);
     setTaskData({
       title: task.title,
@@ -92,7 +92,7 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
     });
   };
 
-  const formatDate = (dateArray) => {
+  const formatDate = (dateArray) => { //função para formatar a data
     if (!Array.isArray(dateArray) || dateArray.length < 3) {
       return "";
     }
@@ -102,7 +102,7 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
       .split("T")[0];
   };
 
-  const getStatusString = (statusValue) => {
+  const getStatusString = (statusValue) => { //função para obter o status
     switch (statusValue) {
       case 100:
         return "PLANNED";
@@ -115,7 +115,7 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
     }
   };
 
-  const getPriorityIcon = (priorityValue) => {
+  const getPriorityIcon = (priorityValue) => { //função para obter o ícone de prioridade
     switch (priorityValue) {
       case 100:
         return (
@@ -155,7 +155,7 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
     }
   };
 
-  const getPriorityString = (priorityValue) => {
+  const getPriorityString = (priorityValue) => { //função para obter a prioridade
     switch (priorityValue) {
       case 100:
         return "LOW";

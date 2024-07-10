@@ -8,34 +8,34 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 function AllprojectsProjectList() {
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [totalPages, setTotalPages] = useState(0);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [skills, setSkills] = useState("");
-  const [interests, setInterests] = useState("");
-  const [status, setStatus] = useState("");
-  const apiUrl = useApiStore.getState().apiUrl;
-  const token = useUserStore((state) => state.token);
+  const [projects, setProjects] = useState([]); // Projetos
+  const [loading, setLoading] = useState(true); // Loading
+  const [page, setPage] = useState(1); // Página
+  const [rowsPerPage, setRowsPerPage] = useState(10); // Linhas por página
+  const [totalPages, setTotalPages] = useState(0); // Total de páginas
+  const [searchTerm, setSearchTerm] = useState(""); // Termo de pesquisa
+  const [skills, setSkills] = useState("");  // Skills
+  const [interests, setInterests] = useState(""); // Interesses
+  const [status, setStatus] = useState(""); // Estado
+  const apiUrl = useApiStore.getState().apiUrl; // URL da API
+  const token = useUserStore((state) => state.token); // Token
   const navigate = useNavigate();
-  const handleSessionTimeout = () => {
-    navigate("/", { state: { showSessionTimeoutModal: true } });
+  const handleSessionTimeout = () => { // Função para lidar com o timeout da sessão
+    navigate("/", { state: { showSessionTimeoutModal: true } }); // Navegar para a página inicial
   };
 
-  const { t } = useTranslation();
+  const { t } = useTranslation(); // Função de tradução
 
   let currentUserRole;
   if (token) {
-    const decodedToken = jwtDecode(token);
-    currentUserRole = decodedToken.role;
+    const decodedToken = jwtDecode(token); // Decodificar o token
+    currentUserRole = decodedToken.role; // Obter o papel do utilizador
   }
 
-  const fetchProjects = useCallback(
+  const fetchProjects = useCallback( // Função para obter os projetos
     async (searchTerm = "", skills = "", interests = "", status = "") => {
       setLoading(true);
-      let url = `${apiUrl}/projects?page=${page}&limit=${rowsPerPage}`;
+      let url = `${apiUrl}/projects?page=${page}&limit=${rowsPerPage}`; 
       const params = new URLSearchParams();
 
       if (searchTerm) {
@@ -48,7 +48,7 @@ function AllprojectsProjectList() {
         params.append("interests", interests);
       }
       if (status) {
-        params.append("status", status);
+        params.append("status", status); 
       }
 
       if (params.toString()) {
@@ -67,13 +67,13 @@ function AllprojectsProjectList() {
 
         const response = await fetch(url, { headers });
 
-        if (response.status === 401) {
+        if (response.status === 401) { // Se o status for 401
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
           if (errorMessage === "Invalid token") {
-            handleSessionTimeout(); // Session timeout
-            return; // Exit early if session timeout
+            handleSessionTimeout(); // Timeout da sessão
+            return; 
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
@@ -83,28 +83,28 @@ function AllprojectsProjectList() {
         }
 
         const data = await response.json();
-        setProjects(data.projects);
-        setTotalPages(data.totalPages);
-        console.log(data);
+        setProjects(data.projects); // Definir os projetos
+        setTotalPages(data.totalPages); // Definir o total de páginas
+       
       } catch (error) {
         console.error("Error fetching projects:", error);
       } finally {
         setLoading(false);
       }
     },
-    [apiUrl, page, rowsPerPage, token]
+    [apiUrl, page, rowsPerPage, token] // Dependências
   );
 
-  useEffect(() => {
+  useEffect(() => { // Efeito para obter os projetos
     fetchProjects(searchTerm, skills, interests, status);
-  }, [fetchProjects, page, rowsPerPage]);
+  }, [fetchProjects, page, rowsPerPage]); // Dependências
 
-  const handleSearch = () => {
-    setPage(1); // Reset to the first page for new searches
+  const handleSearch = () => { // Função para pesquisar
+    setPage(1); // Definir a página para 1
     fetchProjects(searchTerm, skills, interests, status);
   };
 
-  const downloadPdf = async () => {
+  const downloadPdf = async () => { // Função para fazer o download do PDF
     try {
       const headers = {
         Accept: "application/octet-stream",
@@ -119,19 +119,19 @@ function AllprojectsProjectList() {
         headers,
       });
 
-      if (response.status === 401) {
+      if (response.status === 401) { // Se o status for 401
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
 
         if (errorMessage === "Invalid token") {
-          handleSessionTimeout(); // Session timeout
-          return; // Exit early if session timeout
+          handleSessionTimeout(); // Timeout da sessão
+          return; 
         } else {
           console.error("Error updating seen status:", errorMessage);
         }
       }
 
-      if (!response.ok) {
+      if (!response.ok) { // Se não for ok
         console.log("HTTP error! status:", response.status);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
