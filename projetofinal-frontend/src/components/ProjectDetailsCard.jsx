@@ -345,6 +345,12 @@ function ProjectDetailsCard({
               {getBadge(projectDetails.approved)}
             </div>
             <div className="flex items-center space-x-2">
+            <Button onClick={() => navigate(`/myProjects/${projectId}/ganttChart`)} className="ml-2 mb-2 mt-1 text-sm sm:text-base">
+    Gantt
+  </Button>
+            <Button onClick={() => window.history.back()} className="ml-2 mb-2 mt-1 text-sm sm:text-base">
+    {t("Back")}
+  </Button>
               {currentUserIsAdmin &&
                 (projectDetails.status === 100 ||
                   projectDetails.status === 300) && (
