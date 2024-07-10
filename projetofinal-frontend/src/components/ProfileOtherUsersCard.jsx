@@ -4,7 +4,7 @@ import useUserStore from "../Stores/UserStore";
 import useApiStore from "../Stores/ApiStore";
 import { useParams } from "react-router-dom";
 import { MdOutlineEdit } from "react-icons/md";
-import basePhoto from "../Assets/092.png";
+import basePhoto from "../Assets/defaultAvatar.jpg";
 import { jwtDecode } from "jwt-decode";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";

@@ -2,7 +2,7 @@ import React from "react";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { FaLevelUpAlt, FaLevelDownAlt } from "react-icons/fa";
 import { Tooltip } from "react-tooltip";
-import basePhoto from "../Assets/092.png";
+import basePhoto from "../Assets/defaultAvatar.jpg";
 import { LuPlusCircle } from "react-icons/lu";
 import { Label } from "flowbite-react";
 
