@@ -258,7 +258,7 @@ function Layout({
               <Tabs.Item
                 active={activeTab === 1}
                 value={1}
-                title="All Projects"
+                title="Projects/Users"
                 icon={AiOutlineFundProjectionScreen}
               ></Tabs.Item>
               <Tabs.Item
