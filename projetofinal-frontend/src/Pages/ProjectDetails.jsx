@@ -18,11 +18,13 @@ import AddComponents from "../Components/AddComponents";
 import RemoveComponents from "../Components/RemoveComponents";
 import AddResources from "../Components/AddResources";
 import RemoveResources from "../Components/RemoveResources";
+import { useNavigate } from "react-router-dom";
+
 
 function ProjectDetails() {
   const { projectId } = useParams(); // projectId
   const { token } = useUserStore(); // token
-
+  const navigate = useNavigate(); 
   const [project, setProject] = useState(null); // projeto
   const [tasks, setTasks] = useState([]); // tarefas
   const [userImages, setUserImages] = useState({}); // imagens do usuário

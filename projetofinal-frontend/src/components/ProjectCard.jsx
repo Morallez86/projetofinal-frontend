@@ -101,8 +101,8 @@ function ProjectCard({
     
 
     try {
-      const newProject = await createProject(formattedProjectInfo, token); // Criar um novo projeto
-      if (newProject) {
+      const response = await createProject(formattedProjectInfo, token); // Criar um novo projeto
+      if (response && response.ok) {
         
         setSuccessMessage(true);
         setSelectedWorkLocation("");
