@@ -90,12 +90,14 @@ function ProjectDetailsCard({
       : []),
   ];
 
+  //Diferentes acções na função de acordo com o que é alterado
   const handleChange = (e) => {
-    //função para lidar com a mudança
     const { name, value } = e.target;
+    let newValue = value;
+
     if (name === "workplace") {
       const selectedWorkplace = workplaces.find(
-        (wp) => wp.id === parseInt(value, 10)
+        (wp) => wp.id === parseInt(newValue, 10)
       );
       setProjectDetails((prevDetails) => ({
         ...prevDetails,
@@ -104,22 +106,41 @@ function ProjectDetailsCard({
     } else if (name === "status") {
       setProjectDetails((prevDetails) => ({
         ...prevDetails,
-        status: parseInt(value, 10),
+        status: parseInt(newValue, 10),
       }));
-    } else if (name === "startingDate" || name === "plannedEndDate") {
-      const dateArray = convertDateToArray(value);
+      //Ajuste de datas de modo a que a data de início seja sempre inferior à final 
+    } else if (name === "startingDate") {
+      if (newValue > formatDateForInput(projectDetails.plannedEndDate)) {
+        const date2 = new Date(
+          formatDateForInput(projectDetails.plannedEndDate)
+        );
+        date2.setDate(date2.getDate() - 1);
+        newValue = date2.toISOString().split("T")[0];
+      }
+      const dateArray = convertDateToArray(newValue);
       setProjectDetails((prevDetails) => ({
         ...prevDetails,
         [name]: dateArray,
       }));
-      console.log(projectDetails);
+    } else if (name === "plannedEndDate") {
+      if (newValue < formatDateForInput(projectDetails.startingDate)) {
+        const date2 = new Date(formatDateForInput(projectDetails.startingDate));
+        date2.setDate(date2.getDate() + 1);
+        newValue = date2.toISOString().split("T")[0];
+      }
+      const dateArray = convertDateToArray(newValue);
+      setProjectDetails((prevDetails) => ({
+        ...prevDetails,
+        [name]: dateArray,
+      }));
     } else {
       setProjectDetails((prevDetails) => ({
         ...prevDetails,
-        [name]: value,
+        [name]: newValue,
       }));
     }
   };
+
 
   const formatDateForBackend = (dateArray) => {
     //formatar a data para o backend
@@ -140,9 +161,7 @@ function ProjectDetailsCard({
 
   const convertDateToArray = (dateString) => {
     //converter a data para um array
-    console.log(dateString);
     const date = new Date(dateString);
-    console.log(dateString);
     const year = date.getFullYear();
     const month = date.getMonth() + 1;
     const day = date.getDate();
