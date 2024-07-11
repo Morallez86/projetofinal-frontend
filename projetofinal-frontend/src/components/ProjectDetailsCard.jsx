@@ -35,14 +35,15 @@ function ProjectDetailsCard({
   openPopUpResourcesRemove,
 }) {
   const { projectId } = useParams(); //obter o id do projeto através do url
-  const { t } = useTranslation();  //função de tradução
+  const { t } = useTranslation(); //função de tradução
   const [editMode, setEditMode] = useState(false); //estado para editar o projeto
   const [projectDetails, setProjectDetails] = useState({ ...project }); //detalhes do projeto
   const apiUrl = useApiStore((state) => state.apiUrl); //URL da API
   const token = useUserStore((state) => state.token); //token do utilizador
   const workplaces = useWorkplaceStore((state) => state.workplaces); //locais de trabalho
   const navigate = useNavigate(); //navegar para outra página
-  const handleSessionTimeout = () => { //função para lidar com o timeout da sessão
+  const handleSessionTimeout = () => {
+    //função para lidar com o timeout da sessão
     navigate("/", { state: { showSessionTimeoutModal: true } });
   };
   let currentUserId;
@@ -52,11 +53,13 @@ function ProjectDetailsCard({
     currentUserId = decodedToken.id; //id do utilizador
   }
 
-  const currentUserIsAdmin = projectDetails.userProjectDtos?.some( //verificar se o utilizador é administrador
+  const currentUserIsAdmin = projectDetails.userProjectDtos?.some(
+    //verificar se o utilizador é administrador
     (user) => user.userId === currentUserId && user.admin
   );
 
-  const statusOptions = [ //opções de estado
+  const statusOptions = [
+    //opções de estado
     ...(projectDetails.status === 100
       ? [
           { value: 100, label: "PLANNING" },
@@ -86,10 +89,9 @@ function ProjectDetailsCard({
       : []),
   ];
 
-  const handleChange = (e) => { //função para lidar com a mudança
+  const handleChange = (e) => {
+    //função para lidar com a mudança
     const { name, value } = e.target;
-    console.log(value);
-
     if (name === "workplace") {
       const selectedWorkplace = workplaces.find(
         (wp) => wp.id === parseInt(value, 10)
@@ -103,7 +105,7 @@ function ProjectDetailsCard({
         ...prevDetails,
         status: parseInt(value, 10),
       }));
-    } else if (name === "creationDate" || name === "plannedEndDate") {
+    } else if (name === "startingDate" || name === "plannedEndDate") {
       const dateArray = convertDateToArray(value);
       setProjectDetails((prevDetails) => ({
         ...prevDetails,
@@ -118,47 +120,51 @@ function ProjectDetailsCard({
     }
   };
 
-  const formatDateForBackend = (dateArray) => { //formatar a data para o backend
+  const formatDateForBackend = (dateArray) => {
+    //formatar a data para o backend
     if (!dateArray || dateArray.length !== 5) {
       return null;
     }
 
     const [year, month, day, hours, minutes] = dateArray;
 
- 
-    const formattedMonth = `${month + 1}`.padStart(2, "0"); 
+    const formattedMonth = `${month}`.padStart(2, "0");
+    const formattedHours = `${hours}`.padStart(2, "0"); 
     const formattedDay = `${day}`.padStart(2, "0");
 
-    const formattedDate = `${year}-${formattedMonth}-${formattedDay} ${hours}:${minutes}0:00`;
+    const formattedDate = `${year}-${formattedMonth}-${formattedDay} ${formattedHours}:${minutes}0:00`;
 
     return formattedDate;
   };
 
-  const convertDateToArray = (dateString) => { //converter a data para um array
+  const convertDateToArray = (dateString) => {
+    //converter a data para um array
+    console.log(dateString);
     const date = new Date(dateString);
     console.log(dateString);
     const year = date.getFullYear();
-    const month = date.getMonth() + 1; 
+    const month = date.getMonth() + 1;
     const day = date.getDate();
     return [year, month, day, 10, 0];
   };
 
-  const handleSaveClick = async () => { //função para lidar com o clique no botão de guardar
+  const handleSaveClick = async () => {
+    //função para lidar com o clique no botão de guardar
     const updatedProjectDetails = {
       title: projectDetails.title,
       status: projectDetails.status,
       description: projectDetails.description,
       motivation: projectDetails.motivation,
-      creationDate: formatDateForBackend(projectDetails.creationDate),
+      startingDate: formatDateForBackend(projectDetails.startingDate),
       plannedEndDate: formatDateForBackend(projectDetails.plannedEndDate),
       workplace: projectDetails.workplace,
       maxUsers: projectDetails.maxUsers,
     };
 
-    
-
     try {
-      const response = await fetch(`${apiUrl}/projects/${projectId}`, { //atualizar os detalhes do projeto
+      console.log(updatedProjectDetails);
+      const response = await fetch(`${apiUrl}/projects/${projectId}`, {
+        //atualizar os detalhes do projeto
         method: "PUT",
         headers: {
           Accept: "*/*",
@@ -168,16 +174,19 @@ function ProjectDetailsCard({
         body: JSON.stringify(updatedProjectDetails),
       });
 
-      if (response.status === 200) { //se a resposta for 200
-        
+      if (response.status === 200) {
+        //se a resposta for 200
+
         setEditMode(false);
-      } else if (response.status === 401) { //se a resposta for 401
+      } else if (response.status === 401) {
+        //se a resposta for 401
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
 
-        if (errorMessage === "Invalid token") { //se a mensagem de erro for "Invalid token"
-          handleSessionTimeout(); 
-          return; 
+        if (errorMessage === "Invalid token") {
+          //se a mensagem de erro for "Invalid token"
+          handleSessionTimeout();
+          return;
         } else {
           console.error("Error updating seen status:", errorMessage);
         }
@@ -189,7 +198,8 @@ function ProjectDetailsCard({
     }
   };
 
-  const handleAdminChange = async (userId, isAdmin) => { //função para alterar o administrador
+  const handleAdminChange = async (userId, isAdmin) => {
+    //função para alterar o administrador
     try {
       const response = await fetch(
         `${apiUrl}/projects/${projectId}/users/${userId}/status`,
@@ -203,21 +213,22 @@ function ProjectDetailsCard({
         }
       );
 
-      if (response.status === 200) { //se a resposta for 200
+      if (response.status === 200) {
+        //se a resposta for 200
         setProjectDetails((prevDetails) => ({
           ...prevDetails,
           userProjectDtos: prevDetails.userProjectDtos.map((user) =>
             user.userId === userId ? { ...user, admin: isAdmin } : user
           ),
         }));
-        
-      } else if (response.status === 401) { //se a resposta for 401
+      } else if (response.status === 401) {
+        //se a resposta for 401
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
 
         if (errorMessage === "Invalid token") {
           handleSessionTimeout(); // sessão terminada
-          return; 
+          return;
         } else {
           console.error("Error updating seen status:", errorMessage);
         }
@@ -229,7 +240,8 @@ function ProjectDetailsCard({
     }
   };
 
-  const handleUserDeactivation = async (userId) => { //função para desativar o utilizador
+  const handleUserDeactivation = async (userId) => {
+    //função para desativar o utilizador
     try {
       const response = await fetch(
         `${apiUrl}/projects/${projectId}/users/${userId}/inactive`,
@@ -238,26 +250,26 @@ function ProjectDetailsCard({
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
-          }, 
-          body: JSON.stringify({ active: false }), 
+          },
+          body: JSON.stringify({ active: false }),
         }
       );
 
-      if (response.status === 200) { //se a resposta for 200
-        setProjectDetails((prevDetails) => ({ 
+      if (response.status === 200) {
+        //se a resposta for 200
+        setProjectDetails((prevDetails) => ({
           ...prevDetails,
           userProjectDtos: prevDetails.userProjectDtos.map((user) =>
             user.userId === userId ? { ...user, active: false } : user
           ),
         }));
-       
       } else if (response.status === 401) {
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
 
         if (errorMessage === "Invalid token") {
           handleSessionTimeout(); // sessão terminada
-          return; 
+          return;
         } else {
           console.error("Error updating seen status:", errorMessage);
         }
@@ -269,7 +281,8 @@ function ProjectDetailsCard({
     }
   };
 
-  const handleCancelClick = () => { //função para lidar com o clique no botão de cancelar
+  const handleCancelClick = () => {
+    //função para lidar com o clique no botão de cancelar
     setProjectDetails({ ...project });
     setEditMode(false);
   };
@@ -278,18 +291,20 @@ function ProjectDetailsCard({
     setProjectDetails({ ...project });
   }, [project]);
 
-  const formatDateForInput = (dateArray) => { //formatar a data para o input
+  const formatDateForInput = (dateArray) => {
     if (!Array.isArray(dateArray) || dateArray.length < 3) {
       return "";
     }
 
-    const [year, month, day, hour = 0, minute = 0] = dateArray;
-    const date = new Date(year, month - 1, day, hour, minute);
+    const [year, month, day] = dateArray;
+    const date = new Date(Date.UTC(year, month - 1, day)); // Use UTC to avoid timezone issues
     const isoString = date.toISOString();
-    return isoString.split("T")[0];
+
+    return isoString.split("T")[0]; // Return YYYY-MM-DD format
   };
 
-  const getBadge = (approved) => { //obter o crachá
+  const getBadge = (approved) => {
+    //obter o crachá
     if (approved === true) {
       return (
         <>
@@ -430,19 +445,19 @@ function ProjectDetailsCard({
               )}
             </div>
             <div>
-              <Label htmlFor="creationDate" value="Creation Date" />
+              <Label htmlFor="startingDate" value="Starting Date" />
               {editMode ? (
                 <TextInput
-                  id="creationDate"
+                  id="startingDate"
                   type="date"
-                  name="creationDate"
-                  value={formatDateForInput(projectDetails.creationDate)}
+                  name="startingDate"
+                  value={formatDateForInput(projectDetails.startingDate)}
                   onChange={handleChange}
                   className="w-1/2"
                 />
               ) : (
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {formatDateForInput(projectDetails.creationDate)}
+                  {formatDateForInput(projectDetails.startingDate)}
                 </p>
               )}
             </div>

@@ -266,6 +266,7 @@ function ProjectDetails() {
           <div className="flex flex-col overflow-y-auto bg-transparent h-[45rem]">
             <ProjectDetailsCard
               project={project}
+              setProject={setProject}
               userImages={userImages}
               openPopUpUsers={openAddUsersModal}
               openPopUpSkills={openAddSkillsModal}

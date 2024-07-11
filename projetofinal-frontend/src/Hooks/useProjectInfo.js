@@ -62,6 +62,7 @@ const useProjectInfo = () => {
 
   return {
     projectInfo,
+    setProjectInfo,
     handleChange,
     handleWorkplaceChange,
   };
