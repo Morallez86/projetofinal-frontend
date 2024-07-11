@@ -19,12 +19,16 @@ import RemoveComponents from "../Components/RemoveComponents";
 import AddResources from "../Components/AddResources";
 import RemoveResources from "../Components/RemoveResources";
 import { useNavigate } from "react-router-dom";
+import { Button } from "flowbite-react";
+import { useTranslation } from "react-i18next";
+
 
 
 function ProjectDetails() {
   const { projectId } = useParams(); // projectId
   const { token } = useUserStore(); // token
   const navigate = useNavigate(); 
+  const { t } = useTranslation(); // Função de tradução
   const [project, setProject] = useState(null); // projeto
   const [tasks, setTasks] = useState([]); // tarefas
   const [userImages, setUserImages] = useState({}); // imagens do usuário

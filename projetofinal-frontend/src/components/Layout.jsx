@@ -258,7 +258,7 @@ function Layout({
               <Tabs.Item
                 active={activeTab === 1}
                 value={1}
-                title="All Projects"
+                title="Projects/Users"
                 icon={AiOutlineFundProjectionScreen}
               ></Tabs.Item>
               <Tabs.Item
@@ -269,7 +269,7 @@ function Layout({
               ></Tabs.Item>
             </Tabs>
 
-            <div className="w-full max-w-3xl">
+            <div className="flex flex-col items-center">
               {activeTab === 0 && (
                 <div>
                   <Tabs

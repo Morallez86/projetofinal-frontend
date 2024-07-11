@@ -3,7 +3,7 @@ import { Modal, Button, TextInput } from "flowbite-react";
 import useUserStore from "../Stores/UserStore";
 import useProjectStore from "../Stores/ProjectStore";
 import useApiStore from "../Stores/ApiStore";
-import basePhoto from "../Assets/092.png";
+import basePhoto from "../Assets/defaultAvatar.jpg";
 import { jwtDecode } from "jwt-decode";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";

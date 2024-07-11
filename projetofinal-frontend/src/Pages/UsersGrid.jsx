@@ -6,7 +6,7 @@ import useApiStore from "../Stores/ApiStore";
 import useWorkplaceStore from "../Stores/WorkplaceStore";
 import useSkillStore from "../Stores/SkillStore";
 import useInterestStore from "../Stores/InterestStore";
-import basePhoto from "../Assets/092.png";
+import basePhoto from "../Assets/defaultAvatar.jpg";
 import MessageModal from "../Components/MessageModal";
 import "../index.css";
 import { useTranslation } from "react-i18next";

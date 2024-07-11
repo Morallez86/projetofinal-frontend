@@ -23,7 +23,7 @@ const menuItems = [
     ],
   },
   {
-    title: "All Projects",
+    title: "Projects/Users",
     path: "/allProjects",
     icon: <AiOutlineFundProjectionScreen />,
     subtabs: [

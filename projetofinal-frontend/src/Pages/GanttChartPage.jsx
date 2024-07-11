@@ -8,6 +8,9 @@ import { Button } from "flowbite-react";
 import AddTaskCard from "../Components/AddTaskCard";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+
+
 
 const OrientationModal = ({ show }) => { // Modal de orientação para mobile
   if (!show) return null;
@@ -43,6 +46,7 @@ const GanttChartPage = () => {
   const navigate = useNavigate(); 
   const { projectId } = useParams(); // ID do projeto através do URL
   const [viewMode, setViewMode] = useState(ViewMode.Day);  // Modo de visualização
+  const { t } = useTranslation(); // Função de tradução
 
   const apiUrl = useApiStore((state) => state.apiUrl); // URL da API
   const token = useUserStore((state) => state.token); // Token
@@ -139,7 +143,7 @@ const GanttChartPage = () => {
           console.log("Project with this ID is not found");
         } else if (response.status === 200) { // Se o status for 200
           const tasksData = await response.json();
-
+          console.log(tasksData);
           setAllTasks(tasksData);
         } else if (response.status === 401) { // Se o status for 401
           const data = await response.json();
@@ -161,7 +165,7 @@ const GanttChartPage = () => {
   let tasks = [];
 
   if (allTasks && allTasks.length > 0) { // Se existirem tarefas
-    console.log("in");
+   
     tasks = allTasks.map((task) => {
       // Verifica se plannedStartingDate é uma string e a converte para array
       const startingDateArray =
@@ -177,16 +181,20 @@ const GanttChartPage = () => {
           : [...task.plannedEndingDate];
       endingDateArray[1] -= 1;
 
-      const start = new Date(
+      const startTimestamp = Date.UTC(
         startingDateArray[0],
         startingDateArray[1],
         ...startingDateArray.slice(2)
       );
-      const end = new Date(
+      const endTimestamp = Date.UTC(
         endingDateArray[0],
         endingDateArray[1],
         ...endingDateArray.slice(2)
       );
+
+      const start = new Date(startTimestamp);
+      const end = new Date(endTimestamp);
+
 
       return {
         start: start,
@@ -234,8 +242,12 @@ const GanttChartPage = () => {
         >
           {isFilterActive ? "Clean" : "Only My Tasks"}
         </Button>
+        <Button onClick={() => window.history.back()} className="ml-2 mb-2 mt-1 text-sm sm:text-base">
+    {t("Back")}
+  </Button>
       </div>
       {tasks && tasks.length > 0 && (
+        console.log(tasks),
         <Gantt
           tasks={tasks}
           viewMode={viewMode}

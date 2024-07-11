@@ -4,7 +4,7 @@ import useUserStore from "../Stores/UserStore";
 import useApiStore from "../Stores/ApiStore";
 import { useParams } from "react-router-dom";
 import { MdOutlineEdit } from "react-icons/md";
-import basePhoto from "../Assets/092.png";
+import basePhoto from "../Assets/defaultAvatar.jpg";
 import { jwtDecode } from "jwt-decode";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -179,9 +179,15 @@ function ProfileOtherUsersCard() {
 
   return (
     <Card className="bg-gray-200 transition-colors px-4 duration-200 w-full sm:w-3/4 md:w-1/2 h-auto sm:h-100vh border-gray-600 bg-gradient-to-r from-gray-400 via-gray-50 to-white rounded-lg">
-  <h1 className="text-2xl sm:text-3xl font-bold text-center mb-2">
+  <div className="flex items-center justify-between mb-2">
+  <Button onClick={() => window.history.back()} className="mr-2">
+    {t("Back")}
+  </Button>
+  <h1 className="text-2xl sm:text-3xl font-bold text-center flex-grow">
     {t("userProfile")}
   </h1>
+  <div style={{ width: "48px" }}> {/* Espaço reservado para manter o centro do texto, ajuste a largura conforme necessário */}</div>
+</div>
   <div className="flex flex-col pb-10">
     <div className="relative flex items-center space-x-4 sm:space-x-10 justify-center">
       {currentUserRole === 200 && (

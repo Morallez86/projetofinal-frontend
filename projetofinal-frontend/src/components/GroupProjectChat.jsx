@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
-import basePhoto from "../Assets/092.png";
+import basePhoto from "../Assets/defaultAvatar.jpg";
 import { TbEyeSearch } from "react-icons/tb";
 import { useState } from "react";
 import { jwtDecode } from "jwt-decode";
@@ -183,24 +183,24 @@ function GroupProjectChat({
           content="Separate Avatars"
           anchorSelect="#eye-icon"
         />
-        <AvatarGroup size="md" hoverToFront={true}>
-          {users.map((user) => (
-            <Avatar
-              key={user.userId}
-              src={
-                photos[user.userId]
-                  ? `data:${photos[user.userId].type};base64,${
-                      photos[user.userId].image
-                    }`
-                  : basePhoto
-              }
-              alt={`${user.username}'s profile`}
-              style={avatarStyle}
-              title={user.username}
-              status={user.online ? "available" : "dnd"}
-            />
-          ))}
-        </AvatarGroup>
+       <AvatarGroup size="md" hoverToFront={true}>
+  {users.filter(user => user.active).map((user) => (
+    <Avatar
+      key={user.userId}
+      src={
+        photos[user.userId]
+          ? `data:${photos[user.userId].type};base64,${
+              photos[user.userId].image
+            }`
+          : basePhoto
+      }
+      alt={`${user.username}'s profile`}
+      style={avatarStyle}
+      title={user.username}
+      status={user.online ? "available" : "dnd"}
+    />
+  ))}
+</AvatarGroup>
       </div>
       <ChatContainer
         style={{
