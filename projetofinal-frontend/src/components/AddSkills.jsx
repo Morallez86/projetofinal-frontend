@@ -12,18 +12,23 @@ import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-// O contexto é usado porque este componente é reutilizável 
-function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
+// O contexto é usado porque este componente é reutilizável
+function AddSkills({
+  openPopUpSkills,
+  closePopUpSkills,
+  context,
+  projectInfo,
+}) {
   const { projectId } = useParams(); // Obter o id do projeto da URL
   // Obter dados do zustand
-  const token = useUserStore((state) => state.token); 
-  const apiUrl = useApiStore((state) => state.apiUrl); 
-  const userSkills = useUserStore((state) => state.skills); 
+  const token = useUserStore((state) => state.token);
+  const apiUrl = useApiStore((state) => state.apiUrl);
+  const userSkills = useUserStore((state) => state.skills);
   const setUserSkills = useUserStore((state) => state.setSkills);
   const projectSkills = useProjectStore((state) => state.projectSkills);
   const setProjectSkills = useProjectStore((state) => state.setProjectSkills);
 
-  const { skills, addSkill } = useSkillStore(); 
+  const { skills, addSkill } = useSkillStore();
 
   const [selectedSkill, setSelectedSkill] = useState(null); // Definir a competência selecionada
   const [selectedCategory, setSelectedCategory] = useState(null); // Definir a categoria selecionada
@@ -31,37 +36,50 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
   const [animationPlayed, setAnimationPlayed] = useState(false); // Gerir a animação
   const [showSuccessText, setShowSuccessText] = useState(false); // Definir o texto de sucesso exibido
   const navigate = useNavigate();
-  const handleSessionTimeout = () => { // Gerir o tempo limite da sessão
+  const handleSessionTimeout = () => {
+    // Gerir o tempo limite da sessão
     navigate("/", { state: { showSessionTimeoutModal: true } });
   };
 
   const { t } = useTranslation(); // Traduzir o texto
 
-  const skillCategoryMapping = { // Mapear as categorias de competências
+  const skillCategoryMapping = {
+    // Mapear as categorias de competências
     Software: 200,
     Knowledge: 100,
     Hardware: 300,
     Tools: 400,
   };
 
-  const handleInputChange = (value) => { // Gerir a entrada
+  const handleInputChange = (value) => {
+    // Gerir a entrada
     setInputValue(value);
   };
 
-  const options = skills.map((skill) => ({ // Mapear as opções
-    value: skill.name,
-    label: skill.name,
-    type: skill.type,
-    id: skill.id,
-    isDisabled:
-      context === "user"
-        ? userSkills.some((userSkill) => userSkill.name === skill.name)
-        : projectSkills.some(
-            (projectSkill) => projectSkill.name === skill.name
-          ),
-  }));
+  const options = skills.map((skill) => {
+    // Mapear as opções
+    const option = {
+      value: skill.name,
+      label: skill.name,
+      type: skill.type,
+      id: skill.id,
+      isDisabled: false, // Default to false
+    };
 
-  const defaultOptions = { // Opções padrão da animação
+    if (context === "editProject") {
+      option.isDisabled = projectInfo.skills.some(
+        (projectSkill) => projectSkill.name === skill.name
+      );
+    } else {
+      option.isDisabled = userSkills.some(
+        (userSkill) => userSkill.name === skill.name
+      );
+    }
+    return option;
+  });
+
+  const defaultOptions = {
+    // Opções padrão da animação
     loop: false,
     autoplay: false,
     animationData: AddedAnimation,
@@ -70,14 +88,15 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
     },
   };
 
-  const handleSelectChange = (selectedOption) => { // Gerir a mudança de seleção
+  const handleSelectChange = (selectedOption) => {
+    // Gerir a mudança de seleção
     setSelectedSkill(selectedOption);
     const selectedSkill = skills.find(
       (skill) => skill.name === selectedOption.value
     );
 
     // Alter a categoria consoante a competência selecionada
-    if (selectedSkill) { 
+    if (selectedSkill) {
       setSelectedCategory(
         Object.keys(skillCategoryMapping).find(
           (key) => skillCategoryMapping[key] === selectedSkill.type
@@ -86,15 +105,18 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
     }
   };
 
-  const handleCategoryChange = (selectedOption) => { // Gerir a mudança de categoria
+  const handleCategoryChange = (selectedOption) => {
+    // Gerir a mudança de categoria
     setSelectedCategory(selectedOption);
   };
 
-  const isSkillInOptions = options.some( // Verificar se a competência está nas opções
+  const isSkillInOptions = options.some(
+    // Verificar se a competência está nas opções
     (option) => option.value === selectedSkill?.value
   );
 
-  const handleSubmit = async () => { // Gerir o envio do formulário
+  const handleSubmit = async () => {
+    // Gerir o envio do formulário
     console.log(context);
     const data = [
       {
@@ -104,7 +126,8 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
       },
     ];
 
-    if (context === "user") { // Se o contexto for para utilizadores
+    if (context === "user") {
+      // Se o contexto for para utilizadores
       try {
         const response = await fetch(`${apiUrl}/skills`, {
           method: "POST",
@@ -142,7 +165,8 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
       } catch (error) {
         console.error("Error adding skill:", error);
       }
-    } else if (context === "editProject") { // Se o contexto for para editar o projeto
+    } else if (context === "editProject") {
+      // Se o contexto for para editar o projeto
       const data = {
         id: isSkillInOptions ? selectedSkill.id : null,
         name: selectedSkill.value,
@@ -163,7 +187,8 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
             }),
           }
         );
-        if (response.status === 200) { // Se a resposta for 200
+        if (response.status === 200) {
+          // Se a resposta for 200
           setAnimationPlayed(true); // Ativar a animação
           setShowSuccessText(true); // Exibir o texto de sucesso
           setSelectedSkill(null); // Limpar a competência selecionada
@@ -174,13 +199,15 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
 
           if (errorMessage === "Invalid token") {
             handleSessionTimeout(); // Sessão terminada
-            return; 
+            return;
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
-        } else if (response.status === 409) { // Se a resposta for 409
+        } else if (response.status === 409) {
+          // Se a resposta for 409
           console.error("Skill already exists in the project");
-        } else if (response.status === 404) { // Se a resposta for 404
+        } else if (response.status === 404) {
+          // Se a resposta for 404
           console.error("Project not found");
         } else {
           console.error("Failed to add skill to project");
@@ -196,7 +223,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
       }
       setAnimationPlayed(true); // Ativar a animação
       setShowSuccessText(true); // Exibir o texto de sucesso
-      setSelectedSkill(null); // Limpar a competência selecionada 
+      setSelectedSkill(null); // Limpar a competência selecionada
       setSelectedCategory(null); // Limpar a categoria selecionada
     }
   };
@@ -243,10 +270,12 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
                   options={options}
                   onChange={handleSelectChange}
                   onInputChange={handleInputChange}
-                  isOptionDisabled={(option) =>
-                    option.isDisabled || inputValue.length > 20 // Desativar a opção se a competência já existir ou se o comprimento da entrada for maior que 20
+                  isOptionDisabled={
+                    (option) => option.isDisabled || inputValue.length > 20 // Desativar a opção se a competência já existir ou se o comprimento da entrada for maior que 20
                   }
-                  formatOptionLabel={(option) => ( // Formatar a etiqueta da opção, adicionando um ícone de bloqueio se a competência estiver desativada
+                  formatOptionLabel={(
+                    option // Formatar a etiqueta da opção, adicionando um ícone de bloqueio se a competência estiver desativada
+                  ) => (
                     <div>
                       {option.label}
                       {option.isDisabled ? <TbLockFilled /> : null}

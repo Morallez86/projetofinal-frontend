@@ -13,29 +13,31 @@ import { useNavigate } from "react-router-dom";
 
 //O context é usado porque este componente é reutilizável 
 
-function AddResources({ openPopUpResources, closePopUpResources, context }) {
-  
+function AddResources({ openPopUpResources, closePopUpResources, context, projectInfo }) {
   const { projectId } = useParams(); // Obter o id do projeto da URL
   const token = useUserStore((state) => state.token); // Obter o token do usuário
   const apiUrl = useApiStore((state) => state.apiUrl); // Obter a URL da API
   const projectResources = useProjectStore((state) => state.projectResources); // Obter os recursos do projeto
-  const setProjectResources = useProjectStore( // Definir os recursos do projeto
+  const setProjectResources = useProjectStore(
+    // Definir os recursos do projeto
     (state) => state.setProjectResources
   );
 
   const [resources, setResources] = useState([]); // Definir os recursos
   const [selectedResource, setSelectedResource] = useState(null); // Definir o recurso selecionado
   const [inputValue, setInputValue] = useState(""); // Definir o valor de entrada
-  const [animationPlayed, setAnimationPlayed] = useState(false); // Gerir a animação 
+  const [animationPlayed, setAnimationPlayed] = useState(false); // Gerir a animação
   const [showSuccessText, setShowSuccessText] = useState(false); // Definir o texto de sucesso exibido
-  const navigate = useNavigate(); 
-  const handleSessionTimeout = () => { // Gerir o tempo limite da sessão
-    navigate("/", { state: { showSessionTimeoutModal: true } }); 
+  const navigate = useNavigate();
+  const handleSessionTimeout = () => {
+    // Gerir o tempo limite da sessão
+    navigate("/", { state: { showSessionTimeoutModal: true } });
   };
 
   const { t } = useTranslation(); // Traduzir o texto
 
-  useEffect(() => { // Obter todos os recursos
+  useEffect(() => {
+    // Obter todos os recursos
     const getAllResources = async () => {
       try {
         const response = await fetch(`${apiUrl}/resources`, {
@@ -50,14 +52,13 @@ function AddResources({ openPopUpResources, closePopUpResources, context }) {
         if (response.status === 200) {
           const data = await response.json();
           setResources(data); // Definir os recursos
-          
         } else if (response.status === 401) {
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
           if (errorMessage === "Invalid token") {
             handleSessionTimeout(); // Sessão terminada
-            return; 
+            return;
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
@@ -82,12 +83,15 @@ function AddResources({ openPopUpResources, closePopUpResources, context }) {
     value: resource.name,
     label: resource.name,
     id: resource.id,
-    isDisabled: projectResources.some(
-      (projectResource) => projectResource.name === resource.name
-    ),
+    isDisabled:
+      context === "editProject" &&
+      projectInfo.resources.some(
+        (projectResource) => projectResource.name === resource.name
+      ),
   }));
 
-  const defaultOptions = { // Opções padrão da animação
+  const defaultOptions = {
+    // Opções padrão da animação
     loop: false,
     autoplay: false,
     animationData: AddedAnimation,
@@ -96,11 +100,13 @@ function AddResources({ openPopUpResources, closePopUpResources, context }) {
     },
   };
 
-  const handleSelectChange = (selectedOption) => { // Gerir a mudança de seleção
+  const handleSelectChange = (selectedOption) => {
+    // Gerir a mudança de seleção
     setSelectedResource(selectedOption);
   };
 
-  const handleSubmit = async () => { // Gerir o envio do formulário
+  const handleSubmit = async () => {
+    // Gerir o envio do formulário
     if (!selectedResource) return; // Se não houver recurso selecionado, sai
 
     const data = {
@@ -134,7 +140,7 @@ function AddResources({ openPopUpResources, closePopUpResources, context }) {
 
           if (errorMessage === "Invalid token") {
             handleSessionTimeout(); // Sessão terminada
-            return; 
+            return;
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
@@ -187,7 +193,9 @@ function AddResources({ openPopUpResources, closePopUpResources, context }) {
                   isOptionDisabled={(option) =>
                     option.isDisabled || inputValue.length > 20
                   }
-                  formatOptionLabel={(option) => ( // Formatar a etiqueta da opção, adicionando um ícone de bloqueio se o recurso estiver desativado
+                  formatOptionLabel={(
+                    option // Formatar a etiqueta da opção, adicionando um ícone de bloqueio se o recurso estiver desativado
+                  ) => (
                     <div>
                       {option.label}
                       {option.isDisabled ? <TbLockFilled /> : null}
