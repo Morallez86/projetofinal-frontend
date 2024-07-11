@@ -22,6 +22,17 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
   const handleSessionTimeout = () => { //função para timeout
     navigate("/", { state: { showSessionTimeoutModal: true } }); //navegar para a página inicial
   };
+  
+  console.log(task);
+    
+  
+  const checkDependenciesStatus = (taskDependencies) => {
+    return taskDependencies.every(dependencyId => {
+      const task = totalTasks.find(t => t.id === dependencyId);
+      return task && task.status === 300;
+    });
+  };
+
 
   const [taskData, setTaskData] = useState({ //dados da tarefa
     projectId: task.projectId,
@@ -213,23 +224,33 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
       </p>
       {isExpanded && (
         <>
-          <p>
-            <strong>Status:</strong>{" "}
-            {editMode ? (
-              <Select
-                id="taskStatus"
-                name="status"
-                value={taskData.status}
-                onChange={handleChange}
-              >
-                <option value="100">PLANNED</option>
-                <option value="200">IN PROGRESS</option>
-                <option value="300">FINISHED</option>
-              </Select>
-            ) : (
-              getStatusString(task.status)
-            )}
-          </p>
+         <p>
+  <strong>Status:</strong>{" "}
+  {editMode ? (
+    <Select
+      id="taskStatus"
+      name="status"
+      value={taskData.status}
+      onChange={handleChange}
+      disabled={!checkDependenciesStatus(task.dependencies)}
+    >
+      {task.status === 100 ? (
+        <>
+        <option value="100">PLANNED</option>
+        <option value="200">IN PROGRESS</option>
+        </>
+      ) : (
+        <>
+          <option value="100">PLANNED</option>
+          <option value="200">IN PROGRESS</option>
+          <option value="300">FINISHED</option>
+        </>
+      )}
+    </Select>
+  ) : (
+    getStatusString(task.status)
+  )}
+</p>
           <p>
             <strong>Priority:</strong>{" "}
             {editMode ? (
