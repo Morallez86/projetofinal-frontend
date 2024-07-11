@@ -12,6 +12,7 @@ import {
 import { MdOutlineEdit } from "react-icons/md";
 import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
+import { useTranslation } from "react-i18next";
 
 const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
   const [isExpanded, setIsExpanded] = useState(false); //estado para expandir
@@ -19,22 +20,23 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
   const apiUrl = useApiStore((state) => state.apiUrl); //api url
   const token = useUserStore((state) => state.token); //token
   const navigate = useNavigate();
-  const handleSessionTimeout = () => { //função para timeout
+  const { t } = useTranslation(); //função de tradução
+  const handleSessionTimeout = () => {
+    //função para timeout
     navigate("/", { state: { showSessionTimeoutModal: true } }); //navegar para a página inicial
   };
-  
+
   console.log(task);
-    
-  
+
   const checkDependenciesStatus = (taskDependencies) => {
-    return taskDependencies.every(dependencyId => {
-      const task = totalTasks.find(t => t.id === dependencyId);
+    return taskDependencies.every((dependencyId) => {
+      const task = totalTasks.find((t) => t.id === dependencyId);
       return task && task.status === 300;
     });
   };
 
-
-  const [taskData, setTaskData] = useState({ //dados da tarefa
+  const [taskData, setTaskData] = useState({
+    //dados da tarefa
     projectId: task.projectId,
     id: task.id,
     title: task.title,
@@ -45,12 +47,14 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
     userName: task.userName,
   });
 
-  const handleChange = (event) => { //função para mudar
+  const handleChange = (event) => {
+    //função para mudar
     const { name, value } = event.target;
     setTaskData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSubmitClick = () => { //função para submeter
+  const handleSubmitClick = () => {
+    //função para submeter
     fetch(`${apiUrl}/tasks`, {
       method: "PUT",
       headers: {
@@ -59,21 +63,23 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
       },
       body: JSON.stringify(taskData),
     }).then(async (response) => {
-      if (response.status === 401) { //se o status for 401
+      if (response.status === 401) {
+        //se o status for 401
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
 
         if (errorMessage === "Invalid token") {
           handleSessionTimeout(); //chama a função de timeout
-          return; 
+          return;
         } else {
           console.error("Error updating seen status:", errorMessage);
         }
       }
-      if (!response.ok) { //se não for ok
+      if (!response.ok) {
+        //se não for ok
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       const updatedTaskResponse = await response.json();
       const updatedTask = updatedTaskResponse.taskDto;
       const updatedTaskIndex = updatedTaskResponse.index;
@@ -91,7 +97,8 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
     });
   };
 
-  const handleCancelClick = () => { //função para cancelar
+  const handleCancelClick = () => {
+    //função para cancelar
     setEditMode(false);
     setTaskData({
       title: task.title,
@@ -103,33 +110,36 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
     });
   };
 
-  const formatDate = (dateArray) => { //função para formatar a data
+  const formatDate = (dateArray) => {
+    //função para formatar a data
     if (!Array.isArray(dateArray) || dateArray.length < 3) {
       return "";
     }
     const [year, month, day, hour = 0, minute = 0] = dateArray;
-  
+
     // Cria um objeto Date em UTC
     const date = new Date(Date.UTC(year, month - 1, day, hour, minute));
-  
+
     // Retorna a data formatada em UTC
     return date.toISOString().split("T")[0];
   };
 
-  const getStatusString = (statusValue) => { //função para obter o status
+  const getStatusString = (statusValue) => {
+    //função para obter o status
     switch (statusValue) {
       case 100:
-        return "PLANNED";
+        return t("PLANNED");
       case 200:
-        return "IN PROGRESS";
+        return t("IN PROGRESS");
       case 300:
-        return "FINISHED";
+        return t("FINISHED");
       default:
-        return "UNKNOWN";
+        return t("UNKNOWN");
     }
   };
 
-  const getPriorityIcon = (priorityValue) => { //função para obter o ícone de prioridade
+  const getPriorityIcon = (priorityValue) => {
+    //função para obter o ícone de prioridade
     switch (priorityValue) {
       case 100:
         return (
@@ -169,16 +179,17 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
     }
   };
 
-  const getPriorityString = (priorityValue) => { //função para obter a prioridade
+  const getPriorityString = (priorityValue) => {
+    //função para obter a prioridade
     switch (priorityValue) {
       case 100:
-        return "LOW";
+        return t("LOW");
       case 200:
-        return "MEDIUM";
+        return t("MEDIUM");
       case 300:
-        return "HIGH";
+        return t("HIGH");
       default:
-        return "UNKNOWN";
+        return t("UNKNOWN");
     }
   };
 
@@ -210,7 +221,7 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
         )}
       </h3>
       <p className={`${task.status === 300 ? "line-through" : ""}`}>
-        <strong>Description:</strong>{" "}
+        <strong>{t("Description")}:</strong>{" "}
         {editMode ? (
           <Textarea
             id="taskDescription"
@@ -224,35 +235,35 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
       </p>
       {isExpanded && (
         <>
-         <p>
-  <strong>Status:</strong>{" "}
-  {editMode ? (
-    <Select
-      id="taskStatus"
-      name="status"
-      value={taskData.status}
-      onChange={handleChange}
-      disabled={!checkDependenciesStatus(task.dependencies)}
-    >
-      {task.status === 100 ? (
-        <>
-        <option value="100">PLANNED</option>
-        <option value="200">IN PROGRESS</option>
-        </>
-      ) : (
-        <>
-          <option value="100">PLANNED</option>
-          <option value="200">IN PROGRESS</option>
-          <option value="300">FINISHED</option>
-        </>
-      )}
-    </Select>
-  ) : (
-    getStatusString(task.status)
-  )}
-</p>
           <p>
-            <strong>Priority:</strong>{" "}
+            <strong>{t("Status")}:</strong>{" "}
+            {editMode ? (
+              <Select
+                id="taskStatus"
+                name="status"
+                value={taskData.status}
+                onChange={handleChange}
+                disabled={!checkDependenciesStatus(task.dependencies)}
+              >
+                {task.status === 100 ? (
+                  <>
+                    <option value="100">{t("PLANNED")}</option>
+                    <option value="200">{t("IN PROGRESS")}</option>
+                  </>
+                ) : (
+                  <>
+                    <option value="100">{t("PLANNED")}</option>
+                    <option value="200">{t("IN PROGRESS")}</option>
+                    <option value="300">{t("FINISHED")}</option>
+                  </>
+                )}
+              </Select>
+            ) : (
+              getStatusString(task.status)
+            )}
+          </p>
+          <p>
+            <strong>{t("Priority")}:</strong>{" "}
             {editMode ? (
               <Select
                 id="taskPriority"
@@ -260,24 +271,24 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
                 value={taskData.priority}
                 onChange={handleChange}
               >
-                <option value="100">LOW</option>
-                <option value="200">MEDIUM</option>
-                <option value="300">HIGH</option>
+                <option value="100">{t("LOW")}</option>
+                <option value="200">{t("MEDIUM")}</option>
+                <option value="300">{t("HIGH")}</option>
               </Select>
             ) : (
               getPriorityString(task.priority)
             )}
           </p>
           <p>
-            <strong>Planned Start Date:</strong>{" "}
+            <strong>{t("Planned Start Date:")}</strong>{" "}
             {formatDate(task.plannedStartingDate)}
           </p>
           <p>
-            <strong>Planned End Date:</strong>{" "}
+            <strong>{t("Planned End Date:")}</strong>{" "}
             {formatDate(task.plannedEndingDate)}
           </p>
           <p>
-            <strong>Responsible:</strong>{" "}
+            <strong>{t("Responsible")}:</strong>{" "}
             {editMode ? (
               <Select
                 id="taskResponsible"
@@ -298,9 +309,9 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
           {editMode && (
             <div className="flex justify-end mt-4">
               <Button onClick={handleCancelClick} className="mr-2">
-                Cancel
+                {t("Cancel")}
               </Button>
-              <Button onClick={handleSubmitClick}>Save</Button>
+              <Button onClick={handleSubmitClick}>{t("Save")}</Button>
             </div>
           )}
         </>

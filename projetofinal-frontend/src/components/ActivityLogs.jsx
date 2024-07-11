@@ -3,9 +3,10 @@ import { Button, ToggleSwitch, TextInput } from "flowbite-react";
 import CreateLogModal from "./CreateLogModal";
 import { useState } from "react";
 import { FaInfoCircle } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 function ActivityLogs({ tasks, projectId, logs }) {
-    // Estado para controlar a visibilidade do modal
+  // Estado para controlar a visibilidade do modal
   const [showModal, setShowModal] = useState(false);
   // Estado para armazenar e manipular os logs
   const [totalLogs, setTotalLogs] = useState(logs);
@@ -19,7 +20,7 @@ function ActivityLogs({ tasks, projectId, logs }) {
   const [userSearch, setUserSearch] = useState("");
   // Estado para controlar a visibilidade da legenda
   const [showLegend, setShowLegend] = useState(false);
-
+  const { t } = useTranslation(); // Função de tradução
 
   // Função para filtrar logs com base nos switches e nos campos de busca
   const handleFilter = (log) => {
@@ -42,7 +43,7 @@ function ActivityLogs({ tasks, projectId, logs }) {
     return true;
   };
 
-    // Funções para abrir e fechar o modal
+  // Funções para abrir e fechar o modal
   const handleOpenModal = () => {
     setShowModal(true);
   };
@@ -51,7 +52,7 @@ function ActivityLogs({ tasks, projectId, logs }) {
     setShowModal(false);
   };
 
-    // Objeto para mapear códigos de status de logs a classes de cores do Tailwind CSS
+  // Objeto para mapear códigos de status de logs a classes de cores do Tailwind CSS
   const logColors = {
     100: "bg-blue-300",
     200: "bg-yellow-300",
@@ -90,41 +91,41 @@ function ActivityLogs({ tasks, projectId, logs }) {
       {/*Container para o título e a legenda*/}
       <div className="flex flex-row items-center">
         {/* Título */}
-        <h1 className="text-4xl font-bold underline mb-4">Activity Log</h1>
+        <h1 className="text-4xl font-bold underline mb-4">
+          {t("Activity Log")}
+        </h1>
         <div
           className="relative top-0 right-0 cursor-pointer ml-2 mb-2"
           onMouseEnter={() => setShowLegend(true)}
           onMouseLeave={() => setShowLegend(false)}
         >
-
           {/* Ícone de informação que mostra e esconde as cores e legendas de cada cor */}
           <FaInfoCircle size={30} />
           {showLegend && (
             <div className="absolute top-full right-0 bg-white p-4 rounded-md shadow-lg z-10 w-64">
               <p>
                 <span className="inline-block w-4 h-4 bg-blue-300 mr-2"></span>
-                Tasks
+                {t("Tasks")}
               </p>
               <p>
                 <span className="inline-block w-4 h-4 bg-yellow-300 mr-2"></span>
-                Additions
+                {t("Additions")}
               </p>
               <p>
                 <span className="inline-block w-4 h-4 bg-red-400 mr-2"></span>
-                Removals
+                {t("Removals")}
               </p>
               <p>
                 <span className="inline-block w-4 h-4 bg-orange-400 mr-2"></span>
-                Project State
+                {t("Project State")}
               </p>
               <p>
                 <span className="inline-block w-4 h-4 bg-gray-400 mr-2"></span>
-                Personal logs
+                {t("Personal logs")}
               </p>
             </div>
           )}
         </div>
-        
       </div>
 
       {/*Container para os filtros: por task e por user*/}
@@ -132,13 +133,13 @@ function ActivityLogs({ tasks, projectId, logs }) {
         <div className="flex items-center gap-4">
           <ToggleSwitch
             checked={switch1}
-            label="Filter by task"
+            label={t("Filter by task")}
             onChange={setSwitch1}
           />
           {switch1 && (
             // Campo de texto para inserir o filtro por tarefa, visível apenas se o switch estiver ativo
             <TextInput
-              placeholder="Search by task"
+              placeholder={t("Search by task")}
               value={taskSearch}
               onChange={(e) => setTaskSearch(e.target.value)}
             />
@@ -147,13 +148,13 @@ function ActivityLogs({ tasks, projectId, logs }) {
         <div className="flex items-center gap-4">
           <ToggleSwitch
             checked={switch2}
-            label="Filter by user"
+            label={t("Filter by user")}
             onChange={setSwitch2}
           />
           {switch2 && (
-             // Campo de texto para inserir o filtro por usuário, visível apenas se o switch estiver ativo
+            // Campo de texto para inserir o filtro por usuário, visível apenas se o switch estiver ativo
             <TextInput
-              placeholder="Search by user"
+              placeholder={t("Search by user")}
               value={userSearch}
               onChange={(e) => setUserSearch(e.target.value)}
             />
@@ -163,49 +164,59 @@ function ActivityLogs({ tasks, projectId, logs }) {
 
       {/*Container para os logs*/}
       <div className="overflow-auto space-y-4 h-[30rem]">
-        
-        {totalLogs.filter(handleFilter).map((log) => {         // Mapeia cada log filtrado para exibição
-          const formattedDate = formatDateForInput(log.timestamp);  // Formata a data do log
+        {totalLogs.filter(handleFilter).map((log) => {
+          // Mapeia cada log filtrado para exibição
+          const formattedDate = formatDateForInput(log.timestamp); // Formata a data do log
           const formattedTime = formatTimeForInput(log.timestamp); // Formata a hora do log
 
-          const shortDescription = log.newDescription         // Gera uma descrição curta se tiver mais do que 15 caracteres
+          const shortDescription = log.newDescription // Gera uma descrição curta se tiver mais do que 15 caracteres
             ? log.newDescription.length > 15
               ? log.newDescription.slice(0, 15) + " (...)"
               : log.newDescription
             : "";
-          const displayText = log.title ? log.title : shortDescription;  // Decide o texto a ser exibido consoante a existência de um título ou não
+          const displayText = log.title ? log.title : shortDescription; // Decide o texto a ser exibido consoante a existência de um título ou não
 
           return (
             <div
-            key={log.id}
-            className={`w-72 rounded-md border border-black ${logColors[log.type]} ${expandedLogs[log.id] ? "h-auto" : "h-24"}`}
-            onMouseEnter={() =>
-              !log.title &&
-              setExpandedLogs((prev) => ({ ...prev, [log.id]: true }))
-            }
-            onMouseLeave={() =>
-              !log.title &&
-              setExpandedLogs((prev) => ({ ...prev, [log.id]: false }))
-            }
-          >
-            <p className="text-center font-bold">{displayText}</p>
-            {expandedLogs[log.id] && (
-               // Conteúdo expandido com descrição completa e nome da tarefa, se disponível
+              key={log.id}
+              className={`w-72 rounded-md border border-black ${
+                logColors[log.type]
+              } ${expandedLogs[log.id] ? "h-auto" : "h-24"}`}
+              onMouseEnter={() =>
+                !log.title &&
+                setExpandedLogs((prev) => ({ ...prev, [log.id]: true }))
+              }
+              onMouseLeave={() =>
+                !log.title &&
+                setExpandedLogs((prev) => ({ ...prev, [log.id]: false }))
+              }
+            >
+              <p className="text-center font-bold">{displayText}</p>
+              {expandedLogs[log.id] && (
+                // Conteúdo expandido com descrição completa e nome da tarefa, se disponível
 
-              <>
-                <p className="text-center">{log.newDescription}</p>
-                {log.taskName && <p className="text-center font-bold"> About: {log.taskName}</p>}
-              </>
-            )}
-            <p className="text-center">{formattedDate}</p>  {/* Exibe a data formatada */}
-            <p className="text-center">{formattedTime}</p>  {/* Exibe a hora formatada */}
-            <p className="text-center font-bold">{log.userName}</p>  {/* Exibe o nome do usuário */}
-          </div>
+                <>
+                  <p className="text-center">{log.newDescription}</p>
+                  {log.taskName && (
+                    <p className="text-center font-bold">
+                      {" "}
+                      {t("About")} {log.taskName}
+                    </p>
+                  )}
+                </>
+              )}
+              <p className="text-center">{formattedDate}</p>{" "}
+              {/* Exibe a data formatada */}
+              <p className="text-center">{formattedTime}</p>{" "}
+              {/* Exibe a hora formatada */}
+              <p className="text-center font-bold">{log.userName}</p>{" "}
+              {/* Exibe o nome do usuário */}
+            </div>
           );
         })}
       </div>
       <Button onClick={handleOpenModal} className="mb-3">
-        Create log
+        {t("Create log")}
       </Button>
       {showModal && (
         // Modal para criar um novo log

@@ -264,8 +264,8 @@ function LoginCard() {
             <Button
             className="bg-gray-700"  onClick={() => { handleLanguageToggle() }}>
               {(languageApp === 'en'
-      ? "Change to PT" 
-      : "Change to EN")}
+      ? "PT" 
+      : "EN")}
             </Button>
 
       </div>

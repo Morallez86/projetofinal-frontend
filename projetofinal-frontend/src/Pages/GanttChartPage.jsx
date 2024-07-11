@@ -224,7 +224,7 @@ tasks = allTasks.map((task) => {
   return {
     start: start,
     end: end,
-    name: task.title + " Responsible: " + task.userName,
+    name: task.title + " " + task.userName,
     id: task.id,
     type: "task",
     progress: 0,
@@ -238,54 +238,60 @@ tasks = allTasks.map((task) => {
 
   return (
     <div className="flex flex-col min-h-screen">
-  <div className="gantt-outer-container w-auto overflow-auto mx-auto px-4 sm:px-8 lg:px-10">
-    <div className="gantt-container">
-      <div className="flex flex-col sm:flex-row items-center justify-between">
-        <select
-          value={viewMode}
-          onChange={(e) => setViewMode(e.target.value)}
-          className="mb-2 mt-1 text-base sm:text-lg"
-        >
-          <option value={ViewMode.Day}>Day</option>
-          <option value={ViewMode.Week}>Week</option>
-        </select>
-        <Button
-          onClick={openPopUpCreateTask}
-          className="ml-2 mb-2 mt-1 text-sm sm:text-base"
-        >
-          Create New Task
-        </Button>
-        <Button
-          onClick={filterMyTasks}
-          className="ml-2 mb-2 mt-1 text-sm sm:text-base"
-        >
-          {isFilterActive ? "Clean" : "Only My Tasks"}
-        </Button>
-        <Button onClick={() => window.history.back()} className="ml-2 mb-2 mt-1 text-sm sm:text-base">
-    {t("Back")}
-  </Button>
+      <div className="gantt-outer-container w-auto overflow-auto mx-auto px-4 sm:px-8 lg:px-10">
+        <div className="gantt-container">
+          <div className="flex flex-col sm:flex-row items-center justify-between">
+            <select
+              value={viewMode}
+              onChange={(e) => setViewMode(e.target.value)}
+              className="mb-2 mt-1 text-base sm:text-lg"
+            >
+              <option value={ViewMode.Day}>{t("Day")}</option>
+              <option value={ViewMode.Week}>{t("Week")}</option>
+            </select>
+            <Button
+              onClick={openPopUpCreateTask}
+              className="ml-2 mb-2 mt-1 text-sm sm:text-base"
+            >
+              {t("New Task")}
+            </Button>
+            <Button
+              onClick={filterMyTasks}
+              className="ml-2 mb-2 mt-1 text-sm sm:text-base"
+            >
+              {isFilterActive ? t("Clean") : t("My Tasks")}
+            </Button>
+            <Button
+              onClick={() => window.history.back()}
+              className="ml-2 mb-2 mt-1 text-sm sm:text-base"
+            >
+              {t("Back")}
+            </Button>
+          </div>
+          {tasks &&
+            tasks.length > 0 &&
+            (console.log(tasks),
+            (
+              <Gantt
+                tasks={tasks}
+                viewMode={viewMode}
+                preStepsCount={0}
+                rowHeight={30}
+                todayColor="orange"
+                arrowIndent={20}
+                onClick={(task) => setDependentTaskss(task.id)}
+                className={`w-full ${isLandscape ? "gantt-landscape" : ""}`}
+              />
+            ))}
+        </div>
       </div>
-      {tasks && tasks.length > 0 && (
-        console.log(tasks),
-        <Gantt
-          tasks={tasks}
-          viewMode={viewMode}
-          preStepsCount={0}
-          rowHeight={30}
-          todayColor="orange"
-          arrowIndent={20}
-          onClick={(task) => setDependentTaskss(task.id)}
-          className={`w-full ${isLandscape ? "gantt-landscape" : ""}`}        />
-      )}
+      <AddTaskCard
+        popUpShow={popUpShow}
+        setPopUpShow={setPopUpShow}
+        setTasks={setAllTasks}
+      />
+      <OrientationModal show={showModal} />
     </div>
-  </div>
-  <AddTaskCard
-    popUpShow={popUpShow}
-    setPopUpShow={setPopUpShow}
-    setTasks={setAllTasks}
-  />
-  <OrientationModal show={showModal} />
-</div>
   );
 };
 

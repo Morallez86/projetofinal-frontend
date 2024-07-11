@@ -5,6 +5,7 @@ import { Tooltip } from "react-tooltip";
 import basePhoto from "../Assets/defaultAvatar.jpg";
 import { LuPlusCircle } from "react-icons/lu";
 import { Label } from "flowbite-react";
+import { useTranslation } from "react-i18next";
 
 function TeamCard({
   projectDetails,
@@ -15,10 +16,12 @@ function TeamCard({
   currentUserId,
   openPopUpUsers,
 }) {
+  const { t } = useTranslation(); // Traduzir o texto
+
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <Label htmlFor="Team" value="Team" />
+        <Label htmlFor="Team" value={t("Team")} />
         <div
           className="inline-flex items-center cursor-pointer"
           id="icon-element7"
@@ -61,7 +64,7 @@ function TeamCard({
                         handleAdminChange(up.userId, false)
                       }
                       data-tooltip-id={`tooltip-${up.userId}`}
-                      data-tooltip-content="Remove Admin"
+                      data-tooltip-content= {t("Remove Admin")}
                     />
                   ) : (
                     <FaLevelUpAlt
@@ -74,7 +77,7 @@ function TeamCard({
                         currentUserIsAdmin && handleAdminChange(up.userId, true)
                       }
                       data-tooltip-id={`tooltip-${up.userId}`}
-                      data-tooltip-content="Make Admin"
+                      data-tooltip-content= {t("Make Admin")}
                     />
                   )}
                   {(currentUserIsAdmin || up.userId === currentUserId) && (
@@ -82,7 +85,7 @@ function TeamCard({
                       className="h-4 w-4 ml-2 text-red-500 cursor-pointer"
                       onClick={() => handleUserDeactivation(up.userId)}
                       data-tooltip-id={`tooltip-${up.userId}`}
-                      data-tooltip-content="Deactivate User"
+                      data-tooltip-content={t("Deactivate User")}
                     />
                   )}
                   <Tooltip id={`tooltip-${up.userId}`} place="top" />

@@ -23,6 +23,7 @@ import i18n from "../Language/i18n";
 import { Dialog, Transition } from '@headlessui/react';
 import { MenuIcon } from '@heroicons/react/outline';
 import BurgerMenu from './BurguerMenu'; 
+import { useTranslation } from "react-i18next";
 
 function Layout({
   activeTab,
@@ -40,21 +41,21 @@ function Layout({
   const [switch2, setSwitch2] = useState(false); // Estado do switch
   const languageApp = useUserStore((state) => state.language); // Obter a linguagem da aplicação
   const setLanguageApp = useUserStore((state) => state.setLanguage); // Função para definir a linguagem da aplicação
-  const navigate = useNavigate(); 
-  const handleSessionTimeout = () => { // Função para lidar com o timeout da sessão
+  const navigate = useNavigate();
+  const handleSessionTimeout = () => {
+    // Função para lidar com o timeout da sessão
     navigate("/", { state: { showSessionTimeoutModal: true } }); // Navegar para a página inicial
   };
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
- 
+  const { t } = useTranslation(); // Traduzir o texto
 
-  const handleLanguageToggle = () => { // Função para alternar a linguagem
-    const newLanguage = languageApp === "en" ? "pt" : "en"; 
+  const handleLanguageToggle = () => {
+    // Função para alternar a linguagem
+    const newLanguage = languageApp === "en" ? "pt" : "en";
     setLanguageApp(newLanguage);
     i18n.changeLanguage(newLanguage);
   };
-
-  
 
   let userId, username;
   if (token) {
@@ -89,7 +90,7 @@ function Layout({
 
             if (errorMessage === "Invalid token") {
               handleSessionTimeout(); // Lidar com o timeout da sessão
-              return; 
+              return;
             } else {
               console.error("Error updating seen status:", errorMessage);
             }
@@ -105,7 +106,8 @@ function Layout({
     fetchProfileImage(); // Chamar a função fetchProfileImage
   }, [apiUrl, token, userId, setProfileImage]); // Dependências do useEffect
 
-  const handleLogout = async () => { // Função para fazer logout
+  const handleLogout = async () => {
+    // Função para fazer logout
     console.log(token);
     if (token) {
       try {
@@ -118,7 +120,8 @@ function Layout({
           body: JSON.stringify({ projectTimestamps }),
         });
 
-        if (response.ok) { // Se o logout for bem-sucedido
+        if (response.ok) {
+          // Se o logout for bem-sucedido
           console.log(token);
           setToken(null);
           clearProfileImage();
@@ -140,82 +143,94 @@ function Layout({
 
   return (
     <div className="flex flex-col min-h-screen">
-    <div className="md:hidden p-4 flex justify-between items-center space-x-1">
-  {token ? (
-    <>
-      <button onClick={() => setIsMenuOpen(true)}>
-        <MenuIcon className="h-6 w-6" />
-      </button>
-      <div className="inline-flex justify-end items-center space-x-1">
-        {/* Toggle de linguagem */}
-        <ToggleSwitch
-          checked={languageApp === 'pt'}
-          label={languageApp === 'en' ? "EN" : "PT"} 
-          onChange={handleLanguageToggle}
-        />
-        {/* Ícone de mensagens com contêiner relativo */}
-        <div className="cursor-pointer relative">
-          <MdOutlineMessage size={25} onClick={() => navigate("/messages")} />
-          {unreadMessages > 0 && (
-            <div className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-red-600 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">
-              {unreadMessages}
+      <div className="md:hidden p-4 flex justify-between items-center space-x-1">
+        {token ? (
+          <>
+            <button onClick={() => setIsMenuOpen(true)}>
+              <MenuIcon className="h-6 w-6" />
+            </button>
+            <div className="inline-flex justify-end items-center space-x-1">
+              {/* Toggle de linguagem */}
+              <ToggleSwitch
+                checked={languageApp === "pt"}
+                label={languageApp === "en" ? "EN" : "PT"}
+                onChange={handleLanguageToggle}
+              />
+              {/* Ícone de mensagens com contêiner relativo */}
+              <div className="cursor-pointer relative">
+                <MdOutlineMessage
+                  size={25}
+                  onClick={() => navigate("/messages")}
+                />
+                {unreadMessages > 0 && (
+                  <div className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-red-600 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">
+                    {unreadMessages}
+                  </div>
+                )}
+              </div>
+              {/* Ícone de notificações com contêiner relativo */}
+              <div className="cursor-pointer relative">
+                <IoIosNotificationsOutline
+                  size={25}
+                  onClick={() => navigate("/notifications")}
+                />
+                {unreadNotifications > 0 && (
+                  <div className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-red-600 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">
+                    {unreadNotifications}
+                  </div>
+                )}
+              </div>
+              {/* Foto do perfil e botão de logout */}
+              <div className="flex items-center">
+                <Avatar img={profileImage} alt="avatar" size="sm" rounded />
+                <button
+                  className="ml-1 p-1 flex border border-gray-600 hover:bg-cyan-700 items-center justify-center rounded-full bg-white transition-colors duration-200 text-black font-bold"
+                  onClick={handleLogout}
+                >
+                  <TbLogout2 size={25} />
+                </button>
+              </div>
             </div>
-          )}
-        </div>
-        {/* Ícone de notificações com contêiner relativo */}
-        <div className="cursor-pointer relative">
-          <IoIosNotificationsOutline size={25} onClick={() => navigate("/notifications")} />
-          {unreadNotifications > 0 && (
-            <div className="absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/2 bg-red-600 text-white rounded-full text-xs w-4 h-4 flex items-center justify-center">
-              {unreadNotifications}
-            </div>
-          )}
-        </div>
-        {/* Foto do perfil e botão de logout */}
-        <div className="flex items-center">
-          <Avatar img={profileImage} alt="avatar" size="sm" rounded/> 
-          <button
-            className="ml-1 p-1 flex border border-gray-600 hover:bg-cyan-700 items-center justify-center rounded-full bg-white transition-colors duration-200 text-black font-bold" 
-            onClick={handleLogout}
-          >
-            <TbLogout2 size={25} />
-          </button>
-        </div>
+          </>
+        ) : (
+          <div className="flex justify-end items-center flex-1">
+            {/* Toggle de linguagem */}
+            <ToggleSwitch
+              checked={languageApp === "pt"}
+              label={languageApp === "en" ? "EN" : "PT"}
+              onChange={handleLanguageToggle}
+              className="mr-2" // Adiciona margem à direita para separar do botão de login
+            />
+            <button
+              className="p-2 flex border border-gray-600 hover:bg-cyan-700 hover:text-white items-center justify-center rounded-full bg-white transition-colors duration-200 text-black font-bold"
+              onClick={() => navigate("/Login")}
+            >
+              <TbLogin2 size={35} />
+            </button>
+          </div>
+        )}
       </div>
-    </>
-  ) : (
-    <div className="flex justify-end items-center flex-1">
-      {/* Toggle de linguagem */}
-      <ToggleSwitch
-        checked={languageApp === 'pt'}
-        label={languageApp === 'en' ? "EN" : "PT"} 
-        onChange={handleLanguageToggle}
-        className="mr-2" // Adiciona margem à direita para separar do botão de login
-      />
-      <button
-        className="p-2 flex border border-gray-600 hover:bg-cyan-700 hover:text-white items-center justify-center rounded-full bg-white transition-colors duration-200 text-black font-bold"
-        onClick={() => navigate("/Login")}
+      <Dialog
+        open={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+        className="relative z-50 md:hidden"
       >
-        <TbLogin2 size={35} />
-      </button>
-    </div>
-  )}
-</div>
-    <Dialog open={isMenuOpen} onClose={() => setIsMenuOpen(false)} className="relative z-50 md:hidden">
-      <Transition.Child as="div" className="fixed top-0 left-0 w-3/4 h-full bg-white p-4 shadow-xl"
-        enter="transition-transform ease-in-out duration-300"
-        enterFrom="-translate-x-full"
-        enterTo="translate-x-0"
-        leave="transition-transform ease-in-out duration-300"
-        leaveFrom="translate-x-0"
-        leaveTo="-translate-x-full">
-        
-        <BurgerMenu />
-      </Transition.Child>
-    </Dialog>
-    
+        <Transition.Child
+          as="div"
+          className="fixed top-0 left-0 w-3/4 h-full bg-white p-4 shadow-xl"
+          enter="transition-transform ease-in-out duration-300"
+          enterFrom="-translate-x-full"
+          enterTo="translate-x-0"
+          leave="transition-transform ease-in-out duration-300"
+          leaveFrom="translate-x-0"
+          leaveTo="-translate-x-full"
+        >
+          <BurgerMenu />
+        </Transition.Child>
+      </Dialog>
+
       <div className="hidden md:grid grid-cols-[1fr_2fr_1fr] gap-4 p-4 px-8">
-      <div className="flex flex-col items-start">
+        <div className="flex flex-col items-start">
           <img
             src={criticalLogo}
             alt="Critical Logo"
@@ -224,7 +239,9 @@ function Layout({
           {token && username && (
             <div className="flex items-center space-x-2 mt-4">
               <MdWavingHand size={20} />
-              <h1 className="text-black font-bold">Hey {username}</h1>
+              <h1 className="text-black font-bold">
+                {t("Hey")} {username}
+              </h1>
             </div>
           )}
         </div>
@@ -252,19 +269,19 @@ function Layout({
             >
               <Tabs.Item
                 value={0}
-                title="MyProfile"
+                title={t("MyProfile")}
                 icon={ImProfile}
               ></Tabs.Item>
               <Tabs.Item
                 active={activeTab === 1}
                 value={1}
-                title="Projects/Users"
+                title={t("Projects/Users")}
                 icon={AiOutlineFundProjectionScreen}
               ></Tabs.Item>
               <Tabs.Item
                 active={activeTab === 2}
                 value={2}
-                title="Components/Resources"
+                title={t("Components/Resources")}
                 icon={GrResources}
               ></Tabs.Item>
             </Tabs>
@@ -296,21 +313,25 @@ function Layout({
                     <Tabs.Item
                       active={activeSubTabProfile === 0}
                       value={0}
-                      title={<span className="text-black">My Projects</span>}
+                      title={
+                        <span className="text-black">{t("MyProjects")}</span>
+                      }
                       icon={PiProjectorScreenChartLight}
                     ></Tabs.Item>
                     <Tabs.Item
                       active={activeSubTabProfile === 1}
                       value={1}
                       title={
-                        <span className="text-black">Change Password</span>
+                        <span className="text-black">
+                          {t("ChangePassword")}
+                        </span>
                       }
                       icon={CiSettings}
                     ></Tabs.Item>
                     <Tabs.Item
                       active={activeSubTabProfile === 2}
                       value={2}
-                      title={<span className="text-black">About me</span>}
+                      title={<span className="text-black">{t("AboutMe")}</span>}
                       icon={CgProfile}
                     ></Tabs.Item>
                   </Tabs>
@@ -341,19 +362,23 @@ function Layout({
                     <Tabs.Item
                       active={activeSubProjects === 0}
                       value={0}
-                      title={<span className="text-black">Create New</span>}
+                      title={
+                        <span className="text-black">{t("CreateNew")}</span>
+                      }
                       icon={IoCreateOutline}
                     ></Tabs.Item>
                     <Tabs.Item
                       active={activeSubProjects === 1}
                       value={1}
-                      title={<span className="text-black">Projects List</span>}
+                      title={
+                        <span className="text-black">{t("ProjectsList")}</span>
+                      }
                       icon={CiBoxList}
                     ></Tabs.Item>
                     <Tabs.Item
                       active={activeSubProjects === 2}
                       value={2}
-                      title={<span className="text-black">Users</span>}
+                      title={<span className="text-black">{t("Users")}</span>}
                       icon={PiUsersThreeBold}
                     ></Tabs.Item>
                   </Tabs>
@@ -381,13 +406,17 @@ function Layout({
                     <Tabs.Item
                       active={activeSubComponents === 0}
                       value={0}
-                      title={<span className="text-black">Components</span>}
+                      title={
+                        <span className="text-black">{t("Components")}</span>
+                      }
                       icon={VscTools}
                     ></Tabs.Item>
                     <Tabs.Item
                       active={activeSubComponents === 1}
                       value={1}
-                      title={<span className="text-black">Resources</span>}
+                      title={
+                        <span className="text-black">{t("Resources")}</span>
+                      }
                       icon={GrResources}
                     ></Tabs.Item>
                   </Tabs>
@@ -404,7 +433,7 @@ function Layout({
               <div className="relative mt-3 mr-0 p-0">
                 <ToggleSwitch
                   checked={languageApp === "pt"}
-                  label={languageApp === "en" ? "Change to PT" : "Change to EN"}
+                  label={languageApp === "en" ? "PT" : "EN"}
                   onChange={() => {
                     handleLanguageToggle();
                     setSwitch2((prevState) => !prevState);
@@ -447,7 +476,7 @@ function Layout({
               <div className="relative mt-3 mr-0 p-0">
                 <ToggleSwitch
                   checked={languageApp === "pt"}
-                  label={languageApp === "en" ? "Change to PT" : "Change to EN"}
+                  label={languageApp === "en" ? "PT" : "EN"}
                   onChange={() => {
                     handleLanguageToggle();
                     setSwitch2((prevState) => !prevState);
