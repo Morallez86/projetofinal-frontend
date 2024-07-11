@@ -24,6 +24,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import { MenuIcon } from '@heroicons/react/outline';
 import BurgerMenu from './BurguerMenu'; 
 import { useTranslation } from "react-i18next";
+import basePhoto from "../Assets/defaultAvatar.jpg";
 
 function Layout({
   activeTab,
@@ -94,6 +95,9 @@ function Layout({
             } else {
               console.error("Error updating seen status:", errorMessage);
             }
+          } else if (response.status === 406) {
+            // Set the profile image to the default avatar if 406
+            setProfileImage(basePhoto);
           } else {
             console.error("Failed to fetch profile image:", response.status);
           }

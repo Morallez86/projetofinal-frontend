@@ -1,4 +1,4 @@
-import React from "react";
+import {React, useState} from "react";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import { FaLevelUpAlt, FaLevelDownAlt } from "react-icons/fa";
 import { Tooltip } from "react-tooltip";
@@ -6,6 +6,7 @@ import basePhoto from "../Assets/defaultAvatar.jpg";
 import { LuPlusCircle } from "react-icons/lu";
 import { Label } from "flowbite-react";
 import { useTranslation } from "react-i18next";
+import ConfirmationModal from "./ConfirmationModal";
 
 function TeamCard({
   projectDetails,
@@ -17,6 +18,42 @@ function TeamCard({
   openPopUpUsers,
 }) {
   const { t } = useTranslation(); // Traduzir o texto
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [confirmationMessage, setConfirmationMessage] = useState("");
+  const [confirmFunction, setConfirmFunction] = useState(null);
+
+  // Function to handle admin change with confirmation
+  const confirmAdminChange = (userId, isAdmin) => {
+    setShowConfirmation(true);
+    setConfirmationMessage(
+      isAdmin
+        ? t("Make this user an admin?")
+        : t("Remove admin rights from this user?")
+    );
+    setConfirmFunction(() => () => handleAdminChange(userId, isAdmin));
+  };
+
+  // Function to handle user deactivation with confirmation
+  const confirmUserDeactivation = (userId) => {
+    setShowConfirmation(true);
+    setConfirmationMessage(t("Are you sure you want to deactivate this user?"));
+    setConfirmFunction(() => () => handleUserDeactivation(userId));
+  };
+
+  // Function to close the confirmation modal
+  const handleCloseConfirmation = () => {
+    setShowConfirmation(false);
+    setConfirmFunction(null);
+  };
+
+  // Function to execute the confirmed action
+  const handleConfirm = () => {
+    if (confirmFunction) {
+      confirmFunction();
+    }
+    setShowConfirmation(false);
+    setConfirmFunction(null);
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -61,10 +98,10 @@ function TeamCard({
                       }`}
                       onClick={() =>
                         currentUserIsAdmin &&
-                        handleAdminChange(up.userId, false)
+                        confirmAdminChange(up.userId, false)
                       }
                       data-tooltip-id={`tooltip-${up.userId}`}
-                      data-tooltip-content= {t("Remove Admin")}
+                      data-tooltip-content={t("Remove Admin")}
                     />
                   ) : (
                     <FaLevelUpAlt
@@ -74,16 +111,17 @@ function TeamCard({
                           : "text-gray-500"
                       }`}
                       onClick={() =>
-                        currentUserIsAdmin && handleAdminChange(up.userId, true)
+                        currentUserIsAdmin &&
+                        confirmAdminChange(up.userId, true)
                       }
                       data-tooltip-id={`tooltip-${up.userId}`}
-                      data-tooltip-content= {t("Make Admin")}
+                      data-tooltip-content={t("Make Admin")}
                     />
                   )}
                   {(currentUserIsAdmin || up.userId === currentUserId) && (
                     <IoCloseCircleOutline
                       className="h-4 w-4 ml-2 text-red-500 cursor-pointer"
-                      onClick={() => handleUserDeactivation(up.userId)}
+                      onClick={() => confirmUserDeactivation(up.userId)}
                       data-tooltip-id={`tooltip-${up.userId}`}
                       data-tooltip-content={t("Deactivate User")}
                     />
@@ -94,6 +132,12 @@ function TeamCard({
             </div>
           ))}
       </div>
+      <ConfirmationModal
+        show={showConfirmation}
+        onClose={handleCloseConfirmation}
+        onConfirm={handleConfirm}
+        message={confirmationMessage}
+      />
     </div>
   );
 }
