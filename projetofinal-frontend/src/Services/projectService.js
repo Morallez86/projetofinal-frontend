@@ -4,7 +4,6 @@ const apiUrl = useApiStore.getState().apiUrl; // apiUrl
 
 
 export const createProject = async (projectInfo, token) => { // função para criar um projeto
-  
   try {
     const response = await fetch(`${apiUrl}/projects`, {
       method: "POST",
@@ -17,7 +16,7 @@ export const createProject = async (projectInfo, token) => { // função para cr
     });
 
     if (response.status === 201) { // se o status for 201
-      return true;
+      return response;
     } else { // se não
       
       throw new Error("Error creating project");

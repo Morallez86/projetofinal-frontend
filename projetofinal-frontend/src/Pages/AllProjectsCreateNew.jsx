@@ -28,7 +28,7 @@ function AllProjectsCreateNew() {
   const [statePopUpUsers, setStatePopUpUsers] = useState(false);  // Utilizadores pop up
   const [statePopUpUsersRemove, setStatePopUpUsersRemove] = useState(false); // Remover Utilizadores 
 
-  const { projectInfo, handleChange, handleWorkplaceChange } = useProjectInfo(); // Custom Hook
+  const { projectInfo, setProjectInfo, handleChange, handleWorkplaceChange } = useProjectInfo(); // Custom Hook
   
 
   function openAddSkillsModal() { // Função para abrir o modal de adicionar skills
@@ -127,6 +127,7 @@ function AllProjectsCreateNew() {
           openPopUpUsers={openAddUsersModal}
           openPopUpUsersRemove={openRemoveUsersModal}
           projectInfo={projectInfo}
+          setProjectInfo={setProjectInfo}
           handleChange={handleChange}
           handleWorkplaceChange={handleWorkplaceChange}
         />

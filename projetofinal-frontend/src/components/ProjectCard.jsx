@@ -30,18 +30,21 @@ function ProjectCard({
   openPopUpUsers,
   openPopUpUsersRemove,
   projectInfo,
+  setProjectInfo,
   handleChange,
   handleWorkplaceChange,
 }) {
   const { workplaces } = useWorkplaceStore(); // Obter locais de trabalho
   const [selectedWorkLocation, setSelectedWorkLocation] = useState(""); // Local de trabalho selecionado
   const [successMessage, setSuccessMessage] = useState(""); // Mensagem de sucesso
-  const navigate = useNavigate(); 
-  const handleSessionTimeout = () => { // Função para lidar com o timeout da sessão
+  const navigate = useNavigate();
+  const handleSessionTimeout = () => {
+    // Função para lidar com o timeout da sessão
     navigate("/", { state: { showSessionTimeoutModal: true } }); // Navegar para a página inicial
   };
 
-  const clearAllProjectDetails = useProjectStore( // Limpar todos os detalhes do projeto
+  const clearAllProjectDetails = useProjectStore(
+    // Limpar todos os detalhes do projeto
     (state) => state.clearAllProjectDetails
   );
 
@@ -51,20 +54,23 @@ function ProjectCard({
     clearAllProjectDetails();
   }, [clearAllProjectDetails]);
 
-  const formatDateForBackend = (dateString) => { // Função para formatar a data para o backend
+  const formatDateForBackend = (dateString) => {
+    // Função para formatar a data para o backend
     if (!dateString) {
-      return null; 
+      return null;
     }
 
-    const formattedDate = `${dateString} 00:00:00`; 
+    const formattedDate = `${dateString} 00:00:00`;
 
     return formattedDate;
   };
 
   const token = useUserStore((state) => state.token); // Token do utilizador
 
-  const handleSubmit = async () => { // Função para submeter
-    const requiredFields = [ // Campos obrigatórios
+  const handleSubmit = async () => {
+    // Função para submeter
+    const requiredFields = [
+      // Campos obrigatórios
       "title",
       "startingDate",
       "plannedEndDate",
@@ -73,7 +79,8 @@ function ProjectCard({
       "interests",
     ];
 
-    const isFormValid = requiredFields.every((field) => { // Verificar se o formulário é válido
+    const isFormValid = requiredFields.every((field) => {
+      // Verificar se o formulário é válido
       if (field === "workplace") {
         return selectedWorkLocation !== "";
       }
@@ -91,24 +98,32 @@ function ProjectCard({
       return;
     }
 
-    const formattedProjectInfo = { // Informações do projeto formatadas
+    const formattedProjectInfo = {
+      // Informações do projeto formatadas
       ...projectInfo,
       startingDate: formatDateForBackend(projectInfo.startingDate),
       plannedEndDate: formatDateForBackend(projectInfo.plannedEndDate),
       workplace: JSON.parse(selectedWorkLocation),
     };
 
-    
-
     try {
       const response = await createProject(formattedProjectInfo, token); // Criar um novo projeto
       if (response && response.ok) {
-        
         setSuccessMessage(true);
         setSelectedWorkLocation("");
-        clearAllProjectDetails();
-        handleChange({
-          target: { name: "userProjectDtos", value: [] },
+        setProjectInfo({
+          title: "",
+          description: "",
+          motivation: "",
+          maxUsers: 4,
+          startingDate: "",
+          plannedEndDate: "",
+          workplace: { id: null, name: "" },
+          components: [],
+          resources: [],
+          interests: [],
+          skills: [],
+          userProjectDtos: [],
         });
         setTimeout(() => {
           setSuccessMessage(false);
@@ -119,7 +134,7 @@ function ProjectCard({
 
         if (errorMessage === "Invalid token") {
           handleSessionTimeout(); // Lidar com o timeout da sessão
-          return; 
+          return;
         } else {
           console.error("Error updating seen status:", errorMessage);
         }
@@ -133,8 +148,10 @@ function ProjectCard({
 
   return (
     <Card className="border-gray-600 bg-gradient-to-r from-gray-400 via-gray-75 to-white rounded-lg shadow-md w-full sm:w-3/4 h-auto mx-auto">
-    <h1 className="text-2xl sm:text-3xl font-bold text-center mb-6">{t("NewProject")}</h1>
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-10 p-4">
+      <h1 className="text-2xl sm:text-3xl font-bold text-center mb-6">
+        {t("NewProject")}
+      </h1>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-10 p-4">
         <div>
           <div className="mb-2 flex items-center">
             <Label
