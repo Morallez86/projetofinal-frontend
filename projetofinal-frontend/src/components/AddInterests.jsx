@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 
 // context serve porque este componente é reutilizável 
 
-function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
+function AddInterests({ openPopUpInterests, closePopUpInterests, context, projectInfo }) {
     // Utiliza o hook useParams para obter o projectId da URL
   const { projectId } = useParams();
   // Utiliza os estados e funções do store do utilizador
@@ -69,7 +69,7 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context }) {
       );
     } else if (context === "editProject") {
       // Fica disabled se o projeto já o tiver na lista
-      isDisabled = projectInterests.some(
+      isDisabled = projectInfo.interests.some(
         (projectInterest) => projectInterest.name === interest.name
       );
     } else {

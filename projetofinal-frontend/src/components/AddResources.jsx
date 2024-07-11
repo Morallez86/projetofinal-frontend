@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 
 //O context é usado porque este componente é reutilizável 
 
-function AddResources({ openPopUpResources, closePopUpResources, context }) {
+function AddResources({ openPopUpResources, closePopUpResources, context, projectInfo }) {
   
   const { projectId } = useParams(); // Obter o id do projeto da URL
   const token = useUserStore((state) => state.token); // Obter o token do usuário
@@ -82,7 +82,7 @@ function AddResources({ openPopUpResources, closePopUpResources, context }) {
     value: resource.name,
     label: resource.name,
     id: resource.id,
-    isDisabled: projectResources.some(
+    isDisabled: projectInfo.resources.some(
       (projectResource) => projectResource.name === resource.name
     ),
   }));

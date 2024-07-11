@@ -317,10 +317,10 @@ function ProjectDetailsCard({
     }
 
     const [year, month, day] = dateArray;
-    const date = new Date(Date.UTC(year, month - 1, day)); // Use UTC to avoid timezone issues
+    const date = new Date(Date.UTC(year, month - 1, day)); // UTC para evitar problemas de timezones
     const isoString = date.toISOString();
 
-    return isoString.split("T")[0]; // Return YYYY-MM-DD format
+    return isoString.split("T")[0]; // Retorna o formato YYYY-MM-DD
   };
 
   const getBadge = (approved) => {

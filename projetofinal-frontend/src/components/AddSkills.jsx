@@ -13,7 +13,7 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 // O contexto é usado porque este componente é reutilizável 
-function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
+function AddSkills({ openPopUpSkills, closePopUpSkills, context, projectInfo }) {
   const { projectId } = useParams(); // Obter o id do projeto da URL
   // Obter dados do zustand
   const token = useUserStore((state) => state.token); 
@@ -48,7 +48,8 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
     setInputValue(value);
   };
 
-  const options = skills.map((skill) => ({ // Mapear as opções
+  const options = skills.map((skill) => ({
+    // Mapear as opções
     value: skill.name,
     label: skill.name,
     type: skill.type,
@@ -56,7 +57,7 @@ function AddSkills({ openPopUpSkills, closePopUpSkills, context }) {
     isDisabled:
       context === "user"
         ? userSkills.some((userSkill) => userSkill.name === skill.name)
-        : projectSkills.some(
+        : projectInfo.skills.some(
             (projectSkill) => projectSkill.name === skill.name
           ),
   }));
