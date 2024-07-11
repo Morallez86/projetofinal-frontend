@@ -5,6 +5,8 @@ import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { Tooltip } from 'flowbite-react';
+
 
 // funçao que ajuda a formatar a data
 const formatDate = (dateArray) => {
@@ -126,11 +128,21 @@ function AllProjectsTable({
       name: t("Skills"),
       selector: (row) => getSkillsString(row.skills),
       sortable: true,
+      cell: (row) => (
+        <Tooltip content={getSkillsString(row.skills)}>
+          <span>{getSkillsString(row.skills)}</span>
+        </Tooltip>
+      ),
     },
     {
       name: t("Interests"),
       selector: (row) => getInterestsString(row.interests),
       sortable: true,
+      cell: (row) => (
+        <Tooltip content={getInterestsString(row.interests)}>
+          <span>{getInterestsString(row.interests)}</span>
+        </Tooltip>
+      ),
     },
     {
       name: t("SlotsOpen"),

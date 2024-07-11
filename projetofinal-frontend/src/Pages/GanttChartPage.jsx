@@ -164,58 +164,77 @@ const GanttChartPage = () => {
 
   let tasks = [];
 
-  if (allTasks && allTasks.length > 0) { // Se existirem tarefas
-   
-    tasks = allTasks.map((task) => {
-      // Verifica se plannedStartingDate é uma string e a converte para array
-      const startingDateArray =
-        typeof task.plannedStartingDate === "string"
-          ? task.plannedStartingDate.split("-").map(Number)
-          : [...task.plannedStartingDate];
-      startingDateArray[1] -= 1;
-
-      // Verifica se plannedEndingDate é uma string e a converte para array
-      const endingDateArray =
-        typeof task.plannedEndingDate === "string"
-          ? task.plannedEndingDate.split("-").map(Number)
-          : [...task.plannedEndingDate];
-      endingDateArray[1] -= 1;
-
-      const startTimestamp = Date.UTC(
-        startingDateArray[0],
-        startingDateArray[1],
-        ...startingDateArray.slice(2)
-      );
-      const endTimestamp = Date.UTC(
-        endingDateArray[0],
-        endingDateArray[1],
-        ...endingDateArray.slice(2)
-      );
-
-      const start = new Date(startTimestamp);
-      const end = new Date(endTimestamp);
-
-
-      return {
-        start: start,
-        end: end,
-        name: task.title + " Responsible: " + task.userName,
-        id: task.id,
-        type: "task",
-        progress: 0,
-        dependencies: task.dependencies || [],
-        styles: {
-          backgroundSelectedColor: "red",
-          backgroundColor:
-            isDependent(task.id) ||
-            isDependency(task.id) ||
-            (isFilterActive && isMyTask(task.id))
-              ? "red"
-              : "gray",
-        },
-      };
-    });
+  // Função para converter data
+const convertDateArray = (dateArray) => {
+  if (dateArray.length === 7) {
+    // Retorna um novo array com ano, mês, dia seguidos de 0 para horas e minutos
+    return [dateArray[0], dateArray[1], dateArray[2], 0, 0];
   }
+  // Retorna o array original caso não tenha 7 elementos
+  // Pode-se lançar um erro ou tratar de outra forma conforme a necessidade
+  return dateArray;
+};
+
+tasks = allTasks.map((task) => {
+  // Converte startingDate ou plannedStartingDate
+  const startingDateArray = task.startingDate ? convertDateArray([...task.startingDate]) : 
+    (typeof task.plannedStartingDate === "string" ? task.plannedStartingDate.split("-").map(Number) : convertDateArray([...task.plannedStartingDate]));
+  startingDateArray[1] -= 1; // Ajusta o mês
+
+  // Converte endingDate ou plannedEndingDate
+  const endingDateArray = task.endingDate ? convertDateArray([...task.endingDate]) : 
+    (typeof task.plannedEndingDate === "string" ? task.plannedEndingDate.split("-").map(Number) : convertDateArray([...task.plannedEndingDate]));
+  endingDateArray[1] -= 1; // Ajusta o mês
+
+  // Verifica se alguma dependentTask tem endingDate posterior e ajusta a startingDateArray se necessário
+  if (task.dependencies && task.dependencies.length > 0) {
+    let latestDependentEndingDate = new Date(0); // Inicializa com uma data muito antiga
+    task.dependencies.forEach(dependentTaskId => {
+      const dependentTask = allTasks.find(t => t.id === dependentTaskId);
+      if (dependentTask) {
+        const dependentEndingDateArray = dependentTask.endingDate ? convertDateArray([...dependentTask.endingDate]) : 
+          (typeof dependentTask.plannedEndingDate === "string" ? dependentTask.plannedEndingDate.split("-").map(Number) : convertDateArray([...dependentTask.plannedEndingDate]));
+        dependentEndingDateArray[1] -= 1; // Ajusta o mês
+
+        const dependentEndTimestamp = Date.UTC(dependentEndingDateArray[0], dependentEndingDateArray[1], ...dependentEndingDateArray.slice(2));
+        const dependentEndDate = new Date(dependentEndTimestamp);
+
+        if (dependentEndDate > latestDependentEndingDate) {
+          latestDependentEndingDate = dependentEndDate;
+        }
+      }
+    });
+
+    const currentStartTimestamp = Date.UTC(startingDateArray[0], startingDateArray[1], ...startingDateArray.slice(2));
+    if (latestDependentEndingDate.getTime() > currentStartTimestamp) {
+      // Ajusta a startingDateArray para um dia depois da latestDependentEndingDate
+      latestDependentEndingDate.setDate(latestDependentEndingDate.getDate() + 1);
+      startingDateArray[0] = latestDependentEndingDate.getUTCFullYear();
+      startingDateArray[1] = latestDependentEndingDate.getUTCMonth();
+      startingDateArray[2] = latestDependentEndingDate.getUTCDate();
+    }
+  }
+
+  const startTimestamp = Date.UTC(startingDateArray[0], startingDateArray[1], ...startingDateArray.slice(2));
+  const endTimestamp = Date.UTC(endingDateArray[0], endingDateArray[1], ...endingDateArray.slice(2));
+
+  const start = new Date(startTimestamp);
+  const end = new Date(endTimestamp);
+
+  return {
+    start: start,
+    end: end,
+    name: task.title + " Responsible: " + task.userName,
+    id: task.id,
+    type: "task",
+    progress: 0,
+    dependencies: task.dependencies || [],
+    styles: {
+      backgroundSelectedColor: "red",
+      backgroundColor: isDependent(task.id) || isDependency(task.id) || (isFilterActive && isMyTask(task.id)) ? "red" : "gray",
+    },
+  };
+});
 
   return (
     <div className="flex flex-col min-h-screen">

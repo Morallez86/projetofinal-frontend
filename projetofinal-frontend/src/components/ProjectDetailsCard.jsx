@@ -610,19 +610,18 @@ function ProjectDetailsCard({
                     .join(", ")
                 : ""}
             </p>
-            {Array.isArray(projectDetails.skills) &&
-              projectDetails.skills.length > 3 && (
-                <div id="tip-all-skills">
-                  <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
-                    {`+${projectDetails.skills.length - 3}`}
-                  </button>
-                  <Tooltip
-                    anchorSelect="#tip-all-skills"
-                    content={t("CheckAllSkills")}
-                    place="top"
-                  />
-                </div>
-              )}
+            {Array.isArray(projectDetails.skills) && projectDetails.skills.length > 3 && (
+  <div id="tip-all-skills">
+    <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+      All
+    </button>
+    <Tooltip
+      anchorSelect="#tip-all-skills"
+      content={projectDetails.skills.map(skill => skill.name).join(', ')}
+      place="top"
+    />
+  </div>
+)}
           </div>
         </div>
         {/* Interests */}
@@ -669,19 +668,18 @@ function ProjectDetailsCard({
                     .join(", ")
                 : ""}
             </p>
-            {Array.isArray(projectDetails.interests) &&
-              projectDetails.interests.length > 3 && (
-                <div id="tip-all-interests">
-                  <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
-                    {`+${projectDetails.interests.length - 3}`}
-                  </button>
-                  <Tooltip
-                    anchorSelect="#tip-all-interests"
-                    content={t("CheckAllInterests")}
-                    place="top"
-                  />
-                </div>
-              )}
+            {Array.isArray(projectDetails.interests) && projectDetails.interests.length > 3 && (
+  <div id="tip-all-interests">
+    <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+      All
+    </button>
+    <Tooltip
+      anchorSelect="#tip-all-interests"
+      content={projectDetails.interests.map(interest => interest.name).join(', ')}
+      place="top"
+    />
+  </div>
+)}
           </div>
         </div>
         {/* Components */}
@@ -726,19 +724,18 @@ function ProjectDetailsCard({
                     .join(", ")
                 : ""}
             </p>
-            {Array.isArray(projectDetails.components) &&
-              projectDetails.components.length > 3 && (
-                <div id="tip-all-components">
-                  <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
-                    {`+${projectDetails.components.length - 3}`}
-                  </button>
-                  <Tooltip
-                    anchorSelect="#tip-all-components"
-                    content={t("CheckAllComponents")}
-                    place="top"
-                  />
-                </div>
-              )}
+            {Array.isArray(projectDetails.components) && projectDetails.components.length > 3 && (
+  <div id="tip-all-components">
+    <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+      All
+    </button>
+    <Tooltip
+      anchorSelect="#tip-all-components"
+      content={projectDetails.components.map(component => component.name).join(', ')}
+      place="top"
+    />
+  </div>
+)}
           </div>
         </div>
         {/* Resources */}
@@ -783,19 +780,18 @@ function ProjectDetailsCard({
                     .join(", ")
                 : ""}
             </p>
-            {Array.isArray(projectDetails.resources) &&
-              projectDetails.resources.length > 3 && (
-                <div id="tip-all-resources">
-                  <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
-                    {`+${projectDetails.resources.length - 3}`}
-                  </button>
-                  <Tooltip
-                    anchorSelect="#tip-all-resources"
-                    content={t("CheckAllResources")}
-                    place="top"
-                  />
-                </div>
-              )}
+            {Array.isArray(projectDetails.resources) && projectDetails.resources.length > 3 && (
+  <div id="tip-all-resources">
+    <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+      All
+    </button>
+    <Tooltip
+      anchorSelect="#tip-all-resources"
+      content={projectDetails.resources.map(resource => resource.name).join(', ')}
+      place="top"
+    />
+  </div>
+)}
           </div>
         </div>
       </Card>
