@@ -175,7 +175,6 @@ const convertDateArray = (dateArray) => {
   return dateArray;
 };
 
-// Uso da função convertDateArray no mapeamento de tasks
 tasks = allTasks.map((task) => {
   // Converte startingDate ou plannedStartingDate
   const startingDateArray = task.startingDate ? convertDateArray([...task.startingDate]) : 
@@ -186,6 +185,35 @@ tasks = allTasks.map((task) => {
   const endingDateArray = task.endingDate ? convertDateArray([...task.endingDate]) : 
     (typeof task.plannedEndingDate === "string" ? task.plannedEndingDate.split("-").map(Number) : convertDateArray([...task.plannedEndingDate]));
   endingDateArray[1] -= 1; // Ajusta o mês
+
+  // Verifica se alguma dependentTask tem endingDate posterior e ajusta a startingDateArray se necessário
+  if (task.dependencies && task.dependencies.length > 0) {
+    let latestDependentEndingDate = new Date(0); // Inicializa com uma data muito antiga
+    task.dependencies.forEach(dependentTaskId => {
+      const dependentTask = allTasks.find(t => t.id === dependentTaskId);
+      if (dependentTask) {
+        const dependentEndingDateArray = dependentTask.endingDate ? convertDateArray([...dependentTask.endingDate]) : 
+          (typeof dependentTask.plannedEndingDate === "string" ? dependentTask.plannedEndingDate.split("-").map(Number) : convertDateArray([...dependentTask.plannedEndingDate]));
+        dependentEndingDateArray[1] -= 1; // Ajusta o mês
+
+        const dependentEndTimestamp = Date.UTC(dependentEndingDateArray[0], dependentEndingDateArray[1], ...dependentEndingDateArray.slice(2));
+        const dependentEndDate = new Date(dependentEndTimestamp);
+
+        if (dependentEndDate > latestDependentEndingDate) {
+          latestDependentEndingDate = dependentEndDate;
+        }
+      }
+    });
+
+    const currentStartTimestamp = Date.UTC(startingDateArray[0], startingDateArray[1], ...startingDateArray.slice(2));
+    if (latestDependentEndingDate.getTime() > currentStartTimestamp) {
+      // Ajusta a startingDateArray para um dia depois da latestDependentEndingDate
+      latestDependentEndingDate.setDate(latestDependentEndingDate.getDate() + 1);
+      startingDateArray[0] = latestDependentEndingDate.getUTCFullYear();
+      startingDateArray[1] = latestDependentEndingDate.getUTCMonth();
+      startingDateArray[2] = latestDependentEndingDate.getUTCDate();
+    }
+  }
 
   const startTimestamp = Date.UTC(startingDateArray[0], startingDateArray[1], ...startingDateArray.slice(2));
   const endTimestamp = Date.UTC(endingDateArray[0], endingDateArray[1], ...endingDateArray.slice(2));
