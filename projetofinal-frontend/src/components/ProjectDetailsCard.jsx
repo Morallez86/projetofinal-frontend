@@ -33,6 +33,7 @@ function ProjectDetailsCard({
   openPopUpComponentsRemove,
   openPopUpResources,
   openPopUpResourcesRemove,
+  fetchProjectDetails,
 }) {
   const { projectId } = useParams(); //obter o id do projeto através do url
   const { t } = useTranslation(); //função de tradução
@@ -129,7 +130,7 @@ function ProjectDetailsCard({
     const [year, month, day, hours, minutes] = dateArray;
 
     const formattedMonth = `${month}`.padStart(2, "0");
-    const formattedHours = `${hours}`.padStart(2, "0"); 
+    const formattedHours = `${hours}`.padStart(2, "0");
     const formattedDay = `${day}`.padStart(2, "0");
 
     const formattedDate = `${year}-${formattedMonth}-${formattedDay} ${formattedHours}:${minutes}0:00`;
@@ -176,8 +177,8 @@ function ProjectDetailsCard({
 
       if (response.status === 200) {
         //se a resposta for 200
-
         setEditMode(false);
+        fetchProjectDetails();
       } else if (response.status === 401) {
         //se a resposta for 401
         const data = await response.json();

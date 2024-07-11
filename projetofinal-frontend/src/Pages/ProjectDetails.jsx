@@ -277,6 +277,7 @@ function ProjectDetails() {
               openPopUpComponentsRemove={openRemoveComponentsModal}
               openPopUpResources={openAddResourcesModal}
               openPopUpResourcesRemove={openRemoveResourcesModal}
+              fetchProjectDetails = {fetchProjectDetails}
             />
           </div>
         </div>
