@@ -424,17 +424,17 @@ function ProfileCard({
                 : ""}
             </p>
             {Array.isArray(userInfo.skills) && userInfo.skills.length > 7 && (
-              <div id="tip-all-skills">
-                <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
-                  {`+${userInfo.skills.length - 7}`}
-                </button>
-                <Tooltip
-                  anchorSelect="#tip-all-skills"
-                  content={t("CheckAllSkills")}
-                  place="top"
-                />
-              </div>
-            )}
+  <div id="tip-all-skills">
+    <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+      All 
+    </button>
+    <Tooltip
+      anchorSelect="#tip-all-skills"
+      content={userInfo.skills.join(', ')} 
+      place="top"
+    />
+  </div>
+)}
           </div>
         </div>
         <div className="mt-4">
@@ -470,25 +470,24 @@ function ProfileCard({
             />
           </div>
           <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-            <p className="truncate">
-              {Array.isArray(userInfo.interests)
-                ? userInfo.interests.slice(-7).join(", ")
-                : ""}
-            </p>
-            {Array.isArray(userInfo.interests) &&
-              userInfo.interests.length > 7 && (
-                <div id="tip-all-interests">
-                  <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
-                    {`+${userInfo.interests.length - 7}`}
-                  </button>
-                  <Tooltip
-                    anchorSelect="#tip-all-interests"
-                    content={t("CheckAllInterests")}
-                    place="top"
-                  />
-                </div>
-              )}
-          </div>
+  <p className="truncate">
+    {Array.isArray(userInfo.interests)
+      ? userInfo.interests.slice(-7).join(", ")
+      : ""}
+  </p>
+  {Array.isArray(userInfo.interests) && userInfo.interests.length > 7 && (
+    <div id="tip-all-interests">
+      <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+        All
+      </button>
+      <Tooltip
+        anchorSelect="#tip-all-interests"
+        content={userInfo.interests.join(', ')} // Junta todos os interesses com vírgula
+        place="top"
+      />
+    </div>
+  )}
+</div>
         </div>
         {editMode && (
           <div className="flex justify-end mt-4">
