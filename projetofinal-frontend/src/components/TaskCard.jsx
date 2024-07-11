@@ -97,9 +97,12 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
       return "";
     }
     const [year, month, day, hour = 0, minute = 0] = dateArray;
-    return new Date(year, month - 1, day, hour, minute)
-      .toISOString()
-      .split("T")[0];
+  
+    // Cria um objeto Date em UTC
+    const date = new Date(Date.UTC(year, month - 1, day, hour, minute));
+  
+    // Retorna a data formatada em UTC
+    return date.toISOString().split("T")[0];
   };
 
   const getStatusString = (statusValue) => { //função para obter o status

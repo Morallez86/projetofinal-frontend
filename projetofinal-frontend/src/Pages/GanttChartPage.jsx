@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 
+
 const OrientationModal = ({ show }) => { // Modal de orientação para mobile
   if (!show) return null;
 
@@ -142,7 +143,7 @@ const GanttChartPage = () => {
           console.log("Project with this ID is not found");
         } else if (response.status === 200) { // Se o status for 200
           const tasksData = await response.json();
-
+          console.log(tasksData);
           setAllTasks(tasksData);
         } else if (response.status === 401) { // Se o status for 401
           const data = await response.json();
@@ -180,16 +181,20 @@ const GanttChartPage = () => {
           : [...task.plannedEndingDate];
       endingDateArray[1] -= 1;
 
-      const start = new Date(
+      const startTimestamp = Date.UTC(
         startingDateArray[0],
         startingDateArray[1],
         ...startingDateArray.slice(2)
       );
-      const end = new Date(
+      const endTimestamp = Date.UTC(
         endingDateArray[0],
         endingDateArray[1],
         ...endingDateArray.slice(2)
       );
+
+      const start = new Date(startTimestamp);
+      const end = new Date(endTimestamp);
+
 
       return {
         start: start,
@@ -242,6 +247,7 @@ const GanttChartPage = () => {
   </Button>
       </div>
       {tasks && tasks.length > 0 && (
+        console.log(tasks),
         <Gantt
           tasks={tasks}
           viewMode={viewMode}

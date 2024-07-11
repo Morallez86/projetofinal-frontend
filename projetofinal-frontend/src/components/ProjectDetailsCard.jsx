@@ -278,15 +278,22 @@ function ProjectDetailsCard({
     setProjectDetails({ ...project });
   }, [project]);
 
-  const formatDateForInput = (dateArray) => { //formatar a data para o input
+  const formatDateForInput = (dateArray) => {
     if (!Array.isArray(dateArray) || dateArray.length < 3) {
       return "";
     }
-
+  
     const [year, month, day, hour = 0, minute = 0] = dateArray;
-    const date = new Date(year, month - 1, day, hour, minute);
-    const isoString = date.toISOString();
-    return isoString.split("T")[0];
+    
+    const date = new Date(Date.UTC(year, month - 1, day, hour, minute));
+  
+    const formattedDate = [
+      date.getUTCFullYear(),
+      String(date.getUTCMonth() + 1).padStart(2, '0'), 
+      String(date.getUTCDate()).padStart(2, '0')
+    ].join('-');
+  
+    return formattedDate;
   };
 
   const getBadge = (approved) => { //obter o crachá
