@@ -283,5 +283,11 @@
   "Description is necessary for the log": "A descrição é necessária para o Registo",
   "Create": "Criar",
   "Confirmation": "Confirmação",
-  "Confirm": "Aceitar"
+  "Confirm": "Aceitar",
+   "Loading": "A carregar",
+  "NoProjectsFound": "Nenhum Projeto Encontrado",
+   "Login": "Entrar",
+  "Register": "Registar",
+  "ProjectChat": "Chat do Projeto",
+  "TypeYourMessageHere": "Escreva aqui"
 }

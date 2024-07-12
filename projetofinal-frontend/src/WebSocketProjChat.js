@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
-function WebSocketProjChat(projectId, token, onMessageChat, reopenSocket) {
+function WebSocketProjChat(projectId, token, onMessageChat) {
 
   
 

@@ -19,7 +19,6 @@ import RemoveComponents from "../Components/RemoveComponents";
 import AddResources from "../Components/AddResources";
 import RemoveResources from "../Components/RemoveResources";
 import { useNavigate } from "react-router-dom";
-import { Button } from "flowbite-react";
 import { useTranslation } from "react-i18next";
 
 
@@ -44,7 +43,6 @@ function ProjectDetails() {
   const isChatOpenRef = useRef(isChatOpen); // chat aberto ref
   const [messagesAlone, setMessagesAlone] = useState([]); //array de mensagens temporárioas 
   const [allMsgs, setAllMsgs] = useState([]); // todas as mensagens
-  const [reopenSocket, setReopenSocket] = useState(true); // reabrir o socket
   const [statePopUpUsers, setStatePopUpUsers] = useState(false); // popup de utilizadores
   const [statePopUpSkills, setStatePopUpSkills] = useState(false);  // popup de skills
   const [statePopUpSkillsRemove, setStatePopUpSkillsRemove] = useState(false); // popup de remover skills
@@ -125,7 +123,7 @@ function ProjectDetails() {
     }
   };
 
-  WebSocketProjChat(projectId, token, onMessageChat, reopenSocket); // websocket
+  WebSocketProjChat(projectId, token, onMessageChat); // websocket
 
   useEffect(() => { // useEffect para atualizar o chat  
     isChatOpenRef.current = isChatOpen; // chat aberto ref
@@ -250,13 +248,13 @@ function ProjectDetails() {
 
     setUnreadMessages(count); // set das mensagens não lidas
   };
-
+    
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>{t('Loading')}</div>;
   }
 
   if (!project) {
-    return <div>No project found</div>;
+    return <div>{t('NoProjectsFound')}</div>;
   }
 
   const handleSessionTimeout = () => { // função para timeout da sessão

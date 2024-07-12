@@ -285,5 +285,11 @@
   "Description is necessary for the log": "Description is necessary for the log",
   "Create": "Create",
   "Confirmation": "Confirmation",
-  "Confirm": "Confirm"
+  "Confirm": "Confirm",
+  "Loading": "Loading",
+  "NoProjectsFound": "No Projects Found",
+  "Login": "Login",
+  "Register": "Register",
+  "ProjectChat": "Project Chat",
+  "TypeYourMessageHere": "Type message here"
 }

@@ -807,7 +807,7 @@ function Layout({
                   label={languageApp === "en" ? "PT" : "EN"}
                   onChange={() => {
                     handleLanguageToggle();
-                    setSwitch2((prevState) => !prevState);
+                    setSwitch2(!switch2);
                   }}
                 />
               </div>
@@ -881,7 +881,7 @@ function Layout({
                   label={languageApp === "en" ? "PT" : "EN"}
                   onChange={() => {
                     handleLanguageToggle();
-                    setSwitch2((prevState) => !prevState);
+                    setSwitch2(!switch2);
                   }}
                 />
               </div>
