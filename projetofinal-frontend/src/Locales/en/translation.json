@@ -291,5 +291,6 @@
   "Login": "Login",
   "Register": "Register",
   "ProjectChat": "Project Chat",
-  "TypeYourMessageHere": "Type message here"
+  "TypeYourMessageHere": "Type message here",
+  "Please check your email to conclude your registration": "Please check your email to conclude your registration"
 }

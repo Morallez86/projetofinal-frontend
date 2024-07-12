@@ -224,7 +224,7 @@ function RegisterCard() {
 
         if (imageResponse.status === 200) {
           //se a imagem for bem sucedida
-          setSuccessMessage(t("Registration successful!"));
+          setSuccessMessage(t("Please check your email to conclude your registration"));
           setFormDataName({ name: "" });
           setFormDatapasswords({
             password: "",
@@ -272,6 +272,7 @@ function RegisterCard() {
             placeholder={t("Your email")}
             onChange={handleChange}
             onInvalid={handleInvalid}
+            value={formDataRegister.email}
           />
         </div>
         <div>
@@ -289,6 +290,7 @@ function RegisterCard() {
             name="password"
             placeholder={t("Your password")}
             onChange={handleChange}
+            value={formDatapasswords.password}
           />
         </div>
         <div>
@@ -306,6 +308,7 @@ function RegisterCard() {
             name="passwordConfirmation"
             placeholder={t("Confirm your password")}
             onChange={handleChange}
+            value={formDatapasswords.passwordConfirmation}
           />
         </div>
         <div>
@@ -346,6 +349,7 @@ function RegisterCard() {
             name="name"
             placeholder={t("First and Last Name")}
             onChange={handleChange}
+            value={formDataName.name}
           />
         </div>
         <div>
@@ -363,6 +367,7 @@ function RegisterCard() {
             placeholder={t("Example: John Doe")}
             maxLength={15}
             onChange={handleChange}
+            value={formDataRegister.username}
           />
         </div>
         <div>
@@ -389,6 +394,7 @@ function RegisterCard() {
             maxLength={300}
             name="biography"
             onChange={handleChange}
+            value={formDataRegister.biography}
           />
         </div>
         <div className="mb-2 flex items-center col-span-full">

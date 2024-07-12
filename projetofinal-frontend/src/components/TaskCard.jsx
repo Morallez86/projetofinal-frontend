@@ -1,9 +1,7 @@
 // src/Components/TaskCard.js
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Card, TextInput, Textarea, Select, Button } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
-
-import { useState, useEffect } from "react";
 import {
   FcLowPriority,
   FcMediumPriority,
@@ -14,25 +12,27 @@ import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
 import { useTranslation } from "react-i18next";
 
-const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks, fetchProjectDetails }) => {
-  const [isExpanded, setIsExpanded] = useState(false); //estado para expandir
-  const [editMode, setEditMode] = useState(false); //estado para editar
+const TaskCard = ({
+  task,
+  projectUsers,
+  totalTasks,
+  setTotalTasks,
+  fetchProjectDetails,
+}) => {
+  const [isExpanded, setIsExpanded] = useState(false); // Estado para expandir
+  const [editMode, setEditMode] = useState(false); // Estado para editar
   const [isMouseOverInteractiveElement, setIsMouseOverInteractiveElement] =
     useState(false);
-  const apiUrl = useApiStore((state) => state.apiUrl); //api url
-  const token = useUserStore((state) => state.token); //token
+  const apiUrl = useApiStore((state) => state.apiUrl); // Api url
+  const token = useUserStore((state) => state.token); // Token
   const navigate = useNavigate();
-  const { t } = useTranslation(); //função de tradução
+  const { t } = useTranslation(); // Função de tradução
   const handleSessionTimeout = () => {
-    //função para timeout
-    navigate("/", { state: { showSessionTimeoutModal: true } }); //navegar para a página inicial
+    // Função para timeout
+    navigate("/", { state: { showSessionTimeoutModal: true } }); // Navegar para a página inicial
   };
   const [isModified, setIsModified] = useState(false);
 
-  
-  
-    
-  
   const checkDependenciesStatus = (taskDependencies) => {
     return taskDependencies.every((dependencyId) => {
       const task = totalTasks.find((t) => t.id === dependencyId);
@@ -40,8 +40,8 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks, fetchProjectD
     });
   };
 
-
-  const [originalTaskData] = useState({ //dados da tarefa originais
+  const [originalTaskData] = useState({
+    // Dados da tarefa originais
     projectId: task.projectId,
     id: task.id,
     title: task.title,
@@ -52,7 +52,8 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks, fetchProjectD
     userName: task.userName,
   });
 
-  const [taskData, setTaskData] = useState({ //dados da tarefa que podem ser alterados
+  const [taskData, setTaskData] = useState({
+    // Dados da tarefa que podem ser alterados
     projectId: task.projectId,
     id: task.id,
     title: task.title,
@@ -64,7 +65,7 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks, fetchProjectD
   });
 
   const checkIfTaskIsModified = () => {
-    const isModified = Object.keys(originalTaskData).some(key => {
+    const isModified = Object.keys(originalTaskData).some((key) => {
       // Converte ambos os valores para string para uma comparação consistente, útil para campos como 'status'.
       const originalValue = String(originalTaskData[key]);
       const currentValue = String(taskData[key]);
@@ -78,15 +79,16 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks, fetchProjectD
     checkIfTaskIsModified();
   }, [taskData]);
 
-  const handleChange = (event) => { // função para mudar
+  const handleChange = (event) => {
+    // Função para mudar
     const { name, value } = event.target;
-    setTaskData((prevData) => { 
+    setTaskData((prevData) => {
       return { ...prevData, [name]: value };
     });
   };
 
   const handleSubmitClick = () => {
-    //função para submeter
+    // Função para submeter
     fetch(`${apiUrl}/tasks`, {
       method: "PUT",
       headers: {
@@ -96,19 +98,19 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks, fetchProjectD
       body: JSON.stringify(taskData),
     }).then(async (response) => {
       if (response.status === 401) {
-        //se o status for 401
+        // Se o status for 401
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
 
         if (errorMessage === "Invalid token") {
-          handleSessionTimeout(); //chama a função de timeout
+          handleSessionTimeout(); // Chama a função de timeout
           return;
         } else {
           console.error("Error updating seen status:", errorMessage);
         }
       }
       if (!response.ok) {
-        //se não for ok
+        // Se não for ok
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
@@ -126,14 +128,14 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks, fetchProjectD
       newTotalTasks.splice(updatedTaskIndex, 0, updatedTask);
       setTotalTasks(newTotalTasks);
       setEditMode(false);
-      fetchProjectDetails();  
+      fetchProjectDetails();
     });
   };
 
   const handleCancelClick = () => {
-    //função para cancelar
+    // Função para cancelar
     setEditMode(false);
-    
+
     setTaskData({
       title: task.title,
       description: task.description,
@@ -147,7 +149,7 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks, fetchProjectD
   };
 
   const formatDate = (dateArray) => {
-    //função para formatar a data
+    // Função para formatar a data
     if (!Array.isArray(dateArray) || dateArray.length < 3) {
       return "";
     }
@@ -161,7 +163,7 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks, fetchProjectD
   };
 
   const getStatusString = (statusValue) => {
-    //função para obter o status
+    // Função para obter o status
     switch (statusValue) {
       case 100:
         return t("PLANNED");
@@ -175,7 +177,7 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks, fetchProjectD
   };
 
   const getPriorityIcon = (priorityValue) => {
-    //função para obter o ícone de prioridade
+    // Função para obter o ícone de prioridade
     switch (priorityValue) {
       case 100:
         return (
@@ -184,7 +186,11 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks, fetchProjectD
             <MdOutlineEdit
               size={30}
               className="edit-icon cursor-pointer"
-              onClick={() => { setEditMode(true); setIsModified(false); }}            />
+              onClick={() => {
+                setEditMode(true);
+                setIsModified(false);
+              }}
+            />
           </>
         );
       case 200:
@@ -194,7 +200,11 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks, fetchProjectD
             <MdOutlineEdit
               size={30}
               className="edit-icon cursor-pointer"
-              onClick={() => { setEditMode(true); setIsModified(false); }}            />
+              onClick={() => {
+                setEditMode(true);
+                setIsModified(false);
+              }}
+            />
           </>
         );
       case 300:
@@ -204,7 +214,11 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks, fetchProjectD
             <MdOutlineEdit
               size={30}
               className="edit-icon cursor-pointer"
-              onClick={() => { setEditMode(true); setIsModified(false); }}            />
+              onClick={() => {
+                setEditMode(true);
+                setIsModified(false);
+              }}
+            />
           </>
         );
       default:
@@ -213,7 +227,7 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks, fetchProjectD
   };
 
   const getPriorityString = (priorityValue) => {
-    //função para obter a prioridade
+    // Função para obter a prioridade
     switch (priorityValue) {
       case 100:
         return t("LOW");
@@ -278,7 +292,7 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks, fetchProjectD
           task.title
         )}
       </h3>
-      <p className={`${task.status === 300 ? "line-through" : ""}`}>
+      <div className={`${task.status === 300 ? "line-through" : ""}`}>
         <strong>{t("Description")}:</strong>{" "}
         {editMode ? (
           <Textarea
@@ -292,10 +306,10 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks, fetchProjectD
         ) : (
           task.description
         )}
-      </p>
+      </div>
       {isExpanded && (
         <>
-          <p>
+          <div>
             <strong>{t("Status")}:</strong>{" "}
             {editMode ? (
               <Select
@@ -323,8 +337,8 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks, fetchProjectD
             ) : (
               getStatusString(task.status)
             )}
-          </p>
-          <p>
+          </div>
+          <div>
             <strong>{t("Priority")}:</strong>{" "}
             {editMode ? (
               <Select
@@ -342,16 +356,16 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks, fetchProjectD
             ) : (
               getPriorityString(task.priority)
             )}
-          </p>
-          <p>
+          </div>
+          <div>
             <strong>{t("Planned Start Date:")}</strong>{" "}
             {formatDate(task.plannedStartingDate)}
-          </p>
-          <p>
+          </div>
+          <div>
             <strong>{t("Planned End Date:")}</strong>{" "}
             {formatDate(task.plannedEndingDate)}
-          </p>
-          <p>
+          </div>
+          <div>
             <strong>{t("Responsible")}:</strong>{" "}
             {editMode ? (
               <Select
@@ -371,7 +385,7 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks, fetchProjectD
             ) : (
               task.userName
             )}
-          </p>
+          </div>
           {editMode && (
             <div className="flex justify-end mt-4">
               <Button

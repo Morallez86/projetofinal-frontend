@@ -125,6 +125,7 @@ function ProjectCard({
           skills: [],
           userProjectDtos: [],
         });
+        clearAllProjectDetails();
         setTimeout(() => {
           setSuccessMessage(false);
         }, 3000);
