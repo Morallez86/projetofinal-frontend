@@ -44,7 +44,6 @@ function RemoveSkills({
         )
       );
     } else if (context === "editProject" && projectInfo) { //se o contexto for editar projeto e houver informações do projeto
-      console.log(projectInfo);
       setFilteredSkills(
         projectInfo.skills.filter((skill) =>
           skill.name.toLowerCase().includes(filter.toLowerCase())
@@ -114,7 +113,6 @@ function RemoveSkills({
       }
     } else if (context === "editProject" && projectInfo) { //se o contexto for editar projeto e houver informações do projeto
       try {
-        console.log(selectedSkillIds);
         const response = await fetch(
           `${apiUrl}/projects/${projectInfo.id}/removeSkills`,
           {

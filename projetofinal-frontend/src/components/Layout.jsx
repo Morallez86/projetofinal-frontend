@@ -114,7 +114,6 @@ function Layout({
 
   const handleLogout = async () => {
     // Função para fazer logout
-    console.log(token);
     if (token) {
       try {
         const response = await fetch(`${apiUrl}/users/logout`, {
@@ -128,17 +127,14 @@ function Layout({
 
         if (response.ok) {
           // Se o logout for bem-sucedido
-          console.log(token);
           setToken(null);
           clearProfileImage();
           navigate("/");
         } else {
-          console.log(token);
           setToken(null); // Limpar o token em caso de erro
           navigate("/");
         }
       } catch (error) {
-        console.log(token);
         setToken(null); // Limpar o token em caso de erro
         navigate("/");
       }
@@ -801,7 +797,7 @@ function Layout({
         <div className="flex justify-end items-start space-x-2">
           {token && (
             <>
-              <div className="relative mt-3 mr-0 p-0">
+              <div className="relative mt-7 mr-0 p-0">
                 <ToggleSwitch
                   checked={languageApp === "pt"}
                   label={languageApp === "en" ? "PT" : "EN"}
@@ -866,7 +862,7 @@ function Layout({
                 </motion.div>
               </div>
               <button
-                className="p-2 flex border mt-1 border-gray-600 hover:bg-cyan-700 items-center justify-center rounded-full bg-white transition-colors duration-200 text-black font-bold"
+                className="p-2 flex border mt-3 border-gray-600 hover:bg-cyan-700 items-center justify-center rounded-full bg-white transition-colors duration-200 text-black font-bold"
                 onClick={handleLogout}
               >
                 <TbLogout2 size={35} />

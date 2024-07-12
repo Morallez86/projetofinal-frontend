@@ -121,7 +121,6 @@ const NotificationModal = ({ isOpen, closeModal, notification }) => {
 
       if (notification.type === "INVITATION") { // Se a notificação for de convite
         body.type = "400";
-        console.log(body);
       } else if (notification.type === "MANAGING") { // Se a notificação for de gestão
         body.type = "300";
       }

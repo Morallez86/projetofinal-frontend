@@ -181,7 +181,6 @@ function ProjectDetailsCard({
     };
 
     try {
-      console.log(updatedProjectDetails);
       const response = await fetch(`${apiUrl}/projects/${projectId}`, {
         //atualizar os detalhes do projeto
         method: "PUT",

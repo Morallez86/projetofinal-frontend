@@ -13,12 +13,10 @@ function WebSocketProjChat(projectId, token, onMessageChat) {
         );
 
         socket.onopen = () => {
-          console.log("WebSocket connected");
         };
 
         socket.onmessage = (event) => {
           const message = JSON.parse(event.data);
-          console.log("Received message:", message);
 
           const date = new Date(message.timestamp);
           
@@ -33,11 +31,9 @@ function WebSocketProjChat(projectId, token, onMessageChat) {
         };
 
         socket.onclose = () => {
-          console.log("WebSocket disconnected");
         };
 
-        socket.onerror = (error) => {
-          console.error("WebSocket error", error);
+        socket.onerror = () => {
         };
 
         return () => socket.close();

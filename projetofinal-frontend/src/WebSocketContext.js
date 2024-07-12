@@ -25,22 +25,18 @@ export const WebSocketProvider = ({ children }) => {
 
       // WebSocket event handlers
       socket.onopen = () => {
-        console.log("WebSocket connected");
       };
 
       socket.onmessage = (event) => {
         const message = JSON.parse(event.data);
-        console.log("Received message:", message);
         // Execute all registered message handlers for incoming messages
         messageHandlers.forEach((handler) => handler(message));
       };
 
       socket.onclose = () => {
-        console.log("WebSocket disconnected");
       };
 
-      socket.onerror = (error) => {
-        console.error("WebSocket error", error);
+      socket.onerror = () => {
       };
 
       setWs(socket); // Set the WebSocket instance to state

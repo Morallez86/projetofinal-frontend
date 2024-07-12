@@ -121,7 +121,6 @@ function AddSkills({
 
   const handleSubmit = async () => {
     // Gerir o envio do formulário
-    console.log(context);
     const data = [
       {
         id: isSkillInOptions ? selectedSkill.id : null,

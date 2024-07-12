@@ -127,7 +127,6 @@ function AddResources({
 
     if (context === "editProject") {
       try {
-        console.log(data);
         const response = await fetch(
           `${apiUrl}/projects/${projectId}/addResource`,
           {

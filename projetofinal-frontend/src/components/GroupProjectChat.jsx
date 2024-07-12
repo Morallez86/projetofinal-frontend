@@ -107,7 +107,6 @@ function GroupProjectChat({
       .then(async (response) => {
         if (response.status === 201) { // Se a resposta for 201
           const messageData = await response.json();
-          console.log(messageData);
           if (messageData.timestamp.length > 5) { // Se o tamanho do timestamp for maior que 5
             messageData.timestamp = messageData.timestamp.slice(0, 5);
           }
@@ -232,7 +231,6 @@ function GroupProjectChat({
               .getMinutes()
               .toString()
               .padStart(2, "0")}`;
-            console.log(formattedTime);
             return (
               <>
                 {isNewDay && (

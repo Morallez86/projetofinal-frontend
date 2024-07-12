@@ -83,7 +83,6 @@ function AddComponents({
             console.error("Error updating seen status:", errorMessage);
           }
         } else if (response.status === 404) {
-          console.log("Components not found");
           setComponents([]); // Define os componentes como um array vazio
         }
       } catch (error) {
@@ -134,7 +133,6 @@ function AddComponents({
 
     if (context === "editProject") {
       try {
-        console.log(data);
         const response = await fetch(
           `${apiUrl}/projects/${projectId}/addComponent`,
           {

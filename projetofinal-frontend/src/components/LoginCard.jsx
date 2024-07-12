@@ -141,7 +141,6 @@ function LoginCard() {
       });
 
       if (response.status === 200) {  // Verificar se o email foi enviado
-        console.log("Email sent");
         setEmailRecoverySuccess(true);
         setEmailRecovery("");
         setTimeout(() => {
@@ -149,11 +148,9 @@ function LoginCard() {
           setEmailRecoverySuccess(false);
         }, 3000);
       } else {
-        console.log("Email could not be sent");
         setEmailRecoveryError(true);
       }
     } catch (error) { // Em caso de erro
-      console.error("Error fetching user:", error);
       setEmailRecoveryError(true);
     } finally {
       setLoading(false);
@@ -179,14 +176,11 @@ function LoginCard() {
 
       if (response.status === 401) { // Verificar se as credenciais são inválidas
         setWarning(1);
-        console.log("Invalid information");
       } else if (response.status === 200) { // Verificar se o login foi bem-sucedido
         setWarning(0);
         const data = await response.json();
         const token = data.token;
-        console.log(token);
         storeTokenAndRole(token);
-        console.log("Successful login");
         navigate("/myProjects"); // Navegar para a página de projetos
       } else {
         console.log("Unexpected response status:", response.status);

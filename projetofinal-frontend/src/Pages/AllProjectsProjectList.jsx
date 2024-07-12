@@ -132,7 +132,6 @@ function AllprojectsProjectList() {
       }
 
       if (!response.ok) { // Se não for ok
-        console.log("HTTP error! status:", response.status);
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
@@ -157,24 +156,24 @@ function AllprojectsProjectList() {
           placeholder={t("SearchByProjectName")}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="flex-auto mb-2 sm:mb-0 sm:w-1/4"
+          className="flex-auto mb-2 sm:mb-0 sm:w-1/5"
         />
         <TextInput
           placeholder={t("SearchBySkills")}
           value={skills}
           onChange={(e) => setSkills(e.target.value)}
-          className="flex-auto mb-2 sm:mb-0 sm:w-1/4"
+          className="flex-auto mb-2 sm:mb-0 sm:w-1/5"
         />
         <TextInput
           placeholder={t("SearchByInterests")}
           value={interests}
           onChange={(e) => setInterests(e.target.value)}
-          className="flex-auto mb-2 sm:mb-0 sm:w-1/4"
+          className="flex-auto mb-2 sm:mb-0 sm:w-1/5"
         />
         <Select
           value={status}
           onChange={(e) => setStatus(e.target.value)}
-          className="flex-auto mb-2 mt-1 sm:mb-0 sm:w-1/4"
+          className="flex-auto mb-2 mt-1 sm:mb-0 sm:w-1/5"
         >
           <option value="">{t("AllStatuses")}</option>
           <option value="100">{t("Planning")}</option>

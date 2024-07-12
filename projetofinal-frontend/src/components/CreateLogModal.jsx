@@ -97,7 +97,6 @@ function CreateLogModal({ onClose, tasks, projectId, addNewLog }) {
 
   const handleSubmit = () => {
     addLog();
-    console.log(formData);
   };
 
   return (

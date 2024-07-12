@@ -71,7 +71,6 @@ function RemoveResources({
 
   const handleRemoveResources = async () => { // função para remover recursos
     if (projectInfo) {
-      console.log(token);
       try {
         const response = await fetch(
           `${apiUrl}/projects/${projectInfo.id}/removeResources`,

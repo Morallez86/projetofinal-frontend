@@ -60,7 +60,6 @@ function AddUsers({ openPopUpUsers, closePopUpUsers, projectInfo }) {
             console.error("Error updating seen status:", errorMessage);
           }
         } else if (response.status === 404) { // Se a resposta for 404
-          console.log("Users not found");
           setUsers([]); // Definir os utilizadores como vazio
           setUserImages({}); // Definir as imagens dos utilizadores como vazio
         }

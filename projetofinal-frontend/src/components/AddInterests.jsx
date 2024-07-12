@@ -153,7 +153,6 @@ function AddInterests({ openPopUpInterests, closePopUpInterests, context, projec
         name: selectedInterest.value,
       };
       try {
-        console.log(data);
         const response = await fetch(
           `${apiUrl}/projects/${projectId}/addInterest`,
           {

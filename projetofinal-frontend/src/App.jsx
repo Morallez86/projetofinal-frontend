@@ -51,10 +51,7 @@ function App() {
       }
 
       const data = await response.json();
-      console.log(data);
-
       const languageCode = data.locale.substring(0, 2);
-      console.log(languageCode);
       setLanguage(languageCode);
 
       i18n.changeLanguage(languageCode);

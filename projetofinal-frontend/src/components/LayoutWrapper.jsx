@@ -30,7 +30,6 @@ const LayoutWrapper = () => {
         );
         if (messagesResponse.ok) { //se a resposta for bem-sucedida
           const messagesData = await messagesResponse.json();
-          console.log(messagesData)
           setUnreadMessages(messagesData.unreadCount); //atualiza o estado das mensagens não lidas
         } else {
           console.error(

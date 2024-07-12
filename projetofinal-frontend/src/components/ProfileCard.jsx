@@ -120,7 +120,6 @@ function ProfileCard({
         }
       } else if (response.status === 200) { // Resposta bem-sucedida
         const userInfoData = await response.json();
-        console.log(userInfoData);
         setSkills(userInfoData.skills);
         setInterests(userInfoData.interests);
         setUserInfo({
@@ -144,9 +143,7 @@ function ProfileCard({
 
   const handleSaveClick = async () => { // Função para guardar
     try {
-      console.log(selectedImage);
       if (selectedImage) {
-        console.log(email);
         const fileInput = document.getElementById("small-file-upload");
         const file = fileInput.files[0];
 

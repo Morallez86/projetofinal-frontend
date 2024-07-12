@@ -109,7 +109,6 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks, allTask }) {
   useEffect(() => {
     // Obter os utilizadores do projeto
     getUsersFromProject();
-    console.log(users);
   }, []);
 
   useEffect(() => {
@@ -119,7 +118,6 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks, allTask }) {
   useEffect(() => {
     // Obter as tarefas dependentes
     getDependentTasks();
-    console.log(formatDateForBackend(formData.plannedStartingDate));
   }, [formData.plannedStartingDate]); // Dependências que fazem ativar o useEffect
 
   const formatDateForBackend = (dateString) => {
@@ -274,7 +272,6 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks, allTask }) {
       .then(async (response) => {
         if (response.status === 201) {
           // Se a resposta for 201
-          console.log("Task added with success");
           setAnimationPlayed(true); // Ativar a animação
           setShowSuccessText(true); // Exibir o texto de sucesso
           setTimeout(() => {

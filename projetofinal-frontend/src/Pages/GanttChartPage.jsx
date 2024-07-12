@@ -101,7 +101,6 @@ const GanttChartPage = () => {
       // Considerando que 0 é um valor não válido para ID
       const foundTask = allTasks.find((task) => task.id === dependentTaskss);
       if (foundTask) {
-        console.log("Tarefa encontrada:", foundTask);
         // Atualiza o estado com o array dependentTasks da tarefa encontrada
         setDependentTasksState(foundTask.dependentTasks || []);
         setDependencieTasks(foundTask.dependencies || []);
@@ -140,10 +139,8 @@ const GanttChartPage = () => {
     })
       .then(async (response) => {
         if (response.status === 404) { // Se o status for 404
-          console.log("Project with this ID is not found");
         } else if (response.status === 200) { // Se o status for 200
           const tasksData = await response.json();
-          console.log(tasksData);
           setAllTasks(tasksData);
         } else if (response.status === 401) { // Se o status for 401
           const data = await response.json();

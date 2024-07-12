@@ -31,7 +31,6 @@ const useProjects = (userId, page, rowsPerPage) => {
     if (token) {
       try {
         const decodedToken = jwtDecode(token); // decodificar o token
-        console.log(decodedToken); // log do token decodificado
         if (decodedToken.projectTimestamps) {
           Object.entries(decodedToken.projectTimestamps).forEach(
             ([projectId, timestamp]) => {

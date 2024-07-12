@@ -76,8 +76,6 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks, fetchProjectD
   // UseEffect para chamar a função de comparação sempre que os dados da tarefa forem alterados
   useEffect(() => {
     checkIfTaskIsModified();
-    console.log(originalTaskData.status);
-    console.log(taskData.status);
   }, [taskData]);
 
   const handleChange = (event) => { // função para mudar
