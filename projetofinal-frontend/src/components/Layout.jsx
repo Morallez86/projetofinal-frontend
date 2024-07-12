@@ -24,6 +24,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import { MenuIcon } from '@heroicons/react/outline';
 import BurgerMenu from './BurguerMenu'; 
 import { motion } from "framer-motion";
+import pincel from "../Assets/pincel.png";
 
 function Layout({
   activeTab,
@@ -269,7 +270,7 @@ function Layout({
         justifyContent: 'center', // Centraliza horizontalmente o ícone e o texto
                     color: 'black', // Define a cor do texto como preto
                     fontWeight: 'bold', // Torna o texto em negrito
-                    backgroundImage: 'url("https://www.pngall.com/wp-content/uploads/5/Brush-Stroke.png")', // Define a imagem de pincelada como plano de fundo
+                    backgroundImage: `url(${pincel})`, // Define a imagem de pincel como plano de fundo
                     backgroundRepeat: 'no-repeat',
                     backgroundSize: 'cover', // Garante que a imagem de fundo cubra todo o espaço disponível
                     backgroundPosition: 'center', // Centraliza a imagem de fundo
@@ -300,7 +301,7 @@ function Layout({
         justifyContent: 'center', // Centraliza horizontalmente o ícone e o texto
                     color: 'black', // Define a cor do texto como preto
                     fontWeight: 'bold', // Torna o texto em negrito
-                    backgroundImage: 'url("https://www.pngall.com/wp-content/uploads/5/Brush-Stroke.png")', // Define a imagem de pincelada como plano de fundo
+                    backgroundImage: `url(${pincel})`, // Define a imagem de pincel como plano de fundo
                     backgroundRepeat: 'no-repeat',
                     backgroundSize: 'cover', // Garante que a imagem de fundo cubra todo o espaço disponível
                     backgroundPosition: 'center', // Centraliza a imagem de fundo
@@ -327,7 +328,7 @@ function Layout({
         justifyContent: 'center', // Centraliza horizontalmente o ícone e o texto
                     color: 'black', // Define a cor do texto como preto
                     fontWeight: 'bold', // Torna o texto em negrito
-                    backgroundImage: 'url("https://www.pngall.com/wp-content/uploads/5/Brush-Stroke.png")', // Define a imagem de pincelada como plano de fundo
+                    backgroundImage: `url(${pincel})`, // Define a imagem de pincel como plano de fundo
                     backgroundRepeat: 'no-repeat',
                     backgroundSize: 'cover', // Garante que a imagem de fundo cubra todo o espaço disponível
                     backgroundPosition: 'center', // Centraliza a imagem de fundo
@@ -380,7 +381,7 @@ function Layout({
         justifyContent: 'center', // Centraliza horizontalmente o ícone e o texto
         color: activeSubTabProfile === 0 ? 'black' : 'inherit', // Mantém a cor do texto como preto quando ativo
         fontWeight: 'bold', // Torna o texto em negrito
-        backgroundImage: 'url("https://www.pngall.com/wp-content/uploads/5/Brush-Stroke.png")', // Mantém a imagem de fundo apenas quando ativo
+        backgroundImage: `url(${pincel})`, // Define a imagem de pincel como plano de fundo
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover', // Garante que a imagem de fundo cubra todo o espaço disponível
         backgroundPosition: 'center', // Centraliza a imagem de fundo
@@ -409,7 +410,7 @@ function Layout({
                             justifyContent: 'center', // Centraliza horizontalmente o ícone e o texto
                             color: activeSubTabProfile === 1 ? 'black' : 'inherit', // Mantém a cor do texto como preto quando ativo
                             fontWeight: 'bold', // Torna o texto em negrito
-                            backgroundImage: 'url("https://www.pngall.com/wp-content/uploads/5/Brush-Stroke.png")', // Mantém a imagem de fundo apenas quando ativo
+                            backgroundImage: `url(${pincel})`, // Define a imagem de pincel como plano de fundo
                             backgroundRepeat: 'no-repeat',
                             backgroundSize: 'cover', // Garante que a imagem de fundo cubra todo o espaço disponível
                             backgroundPosition: 'center', // Centraliza a imagem de fundo
@@ -438,7 +439,7 @@ function Layout({
                             justifyContent: 'center', // Centraliza horizontalmente o ícone e o texto
                             color: activeSubTabProfile === 2 ? 'black' : 'inherit', // Mantém a cor do texto como preto quando ativo
                             fontWeight: 'bold', // Torna o texto em negrito
-                            backgroundImage: 'url("https://www.pngall.com/wp-content/uploads/5/Brush-Stroke.png")', // Mantém a imagem de fundo apenas quando ativo
+                            backgroundImage: `url(${pincel})`, // Define a imagem de pincel como plano de fundo
                             backgroundRepeat: 'no-repeat',
                             backgroundSize: 'cover', // Garante que a imagem de fundo cubra todo o espaço disponível
                             backgroundPosition: 'center', // Centraliza a imagem de fundo
@@ -492,7 +493,7 @@ function Layout({
                             justifyContent: 'center', // Centraliza horizontalmente o ícone e o texto
                             color: activeSubProjects === 0 ? 'black' : 'inherit', // Mantém a cor do texto como preto quando ativo
                             fontWeight: 'bold', // Torna o texto em negrito
-                            backgroundImage: 'url("https://www.pngall.com/wp-content/uploads/5/Brush-Stroke.png")', // Mantém a imagem de fundo apenas quando ativo
+                            backgroundImage: `url(${pincel})`, // Define a imagem de pincel como plano de fundo
                             backgroundRepeat: 'no-repeat',
                             backgroundSize: 'cover', // Garante que a imagem de fundo cubra todo o espaço disponível
                             backgroundPosition: 'center', // Centraliza a imagem de fundo
@@ -521,7 +522,7 @@ function Layout({
                             justifyContent: 'center', // Centraliza horizontalmente o ícone e o texto
                             color: activeSubProjects === 1 ? 'black' : 'inherit', // Mantém a cor do texto como preto quando ativo
                             fontWeight: 'bold', // Torna o texto em negrito
-                            backgroundImage: 'url("https://www.pngall.com/wp-content/uploads/5/Brush-Stroke.png")', // Mantém a imagem de fundo apenas quando ativo
+                            backgroundImage: `url(${pincel})`, // Define a imagem de pincel como plano de fundo
                             backgroundRepeat: 'no-repeat',
                             backgroundSize: 'cover', // Garante que a imagem de fundo cubra todo o espaço disponível
                             backgroundPosition: 'center', // Centraliza a imagem de fundo
@@ -550,7 +551,7 @@ function Layout({
                             justifyContent: 'center', // Centraliza horizontalmente o ícone e o texto
                             color: activeSubProjects === 2 ? 'black' : 'inherit', // Mantém a cor do texto como preto quando ativo
                             fontWeight: 'bold', // Torna o texto em negrito
-                            backgroundImage: 'url("https://www.pngall.com/wp-content/uploads/5/Brush-Stroke.png")', // Mantém a imagem de fundo apenas quando ativo
+                            backgroundImage: `url(${pincel})`, // Define a imagem de pincel como plano de fundo
                             backgroundRepeat: 'no-repeat',
                             backgroundSize: 'cover', // Garante que a imagem de fundo cubra todo o espaço disponível
                             backgroundPosition: 'center', // Centraliza a imagem de fundo
@@ -601,7 +602,7 @@ function Layout({
                             justifyContent: 'center', // Centraliza horizontalmente o ícone e o texto
                             color: activeSubComponents === 0 ? 'black' : 'inherit', // Mantém a cor do texto como preto quando ativo
                             fontWeight: 'bold', // Torna o texto em negrito
-                            backgroundImage: 'url("https://www.pngall.com/wp-content/uploads/5/Brush-Stroke.png")', // Mantém a imagem de fundo apenas quando ativo
+                            backgroundImage: `url(${pincel})`, // Define a imagem de pincel como plano de fundo
                             backgroundRepeat: 'no-repeat',
                             backgroundSize: 'cover', // Garante que a imagem de fundo cubra todo o espaço disponível
                             backgroundPosition: 'center', // Centraliza a imagem de fundo
@@ -630,7 +631,7 @@ function Layout({
                             justifyContent: 'center', // Centraliza horizontalmente o ícone e o texto
                             color: activeSubComponents === 1 ? 'black' : 'inherit', // Mantém a cor do texto como preto quando ativo
                             fontWeight: 'bold', // Torna o texto em negrito
-                            backgroundImage: 'url("https://www.pngall.com/wp-content/uploads/5/Brush-Stroke.png")', // Mantém a imagem de fundo apenas quando ativo
+                            backgroundImage: `url(${pincel})`, // Define a imagem de pincel como plano de fundo
                             backgroundRepeat: 'no-repeat',
                             backgroundSize: 'cover', // Garante que a imagem de fundo cubra todo o espaço disponível
                             backgroundPosition: 'center', // Centraliza a imagem de fundo
