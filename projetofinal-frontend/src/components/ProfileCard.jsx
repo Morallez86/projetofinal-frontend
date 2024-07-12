@@ -237,12 +237,13 @@ function ProfileCard({
         className="h-5 w-5 sm:h-6 sm:w-6 text-black cursor-pointer absolute top-3 right-6 transform translate-x-1/2 -translate-y-1/2"
         onClick={handleEditClick}
           />
-          <Avatar
-            img={profileImage}
-            alt="avatar"
-            size="xl"
-            className="border border-black rounded-full  mb-2"
-          />
+         <Avatar
+  img={profileImage}
+  alt="avatar"
+  size="xl"
+  className="border border-black rounded-full mb-2"
+  style={{ borderRadius: '50%', overflow: 'hidden' }} 
+/>
           {editMode && (
             <FileInput
               id="small-file-upload"
