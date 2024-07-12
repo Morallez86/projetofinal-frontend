@@ -22,7 +22,7 @@ function TeamCard({
   const [confirmationMessage, setConfirmationMessage] = useState("");
   const [confirmFunction, setConfirmFunction] = useState(null);
 
-  // Function to handle admin change with confirmation
+  // Função para lidar com a confirmação do estado admin dos users num projeto
   const confirmAdminChange = (userId, isAdmin) => {
     setShowConfirmation(true);
     setConfirmationMessage(
@@ -33,20 +33,20 @@ function TeamCard({
     setConfirmFunction(() => () => handleAdminChange(userId, isAdmin));
   };
 
-  // Function to handle user deactivation with confirmation
+  // Função para lidar com a confirmação da desactivação de um user num projeto
   const confirmUserDeactivation = (userId) => {
     setShowConfirmation(true);
     setConfirmationMessage(t("Are you sure you want to deactivate this user?"));
     setConfirmFunction(() => () => handleUserDeactivation(userId));
   };
 
-  // Function to close the confirmation modal
+  // Função para fechar o modelo de confirmação
   const handleCloseConfirmation = () => {
     setShowConfirmation(false);
     setConfirmFunction(null);
   };
 
-  // Function to execute the confirmed action
+  // Função para abrir o modelo de confirmação
   const handleConfirm = () => {
     if (confirmFunction) {
       confirmFunction();

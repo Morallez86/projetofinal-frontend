@@ -17,6 +17,8 @@ import { useTranslation } from "react-i18next";
 const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
   const [isExpanded, setIsExpanded] = useState(false); //estado para expandir
   const [editMode, setEditMode] = useState(false); //estado para editar
+  const [isMouseOverInteractiveElement, setIsMouseOverInteractiveElement] =
+    useState(false);
   const apiUrl = useApiStore((state) => state.apiUrl); //api url
   const token = useUserStore((state) => state.token); //token
   const navigate = useNavigate();
@@ -193,13 +195,36 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
     }
   };
 
+  // Função para expandir o card quando o rato entra na área do card
+  const handleMouseEnterCard = () => {
+    setIsExpanded(true);
+  };
+
+  // Função que colapsa o card quando o rato sai da área do card
+  // Mas mantém o card expandido se o rato está sobre um elemento interactivo
+  const handleMouseLeaveCard = () => {
+    if (!isMouseOverInteractiveElement) {
+      setIsExpanded(false);
+    }
+  };
+
+  // Função que marca que o rato está sobre um elemento interactivo
+  const handleMouseEnterInteractiveElement = () => {
+    setIsMouseOverInteractiveElement(true);
+  };
+
+  // Função que marca que o rato saiu de um elemento interactivo
+  const handleMouseLeaveInteractiveElement = () => {
+    setIsMouseOverInteractiveElement(false);
+  };
+
   return (
     <Card
       className={`relative max-w p-4 mb-4 ${isExpanded ? "expanded" : ""} ${
         task.status === 300 ? "opacity-50" : ""
       }`}
-      onMouseEnter={() => setIsExpanded(true)}
-      onMouseLeave={() => setIsExpanded(false)}
+      onMouseEnter={handleMouseEnterCard}
+      onMouseLeave={handleMouseLeaveCard}
     >
       <div className="absolute top-0 right-0 mt-2 mr-2">
         {getPriorityIcon(task.priority)}
@@ -215,6 +240,8 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
             name="title"
             value={taskData.title}
             onChange={handleChange}
+            onMouseEnter={handleMouseEnterInteractiveElement}
+            onMouseLeave={handleMouseLeaveInteractiveElement}
           />
         ) : (
           task.title
@@ -228,6 +255,8 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
             name="description"
             value={taskData.description}
             onChange={handleChange}
+            onMouseEnter={handleMouseEnterInteractiveElement}
+            onMouseLeave={handleMouseLeaveInteractiveElement}
           />
         ) : (
           task.description
@@ -244,6 +273,8 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
                 value={taskData.status}
                 onChange={handleChange}
                 disabled={!checkDependenciesStatus(task.dependencies)}
+                onMouseEnter={handleMouseEnterInteractiveElement}
+                onMouseLeave={handleMouseLeaveInteractiveElement}
               >
                 {task.status === 100 ? (
                   <>
@@ -270,6 +301,8 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
                 name="priority"
                 value={taskData.priority}
                 onChange={handleChange}
+                onMouseEnter={handleMouseEnterInteractiveElement}
+                onMouseLeave={handleMouseLeaveInteractiveElement}
               >
                 <option value="100">{t("LOW")}</option>
                 <option value="200">{t("MEDIUM")}</option>
@@ -295,6 +328,8 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
                 name="userName"
                 value={taskData.userName}
                 onChange={handleChange}
+                onMouseEnter={handleMouseEnterInteractiveElement}
+                onMouseLeave={handleMouseLeaveInteractiveElement}
               >
                 {projectUsers.map((user) => (
                   <option key={user.id} value={user.username}>
@@ -308,10 +343,21 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
           </p>
           {editMode && (
             <div className="flex justify-end mt-4">
-              <Button onClick={handleCancelClick} className="mr-2">
+              <Button
+                onClick={handleCancelClick}
+                className="mr-2"
+                onMouseEnter={handleMouseEnterInteractiveElement}
+                onMouseLeave={handleMouseLeaveInteractiveElement}
+              >
                 {t("Cancel")}
               </Button>
-              <Button onClick={handleSubmitClick}>{t("Save")}</Button>
+              <Button
+                onClick={handleSubmitClick}
+                onMouseEnter={handleMouseEnterInteractiveElement}
+                onMouseLeave={handleMouseLeaveInteractiveElement}
+              >
+                {t("Save")}
+              </Button>
             </div>
           )}
         </>
