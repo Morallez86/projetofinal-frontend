@@ -11,9 +11,9 @@ import CreatableSelect from "react-select/creatable";
 import { Alert } from "flowbite-react";
 import { HiInformationCircle } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
-function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
-  
+function AddTaskCard({ popUpShow, setPopUpShow, setTasks, allTask }) {
   const token = useUserStore((state) => state.token); // Obter o token do utilizador
   const apiUrl = useApiStore((state) => state.apiUrl); // Obter a URL da API
   const [animationPlayed, setAnimationPlayed] = useState(false); // Gerir a animação
@@ -23,14 +23,18 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
   const [restUsers, setRestUsers] = useState([]); // Definir os utilizadores restantes excluindo o selecionado como responsável
   const [warning, setWarning] = useState(false); // Definir o aviso
   const [warningData, setWarningData] = useState(false); // Definir o aviso de dados
+  const [maxEndDate, setMaxEndDate] = useState(null);
+  const { t } = useTranslation(); // Função de tradução
   const navigate = useNavigate();
-  const handleSessionTimeout = () => { // Gerir o tempo limite da sessão
+  const handleSessionTimeout = () => {
+    // Gerir o tempo limite da sessão
     navigate("/", { state: { showSessionTimeoutModal: true } });
   };
 
   const { projectId } = useParams(); // Obter o id do projeto da URL
 
-  const [formData, setFormData] = useState({ // Definir os dados do formulário
+  const [formData, setFormData] = useState({
+    // Definir os dados do formulário
     projectId: projectId,
     title: "",
     description: "",
@@ -44,19 +48,48 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
     userId: "",
   });
 
-  const handleChange = (event) => { // Gerir a mudança
+  useEffect(() => {
+    if (allTask.length > 0) {
+      // Filter out any empty or invalid tasks
+      const validTasks = allTask.filter(
+        (task) => Array.isArray(task) && task.length === 5
+      );
+
+      if (validTasks.length > 0) {
+        // Convert each task to a Date object and find the maximum
+        const maxEndDate = new Date(
+          Math.max.apply(
+            null,
+            validTasks.map((task) => {
+              const [year, month, day, hour, minute] = task;
+              // Month in JS Date object is 0-based (0 = January)
+              return new Date(year, month - 1, day, hour, minute);
+            })
+          )
+        );
+
+        // Update state with the maximum end date
+        setMaxEndDate(maxEndDate.toISOString().split("T")[0]);
+      }
+    }
+  }, [allTask]);
+
+  const handleChange = (event) => {
+    // Gerir a mudança
     const { name, value } = event.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleChangeSelect = (selectedOption) => { // Gerir a mudança de seleção
+  const handleChangeSelect = (selectedOption) => {
+    // Gerir a mudança de seleção
     setFormData((prevData) => ({
       ...prevData,
       userName: selectedOption.label,
     }));
   };
 
-  const handleRemoveContributor = (selectedOption) => { // Gerir a remoção de contribuidor
+  const handleRemoveContributor = (selectedOption) => {
+    // Gerir a remoção de contribuidor
     setFormData((prevData) => ({
       ...prevData,
       contributors: formData.contributors.filter(
@@ -65,40 +98,45 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
     }));
   };
 
-  const handleIdSelect = (selectedOption) => { // Gerir a seleção de id
+  const handleIdSelect = (selectedOption) => {
+    // Gerir a seleção de id
     setFormData((prevData) => ({
       ...prevData,
       userId: selectedOption.value,
     }));
   };
 
-  useEffect(() => { // Obter os utilizadores do projeto
+  useEffect(() => {
+    // Obter os utilizadores do projeto
     getUsersFromProject();
     console.log(users);
-  }, []); 
+  }, []);
 
   useEffect(() => {
     setRestUsers(users.filter((user) => user.username !== formData.userName)); // Definir os utilizadores restantes excluindo o selecionado como responsável
   }, [users, formData.userName]); // Dependências que fazem ativar o useEffect
 
-  useEffect(() => { // Obter as tarefas dependentes
+  useEffect(() => {
+    // Obter as tarefas dependentes
     getDependentTasks();
     console.log(formatDateForBackend(formData.plannedStartingDate));
   }, [formData.plannedStartingDate]); // Dependências que fazem ativar o useEffect
- 
-  const formatDateForBackend = (dateString) => { // Formatar a data para o backend
+
+  const formatDateForBackend = (dateString) => {
+    // Formatar a data para o backend
     if (!dateString) {
       return null;
     }
 
-   
-    const formattedDate = `${dateString} 00:00:00`; 
+    const formattedDate = `${dateString} 00:00:00`;
 
     return formattedDate;
   };
 
-  const getDependentTasks = () => { // Obter as tarefas dependentes
-    const plannedStartingDate = formatDateForBackend( // Formatar a data de início planeada
+  const getDependentTasks = () => {
+    // Obter as tarefas dependentes
+    const plannedStartingDate = formatDateForBackend(
+      // Formatar a data de início planeada
       formData.plannedStartingDate
     );
     fetch(
@@ -113,17 +151,19 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
       }
     )
       .then(async (response) => {
-        if (response.status === 200) { // Se a resposta for 200
+        if (response.status === 200) {
+          // Se a resposta for 200
           const dependentTasksData = await response.json();
-        
+
           setDependentTasks(dependentTasksData); // Definir as tarefas dependentes
-        } else if (response.status === 401) { // Se a resposta for 401
+        } else if (response.status === 401) {
+          // Se a resposta for 401
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
           if (errorMessage === "Invalid token") {
             handleSessionTimeout(); // Tempo limite da sessão
-            return; 
+            return;
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
@@ -136,7 +176,8 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
       });
   };
 
-  const getUsersFromProject = () => { // Obter os utilizadores do projeto
+  const getUsersFromProject = () => {
+    // Obter os utilizadores do projeto
     fetch(`${apiUrl}/projects/${projectId}/users`, {
       method: "GET",
       headers: {
@@ -146,17 +187,19 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
       },
     })
       .then(async (response) => {
-        if (response.status === 200) { // Se a resposta for 200
+        if (response.status === 200) {
+          // Se a resposta for 200
           const usersData = await response.json();
-          
+
           setUsers(usersData);
-        } else if (response.status === 401) { // Se a resposta for 401
+        } else if (response.status === 401) {
+          // Se a resposta for 401
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
           if (errorMessage === "Invalid token") {
             handleSessionTimeout(); // Tempo limite da sessão
-            return; 
+            return;
           } else {
             console.error("Error updating seen status:", errorMessage);
           }
@@ -169,24 +212,26 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
       });
   };
 
-  const defaultOptions = { // Opções padrão
+  const defaultOptions = {
+    // Opções padrão
     loop: false,
     autoplay: false,
     animationData: AddedAnimation,
     rendererSettings: {
-      preserveAspectRatio: "xMidYMid slice", 
+      preserveAspectRatio: "xMidYMid slice",
     },
   };
 
-  const handleSubmit = async () => { // Submeter
+  const handleSubmit = async () => {
+    // Submeter
     const contributorsAsString = formData.contributors
       .map((contributor) => contributor.label)
       .join(","); // Definir os contribuidores como string
 
-    setWarning(false); 
-    setWarningData(false);  //Limpa os avisos
+    setWarning(false);
+    setWarningData(false); //Limpa os avisos
 
-    let stop = 0; 
+    let stop = 0;
     if (
       !formData.title ||
       !formData.description ||
@@ -196,7 +241,7 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
       !formData.priority
     ) {
       setWarning(true);
-      stop = 1; 
+      stop = 1;
     }
 
     if (formData.plannedStartingDate > formData.plannedEndingDate) {
@@ -204,13 +249,21 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
       stop = 1;
     }
 
-    if (stop != 0) {  //para ele percorrer os 2 alertas
+    if (
+      new Date(formData.plannedStartingDate) > new Date(maxEndDate) ||
+      new Date(formData.plannedEndingDate) > new Date(maxEndDate)
+    ) {
+      setWarningData(true);
       return;
     }
 
-   
+    if (stop != 0) {
+      //para ele percorrer os 2 alertas
+      return;
+    }
 
-    fetch(`${apiUrl}/tasks`, { // Adicionar tarefa
+    fetch(`${apiUrl}/tasks`, {
+      // Adicionar tarefa
       method: "POST",
       headers: {
         Accept: "*/*",
@@ -225,17 +278,18 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
       }),
     })
       .then(async (response) => {
-        if (response.status === 201) { // Se a resposta for 201
+        if (response.status === 201) {
+          // Se a resposta for 201
           console.log("Task added with success");
           setAnimationPlayed(true); // Ativar a animação
           setShowSuccessText(true); // Exibir o texto de sucesso
           setTimeout(() => {
             setPopUpShow(false); // Fechar o popup
             setShowSuccessText(false); // Esconder o texto de sucesso
-            
           }, 2000); // Fechar o popup após 2 segundos
           setTasks((prevTasks) => [...prevTasks, formData]); // Adicionar a tarefa
-        } else if (response.status === 401) { // Se a resposta for 401  
+        } else if (response.status === 401) {
+          // Se a resposta for 401
           const data = await response.json();
           const errorMessage = data.message || "Unauthorized";
 
@@ -267,14 +321,14 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
       <Modal.Body>
         <div className="flex flex-col items-center justify-center overflow-x-hidden overflow-y-hidden">
           <h3 className="text-lg font-bold text-gray-500 dark:text-gray-400">
-            Create a task
+            {t("Create a task")}
           </h3>
           <form className="space-y-3">
             <div className="flex flex-col space-y-4">
               <div>
-                <Label htmlFor="title" value="Task tile" />
+                <Label htmlFor="title" value={t("Title")} />
                 <TextInput
-                  placeholder="Choose a title for the task"
+                  placeholder={t("Choose a title for the task")}
                   id="title"
                   name="title"
                   defaultValue={""}
@@ -282,7 +336,7 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
                 />
               </div>
               <div>
-                <Label htmlFor="description" value="Task description" />
+                <Label htmlFor="description" value={t("Description")} />
                 <Textarea
                   id="description"
                   name="description"
@@ -292,13 +346,13 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
                 />
               </div>
               <div>
-                <Label htmlFor="responsible" value="Responsible" />
+                <Label htmlFor="responsible" value={t("Responsible")} />
                 <Select
                   options={users.map((user) => ({
                     value: user.userId,
                     label: user.username,
                   }))}
-                  placeholder="Select a responsible"
+                  placeholder={t("Select a responsible")}
                   maxMenuHeight={160}
                   name="userName"
                   onChange={(selectedOptions) => {
@@ -311,7 +365,7 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
               <div>
                 <Label
                   htmlFor="plannedStartingDate"
-                  value="Planned Starting Date"
+                  value={t("Planned Starting Date")}
                 />
                 <TextInput
                   id="plannedStartingDate"
@@ -324,7 +378,7 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
               <div>
                 <Label
                   htmlFor="plannedEndingDate"
-                  value="Planned Ending Date"
+                  value={t("Planned Ending Date")}
                 />
                 <TextInput
                   id="plannedEndingDate"
@@ -335,14 +389,14 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
                 />
               </div>
               <div>
-                <Label htmlFor="priority" value="Priority" />
+                <Label htmlFor="priority" value={t("Priority")} />
                 <Select
                   options={[
-                    { value: 100, label: "Low" },
-                    { value: 200, label: "Medium" },
-                    { value: 300, label: "High" },
+                    { value: 100, label: t("LOW") },
+                    { value: 200, label: t("MEDIUM") },
+                    { value: 300, label: t("HIGH") },
                   ]}
-                  placeholder="Select a priority"
+                  placeholder={t("Select a priority")}
                   maxMenuHeight={160}
                   name="priority"
                   onChange={(selectedOption) => {
@@ -354,13 +408,13 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
                 />
               </div>
               <div>
-                <Label htmlFor="dependentTasks" value="Dependent task" />
+                <Label htmlFor="dependentTasks" value={t("Dependent task")} />
                 <Select
                   options={dependentTasks.map((task) => ({
                     value: task.id,
                     label: task.title,
                   }))}
-                  placeholder="Select dependent task"
+                  placeholder={t("Select dependent task")}
                   maxMenuHeight={160}
                   name="dependencies"
                   isMulti
@@ -378,7 +432,7 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
               <div>
                 <Label
                   htmlFor="additionalExecutors"
-                  value="Additional Executors"
+                  value={t("Additional Executors")}
                 />
                 <CreatableSelect
                   key={formData.userName}
@@ -387,7 +441,7 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
                     value: user.id,
                     label: user.username,
                   }))}
-                  placeholder="Select additional executors"
+                  placeholder={t("Select additional executors")}
                   maxMenuHeight={160}
                   name="contributors"
                   value={formData.contributors}
@@ -402,7 +456,7 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
             </div>
             <div className="flex flex-col justify-center items-center mt-0">
               <div className="flex justify-center items-center space-x-2">
-                <Button onClick={handleSubmit}>Add task</Button>
+                <Button onClick={handleSubmit}>{t("Create task")}</Button>
                 <div
                   id="icon-element"
                   className="pointer-events-none flex items-center justify-center"
@@ -413,8 +467,8 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
                 >
                   <Lottie
                     options={defaultOptions}
-                    height={250}
-                    width={250}
+                    height={150}
+                    width={150}
                     isStopped={!animationPlayed}
                     isPaused={!animationPlayed}
                     eventListeners={[
@@ -431,19 +485,21 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks }) {
               <div className="flex flex-col items-center space-y-2">
                 {showSuccessText && (
                   <div className="animate-pulse text-green-500 font-bold">
-                    Added with success
+                    {t("Added with success")}
                   </div>
                 )}
                 {warning && (
                   <Alert color="failure" icon={HiInformationCircle}>
-                    <span className="font-medium"> </span> The required fields
-                    are not all filled in
+                    <span className="font-medium"> </span>{" "}
+                    {t("The required fields are not all filled in")}
                   </Alert>
                 )}
                 {warningData && (
                   <Alert color="failure" icon={HiInformationCircle}>
-                    <span className="font-medium"> </span> The end date cannot
-                    be earlier than the start date
+                    <span className="font-medium"> </span>{" "}
+                    {t(
+                      "The end date cannot be earlier than the start date or after the end of the project"
+                    )}
                   </Alert>
                 )}
               </div>

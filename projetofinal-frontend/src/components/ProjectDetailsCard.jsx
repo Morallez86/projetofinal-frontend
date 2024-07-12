@@ -63,30 +63,30 @@ function ProjectDetailsCard({
     //opções de estado
     ...(projectDetails.status === 100
       ? [
-          { value: 100, label: "PLANNING" },
-          { value: 200, label: "READY" },
-          { value: 500, label: "CANCELLED" },
+          { value: 100, label: t("Planning") },
+          { value: 200, label: t("Ready") },
+          { value: 500, label: t("Cancelled") },
         ]
       : []),
     ...(projectDetails.status === 200
       ? [
-          { value: 100, label: "PLANNING" },
-          { value: 200, label: "READY" },
-          { value: 500, label: "CANCELLED" },
+          { value: 100, label: t("Planning")},
+          { value: 200, label: t("Ready") },
+          { value: 500, label: t("Cancelled") },
         ]
       : []),
     ...(projectDetails.status === 300
       ? [
-          { value: 300, label: "IN PROGRESS" },
-          { value: 400, label: "FINISHED" },
-          { value: 500, label: "CANCELLED" },
+          { value: 300, label: t("InProgress") },
+          { value: 400, label: t("Finished") },
+          { value: 500, label: t("Cancelled") },
         ]
       : []),
     ...(projectDetails.status === 400
-      ? [{ value: 400, label: "FINISHED" }]
+      ? [{ value: 400, label: t("Finished") }]
       : []),
     ...(projectDetails.status === 500
-      ? [{ value: 500, label: "CANCELLED" }]
+      ? [{ value: 500, label: t("Cancelled") }]
       : []),
   ];
 
@@ -380,12 +380,18 @@ function ProjectDetailsCard({
               {getBadge(projectDetails.approved)}
             </div>
             <div className="flex items-center space-x-2">
-            <Button onClick={() => navigate(`/myProjects/${projectId}/ganttChart`)} className="ml-2 mb-2 mt-1 text-sm sm:text-base">
-    Gantt
-  </Button>
-            <Button onClick={() => window.history.back()} className="ml-2 mb-2 mt-1 text-sm sm:text-base">
-    {t("Back")}
-  </Button>
+              <Button
+                onClick={() => navigate(`/myProjects/${projectId}/ganttChart`)}
+                className="ml-2 mb-2 mt-1 text-sm sm:text-base"
+              >
+                Gantt
+              </Button>
+              <Button
+                onClick={() => window.history.back()}
+                className="ml-2 mb-2 mt-1 text-sm sm:text-base"
+              >
+                {t("Back")}
+              </Button>
               {currentUserIsAdmin &&
                 (projectDetails.status === 100 ||
                   projectDetails.status === 300) && (
@@ -398,12 +404,12 @@ function ProjectDetailsCard({
           </div>
           <div className="flex flex-col gap-4">
             <div>
-              <Label htmlFor="title" value="Title" />
+              <Label htmlFor="title" value={t("Title")} />
               {editMode ? (
                 <TextInput
                   id="title"
                   type="text"
-                  name="title"
+                  name={t("Title")}
                   value={projectDetails.title}
                   onChange={handleChange}
                 />
@@ -414,11 +420,11 @@ function ProjectDetailsCard({
               )}
             </div>
             <div>
-              <Label htmlFor="status" value="Status" />
+              <Label htmlFor="status" value={t("Status")} />
               {editMode ? (
                 <Select
                   id="status"
-                  name="status"
+                  name={t("Status")}
                   value={projectDetails.status}
                   onChange={handleChange}
                 >
@@ -439,11 +445,11 @@ function ProjectDetailsCard({
               )}
             </div>
             <div>
-              <Label htmlFor="description" value="Description" />
+              <Label htmlFor="description" value={t("Description")} />
               {editMode ? (
                 <Textarea
                   id="description"
-                  name="description"
+                  name={t("Description")}
                   value={projectDetails.description}
                   onChange={handleChange}
                   rows={3}
@@ -455,11 +461,11 @@ function ProjectDetailsCard({
               )}
             </div>
             <div>
-              <Label htmlFor="motivation" value="Motivation" />
+              <Label htmlFor="motivation" value={t("Motivation")} />
               {editMode ? (
                 <Textarea
                   id="motivation"
-                  name="motivation"
+                  name={t("Motivation")}
                   value={projectDetails.motivation}
                   onChange={handleChange}
                   rows={3}
@@ -471,12 +477,12 @@ function ProjectDetailsCard({
               )}
             </div>
             <div>
-              <Label htmlFor="startingDate" value="Starting Date" />
+              <Label htmlFor="startingDate" value={t("StartingDate")} />
               {editMode ? (
                 <TextInput
                   id="startingDate"
                   type="date"
-                  name="startingDate"
+                  name={t("StartingDate")}
                   value={formatDateForInput(projectDetails.startingDate)}
                   onChange={handleChange}
                   className="w-1/2"
@@ -488,12 +494,12 @@ function ProjectDetailsCard({
               )}
             </div>
             <div>
-              <Label htmlFor="plannedEndDate" value="Planned End Date" />
+              <Label htmlFor="plannedEndDate" value={t("PlannedEndDate")} />
               {editMode ? (
                 <TextInput
                   id="plannedEndDate"
                   type="date"
-                  name="plannedEndDate"
+                  name={t("PlannedEndDate")}
                   value={formatDateForInput(projectDetails.plannedEndDate)}
                   onChange={handleChange}
                   className="w-1/2"
@@ -505,17 +511,17 @@ function ProjectDetailsCard({
               )}
             </div>
             <div>
-              <Label htmlFor="workplace" value="Workplace" />
+              <Label htmlFor="workplace" value={t("Workplace")} />
               {editMode ? (
                 <Select
                   id="workplace"
-                  name="workplace"
+                  name={t("Workplace")}
                   value={projectDetails.workplace?.id || ""}
                   onChange={handleChange}
                   className="w-1/2"
                 >
                   <option value="" disabled>
-                    Select Workplace
+                    {t("SelectWorkplace")}
                   </option>
                   {workplaces.map((workplace) => (
                     <option key={workplace.id} value={workplace.id}>
@@ -530,12 +536,12 @@ function ProjectDetailsCard({
               )}
             </div>
             <div>
-              <Label htmlFor="maxUsers" value="Max Users" />
+              <Label htmlFor="maxUsers" value={t("MaxUsers")} />
               {editMode ? (
                 <TextInput
                   id="maxUsers"
                   type="number"
-                  name="maxUsers"
+                  name={t("MaxUsers")}
                   min={1}
                   max={4}
                   value={projectDetails.maxUsers}
@@ -552,9 +558,9 @@ function ProjectDetailsCard({
           {editMode && (
             <div className="flex justify-end mt-4 -mb-6">
               <Button onClick={handleCancelClick} className="mr-2">
-                Cancel
+                {t("Cancel")}
               </Button>
-              <Button onClick={handleSaveClick}>Save</Button>
+              <Button onClick={handleSaveClick}>{t("Save")}</Button>
             </div>
           )}
         </div>
@@ -610,18 +616,21 @@ function ProjectDetailsCard({
                     .join(", ")
                 : ""}
             </p>
-            {Array.isArray(projectDetails.skills) && projectDetails.skills.length > 3 && (
-  <div id="tip-all-skills">
-    <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
-      All
-    </button>
-    <Tooltip
-      anchorSelect="#tip-all-skills"
-      content={projectDetails.skills.map(skill => skill.name).join(', ')}
-      place="top"
-    />
-  </div>
-)}
+            {Array.isArray(projectDetails.skills) &&
+              projectDetails.skills.length > 3 && (
+                <div id="tip-all-skills">
+                  <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+                    {t("All")}
+                  </button>
+                  <Tooltip
+                    anchorSelect="#tip-all-skills"
+                    content={projectDetails.skills
+                      .map((skill) => skill.name)
+                      .join(", ")}
+                    place="top"
+                  />
+                </div>
+              )}
           </div>
         </div>
         {/* Interests */}
@@ -668,18 +677,21 @@ function ProjectDetailsCard({
                     .join(", ")
                 : ""}
             </p>
-            {Array.isArray(projectDetails.interests) && projectDetails.interests.length > 3 && (
-  <div id="tip-all-interests">
-    <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
-      All
-    </button>
-    <Tooltip
-      anchorSelect="#tip-all-interests"
-      content={projectDetails.interests.map(interest => interest.name).join(', ')}
-      place="top"
-    />
-  </div>
-)}
+            {Array.isArray(projectDetails.interests) &&
+              projectDetails.interests.length > 3 && (
+                <div id="tip-all-interests">
+                  <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+                    {t("All")}
+                  </button>
+                  <Tooltip
+                    anchorSelect="#tip-all-interests"
+                    content={projectDetails.interests
+                      .map((interest) => interest.name)
+                      .join(", ")}
+                    place="top"
+                  />
+                </div>
+              )}
           </div>
         </div>
         {/* Components */}
@@ -724,18 +736,21 @@ function ProjectDetailsCard({
                     .join(", ")
                 : ""}
             </p>
-            {Array.isArray(projectDetails.components) && projectDetails.components.length > 3 && (
-  <div id="tip-all-components">
-    <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
-      All
-    </button>
-    <Tooltip
-      anchorSelect="#tip-all-components"
-      content={projectDetails.components.map(component => component.name).join(', ')}
-      place="top"
-    />
-  </div>
-)}
+            {Array.isArray(projectDetails.components) &&
+              projectDetails.components.length > 3 && (
+                <div id="tip-all-components">
+                  <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+                    {t("All")}
+                  </button>
+                  <Tooltip
+                    anchorSelect="#tip-all-components"
+                    content={projectDetails.components
+                      .map((component) => component.name)
+                      .join(", ")}
+                    place="top"
+                  />
+                </div>
+              )}
           </div>
         </div>
         {/* Resources */}
@@ -780,18 +795,21 @@ function ProjectDetailsCard({
                     .join(", ")
                 : ""}
             </p>
-            {Array.isArray(projectDetails.resources) && projectDetails.resources.length > 3 && (
-  <div id="tip-all-resources">
-    <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
-      All
-    </button>
-    <Tooltip
-      anchorSelect="#tip-all-resources"
-      content={projectDetails.resources.map(resource => resource.name).join(', ')}
-      place="top"
-    />
-  </div>
-)}
+            {Array.isArray(projectDetails.resources) &&
+              projectDetails.resources.length > 3 && (
+                <div id="tip-all-resources">
+                  <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+                    {t("All")}
+                  </button>
+                  <Tooltip
+                    anchorSelect="#tip-all-resources"
+                    content={projectDetails.resources
+                      .map((resource) => resource.name)
+                      .join(", ")}
+                    place="top"
+                  />
+                </div>
+              )}
           </div>
         </div>
       </Card>
