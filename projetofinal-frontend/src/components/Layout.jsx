@@ -217,19 +217,26 @@ function Layout({
     </Dialog>
     
       <div className="hidden md:grid grid-cols-[1fr_2fr_1fr] gap-4 p-4 px-8">
-      <div className="flex flex-col items-start">
-          <img
-            src={criticalLogo}
-            alt="Critical Logo"
-            className="w-32 rounded border border-gray-600 h-auto"
-          />
-          {token && username && (
-            <div className="flex items-center space-x-2 mt-4">
-              <MdWavingHand size={20} />
-              <h1 className="text-black font-bold">Hey {username}</h1>
-            </div>
-          )}
-        </div>
+      <div className="p-4 px-8">
+  <div className="flex flex-row items-center justify-start space-x-4"> 
+    <img
+      src={criticalLogo}
+      alt="Critical Logo"
+      className="w-32 rounded border border-gray-600 h-auto"
+    />
+    {token && username && (
+      <div className="p-1 bg-white rounded-full">
+        <Avatar img={profileImage} alt="avatar" rounded />
+      </div>
+    )}
+  </div>
+  {token && username && (
+    <div className="flex mt-2">
+      <MdWavingHand size={20} />
+      <h1 className="text-black font-bold">Hey {username}</h1>
+    </div>
+  )}
+</div>
         {token ? (
           <div className="flex flex-col items-center">
             <Tabs
@@ -664,28 +671,50 @@ function Layout({
                 />
               </div>
               <div className="relative mt-3 cursor-pointer">
-                <MdOutlineMessage
-                  size={35}
-                  onClick={() => navigate("/messages")}
-                />
-                {unreadMessages > 0 && (
-                  <div className="absolute top-0 right-0 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
-                    {unreadMessages}
-                  </div>
-                )}
-              </div>
-              <div className="relative mt-3 cursor-pointer">
-                <IoIosNotificationsOutline
-                  size={35}
-                  onClick={() => navigate("/notifications")}
-                />
-                {unreadNotifications > 0 && (
-                  <div className="absolute top-0 right-0 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
-                    {unreadNotifications}
-                  </div>
-                )}
-              </div>
-              <Avatar img={profileImage} alt="avatar" rounded />
+  <motion.div
+    whileHover={{ scale: 1.1 }}
+    whileTap={{ scale: 0.9 }}
+    className="relative bg-white rounded-full w-14 h-14 flex items-center justify-center" 
+  >
+    <div className="absolute">
+      <MdOutlineMessage
+        size={35}
+        onClick={() => navigate("/messages")}
+      />
+    </div>
+    {unreadMessages > 0 && (
+  <motion.div
+  className="absolute top-0 right-0 bg-red-600 text-black font-bold rounded-full text-sm w-5 h-5 flex items-center justify-center border-2 border-white"    initial={{ scale: 0 }}
+    animate={{ scale: 1 }}
+    transition={{ type: "spring", stiffness: 260, damping: 20 }}
+  >
+    {unreadMessages}
+  </motion.div>
+)}
+  </motion.div>
+</div>
+<div className="relative mt-3 cursor-pointer">
+  <motion.div
+    whileHover={{ scale: 1.1 }}
+    whileTap={{ scale: 0.9 }}
+    className="relative bg-white rounded-full w-14 h-14 flex items-center justify-center"
+  >
+    <IoIosNotificationsOutline
+      size={35}
+      onClick={() => navigate("/notifications")}
+    />
+    {unreadNotifications > 0 && (
+      <motion.div
+        className="absolute top-0 right-0 bg-red-600 text-black font-bold rounded-full text-sm w-5 h-5 flex items-center justify-center border-2 border-white"
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ type: "spring", stiffness: 260, damping: 20 }}
+      >
+        {unreadNotifications}
+      </motion.div>
+    )}
+  </motion.div>
+</div>
               <button
                 className="p-2 flex border mt-1 border-gray-600 hover:bg-cyan-700 items-center justify-center rounded-full bg-white transition-colors duration-200 text-black font-bold"
                 onClick={handleLogout}
