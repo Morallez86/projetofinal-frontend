@@ -296,6 +296,7 @@ function ProjectDetails() {
                   projectUsers={project.userProjectDtos}
                   totalTasks={tasks}
                   setTotalTasks={setTasks}
+                  fetchProjectDetails = {fetchProjectDetails}
                 />
               ))
             ) : (

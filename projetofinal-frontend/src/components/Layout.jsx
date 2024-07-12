@@ -23,6 +23,8 @@ import i18n from "../Language/i18n";
 import { Dialog, Transition } from '@headlessui/react';
 import { MenuIcon } from '@heroicons/react/outline';
 import BurgerMenu from './BurguerMenu'; 
+import { motion } from "framer-motion";
+import pincel from "../Assets/pincel.png";
 
 function Layout({
   activeTab,
@@ -215,19 +217,26 @@ function Layout({
     </Dialog>
     
       <div className="hidden md:grid grid-cols-[1fr_2fr_1fr] gap-4 p-4 px-8">
-      <div className="flex flex-col items-start">
-          <img
-            src={criticalLogo}
-            alt="Critical Logo"
-            className="w-32 rounded border border-gray-600 h-auto"
-          />
-          {token && username && (
-            <div className="flex items-center space-x-2 mt-4">
-              <MdWavingHand size={20} />
-              <h1 className="text-black font-bold">Hey {username}</h1>
-            </div>
-          )}
-        </div>
+      <div className="p-4 px-8">
+  <div className="flex flex-row items-center justify-start space-x-4"> 
+    <img
+      src={criticalLogo}
+      alt="Critical Logo"
+      className="w-32 rounded border border-gray-600 h-auto"
+    />
+    {token && username && (
+      <div className="p-1 bg-white rounded-full">
+        <Avatar img={profileImage} alt="avatar" rounded />
+      </div>
+    )}
+  </div>
+  {token && username && (
+    <div className="flex mt-2">
+      <MdWavingHand size={20} />
+      <h1 className="text-black font-bold">Hey {username}</h1>
+    </div>
+  )}
+</div>
         {token ? (
           <div className="flex flex-col items-center">
             <Tabs
@@ -251,21 +260,89 @@ function Layout({
               }}
             >
               <Tabs.Item
+              active={activeTab === 0}
                 value={0}
-                title="MyProfile"
-                icon={ImProfile}
+                title={
+                  <motion.div
+                  whileHover={{
+                    x: [0, -2, 2, -2, 2, 0], // Move o elemento horizontalmente para criar o efeito de tremor
+                    transition: { duration: 0.4 } // Ajusta a duração da animação para que o tremor seja rápido
+                  }}
+                  whileTap={{ scale: 0.95, rotate: -10, color: "#F00" }}
+                  className={`cursor-pointer p-2 ${activeTab === 0 ? 'text-blue-500 custom-active-style' : 'text-gray-500 custom-inactive-style'}`}
+                  style={{
+                    position: 'relative',
+                    display: 'flex', // Usa flexbox para alinhar ícone e texto
+        alignItems: 'center', // Centraliza verticalmente o ícone e o texto
+        justifyContent: 'center', // Centraliza horizontalmente o ícone e o texto
+                    color: 'black', // Define a cor do texto como preto
+                    fontWeight: 'bold', // Torna o texto em negrito
+                    backgroundImage: `url(${pincel})`, // Define a imagem de pincel como plano de fundo
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: 'cover', // Garante que a imagem de fundo cubra todo o espaço disponível
+                    backgroundPosition: 'center', // Centraliza a imagem de fundo
+                    filter: activeTab === 0 ? 'drop-shadow(2px 4px 6px black)' : 'contrast(0.5)',                    
+                  }}
+                  
+                >
+                  
+                  <ImProfile style={{ marginRight: '8px', fontSize: '19px' }} /> My Profile&nbsp;&nbsp;         </motion.div>
+                }
+            
               ></Tabs.Item>
               <Tabs.Item
                 active={activeTab === 1}
                 value={1}
-                title="Projects/Users"
-                icon={AiOutlineFundProjectionScreen}
+                title={
+                  <motion.div
+                  whileHover={{
+                    x: [0, -2, 2, -2, 2, 0], // Move o elemento horizontalmente para criar o efeito de tremor
+                    transition: { duration: 0.4 } // Ajusta a duração da animação para que o tremor seja rápido
+                  }}
+                  whileTap={{ scale: 0.95, rotate: -10, color: "#F00" }}
+                  className={`cursor-pointer p-2 ${activeTab === 0 ? 'text-blue-500 custom-active-style' : 'text-gray-500 custom-inactive-style'}`}
+                  style={{
+                    position: 'relative',
+                    display: 'flex', // Usa flexbox para alinhar ícone e texto
+        alignItems: 'center', // Centraliza verticalmente o ícone e o texto
+        justifyContent: 'center', // Centraliza horizontalmente o ícone e o texto
+                    color: 'black', // Define a cor do texto como preto
+                    fontWeight: 'bold', // Torna o texto em negrito
+                    backgroundImage: `url(${pincel})`, // Define a imagem de pincel como plano de fundo
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: 'cover', // Garante que a imagem de fundo cubra todo o espaço disponível
+                    backgroundPosition: 'center', // Centraliza a imagem de fundo
+                    filter: activeTab === 1 ? 'drop-shadow(2px 4px 6px black)' : 'contrast(0.5)',                  }}
+                >
+                 <AiOutlineFundProjectionScreen style={{ marginRight: '8px', fontSize: '19px' }} /> Projects/Users&nbsp;&nbsp;         </motion.div>
+                }   
               ></Tabs.Item>
               <Tabs.Item
                 active={activeTab === 2}
                 value={2}
-                title="Components/Resources"
-                icon={GrResources}
+                title={
+                  <motion.div
+                  whileHover={{
+                    x: [0, -2, 2, -2, 2, 0], // Move o elemento horizontalmente para criar o efeito de tremor
+                    transition: { duration: 0.4 } // Ajusta a duração da animação para que o tremor seja rápido
+                  }}
+                  whileTap={{ scale: 0.95, rotate: -10, color: "#F00" }}
+                  className={`cursor-pointer p-2 ${activeTab === 0 ? 'text-blue-500 custom-active-style' : 'text-gray-500 custom-inactive-style'}`}
+                  style={{
+                    position: 'relative',
+                    display: 'flex', // Usa flexbox para alinhar ícone e texto
+        alignItems: 'center', // Centraliza verticalmente o ícone e o texto
+        justifyContent: 'center', // Centraliza horizontalmente o ícone e o texto
+                    color: 'black', // Define a cor do texto como preto
+                    fontWeight: 'bold', // Torna o texto em negrito
+                    backgroundImage: `url(${pincel})`, // Define a imagem de pincel como plano de fundo
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: 'cover', // Garante que a imagem de fundo cubra todo o espaço disponível
+                    backgroundPosition: 'center', // Centraliza a imagem de fundo
+                    filter: activeTab === 2 ? 'drop-shadow(2px 4px 6px black)' : 'contrast(0.5)',                  }}
+                >
+                 <GrResources style={{ marginRight: '8px', fontSize: '19px' }} /> Components/Resources&nbsp;&nbsp;         </motion.div>
+                }   
               ></Tabs.Item>
             </Tabs>
 
@@ -293,25 +370,92 @@ function Layout({
                       }
                     }}
                   >
-                    <Tabs.Item
-                      active={activeSubTabProfile === 0}
-                      value={0}
-                      title={<span className="text-black">My Projects</span>}
-                      icon={PiProjectorScreenChartLight}
-                    ></Tabs.Item>
+                   <Tabs.Item
+  active={activeSubTabProfile === 0}
+  value={0}
+  title={
+    <motion.div
+      whileHover={{
+        x: [0, -2, 2, -2, 2, 0], // Move o elemento horizontalmente para criar o efeito de tremor
+        transition: { duration: 0.4 } // Ajusta a duração da animação para que o tremor seja rápido
+      }}
+      whileTap={{ scale: 0.95, rotate: -10, color: "#F00" }}
+      className={`cursor-pointer p-2 ${activeSubTabProfile === 0 ? 'custom-active-style' : 'custom-inactive-style'}`}
+      style={{
+        position: 'relative',
+        display: 'flex', // Usa flexbox para alinhar ícone e texto
+        alignItems: 'center', // Centraliza verticalmente o ícone e o texto
+        justifyContent: 'center', // Centraliza horizontalmente o ícone e o texto
+        color: activeSubTabProfile === 0 ? 'black' : 'inherit', // Mantém a cor do texto como preto quando ativo
+        fontWeight: 'bold', // Torna o texto em negrito
+        backgroundImage: `url(${pincel})`, // Define a imagem de pincel como plano de fundo
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover', // Garante que a imagem de fundo cubra todo o espaço disponível
+        backgroundPosition: 'center', // Centraliza a imagem de fundo
+        filter: activeSubTabProfile === 0 ? 'drop-shadow(2px 4px 6px black)' : 'contrast(0.5)',      }}
+    >
+      <PiProjectorScreenChartLight style={{ marginRight: '8px', fontSize: '19px' }} /> My Projects&nbsp;&nbsp;
+    </motion.div>
+  }
+  
+/>
                     <Tabs.Item
                       active={activeSubTabProfile === 1}
                       value={1}
                       title={
-                        <span className="text-black">Change Password</span>
+                        <motion.div
+                          whileHover={{
+                            x: [0, -2, 2, -2, 2, 0], // Move o elemento horizontalmente para criar o efeito de tremor
+                            transition: { duration: 0.4 } // Ajusta a duração da animação para que o tremor seja rápido
+                          }}
+                          whileTap={{ scale: 0.95, rotate: -10, color: "#F00" }}
+                          className={`cursor-pointer p-2 ${activeSubTabProfile === 0 ? 'custom-active-style' : 'custom-inactive-style'}`}
+                          style={{
+                            position: 'relative',
+                            display: 'flex', // Usa flexbox para alinhar ícone e texto
+                            alignItems: 'center', // Centraliza verticalmente o ícone e o texto
+                            justifyContent: 'center', // Centraliza horizontalmente o ícone e o texto
+                            color: activeSubTabProfile === 1 ? 'black' : 'inherit', // Mantém a cor do texto como preto quando ativo
+                            fontWeight: 'bold', // Torna o texto em negrito
+                            backgroundImage: `url(${pincel})`, // Define a imagem de pincel como plano de fundo
+                            backgroundRepeat: 'no-repeat',
+                            backgroundSize: 'cover', // Garante que a imagem de fundo cubra todo o espaço disponível
+                            backgroundPosition: 'center', // Centraliza a imagem de fundo
+                            filter: activeSubTabProfile === 1 ? 'drop-shadow(2px 4px 6px black)' : 'contrast(0.5)',      }}
+                        >
+                          <CiSettings style={{ marginRight: '8px', fontSize: '19px' }} /> Change Password&nbsp;&nbsp;
+                        </motion.div>
                       }
-                      icon={CiSettings}
+                     
                     ></Tabs.Item>
                     <Tabs.Item
                       active={activeSubTabProfile === 2}
                       value={2}
-                      title={<span className="text-black">About me</span>}
-                      icon={CgProfile}
+                      title={
+                        <motion.div
+                          whileHover={{
+                            x: [0, -2, 2, -2, 2, 0], // Move o elemento horizontalmente para criar o efeito de tremor
+                            transition: { duration: 0.4 } // Ajusta a duração da animação para que o tremor seja rápido
+                          }}
+                          whileTap={{ scale: 0.95, rotate: -10, color: "#F00" }}
+                          className={`cursor-pointer p-2 ${activeSubTabProfile === 0 ? 'custom-active-style' : 'custom-inactive-style'}`}
+                          style={{
+                            position: 'relative',
+                            display: 'flex', // Usa flexbox para alinhar ícone e texto
+                            alignItems: 'center', // Centraliza verticalmente o ícone e o texto
+                            justifyContent: 'center', // Centraliza horizontalmente o ícone e o texto
+                            color: activeSubTabProfile === 2 ? 'black' : 'inherit', // Mantém a cor do texto como preto quando ativo
+                            fontWeight: 'bold', // Torna o texto em negrito
+                            backgroundImage: `url(${pincel})`, // Define a imagem de pincel como plano de fundo
+                            backgroundRepeat: 'no-repeat',
+                            backgroundSize: 'cover', // Garante que a imagem de fundo cubra todo o espaço disponível
+                            backgroundPosition: 'center', // Centraliza a imagem de fundo
+                            filter: activeSubTabProfile === 2 ? 'drop-shadow(2px 4px 6px black)' : 'contrast(0.5)',      }}
+                        >
+                          <CgProfile style={{ marginRight: '8px', fontSize: '19px' }} /> About Me&nbsp;&nbsp;
+                        </motion.div>
+                      }
+                    
                     ></Tabs.Item>
                   </Tabs>
                 </div>
@@ -341,20 +485,89 @@ function Layout({
                     <Tabs.Item
                       active={activeSubProjects === 0}
                       value={0}
-                      title={<span className="text-black">Create New</span>}
-                      icon={IoCreateOutline}
+                      title={
+                        <motion.div
+                          whileHover={{
+                            x: [0, -2, 2, -2, 2, 0], // Move o elemento horizontalmente para criar o efeito de tremor
+                            transition: { duration: 0.4 } // Ajusta a duração da animação para que o tremor seja rápido
+                          }}
+                          whileTap={{ scale: 0.95, rotate: -10, color: "#F00" }}
+                          className={`cursor-pointer p-2 ${activeSubTabProfile === 0 ? 'custom-active-style' : 'custom-inactive-style'}`}
+                          style={{
+                            position: 'relative',
+                            display: 'flex', // Usa flexbox para alinhar ícone e texto
+                            alignItems: 'center', // Centraliza verticalmente o ícone e o texto
+                            justifyContent: 'center', // Centraliza horizontalmente o ícone e o texto
+                            color: activeSubProjects === 0 ? 'black' : 'inherit', // Mantém a cor do texto como preto quando ativo
+                            fontWeight: 'bold', // Torna o texto em negrito
+                            backgroundImage: `url(${pincel})`, // Define a imagem de pincel como plano de fundo
+                            backgroundRepeat: 'no-repeat',
+                            backgroundSize: 'cover', // Garante que a imagem de fundo cubra todo o espaço disponível
+                            backgroundPosition: 'center', // Centraliza a imagem de fundo
+                            filter: activeSubProjects === 0 ? 'drop-shadow(2px 4px 6px black)' : 'contrast(0.5)',      }}
+                        >
+                          <IoCreateOutline style={{ marginRight: '8px', fontSize: '19px' }} />  Create New&nbsp;&nbsp;
+                        </motion.div>
+                      }
+                     
                     ></Tabs.Item>
                     <Tabs.Item
                       active={activeSubProjects === 1}
                       value={1}
-                      title={<span className="text-black">Projects List</span>}
-                      icon={CiBoxList}
+                      title={
+                        <motion.div
+                          whileHover={{
+                            x: [0, -2, 2, -2, 2, 0], // Move o elemento horizontalmente para criar o efeito de tremor
+                            transition: { duration: 0.4 } // Ajusta a duração da animação para que o tremor seja rápido
+                          }}
+                          whileTap={{ scale: 0.95, rotate: -10, color: "#F00" }}
+                          className={`cursor-pointer p-2 ${activeSubTabProfile === 0 ? 'custom-active-style' : 'custom-inactive-style'}`}
+                          style={{
+                            position: 'relative',
+                            display: 'flex', // Usa flexbox para alinhar ícone e texto
+                            alignItems: 'center', // Centraliza verticalmente o ícone e o texto
+                            justifyContent: 'center', // Centraliza horizontalmente o ícone e o texto
+                            color: activeSubProjects === 1 ? 'black' : 'inherit', // Mantém a cor do texto como preto quando ativo
+                            fontWeight: 'bold', // Torna o texto em negrito
+                            backgroundImage: `url(${pincel})`, // Define a imagem de pincel como plano de fundo
+                            backgroundRepeat: 'no-repeat',
+                            backgroundSize: 'cover', // Garante que a imagem de fundo cubra todo o espaço disponível
+                            backgroundPosition: 'center', // Centraliza a imagem de fundo
+                            filter: activeSubProjects === 1 ? 'drop-shadow(2px 4px 6px black)' : 'contrast(0.5)',      }}
+                        >
+                          <CiBoxList style={{ marginRight: '8px', fontSize: '19px' }} />  Projects List&nbsp;&nbsp;
+                        </motion.div>
+                      }
+                      
                     ></Tabs.Item>
                     <Tabs.Item
                       active={activeSubProjects === 2}
                       value={2}
-                      title={<span className="text-black">Users</span>}
-                      icon={PiUsersThreeBold}
+                      title={
+                        <motion.div
+                          whileHover={{
+                            x: [0, -2, 2, -2, 2, 0], // Move o elemento horizontalmente para criar o efeito de tremor
+                            transition: { duration: 0.4 } // Ajusta a duração da animação para que o tremor seja rápido
+                          }}
+                          whileTap={{ scale: 0.95, rotate: -10, color: "#F00" }}
+                          className={`cursor-pointer p-2 ${activeSubTabProfile === 0 ? 'custom-active-style' : 'custom-inactive-style'}`}
+                          style={{
+                            position: 'relative',
+                            display: 'flex', // Usa flexbox para alinhar ícone e texto
+                            alignItems: 'center', // Centraliza verticalmente o ícone e o texto
+                            justifyContent: 'center', // Centraliza horizontalmente o ícone e o texto
+                            color: activeSubProjects === 2 ? 'black' : 'inherit', // Mantém a cor do texto como preto quando ativo
+                            fontWeight: 'bold', // Torna o texto em negrito
+                            backgroundImage: `url(${pincel})`, // Define a imagem de pincel como plano de fundo
+                            backgroundRepeat: 'no-repeat',
+                            backgroundSize: 'cover', // Garante que a imagem de fundo cubra todo o espaço disponível
+                            backgroundPosition: 'center', // Centraliza a imagem de fundo
+                            filter: activeSubProjects === 2 ? 'drop-shadow(2px 4px 6px black)' : 'contrast(0.5)',      }}
+                        >
+                          <PiUsersThreeBold style={{ marginRight: '8px', fontSize: '19px' }} />  Users&nbsp;&nbsp;
+                        </motion.div>
+                      }
+                     
                     ></Tabs.Item>
                   </Tabs>
                 </div>
@@ -381,14 +594,60 @@ function Layout({
                     <Tabs.Item
                       active={activeSubComponents === 0}
                       value={0}
-                      title={<span className="text-black">Components</span>}
-                      icon={VscTools}
+                      title={
+                        <motion.div
+                          whileHover={{
+                            x: [0, -2, 2, -2, 2, 0], // Move o elemento horizontalmente para criar o efeito de tremor
+                            transition: { duration: 0.4 } // Ajusta a duração da animação para que o tremor seja rápido
+                          }}
+                          whileTap={{ scale: 0.95, rotate: -10, color: "#F00" }}
+                          className={`cursor-pointer p-2 ${activeSubTabProfile === 0 ? 'custom-active-style' : 'custom-inactive-style'}`}
+                          style={{
+                            position: 'relative',
+                            display: 'flex', // Usa flexbox para alinhar ícone e texto
+                            alignItems: 'center', // Centraliza verticalmente o ícone e o texto
+                            justifyContent: 'center', // Centraliza horizontalmente o ícone e o texto
+                            color: activeSubComponents === 0 ? 'black' : 'inherit', // Mantém a cor do texto como preto quando ativo
+                            fontWeight: 'bold', // Torna o texto em negrito
+                            backgroundImage: `url(${pincel})`, // Define a imagem de pincel como plano de fundo
+                            backgroundRepeat: 'no-repeat',
+                            backgroundSize: 'cover', // Garante que a imagem de fundo cubra todo o espaço disponível
+                            backgroundPosition: 'center', // Centraliza a imagem de fundo
+                            filter: activeSubComponents === 0 ? 'drop-shadow(2px 4px 6px black)' : 'contrast(0.5)',      }}
+                        >
+                          <VscTools style={{ marginRight: '8px', fontSize: '19px' }} />  Components&nbsp;&nbsp;
+                        </motion.div>
+                      }
+                      
                     ></Tabs.Item>
                     <Tabs.Item
                       active={activeSubComponents === 1}
                       value={1}
-                      title={<span className="text-black">Resources</span>}
-                      icon={GrResources}
+                      title={
+                        <motion.div
+                          whileHover={{
+                            x: [0, -2, 2, -2, 2, 0], // Move o elemento horizontalmente para criar o efeito de tremor
+                            transition: { duration: 0.4 } // Ajusta a duração da animação para que o tremor seja rápido
+                          }}
+                          whileTap={{ scale: 0.95, rotate: -10, color: "#F00" }}
+                          className={`cursor-pointer p-2 ${activeSubTabProfile === 0 ? 'custom-active-style' : 'custom-inactive-style'}`}
+                          style={{
+                            position: 'relative',
+                            display: 'flex', // Usa flexbox para alinhar ícone e texto
+                            alignItems: 'center', // Centraliza verticalmente o ícone e o texto
+                            justifyContent: 'center', // Centraliza horizontalmente o ícone e o texto
+                            color: activeSubComponents === 1 ? 'black' : 'inherit', // Mantém a cor do texto como preto quando ativo
+                            fontWeight: 'bold', // Torna o texto em negrito
+                            backgroundImage: `url(${pincel})`, // Define a imagem de pincel como plano de fundo
+                            backgroundRepeat: 'no-repeat',
+                            backgroundSize: 'cover', // Garante que a imagem de fundo cubra todo o espaço disponível
+                            backgroundPosition: 'center', // Centraliza a imagem de fundo
+                            filter: activeSubComponents === 1 ? 'drop-shadow(2px 4px 6px black)' : 'contrast(0.5)',      }}
+                        >
+                          <GrResources style={{ marginRight: '8px', fontSize: '19px' }} />  Resources&nbsp;&nbsp;
+                        </motion.div>
+                      }
+                     
                     ></Tabs.Item>
                   </Tabs>
                 </div>
@@ -412,28 +671,50 @@ function Layout({
                 />
               </div>
               <div className="relative mt-3 cursor-pointer">
-                <MdOutlineMessage
-                  size={35}
-                  onClick={() => navigate("/messages")}
-                />
-                {unreadMessages > 0 && (
-                  <div className="absolute top-0 right-0 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
-                    {unreadMessages}
-                  </div>
-                )}
-              </div>
-              <div className="relative mt-3 cursor-pointer">
-                <IoIosNotificationsOutline
-                  size={35}
-                  onClick={() => navigate("/notifications")}
-                />
-                {unreadNotifications > 0 && (
-                  <div className="absolute top-0 right-0 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
-                    {unreadNotifications}
-                  </div>
-                )}
-              </div>
-              <Avatar img={profileImage} alt="avatar" rounded />
+  <motion.div
+    whileHover={{ scale: 1.1 }}
+    whileTap={{ scale: 0.9 }}
+    className="relative bg-white rounded-full w-14 h-14 flex items-center justify-center" 
+  >
+    <div className="absolute">
+      <MdOutlineMessage
+        size={35}
+        onClick={() => navigate("/messages")}
+      />
+    </div>
+    {unreadMessages > 0 && (
+  <motion.div
+  className="absolute top-0 right-0 bg-red-600 text-black font-bold rounded-full text-sm w-5 h-5 flex items-center justify-center border-2 border-white"    initial={{ scale: 0 }}
+    animate={{ scale: 1 }}
+    transition={{ type: "spring", stiffness: 260, damping: 20 }}
+  >
+    {unreadMessages}
+  </motion.div>
+)}
+  </motion.div>
+</div>
+<div className="relative mt-3 cursor-pointer">
+  <motion.div
+    whileHover={{ scale: 1.1 }}
+    whileTap={{ scale: 0.9 }}
+    className="relative bg-white rounded-full w-14 h-14 flex items-center justify-center"
+  >
+    <IoIosNotificationsOutline
+      size={35}
+      onClick={() => navigate("/notifications")}
+    />
+    {unreadNotifications > 0 && (
+      <motion.div
+        className="absolute top-0 right-0 bg-red-600 text-black font-bold rounded-full text-sm w-5 h-5 flex items-center justify-center border-2 border-white"
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ type: "spring", stiffness: 260, damping: 20 }}
+      >
+        {unreadNotifications}
+      </motion.div>
+    )}
+  </motion.div>
+</div>
               <button
                 className="p-2 flex border mt-1 border-gray-600 hover:bg-cyan-700 items-center justify-center rounded-full bg-white transition-colors duration-200 text-black font-bold"
                 onClick={handleLogout}

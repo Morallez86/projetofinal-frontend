@@ -61,4 +61,10 @@ body {
   border: none;
 }
 
+  .bg-gray-100 {
+    --tw-bg-opacity: 1;
+    background-color: rgba(255, 255, 255, 0) !important;
+}
+
+
 
