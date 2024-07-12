@@ -388,6 +388,7 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks, fetchProjectD
                 onClick={handleSubmitClick}
                 onMouseEnter={handleMouseEnterInteractiveElement}
                 onMouseLeave={handleMouseLeaveInteractiveElement}
+                disabled={!isModified}
               >
                 {t("Save")}
               </Button>
