@@ -23,6 +23,7 @@ import i18n from "../Language/i18n";
 import { Dialog, Transition } from '@headlessui/react';
 import { MenuIcon } from '@heroicons/react/outline';
 import BurgerMenu from './BurguerMenu'; 
+import { motion } from "framer-motion";
 
 function Layout({
   activeTab,
@@ -251,21 +252,90 @@ function Layout({
               }}
             >
               <Tabs.Item
+              active={activeTab === 0}
                 value={0}
-                title="MyProfile"
-                icon={ImProfile}
+                title={
+                  <motion.div
+                  whileHover={{
+                    x: [0, -2, 2, -2, 2, 0], // Move o elemento horizontalmente para criar o efeito de tremor
+                    transition: { duration: 0.4 } // Ajusta a duração da animação para que o tremor seja rápido
+                  }}
+                  whileTap={{ scale: 0.95, rotate: -10, color: "#F00" }}
+                  className={`cursor-pointer p-2 ${activeTab === 0 ? 'text-blue-500 custom-active-style' : 'text-gray-500 custom-inactive-style'}`}
+                  style={{
+                    position: 'relative',
+                    display: 'flex', // Usa flexbox para alinhar ícone e texto
+        alignItems: 'center', // Centraliza verticalmente o ícone e o texto
+        justifyContent: 'center', // Centraliza horizontalmente o ícone e o texto
+                    color: 'black', // Define a cor do texto como preto
+                    fontWeight: 'bold', // Torna o texto em negrito
+                    backgroundImage: 'url("https://www.pngall.com/wp-content/uploads/5/Brush-Stroke.png")', // Define a imagem de pincelada como plano de fundo
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: 'cover', // Garante que a imagem de fundo cubra todo o espaço disponível
+                    backgroundPosition: 'center', // Centraliza a imagem de fundo
+                    filter: activeTab === 0 ? 'drop-shadow(0 0 0.75rem black)' : 'none',
+                    
+                  }}
+                  
+                >
+                  
+                  <ImProfile style={{ marginRight: '8px', fontSize: '19px' }} /> My Projects&nbsp;&nbsp;         </motion.div>
+                }
+            
               ></Tabs.Item>
               <Tabs.Item
                 active={activeTab === 1}
                 value={1}
-                title="Projects/Users"
-                icon={AiOutlineFundProjectionScreen}
+                title={
+                  <motion.div
+                  whileHover={{
+                    x: [0, -2, 2, -2, 2, 0], // Move o elemento horizontalmente para criar o efeito de tremor
+                    transition: { duration: 0.4 } // Ajusta a duração da animação para que o tremor seja rápido
+                  }}
+                  whileTap={{ scale: 0.95, rotate: -10, color: "#F00" }}
+                  className={`cursor-pointer p-2 ${activeTab === 0 ? 'text-blue-500 custom-active-style' : 'text-gray-500 custom-inactive-style'}`}
+                  style={{
+                    position: 'relative',
+                    display: 'flex', // Usa flexbox para alinhar ícone e texto
+        alignItems: 'center', // Centraliza verticalmente o ícone e o texto
+        justifyContent: 'center', // Centraliza horizontalmente o ícone e o texto
+                    color: 'black', // Define a cor do texto como preto
+                    fontWeight: 'bold', // Torna o texto em negrito
+                    backgroundImage: 'url("https://www.pngall.com/wp-content/uploads/5/Brush-Stroke.png")', // Define a imagem de pincelada como plano de fundo
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: 'cover', // Garante que a imagem de fundo cubra todo o espaço disponível
+                    backgroundPosition: 'center', // Centraliza a imagem de fundo
+                  }}
+                >
+                 <AiOutlineFundProjectionScreen style={{ marginRight: '8px', fontSize: '19px' }} /> Projects/Users&nbsp;&nbsp;         </motion.div>
+                }   
               ></Tabs.Item>
               <Tabs.Item
                 active={activeTab === 2}
                 value={2}
-                title="Components/Resources"
-                icon={GrResources}
+                title={
+                  <motion.div
+                  whileHover={{
+                    x: [0, -2, 2, -2, 2, 0], // Move o elemento horizontalmente para criar o efeito de tremor
+                    transition: { duration: 0.4 } // Ajusta a duração da animação para que o tremor seja rápido
+                  }}
+                  whileTap={{ scale: 0.95, rotate: -10, color: "#F00" }}
+                  className={`cursor-pointer p-2 ${activeTab === 0 ? 'text-blue-500 custom-active-style' : 'text-gray-500 custom-inactive-style'}`}
+                  style={{
+                    position: 'relative',
+                    display: 'flex', // Usa flexbox para alinhar ícone e texto
+        alignItems: 'center', // Centraliza verticalmente o ícone e o texto
+        justifyContent: 'center', // Centraliza horizontalmente o ícone e o texto
+                    color: 'black', // Define a cor do texto como preto
+                    fontWeight: 'bold', // Torna o texto em negrito
+                    backgroundImage: 'url("https://www.pngall.com/wp-content/uploads/5/Brush-Stroke.png")', // Define a imagem de pincelada como plano de fundo
+                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: 'cover', // Garante que a imagem de fundo cubra todo o espaço disponível
+                    backgroundPosition: 'center', // Centraliza a imagem de fundo
+                  }}
+                >
+                 <GrResources style={{ marginRight: '8px', fontSize: '19px' }} /> Components/Resources&nbsp;&nbsp;         </motion.div>
+                }   
               ></Tabs.Item>
             </Tabs>
 
