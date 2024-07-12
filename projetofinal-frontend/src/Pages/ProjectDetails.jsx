@@ -19,7 +19,6 @@ import RemoveComponents from "../Components/RemoveComponents";
 import AddResources from "../Components/AddResources";
 import RemoveResources from "../Components/RemoveResources";
 import { useNavigate } from "react-router-dom";
-import { Button } from "flowbite-react";
 import { useTranslation } from "react-i18next";
 
 
@@ -250,13 +249,13 @@ function ProjectDetails() {
 
     setUnreadMessages(count); // set das mensagens não lidas
   };
-
+    
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>{t('Loading')}</div>;
   }
 
   if (!project) {
-    return <div>No project found</div>;
+    return <div>{t('NoProjectsFound')}</div>;
   }
 
   const handleSessionTimeout = () => { // função para timeout da sessão
