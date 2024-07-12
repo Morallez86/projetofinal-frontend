@@ -24,8 +24,6 @@ const LayoutWrapper = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         };
-
-       
         const messagesResponse = await fetch( //obtém as mensagens não lidas
           `${apiUrl}/messages/unread/count`,
           { headers }

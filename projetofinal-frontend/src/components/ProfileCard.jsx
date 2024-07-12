@@ -230,18 +230,21 @@ function ProfileCard({
 
   return (
     <Card className="bg-gray-200 transition-colors px-4 duration-200 w-full sm:w-3/4 md:w-1/2 h-100vh border-gray-600 bg-gradient-to-r from-gray-400 via-gray-50 to-white rounded-lg">
-  <h1 className="text-2xl sm:text-3xl font-bold text-center mb-2">{t("MyProfile")}</h1>
-  <div className="flex flex-col pb-10 ">
-    <div className="relative flex items-center justify-center">
+      <h1 className="text-2xl sm:text-3xl font-bold text-center mb-2">
+        {t("MyProfile")}
+      </h1>
+      <div className="flex flex-col pb-10 ">
+        <div className="relative flex items-center justify-center">
           <MdOutlineEdit
-        className="h-5 w-5 sm:h-6 sm:w-6 text-black cursor-pointer absolute top-3 right-6 transform translate-x-1/2 -translate-y-1/2"
-        onClick={handleEditClick}
+            className="h-5 w-5 sm:h-6 sm:w-6 text-black cursor-pointer absolute top-3 right-6 transform translate-x-1/2 -translate-y-1/2"
+            onClick={handleEditClick}
           />
           <Avatar
             img={profileImage}
             alt="avatar"
             size="xl"
-            className="border border-black rounded-full  mb-2"
+            className="border border-black rounded-full mb-2"
+            style={{ borderRadius: "50%", overflow: "hidden" }}
           />
           {editMode && (
             <FileInput
@@ -254,7 +257,7 @@ function ProfileCard({
           )}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="mt-4">
+          <div className="mt-4">
             <Label
               htmlFor="name"
               value={t("Name")}
@@ -424,17 +427,17 @@ function ProfileCard({
                 : ""}
             </p>
             {Array.isArray(userInfo.skills) && userInfo.skills.length > 7 && (
-  <div id="tip-all-skills">
-    <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
-      All 
-    </button>
-    <Tooltip
-      anchorSelect="#tip-all-skills"
-      content={userInfo.skills.join(', ')} 
-      place="top"
-    />
-  </div>
-)}
+              <div id="tip-all-skills">
+                <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+                  All
+                </button>
+                <Tooltip
+                  anchorSelect="#tip-all-skills"
+                  content={userInfo.skills.join(", ")}
+                  place="top"
+                />
+              </div>
+            )}
           </div>
         </div>
         <div className="mt-4">
@@ -470,24 +473,25 @@ function ProfileCard({
             />
           </div>
           <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-  <p className="truncate">
-    {Array.isArray(userInfo.interests)
-      ? userInfo.interests.slice(-7).join(", ")
-      : ""}
-  </p>
-  {Array.isArray(userInfo.interests) && userInfo.interests.length > 7 && (
-    <div id="tip-all-interests">
-      <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
-        All
-      </button>
-      <Tooltip
-        anchorSelect="#tip-all-interests"
-        content={userInfo.interests.join(', ')} // Junta todos os interesses com vírgula
-        place="top"
-      />
-    </div>
-  )}
-</div>
+            <p className="truncate">
+              {Array.isArray(userInfo.interests)
+                ? userInfo.interests.slice(-7).join(", ")
+                : ""}
+            </p>
+            {Array.isArray(userInfo.interests) &&
+              userInfo.interests.length > 7 && (
+                <div id="tip-all-interests">
+                  <button className="ml-2 w-12 h-6 flex items-center justify-center hover:text-2xl hover:font-bold">
+                    All
+                  </button>
+                  <Tooltip
+                    anchorSelect="#tip-all-interests"
+                    content={userInfo.interests.join(", ")} // Junta todos os interesses com vírgula
+                    place="top"
+                  />
+                </div>
+              )}
+          </div>
         </div>
         {editMode && (
           <div className="flex justify-end mt-4">
