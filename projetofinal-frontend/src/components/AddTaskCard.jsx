@@ -249,13 +249,7 @@ function AddTaskCard({ popUpShow, setPopUpShow, setTasks, allTask }) {
       stop = 1;
     }
 
-    if (
-      new Date(formData.plannedStartingDate) > new Date(maxEndDate) ||
-      new Date(formData.plannedEndingDate) > new Date(maxEndDate)
-    ) {
-      setWarningData(true);
-      return;
-    }
+
 
     if (stop != 0) {
       //para ele percorrer os 2 alertas

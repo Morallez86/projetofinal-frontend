@@ -30,7 +30,7 @@ function CheckoutForm() { // Formulário de checkout
                             transition: { duration: 0.4 }, // Ajusta a duração da animação para que o tremor seja rápido
                           }}
                           whileTap={{ scale: 0.95, rotate: -10, color: "#F00" }}
-                          onClick={() =>  {setIsTabLogActive(true); setIsTabRegActive(true);} }// Atualiza o estado ao clicar
+                          onClick={() =>  {setIsTabLogActive(true); setIsTabRegActive(false);} }// Atualiza o estado ao clicar
 
                           style={{
                             position: "relative",
