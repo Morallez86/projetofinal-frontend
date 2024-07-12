@@ -70,7 +70,7 @@ function ProjectDetailsCard({
       : []),
     ...(projectDetails.status === 200
       ? [
-          { value: 100, label: t("Planning")},
+          { value: 100, label: t("Planning") },
           { value: 200, label: t("Ready") },
           { value: 500, label: t("Cancelled") },
         ]
@@ -108,7 +108,7 @@ function ProjectDetailsCard({
         ...prevDetails,
         status: parseInt(newValue, 10),
       }));
-      //Ajuste de datas de modo a que a data de início seja sempre inferior à final 
+      //Ajuste de datas de modo a que a data de início seja sempre inferior à final
     } else if (name === "startingDate") {
       if (newValue > formatDateForInput(projectDetails.plannedEndDate)) {
         const date2 = new Date(
@@ -140,7 +140,6 @@ function ProjectDetailsCard({
       }));
     }
   };
-
 
   const formatDateForBackend = (dateArray) => {
     //formatar a data para o backend
@@ -582,20 +581,24 @@ function ProjectDetailsCard({
               value={t("Skills")}
               className="font-semibold text-base"
             />
-            <div
-              className="inline-flex items-center cursor-pointer"
-              id="icon-element2"
-              onClick={openPopUpSkills}
-            >
-              <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
-            </div>
-            <div
-              className="inline-flex items-center cursor-pointer"
-              id="icon-element-remove2"
-              onClick={openPopUpSkillsRemove}
-            >
-              <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
-            </div>
+            {currentUserIsAdmin && (
+              <div
+                className="inline-flex items-center cursor-pointer"
+                id="icon-element2"
+                onClick={openPopUpSkills}
+              >
+                <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
+              </div>
+            )}
+            {currentUserIsAdmin && (
+              <div
+                className="inline-flex items-center cursor-pointer"
+                id="icon-element-remove2"
+                onClick={openPopUpSkillsRemove}
+              >
+                <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
+              </div>
+            )}
             <Tooltip
               anchorSelect="#icon-element2"
               content={t("AddNewSkill")}
@@ -642,6 +645,7 @@ function ProjectDetailsCard({
                 value={t("Interests")}
                 className="font-semibold text-base"
               />
+              {currentUserIsAdmin && (
               <div
                 className="inline-flex items-center cursor-pointer"
                 id="icon-element4"
@@ -649,6 +653,8 @@ function ProjectDetailsCard({
               >
                 <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
               </div>
+              )}
+              {currentUserIsAdmin && (
               <div
                 className="inline-flex items-center cursor-pointer"
                 id="icon-element-remove4"
@@ -656,6 +662,7 @@ function ProjectDetailsCard({
               >
                 <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
               </div>
+              )}
               <Tooltip
                 anchorSelect="#icon-element4"
                 content={t("AddNewInterest")}
@@ -702,6 +709,7 @@ function ProjectDetailsCard({
               value={t("Components")}
               className="font-semibold text-base"
             />
+            {currentUserIsAdmin && (
             <div
               className="inline-flex items-center cursor-pointer"
               id="icon-element5"
@@ -709,6 +717,8 @@ function ProjectDetailsCard({
             >
               <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
             </div>
+            )}
+            {currentUserIsAdmin && (
             <div
               className="inline-flex items-center cursor-pointer"
               id="icon-element-remove5"
@@ -716,6 +726,7 @@ function ProjectDetailsCard({
             >
               <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
             </div>
+            )}
             <Tooltip
               anchorSelect="#icon-element5"
               content={t("AddNewComponent")}
@@ -761,6 +772,7 @@ function ProjectDetailsCard({
               value={t("Resources")}
               className="font-semibold text-base"
             />
+            {currentUserIsAdmin && (
             <div
               className="inline-flex items-center cursor-pointer"
               id="icon-element6"
@@ -768,6 +780,8 @@ function ProjectDetailsCard({
             >
               <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
             </div>
+            )}
+            {currentUserIsAdmin && (
             <div
               className="inline-flex items-center cursor-pointer"
               id="icon-element-remove6"
@@ -775,6 +789,7 @@ function ProjectDetailsCard({
             >
               <MdOutlineRemoveCircleOutline className="h-4.5 w-4.5 text-black font-bold ml-2" />
             </div>
+            )}
             <Tooltip
               anchorSelect="#icon-element6"
               content={t("AddNewResource")}

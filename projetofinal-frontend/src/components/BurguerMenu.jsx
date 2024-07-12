@@ -7,7 +7,6 @@ import { AiOutlineFundProjectionScreen } from 'react-icons/ai';
 import { CgProfile } from 'react-icons/cg';
 import { IoCreateOutline } from 'react-icons/io5';
 import { CiBoxList } from 'react-icons/ci';
-import { IoIosPeople } from 'react-icons/io';
 import { CiSettings } from 'react-icons/ci';
 
 // Estrutura de dados para tabs e subtabs

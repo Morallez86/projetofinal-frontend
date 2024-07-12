@@ -135,6 +135,7 @@ function AllProjectsCreateNew() {
       <AddSkills
         openPopUpSkills={statePopUpSkills}
         closePopUpSkills={closeAddSkillsModal}
+        projectInfo={projectInfo}
       />
       <AddInterests
         openPopUpInterests={statePopUpInterests}

@@ -20,9 +20,9 @@ import { jwtDecode } from "jwt-decode";
 import { ToggleSwitch } from "flowbite-react";
 import { useState } from "react";
 import i18n from "../Language/i18n";
-import { Dialog, Transition } from '@headlessui/react';
-import { MenuIcon } from '@heroicons/react/outline';
-import BurgerMenu from './BurguerMenu'; 
+import { Dialog, Transition } from "@headlessui/react";
+import { MenuIcon } from "@heroicons/react/outline";
+import BurgerMenu from "./BurguerMenu";
 import { useTranslation } from "react-i18next";
 import basePhoto from "../Assets/defaultAvatar.jpg";
 import { motion } from "framer-motion";
@@ -244,7 +244,7 @@ function Layout({
               className="w-32 rounded border border-gray-600 h-auto"
             />
             {token && username && (
-              <div className="p-1 bg-white rounded-full">
+              <div className="hidden xl:inline-flex p-1 bg-white rounded-full">
                 <Avatar img={profileImage} alt="avatar" rounded />
               </div>
             )}
