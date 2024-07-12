@@ -285,5 +285,9 @@
   "Confirmation": "Confirmação",
   "Confirm": "Aceitar",
    "Loading": "A carregar",
-  "NoProjectsFound": "Nenhum Projeto Encontrado"
+  "NoProjectsFound": "Nenhum Projeto Encontrado",
+   "Login": "Entrar",
+  "Register": "Registar",
+  "ProjectChat": "Chat do Projeto",
+  "TypeYourMessageHere": "Escreva aqui"
 }

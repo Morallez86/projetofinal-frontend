@@ -287,5 +287,9 @@
   "Confirmation": "Confirmation",
   "Confirm": "Confirm",
   "Loading": "Loading",
-  "NoProjectsFound": "No Projects Found"
+  "NoProjectsFound": "No Projects Found",
+  "Login": "Login",
+  "Register": "Register",
+  "ProjectChat": "Project Chat",
+  "TypeYourMessageHere": "Type message here"
 }
