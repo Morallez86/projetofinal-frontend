@@ -7,17 +7,21 @@ import useUserStore from "../Stores/UserStore";
 import useApiStore from "../Stores/ApiStore";
 import { HiInformationCircle } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 function CreateLogModal({ onClose, tasks, projectId, addNewLog }) {
-  const options = [ // Opções para o select
+  const options = [
+    // Opções para o select
     { value: null, label: "None" },
     ...tasks.map((task) => ({ value: task.id, label: task.title })),
   ];
+  const { t } = useTranslation(); // Função de tradução
   const token = useUserStore((state) => state.token); // obter o token do utilizador
   const apiUrl = useApiStore((state) => state.apiUrl); // obter o URL da API
   const [warning, setWarning] = useState(0); // Aviso
   const navigate = useNavigate();
-  const handleSessionTimeout = () => { // Função para lidar com o timeout da sessão
+  const handleSessionTimeout = () => {
+    // Função para lidar com o timeout da sessão
     navigate("/", { state: { showSessionTimeoutModal: true } }); // Redirecionar para a página inicial
   };
 
@@ -32,7 +36,8 @@ function CreateLogModal({ onClose, tasks, projectId, addNewLog }) {
     }
   }
 
-  const [formData, setFormData] = useState({ // Dados do formulário
+  const [formData, setFormData] = useState({
+    // Dados do formulário
     newDescription: "",
     type: "",
     timestamp: "",
@@ -41,13 +46,16 @@ function CreateLogModal({ onClose, tasks, projectId, addNewLog }) {
     taskId: "",
   });
 
-  const handleChange = (event) => { // Função para lidar com a mudança de valor
+  const handleChange = (event) => {
+    // Função para lidar com a mudança de valor
     const { name, value } = event.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const addLog = async () => { // Função para adicionar um log
-    if (formData.newDescription === "") { // Verificar se a descrição está vazia
+  const addLog = async () => {
+    // Função para adicionar um log
+    if (formData.newDescription === "") {
+      // Verificar se a descrição está vazia
       setWarning(1);
       return;
     }
@@ -60,7 +68,8 @@ function CreateLogModal({ onClose, tasks, projectId, addNewLog }) {
         },
         body: JSON.stringify(formData),
       });
-      if (response.status === 401) { // Verificar se o utilizador não está autorizado
+      if (response.status === 401) {
+        // Verificar se o utilizador não está autorizado
         const data = await response.json();
         const errorMessage = data.message || "Unauthorized";
 
@@ -71,12 +80,13 @@ function CreateLogModal({ onClose, tasks, projectId, addNewLog }) {
           console.error("Error updating seen status:", errorMessage);
         }
       }
-      if (!response.ok) { // Verificar se a resposta não é bem sucedida
+      if (!response.ok) {
+        // Verificar se a resposta não é bem sucedida
         throw new Error("Failed to create log");
       }
 
       const data = await response.json();
-      
+
       addNewLog(data); // Adicionar o novo log
       setWarning(0); // Reset warning
       onClose(); // Fechar o modal
@@ -92,7 +102,7 @@ function CreateLogModal({ onClose, tasks, projectId, addNewLog }) {
 
   return (
     <Modal show={true} onClose={onClose}>
-      <Modal.Header>Create Log</Modal.Header>
+      <Modal.Header>{t("Create Log")}</Modal.Header>
       <Modal.Body>
         <div className="grid grid-cols-2 gap-4 items-start justify-center h-[16rem] overflow-auto">
           <div className="mt-4">
@@ -123,7 +133,7 @@ function CreateLogModal({ onClose, tasks, projectId, addNewLog }) {
         {warning === 1 && (
           <Alert color="failure" icon={HiInformationCircle}>
             <span className="font-medium">
-              At least the description about log is required
+              {t("Description is necessary for the log")}
             </span>
           </Alert>
         )}
@@ -136,10 +146,10 @@ function CreateLogModal({ onClose, tasks, projectId, addNewLog }) {
             onClose();
           }}
         >
-          Cancel
+          {t("Cancel")}
         </Button>
         <Button color="gray" onClick={handleSubmit}>
-          Create
+          {t("Create")}
         </Button>
       </Modal.Footer>
     </Modal>

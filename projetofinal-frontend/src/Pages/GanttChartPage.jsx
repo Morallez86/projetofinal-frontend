@@ -289,6 +289,7 @@ tasks = allTasks.map((task) => {
         popUpShow={popUpShow}
         setPopUpShow={setPopUpShow}
         setTasks={setAllTasks}
+        allTask={allTasks}
       />
       <OrientationModal show={showModal} />
     </div>
