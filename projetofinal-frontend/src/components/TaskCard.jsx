@@ -3,7 +3,7 @@ import React from "react";
 import { Card, TextInput, Textarea, Select, Button } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   FcLowPriority,
   FcMediumPriority,
@@ -13,7 +13,7 @@ import { MdOutlineEdit } from "react-icons/md";
 import useApiStore from "../Stores/ApiStore";
 import useUserStore from "../Stores/UserStore";
 
-const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
+const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks, fetchProjectDetails }) => {
   const [isExpanded, setIsExpanded] = useState(false); //estado para expandir
   const [editMode, setEditMode] = useState(false); //estado para editar
   const apiUrl = useApiStore((state) => state.apiUrl); //api url
@@ -22,8 +22,10 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
   const handleSessionTimeout = () => { //função para timeout
     navigate("/", { state: { showSessionTimeoutModal: true } }); //navegar para a página inicial
   };
+  const [isModified, setIsModified] = useState(false);
+
   
-  console.log(task);
+  
     
   
   const checkDependenciesStatus = (taskDependencies) => {
@@ -34,7 +36,7 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
   };
 
 
-  const [taskData, setTaskData] = useState({ //dados da tarefa
+  const [originalTaskData] = useState({ //dados da tarefa originais
     projectId: task.projectId,
     id: task.id,
     title: task.title,
@@ -45,9 +47,39 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
     userName: task.userName,
   });
 
-  const handleChange = (event) => { //função para mudar
+  const [taskData, setTaskData] = useState({ //dados da tarefa que podem ser alterados
+    projectId: task.projectId,
+    id: task.id,
+    title: task.title,
+    description: task.description,
+    status: task.status,
+    priority: task.priority,
+    contributors: task.contributors,
+    userName: task.userName,
+  });
+
+  const checkIfTaskIsModified = () => {
+    const isModified = Object.keys(originalTaskData).some(key => {
+      // Converte ambos os valores para string para uma comparação consistente, útil para campos como 'status'.
+      const originalValue = String(originalTaskData[key]);
+      const currentValue = String(taskData[key]);
+      return originalValue !== currentValue;
+    });
+    setIsModified(isModified);
+  };
+
+  // UseEffect para chamar a função de comparação sempre que os dados da tarefa forem alterados
+  useEffect(() => {
+    checkIfTaskIsModified();
+    console.log(originalTaskData.status);
+    console.log(taskData.status);
+  }, [taskData]);
+
+  const handleChange = (event) => { // função para mudar
     const { name, value } = event.target;
-    setTaskData((prevData) => ({ ...prevData, [name]: value }));
+    setTaskData((prevData) => { 
+      return { ...prevData, [name]: value };
+    });
   };
 
   const handleSubmitClick = () => { //função para submeter
@@ -88,11 +120,13 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
       newTotalTasks.splice(updatedTaskIndex, 0, updatedTask);
       setTotalTasks(newTotalTasks);
       setEditMode(false);
+      fetchProjectDetails();  
     });
   };
 
   const handleCancelClick = () => { //função para cancelar
     setEditMode(false);
+    
     setTaskData({
       title: task.title,
       description: task.description,
@@ -100,7 +134,9 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
       priority: task.priority,
       contributors: task.contributors,
       userName: task.userName,
+      id: task.id,
     });
+    setIsModified(false);
   };
 
   const formatDate = (dateArray) => { //função para formatar a data
@@ -138,8 +174,7 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
             <MdOutlineEdit
               size={30}
               className="edit-icon cursor-pointer"
-              onClick={() => setEditMode(true)}
-            />
+              onClick={() => { setEditMode(true); setIsModified(false); }}            />
           </>
         );
       case 200:
@@ -149,8 +184,7 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
             <MdOutlineEdit
               size={30}
               className="edit-icon cursor-pointer"
-              onClick={() => setEditMode(true)}
-            />
+              onClick={() => { setEditMode(true); setIsModified(false); }}            />
           </>
         );
       case 300:
@@ -160,8 +194,7 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
             <MdOutlineEdit
               size={30}
               className="edit-icon cursor-pointer"
-              onClick={() => setEditMode(true)}
-            />
+              onClick={() => { setEditMode(true); setIsModified(false); }}            />
           </>
         );
       default:
@@ -300,8 +333,8 @@ const TaskCard = ({ task, projectUsers, totalTasks, setTotalTasks }) => {
               <Button onClick={handleCancelClick} className="mr-2">
                 Cancel
               </Button>
-              <Button onClick={handleSubmitClick}>Save</Button>
-            </div>
+              <Button onClick={handleSubmitClick} disabled={!isModified}>Save</Button>
+              </div>
           )}
         </>
       )}
