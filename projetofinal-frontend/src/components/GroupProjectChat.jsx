@@ -35,7 +35,6 @@ function GroupProjectChat({
   const apiUrl = useApiStore((state) => state.apiUrl); // Obter o URL da API
   const { projectId } = useParams(); // Obter o ID do projeto
   const [messages, setMessages] = useState(initialMessages); // Inicializar as mensagens
-  const [reopenSocket, setReopenSocket] = useState(true); // Reabrir o socket
   const [firstMessage, setFirstMessage] = useState(true); // Primeira mensagem
   const navigate = useNavigate(); 
   const handleSessionTimeout = () => { // Função para lidar com o timeout da sessão
@@ -72,7 +71,7 @@ function GroupProjectChat({
     setFirstMessage(false); // Atualizar o estado da primeira mensagem
   };
 
-  WebSocketProjChat(projectId, token, onMessageChat, reopenSocket); // Inicializar o WebSocket
+  WebSocketProjChat(projectId, token, onMessageChat); // Inicializar o WebSocket
 
   let userIdFromToken; // ID do utilizador
   let usernameFromToken; // Nome do utilizador

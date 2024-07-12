@@ -43,7 +43,6 @@ function ProjectDetails() {
   const isChatOpenRef = useRef(isChatOpen); // chat aberto ref
   const [messagesAlone, setMessagesAlone] = useState([]); //array de mensagens temporárioas 
   const [allMsgs, setAllMsgs] = useState([]); // todas as mensagens
-  const [reopenSocket, setReopenSocket] = useState(true); // reabrir o socket
   const [statePopUpUsers, setStatePopUpUsers] = useState(false); // popup de utilizadores
   const [statePopUpSkills, setStatePopUpSkills] = useState(false);  // popup de skills
   const [statePopUpSkillsRemove, setStatePopUpSkillsRemove] = useState(false); // popup de remover skills
@@ -124,7 +123,7 @@ function ProjectDetails() {
     }
   };
 
-  WebSocketProjChat(projectId, token, onMessageChat, reopenSocket); // websocket
+  WebSocketProjChat(projectId, token, onMessageChat); // websocket
 
   useEffect(() => { // useEffect para atualizar o chat  
     isChatOpenRef.current = isChatOpen; // chat aberto ref
