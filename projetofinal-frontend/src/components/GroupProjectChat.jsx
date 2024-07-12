@@ -13,7 +13,7 @@ import {
   MessageInput,
   ConversationHeader,
   Avatar,
-  TypingIndicator,
+
   AvatarGroup,
   MessageSeparator,
 } from "@chatscope/chat-ui-kit-react";
@@ -21,7 +21,7 @@ import { Tooltip } from "react-tooltip";
 import useUserStore from "../Stores/UserStore";
 import { useParams } from "react-router-dom";
 import useApiStore from "../Stores/ApiStore";
-import { useEffect } from "react";
+
 import WebSocketProjChat from "../WebSocketProjChat";
 
 function GroupProjectChat({
@@ -35,7 +35,6 @@ function GroupProjectChat({
   const apiUrl = useApiStore((state) => state.apiUrl); // Obter o URL da API
   const { projectId } = useParams(); // Obter o ID do projeto
   const [messages, setMessages] = useState(initialMessages); // Inicializar as mensagens
-  const [firstMessage, setFirstMessage] = useState(true); // Primeira mensagem
   const navigate = useNavigate(); 
   const handleSessionTimeout = () => { // Função para lidar com o timeout da sessão
     navigate("/", { state: { showSessionTimeoutModal: true } }); // Navegar para a página inicial
@@ -68,7 +67,6 @@ function GroupProjectChat({
       }),
     ]);
 
-    setFirstMessage(false); // Atualizar o estado da primeira mensagem
   };
 
   WebSocketProjChat(projectId, token, onMessageChat); // Inicializar o WebSocket
