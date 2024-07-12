@@ -1,5 +1,4 @@
 import React from "react";
-import styles from "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import basePhoto from "../Assets/defaultAvatar.jpg";
 import { TbEyeSearch } from "react-icons/tb";
 import { useState } from "react";

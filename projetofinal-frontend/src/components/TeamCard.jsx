@@ -59,13 +59,15 @@ function TeamCard({
     <div className="flex flex-col gap-4">
       <div>
         <Label htmlFor="Team" value={t("Team")} />
-        <div
-          className="inline-flex items-center cursor-pointer"
-          id="icon-element7"
-          onClick={openPopUpUsers}
-        >
-          <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
-        </div>
+        {currentUserIsAdmin && (
+          <div
+            className="inline-flex items-center cursor-pointer"
+            id="icon-element7"
+            onClick={openPopUpUsers}
+          >
+            <LuPlusCircle className="h-4 w-4 text-black font-bold ml-2" />
+          </div>
+        )}
         <Tooltip anchorSelect="#icon-element7" place="top" />
         {projectDetails.userProjectDtos
           ?.filter((up) => up.active)

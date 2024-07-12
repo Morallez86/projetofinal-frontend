@@ -70,9 +70,13 @@ function AddSkills({
       option.isDisabled = projectInfo.skills.some(
         (projectSkill) => projectSkill.name === skill.name
       );
-    } else {
+    } else if (context === "user") {
       option.isDisabled = userSkills.some(
         (userSkill) => userSkill.name === skill.name
+      );
+    } else {
+      option.isDisabled = projectSkills.some(
+        (projectSkill) => projectSkill.name === skill.name
       );
     }
     return option;

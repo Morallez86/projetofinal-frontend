@@ -11,9 +11,14 @@ import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-//O context é usado porque este componente é reutilizável 
+//O context é usado porque este componente é reutilizável
 
-function AddResources({ openPopUpResources, closePopUpResources, context, projectInfo }) {
+function AddResources({
+  openPopUpResources,
+  closePopUpResources,
+  context,
+  projectInfo,
+}) {
   const { projectId } = useParams(); // Obter o id do projeto da URL
   const token = useUserStore((state) => state.token); // Obter o token do usuário
   const apiUrl = useApiStore((state) => state.apiUrl); // Obter a URL da API
@@ -79,16 +84,23 @@ function AddResources({ openPopUpResources, closePopUpResources, context, projec
   };
 
   // Mapear os recursos e definir as opções
-  const options = resources.map((resource) => ({
-    value: resource.name,
-    label: resource.name,
-    id: resource.id,
-    isDisabled:
-      context === "editProject" &&
-      projectInfo.resources.some(
-        (projectResource) => projectResource.name === resource.name
-      ),
-  }));
+  const options = resources.map((resource) => {
+    const isDisabled =
+      context === "editProject"
+        ? projectInfo.resources.some(
+            (projectResource) => projectResource.name === resource.name
+          )
+        : projectResources.some(
+            (projectResource) => projectResource.name === resource.name
+          );
+
+    return {
+      value: resource.name,
+      label: resource.name,
+      id: resource.id,
+      isDisabled: isDisabled,
+    };
+  });
 
   const defaultOptions = {
     // Opções padrão da animação
